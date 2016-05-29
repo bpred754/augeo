@@ -3,7 +3,7 @@ and by using Augeo.io (the “Website”), you agree to the terms of this Privac
 of Service in their entirety, and refer to those for definitions and contacts.
 
 
-#####Data Collected
+###Data Collected
 We collect anonymous data from every visitor of the Website to monitor traffic and fix bugs. For example, we collect information like web 
 requests, the data sent in response to such requests, the Internet Protocol address, the browser type, the browser language, and a 
 timestamp for the request.
@@ -21,11 +21,11 @@ Account' option in the 'Settings' drop down in the top right section of the scre
 Minors and children should not use Augeo. By using the Website, you represent that you have the legal capacity to enter into a binding 
 agreement.
 
-#####Use of the Data
+###Use of the Data
 We only use your personal information to provide you the Augeo services or to communicate with you about the services or the Website. 
 With respect to any information you may choose to share with Augeo, we take the privacy and confidentiality of such information seriously.
 
-#####We do not share personal information you have provided to us without your consent, unless:
+###We do not share personal information you have provided to us without your consent, unless:
 
 * doing so is appropriate to carry out your own request;
 * we believe it's needed to enforce our Terms of Service, or that is legally required;
@@ -40,7 +40,7 @@ Augeo feels you would be interested in, or communicate with you about your use o
 us via a confirmation email when you open an email from us. If you do not want to receive email from Augeo, please opt out of receiving 
 emails at the bottom of any Augeo emails.
 
-#####Sharing of Data
+###Sharing of Data
 We don't share your personal information with third parties. Only aggregated, anonymized data is periodically transmitted to external 
 services to help us improve the Augeo Website and service. We currently use Google Analytics (traffic analysis, SEO optimization). We 
 listed below what data these third parties extract exactly. Feel free to check out their own Privacy Policies to find out more.
@@ -59,7 +59,7 @@ to assist us. You hereby consent to our sharing of Personal Information with our
 
 We may choose to buy or sell assets. In these types of transactions, user information is typically one of the transferred business assets. Moreover, if we, or substantially all of our assets, were acquired, or if we go out of business or enter bankruptcy, user information would be one of the assets that is transferred or acquired by a third party. You acknowledge that such transfers may occur, and that any acquirer of us or our assets may continue to use your personal information as set forth in this policy.
 
-#####Changes to the Privacy Policy
+###Changes to the Privacy Policy
 We may amend this Privacy Policy from time to time. Use of information we collect now is subject to the Privacy Policy in effect at the 
 time such information is used. If we make major changes in the way we collect or use information, we will notify you by posting an 
 announcement on the Website or sending you an email.  A user is bound by any changes to the Privacy Policy when he or she uses the Services 
