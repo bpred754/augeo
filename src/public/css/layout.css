@@ -1,0 +1,223 @@
+
+  /***************************************************************************/
+  /* Augeo.io is a web application that uses Natural Language Processing to  */
+  /* classify a user's internet activity into different 'skills'.            */
+  /* Copyright (C) 2016 Brian Redd                                           */
+  /*                                                                         */
+  /* This program is free software: you can redistribute it and/or modify    */
+  /* it under the terms of the GNU General Public License as published by    */
+  /* the Free Software Foundation, either version 3 of the License, or       */
+  /* (at your option) any later version.                                     */
+  /*                                                                         */
+  /* This program is distributed in the hope that it will be useful,         */
+  /* but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+  /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+  /* GNU General Public License for more details.                            */
+  /*                                                                         */
+  /* You should have received a copy of the GNU General Public License       */
+  /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
+  /***************************************************************************/
+
+  /***************************************************************************/
+  /* Description: css for layout.html                                        */
+  /***************************************************************************/
+
+  html, body {
+    height:100%;
+  }
+
+  body {
+    padding-top: 70px;
+    font-weight:300;
+  }
+
+  a:focus {
+    color:gray;
+    text-decoration:none;
+  }
+
+  #delete-error-message {
+    padding-left:20px;
+    margin-bottom:5px;
+    color:red;
+  }
+
+  #delete-modal-body {
+    height:100px;
+  }
+
+  #my-navbar-container {
+    height:50px;
+  }
+
+  #leaderboard-text-container {
+    width:130px;
+    height:50px;
+    float:left;
+  }
+
+  #project-name-container {
+    margin-left:30px;
+  }
+
+  #settings-dropdown {
+    right:0;
+    left:initial;
+    margin-top:0px;
+  }
+
+  #settings-text-container {
+    width:110px;
+    float:right;
+  }
+
+  .clickable {
+    cursor:pointer;
+  }
+
+  .footer {
+    padding-top:15px;
+    background-color: #222;
+    width:100%;
+  }
+
+  .footer p {
+    font-size:1em;
+  }
+
+  .footer-description {
+    height:100%;
+    color:#9d9d9d;
+  }
+
+  .footer-description a {
+    color:#9d9d9d;
+    text-decoration:underline;
+  }
+
+  .footer-legal {
+    text-align:right;
+    height:100%;
+    color:#9d9d9d;
+  }
+
+  .footer-legal a {
+    color:#9d9d9d;
+  }
+
+  .footer-text-large {
+    font-size:1.3em;
+  }
+
+  .footer-text-small {
+    font-size:.9em;
+  }
+
+  .header-action {
+    display: block;
+    margin:0 auto;
+    font-size:1.3em;
+  }
+
+  .header-action-container {
+    float:right;
+    width:255px;
+    margin-right:25px;
+  }
+
+  .header-text-font {
+    text-decoration:none;
+    padding:15px 15px;
+    line-height:20px;
+    float:left;
+    height:50px;
+    color:#9d9d9d;
+  }
+
+  .header-text-font:hover {
+    text-decoration:none;
+    color:white;
+  }
+
+  .main-content {
+    margin-bottom:100px;
+  }
+
+  .navbar-nav {
+    float:right;
+  }
+
+  .project-name-text {
+    font-size:1.5em;
+  }
+
+  .push, .footer {
+    height:150px;
+  }
+
+  .theme-dropdown .dropdown-menu {
+    position: static;
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .theme-showcase > p > .btn {
+    margin: 5px 0;
+  }
+
+  .theme-showcase .navbar .container {
+    width: auto;
+  }
+
+  .wrapper {
+    min-height:100%;
+    height:auto !important;
+    height:100%;
+    margin:0 auto -150px; /* This must be the negative value of .push, .footer height*/
+  }
+
+  /***************************************************************************/
+  /* Screen Size: less than custom small                                     */
+  /***************************************************************************/
+
+  @media(max-width:600px) {
+
+    #leaderboard-text-container {
+      width:125px;
+    }
+
+    #settings-text-container {
+      width:100px;
+      float:right;
+    }
+
+    .footer p {
+      font-size:.7em;
+    }
+
+    .header-action-container {
+      float:right;
+      width:225px;
+      margin-right:0px;
+    }
+
+    .header-action {
+      display: block;
+      margin:0 auto;
+      font-size:1.1em;
+    }
+
+    .header-text-font {
+      font-size:1.1em;
+      text-decoration:none;
+      padding:15px 15px;
+      line-height:20px;
+      float:left;
+      height:50px;
+      color:#9d9d9d;
+    }
+
+    #project-name-container {
+      margin-left:10px;
+    }
+  }

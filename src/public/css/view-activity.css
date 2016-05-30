@@ -1,0 +1,81 @@
+
+  /***************************************************************************/
+  /* Augeo.io is a web application that uses Natural Language Processing to  */
+  /* classify a user's internet activity into different 'skills'.            */
+  /* Copyright (C) 2016 Brian Redd                                           */
+  /*                                                                         */
+  /* This program is free software: you can redistribute it and/or modify    */
+  /* it under the terms of the GNU General Public License as published by    */
+  /* the Free Software Foundation, either version 3 of the License, or       */
+  /* (at your option) any later version.                                     */
+  /*                                                                         */
+  /* This program is distributed in the hope that it will be useful,         */
+  /* but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+  /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+  /* GNU General Public License for more details.                            */
+  /*                                                                         */
+  /* You should have received a copy of the GNU General Public License       */
+  /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
+  /***************************************************************************/
+
+  /***************************************************************************/
+  /* Description: css for view-activity.html                                  */
+  /***************************************************************************/
+
+  #head-container {
+    height:250px;
+  }
+
+  #header-title {
+    width:160px;
+    margin: 0 auto;
+    font-size:3.5em;
+    margin-bottom:15px;
+  }
+
+  #loader {
+    display:block;
+    margin:auto;
+    padding-top:20px;
+  }
+
+  #skill-container {
+    width:126px;
+    margin:0 auto;
+    margin-bottom: 15px;
+  }
+
+  #skill-icon {
+    width:100%;
+  }
+
+  #skill-select {
+    width:20%;
+    margin:0 auto;
+  }
+
+  #tweet-container {
+    height :100%;
+    max-width:500px;
+    margin:0 auto;
+  }
+
+  .activity {
+    margin-bottom: 20px;
+  }
+
+  .skill-glyphicon {
+    font-size:125px;
+  }
+
+  /***************************************************************************/
+  /* Screen Size: less than custom small                                     */
+  /***************************************************************************/
+
+  @media(max-width:600px) {
+
+    #skill-select {
+      width:43%;
+      margin: 0 auto;
+    }
+  }

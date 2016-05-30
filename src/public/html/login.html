@@ -1,0 +1,147 @@
+
+  <!-------------------------------------------------------------------------->
+  <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+  <!-- to classify a user's internet activity into different 'skills'.      -->
+  <!-- Copyright (C) 2016 Brian Redd                                        -->
+  <!--                                                                      -->
+  <!-- This program is free software: you can redistribute it and/or modify -->
+  <!-- it under the terms of the GNU General Public License as published by -->
+  <!-- the Free Software Foundation, either version 3 of the License, or    -->
+  <!-- (at your option) any later version.                                  -->
+  <!--                                                                      -->
+  <!-- This program is distributed in the hope that it will be useful,      -->
+  <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+  <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+  <!-- GNU General Public License for more details.                         -->
+  <!--                                                                      -->
+  <!-- You should have received a copy of the GNU General Public License    -->
+  <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+  <!-------------------------------------------------------------------------->
+
+  <link rel="stylesheet" href="css/login.css">
+
+  <div id="front-page-container" class="container">
+    <div id="description-container" class="col-md-8 col-xs-12">
+      <div id="description-row1" class="row">
+        <div id="logo-container" class="center-block">
+          <img id="logo" src="image/logo.png">
+        </div>
+      </div>
+      <div id="description-row2" class="row">
+        <div class="col-xs-4 description-icon-container">
+          <div class="description-icon">
+            <span class="glyphicon glyphicon-equalizer"></span>
+          </div>
+        </div>
+        <div class="col-xs-4 description-icon-container">
+          <div class="description-icon">
+            <span class="glyphicon glyphicon-globe"></span>
+          </div></div>
+        <div class="col-xs-4 description-icon-container">
+          <div class="description-icon">
+            <span class="glyphicon glyphicon-star"></span>
+          </div></div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          <p class="front-page-text">Track your Twitter activity</p>
+        </div>
+        <div class="col-xs-4">
+          <p class="front-page-text">Interact with people that have similar interests</p>
+        </div>
+        <div class="col-xs-4">
+          <p class="front-page-text">Find leaders in areas that most fascinate you</p>
+          <span class="glyphicons glyphicons-group"></span>
+        </div>
+      </div>
+    </div>
+    <div id="form-container" class="col-xs-6">
+      <div class="message-container">
+        <p class="message">{{loginMessage}}</p>
+      </div>
+      <div id="login-container" class="row">
+        <form class="front-page-form" role="form">
+          <div class="inline-form-container">
+            <label class="control-label front-page-font">Login</label>
+            <input class="form-control input-lg" type="email" placeholder="Email Address" ng-model="loginEmail">
+          </div>
+          <table>
+            <tbody>
+              <tr>
+                <td class="password-container">
+                  <password-input model="loginPassword"></password-input>
+                </td>
+                <td>
+                  <button type="submit" class="btn btn-default btn-lg" ng-click="submitLogin()">Submit</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <div class="divider"></div>
+      <div class="message-container">
+        <p class="message">{{signupMessage}}</p>
+      </div>
+
+      <div id="signup-container" class="row">
+        <form class="front-page-form" role="form">
+          <table class="inline-form-container">
+            <tbody>
+              <tr>
+                <td>
+                  <label class="control-label front-page-font">Signup</label>
+                </td>
+              </tr>
+              <tr>
+                <td class="inline-form-left">
+                  <input class="form-control input-lg" type="text" placeholder="First Name" ng-model="signupFirstName">
+                </td>
+                <td class="inline-form-right">
+                  <input class="form-control input-lg" type="text" placeholder="Last Name" ng-model="signupLastName">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="inline-form-container">
+            <input class="form-control input-lg" type="email" placeholder="Email Address" ng-model="signupEmail">
+          </div>
+          <table>
+            <tbody>
+              <tr>
+                <td class="password-container">
+                  <password-input model="signupPassword"></password-input>
+                </td>
+                <td>
+                  <button type="submit" class="btn btn-default btn-lg" ng-click="validateAndDisclose()">Sign Up</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="checkbox terms-checkbox">
+            <label><input type="checkbox" value="" ng-model="agreedToTerms">Agree to <a href="https://github.com/bpred754/augeo/blob/master/terms-of-service.md" target="_blank">Terms of Service</a></label>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disclosure Modal -->
+  <div class="modal fade" id="disclosure-modal" tabindex="-1" role="dialog" aria-labelledby="disclosure-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="disclosure-modal-label">Disclosure</h4>
+        </div>
+        <div class="modal-body">
+          This site is currently in Alpha and is Open Source. Due to these reasons this site is more susceptible to an attack
+          and a breach of your data. If you accept this risk, please continue. We hope you enjoy the site!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="submitSignup()">Continue</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>

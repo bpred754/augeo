@@ -1,0 +1,253 @@
+
+  /***************************************************************************/
+  /* Augeo.io is a web application that uses Natural Language Processing to  */
+  /* classify a user's internet activity into different 'skills'.            */
+  /* Copyright (C) 2016 Brian Redd                                           */
+  /*                                                                         */
+  /* This program is free software: you can redistribute it and/or modify    */
+  /* it under the terms of the GNU General Public License as published by    */
+  /* the Free Software Foundation, either version 3 of the License, or       */
+  /* (at your option) any later version.                                     */
+  /*                                                                         */
+  /* This program is distributed in the hope that it will be useful,         */
+  /* but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+  /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+  /* GNU General Public License for more details.                            */
+  /*                                                                         */
+  /* You should have received a copy of the GNU General Public License       */
+  /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
+  /***************************************************************************/
+
+  /***************************************************************************/
+  /* Description: css for twitter-history.html                                */
+  /***************************************************************************/
+
+  #logo {
+    height:250px;
+    width:250px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom:25px;
+  }
+
+  #logo-image {
+    max-height:100%;
+    max-width:100%
+  }
+
+  .complete {
+    color:rgb(110, 182, 110);
+  }
+
+  .status-container {
+    font-size:.7em;
+    margin-top:2%;
+  }
+
+  .text-icon-container {
+    text-align:center;
+    margin-top:-3%;
+  }
+
+  .title-text {
+    font-size:1.2em
+  }
+
+  .twitter-history-glyphicon {
+    display:inline-block;
+  }
+
+  .twitter-history-icon {
+    text-align:center;
+  }
+
+  .twitter-history-spacer {
+    height:inherit;
+  }
+
+  /***************************************************************************/
+  /* Screen Size: less than custom small                                     */
+  /***************************************************************************/
+
+  @media(max-width:599px) {
+
+    #head-container {
+      margin-left:0px;
+    }
+
+    #header-description {
+      font-size:1em;
+      font-weight:300;
+      margin-left:5%;
+      margin-right:0%;
+    }
+
+    #header-title {
+      font-size:2em;
+      font-weight:300;
+    }
+
+    .text-icon {
+      display:inline-block;
+      font-size:11em;
+      margin-top:0px;
+    }
+
+    .tweet-description {
+      margin-left:80px;
+    }
+
+    .twitter-history-icon {
+      text-align:center;
+      font-size: 9em;
+      margin-top: 30px;
+    }
+
+    .type-description {
+      font-size:1em;
+      text-align:center;
+      margin-top:43px;
+      font-weight: 300;
+      line-height: 1.4;
+    }
+  }
+
+  /***************************************************************************/
+  /* Screen Size: custom small                                               */
+  /***************************************************************************/
+
+  @media(min-width:600px) {
+
+    #head-container {
+      margin-left:0px;
+    }
+
+    #header-description {
+      font-size:1.3em;
+      font-weight:300;
+      margin-left:5%;
+      margin-right:0%;
+    }
+
+    #header-title {
+      font-size:3.5em;
+      font-weight:300;
+    }
+
+    .text-icon {
+      display:inline-block;
+      font-size:16em;
+      margin-top:0px;
+    }
+
+    .tweet-description {
+      margin-left:80px;
+    }
+
+    .twitter-history-icon {
+      text-align:center;
+      font-size: 12em;
+      margin-top: 30px;
+    }
+
+    .type-description {
+      font-size:1.6em;
+      text-align:center;
+      margin-top:43px;
+      font-weight: 300;
+      line-height: 1.4;
+    }
+  }
+
+  /***************************************************************************/
+  /* Screen Size: small                                                      */
+  /***************************************************************************/
+
+  @media(min-width:767px) {
+
+    #head-container {
+      margin-left:0px;
+    }
+
+    #header-description {
+      font-size:1.3em;
+      font-weight:300;
+      margin-left:5%;
+      margin-right:0%;
+    }
+
+    .tweet-description {
+      margin-left:80px;
+    }
+  }
+
+  /***************************************************************************/
+  /* Screen Size: custom medium                                              */
+  /***************************************************************************/
+
+  @media(min-width:850px) {
+
+    #head-container {
+      margin-left:0px;
+    }
+
+    #header-description {
+      font-size:1.3em;
+      font-weight:300;
+      margin-left:5%;
+      margin-right:0%;
+    }
+
+    .tweet-description {
+      margin-left:55px;
+    }
+
+    .twitter-history-jumbotron {
+      padding-left:0px;
+      padding-right:0px;
+    }
+  }
+
+  /***************************************************************************/
+  /* Screen Size: medium                                                     */
+  /***************************************************************************/
+
+  @media(min-width:992px) {
+
+    #head-container {
+      margin-left:0px;
+    }
+
+    #header-description {
+      font-size:1.3em;
+      font-weight:300;
+      margin-left:5%;
+      margin-right:0%;
+    }
+
+    .tweet-description {
+      margin-left:50px;
+    }
+  }
+
+  /***************************************************************************/
+  /* Screen Size: large                                                      */
+  /***************************************************************************/
+
+  @media(min-width:1200px) {
+
+    #head-container {
+      margin-left:125px;
+    }
+
+    #header-description {
+      font-size:1.3em;
+      font-weight:300;
+      margin-left:5%;
+      margin-right:15%;
+    }
+
+    .tweet-description {
+      margin-left:0px;
+    }
+  }

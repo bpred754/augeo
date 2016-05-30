@@ -1,0 +1,129 @@
+
+  /***************************************************************************/
+  /* Augeo.io is a web application that uses Natural Language Processing to  */
+  /* classify a user's internet activity into different 'skills'.            */
+  /* Copyright (C) 2016 Brian Redd                                           */
+  /*                                                                         */
+  /* This program is free software: you can redistribute it and/or modify    */
+  /* it under the terms of the GNU General Public License as published by    */
+  /* the Free Software Foundation, either version 3 of the License, or       */
+  /* (at your option) any later version.                                     */
+  /*                                                                         */
+  /* This program is distributed in the hope that it will be useful,         */
+  /* but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+  /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+  /* GNU General Public License for more details.                            */
+  /*                                                                         */
+  /* You should have received a copy of the GNU General Public License       */
+  /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
+  /***************************************************************************/
+
+  /***************************************************************************/
+  /* Description: Handles requests to Augeo's user-api                       */
+  /***************************************************************************/
+
+  // Required libraries
+  var UserRouter = require('express').Router();
+
+  // Required local modules
+  var Logger = require('../module/logger');
+  var UserService = require('../service/user-service');
+
+  // Global variables
+  var log = new Logger();
+
+  /***************************************************************************/
+  /* GET Requests                                                            */
+  /***************************************************************************/
+
+  UserRouter.get('/getCurrentUser', function(request, response) {
+    log.info('Getting current user from session: ' + request.session.user);
+
+    if(request.session.user) {
+      response.status(200).send(request.session.user);
+    } else {
+      response.sendStatus(200);
+    }
+  });
+
+  /***************************************************************************/
+  /* POST Requests                                                           */
+  /***************************************************************************/
+
+  UserRouter.post('/add', function(request, response) {
+
+    var user = {
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      email: request.body.email,
+      password: request.body.password,
+    }
+
+    // Check if email exists
+    UserService.checkExistingAugeoUser(user.email, function(userExists) {
+
+      if(userExists) {
+        response.status(400).send('This email already exists. Please try another.');
+      } else {
+        UserService.addUser(user, function() {
+          response.sendStatus(200);
+        }, function() {
+          response.status(400).send('Invalid input. Please try again.');
+        });
+      }
+    });
+  });
+
+  UserRouter.post('/login', function(request, response) {
+
+    var rollback = function() {
+      response.status(400).send('Incorrect email address or password');
+    };
+
+    UserService.login(request.body.email, request.body.password, function(pUser) {
+
+      // Set session user
+      if(pUser != null) {
+        request.session.user = pUser;
+        response.sendStatus(200);
+      } else {
+        rollback();
+      }
+
+    }, rollback);
+  });
+
+  UserRouter.post('/logout', function(request, response) {
+
+    // Destroy the session
+    if(request.session.user) {
+      request.session.destroy();
+      response.status(200).send('You have successfully logged out.');
+    } else {
+      response.sendStatus(400);
+    }
+
+  });
+
+  UserRouter.post('/remove', function(request, response) {
+
+    var rollback = function() {response.status(400).send('Failed to delete user');};
+
+    if(request.session.user) {
+      UserService.removeUser(request.session.user.email, request.body.password, function(error, user) {
+        if(error) {
+          response.status(401).send('Incorrect password');
+        } else if(user) {
+          // Destroy the session
+          request.session.destroy();
+          response.sendStatus(200);
+        } else {
+          rollback();
+        }
+      }, rollback);
+    } else {
+      rollback();
+    }
+  });
+
+  module.exports = UserRouter;

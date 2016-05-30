@@ -1,0 +1,198 @@
+
+  /***************************************************************************/
+  /* Augeo.io is a web application that uses Natural Language Processing to  */
+  /* classify a user's internet activity into different 'skills'.            */
+  /* Copyright (C) 2016 Brian Redd                                           */
+  /*                                                                         */
+  /* This program is free software: you can redistribute it and/or modify    */
+  /* it under the terms of the GNU General Public License as published by    */
+  /* the Free Software Foundation, either version 3 of the License, or       */
+  /* (at your option) any later version.                                     */
+  /*                                                                         */
+  /* This program is distributed in the hope that it will be useful,         */
+  /* but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+  /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+  /* GNU General Public License for more details.                            */
+  /*                                                                         */
+  /* You should have received a copy of the GNU General Public License       */
+  /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
+  /***************************************************************************/
+
+  /***************************************************************************/
+  /* Description: css for profile.html                                       */
+  /***************************************************************************/
+
+  #header-container {
+    height:220px;
+    display:-webkit-flex;
+    display:flex;
+  }
+
+  #header-jumbotron {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  #invalid-profile-text {
+    text-align:center;
+    font-size:2em;
+  }
+
+  #profile-pic {
+    background-color:gray;
+    height:100%;
+    width:180px;
+    cursor:pointer;
+  }
+
+  #profile-pic-container {
+    text-align:center;
+    height:100%;
+  }
+
+  #recent-activity-container {
+    height:100%;
+    -webkit-flex:1;
+    flex:1;
+    margin-left:20px;
+    margin-right:20px;
+  }
+
+  #skill-icon-container {
+    height:280px;
+  }
+
+  #view-activity-link {
+    margin-top:10px;
+    cursor:pointer;
+  }
+
+  .fill-height {
+    height:100%;
+  }
+
+  .skill-row {
+    height:205px;
+  }
+
+  /***************************************************************************/
+  /* Screen Size: less than small                                            */
+  /***************************************************************************/
+
+  @media(max-width:767px) {
+
+    #medium-screen {
+      display:none;
+    }
+
+    #profile-pic-container {
+      width:50%;
+      margin:0 auto;
+      padding-left:0px;
+      padding-right:0px;
+    }
+
+    #recent-activity-container {
+      display:none;
+    }
+
+    #small-screen {
+      display:none;
+    }
+
+    #xsmall-screen {
+      display:initial;
+    }
+  }
+
+  /***************************************************************************/
+  /* Screen Size: small                                                      */
+  /***************************************************************************/
+
+  @media(min-width:768px) {
+
+    #medium-screen {
+      display:none;
+    }
+
+    #profile-pic-container {
+      width:50%;
+      margin:0 auto;
+      padding-left:0px;
+      padding-right:0px;
+    }
+
+    #recent-activity-container {
+      display:none;
+    }
+
+    #small-screen {
+      display:initial;
+    }
+
+    #xsmall-screen {
+      display:none;
+    }
+  }
+
+  /***************************************************************************/
+  /* Screen Size: medium                                                     */
+  /***************************************************************************/
+
+  @media(min-width:992px) {
+
+    #medium-screen {
+      display:initial;
+    }
+
+    #profile-pic-container {
+      width:initial;
+      margin:0;
+      padding-left:60px;
+      padding-right:0px;
+    }
+
+    #recent-activity-container {
+      height:100%;
+      display:initial;
+    }
+
+    #small-screen {
+      display:none;
+    }
+
+    #xsmall-screen {
+      display:none;
+    }
+  }
+
+  /***************************************************************************/
+  /* Screen Size: large                                                      */
+  /***************************************************************************/
+
+  @media(min-width:1200px) {
+
+    #medium-screen {
+      display:initial;
+    }
+
+    #profile-pic-container {
+      width:initial;
+      margin:0;
+      padding-left:60px;
+      padding-right:0px;
+    }
+
+    #recent-activity-container {
+      height:100%;
+      display:initial;
+    }
+
+    #small-screen {
+      display:none;
+    }
+
+    #xsmall-screen {
+      display:none;
+    }
+  }

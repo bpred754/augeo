@@ -1,0 +1,33 @@
+
+  <!-------------------------------------------------------------------------->
+  <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+  <!-- to classify a user's internet activity into different 'skills'.      -->
+  <!-- Copyright (C) 2016 Brian Redd                                        -->
+  <!--                                                                      -->
+  <!-- This program is free software: you can redistribute it and/or modify -->
+  <!-- it under the terms of the GNU General Public License as published by -->
+  <!-- the Free Software Foundation, either version 3 of the License, or    -->
+  <!-- (at your option) any later version.                                  -->
+  <!--                                                                      -->
+  <!-- This program is distributed in the hope that it will be useful,      -->
+  <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+  <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+  <!-- GNU General Public License for more details.                         -->
+  <!--                                                                      -->
+  <!-- You should have received a copy of the GNU General Public License    -->
+  <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+  <!-------------------------------------------------------------------------->
+
+  <div id="page-container">
+    <div id="arrow-left-container">
+      <div class="arrow-left" ng-class="{false: 'arrow-left-button'}[currentPageNumber == 1]" ng-click="previous()"></div>
+    </div>
+    <div id="page-number-container">
+    <div ng-repeat="el in paginatorElements track by $index" class="{{el.class}}" ng-click="loadPage({page:el.value})">{{el.value}}</div>
+    </div>
+    <div id="arrow-right-container">
+      <div class="arrow-right" ng-class="{false: 'arrow-right-button'}[currentPageNumber == lastPage]" ng-click="next()"></div>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="css/directive/paginate.css">

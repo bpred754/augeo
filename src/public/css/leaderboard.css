@@ -1,0 +1,149 @@
+
+  /***************************************************************************/
+  /* Augeo.io is a web application that uses Natural Language Processing to  */
+  /* classify a user's internet activity into different 'skills'.            */
+  /* Copyright (C) 2016 Brian Redd                                           */
+  /*                                                                         */
+  /* This program is free software: you can redistribute it and/or modify    */
+  /* it under the terms of the GNU General Public License as published by    */
+  /* the Free Software Foundation, either version 3 of the License, or       */
+  /* (at your option) any later version.                                     */
+  /*                                                                         */
+  /* This program is distributed in the hope that it will be useful,         */
+  /* but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+  /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+  /* GNU General Public License for more details.                            */
+  /*                                                                         */
+  /* You should have received a copy of the GNU General Public License       */
+  /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
+  /***************************************************************************/
+
+  /***************************************************************************/
+  /* Description: css for leaderboard.html                                   */
+  /***************************************************************************/
+
+  #entry-titles-container {
+    height:60px;
+  }
+
+  #go-button {
+    height:34px;
+    width:34px;
+    text-align:center;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:1.3em;
+  }
+
+  #go-button-container {
+    padding-left:0px;
+  }
+
+  #go-button:hover {
+    background-color:#CBCBCB;
+    color:#7D7D7D;
+  }
+
+  #go-button-title {
+    vertical-align:sub;
+  }
+
+  #head-container {
+    height:250px;
+  }
+
+  #header-title {
+    width:307px;
+    margin: 0 auto;
+    font-size:3.5em;
+    margin-bottom:15px;
+  }
+
+  #skill-container {
+    width:126px;
+    margin:0 auto;
+    margin-bottom: 15px;
+  }
+
+  #skill-icon {
+    width:100%;
+  }
+
+  #skill-select {
+    width:20%;
+    margin:0 auto;
+  }
+
+  #user-entry-title {
+    text-align:right;
+  }
+
+  #user-entry-input{
+    font-size:1.3em;
+  }
+
+  #user-entry-input-container {
+    padding-left:0px;
+  }
+
+  .entry-title {
+    height:100%;
+    color: #7D7D7D;
+    font-size:1.5em;
+    text-align:center;
+  }
+
+  .go-button {
+    background-color:#7D7D7D;
+    color:#eee;
+  }
+
+  .go-button-enter {
+    background-color:#CBCBCB;
+    color:#7D7D7D;
+  }
+
+  .leaderboard-row {
+    height:20px;
+  }
+
+  .skill-glyphicon {
+    font-size:125px;
+  }
+
+  /***************************************************************************/
+  /* Screen Size: less than small                                            */
+  /***************************************************************************/
+
+  @media(max-width:767px) {
+
+    #entry-titles-container {
+      height:40px;
+    }
+
+    #go-button {
+      height:25px;
+      width:25px;
+      text-align:center;
+      border-radius:5px;
+      cursor:pointer;
+      font-size:1em;
+    }
+
+    #skill-select {
+      width:35%;
+      margin:0 auto;
+    }
+
+    #user-entry-input{
+      font-size:.9em;
+      height:25px;
+    }
+
+    .entry-title {
+      height:100%;
+      color: #7D7D7D;
+      font-size:1.1em;
+      text-align:center;
+    }
+  }

@@ -1,0 +1,141 @@
+
+  <!-------------------------------------------------------------------------->
+  <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+  <!-- to classify a user's internet activity into different 'skills'.      -->
+  <!-- Copyright (C) 2016 Brian Redd                                        -->
+  <!--                                                                      -->
+  <!-- This program is free software: you can redistribute it and/or modify -->
+  <!-- it under the terms of the GNU General Public License as published by -->
+  <!-- the Free Software Foundation, either version 3 of the License, or    -->
+  <!-- (at your option) any later version.                                  -->
+  <!--                                                                      -->
+  <!-- This program is distributed in the hope that it will be useful,      -->
+  <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+  <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+  <!-- GNU General Public License for more details.                         -->
+  <!--                                                                      -->
+  <!-- You should have received a copy of the GNU General Public License    -->
+  <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+  <!-------------------------------------------------------------------------->
+
+  <link rel="stylesheet" href="css/directive/activity.css">
+
+  <div class="activity-container">
+    <div class="tweet-row1">
+      <a class="avatar-image-link">
+        <img class="avatar-image">
+      </a>
+      <div class="name-container">
+        <a class="name"></a>
+        <a class="screen-name"></a>
+      </div>
+      <div class="experience-container">
+        <div class="experience-wrapper">
+          <div class="experience"></div>
+          <div class="classification-container">
+            <div class="classification"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tweet-row2">
+        <p id="tweet-text"></p>
+        <a class="media-link">
+          <img class="tweet-media">
+        <a/>
+    </div>
+
+    <div class="tweet-row3">
+      <div class="tweet-footer">
+        <a class="timestamp"></a>
+        <div class="tweet-action-container">
+          <a class="reply">
+            <img class="tweet-action" src="image/twitter/default-reply.png">
+          </a>
+        </div>
+        <div class="tweet-action-container">
+          <a class="retweet">
+            <img class="tweet-action" src="image/twitter/default-retweet.png">
+          </a>
+        </div>
+        <div class="retweet-count tweet-action-count"></div>
+        <div class="tweet-action-container">
+          <a class="favorite">
+            <img class="favorite-action tweet-action" src="image/twitter/default-favorite.png">
+          </a>
+        </div>
+        <div class="favorite-count tweet-action-count"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    $('#reply').mouseenter(function() {
+      $(this).children('.tweet-action').attr('src','image/twitter/reply-hover.png')
+    }).mouseleave(function() {
+      $(this).children('.tweet-action').attr('src','image/twitter/default-reply.png');
+    });
+
+    $('#retweet').mouseenter(function() {
+      $(this).children('.tweet-action').attr('src','image/twitter/retweet-hover.png')
+    }).mouseleave(function() {
+      $(this).children('.tweet-action').attr('src','image/twitter/default-retweet.png');
+    });
+
+    $('#favorite').mouseenter(function() {
+      $(this).children('.tweet-action').attr('src','image/twitter/favorite-hover.png')
+    }).mouseleave(function() {
+      $(this).children('.tweet-action').attr('src','image/twitter/default-favorite.png');
+    });
+
+  </script>
+
+  <script>
+  // Twitter Intents handler
+  (function() {
+    if (window.__twitterIntentHandler) return;
+    var intentRegex = /twitter\.com(\:\d{2,4})?\/intent\/(\w+)/,
+        windowOptions = 'scrollbars=yes,resizable=yes,toolbar=no,location=yes',
+        width = 550,
+        height = 420,
+        winHeight = screen.height,
+        winWidth = screen.width;
+
+    function handleIntent(e) {
+      e = e || window.event;
+      var target = e.target || e.srcElement,
+          m, left, top;
+
+      while (target && target.nodeName.toLowerCase() !== 'a') {
+        target = target.parentNode;
+      }
+
+      if (target && target.nodeName.toLowerCase() === 'a' && target.href) {
+        m = target.href.match(intentRegex);
+        if (m) {
+          left = Math.round((winWidth / 2) - (width / 2));
+          top = 0;
+
+          if (winHeight > height) {
+            top = Math.round((winHeight / 2) - (height / 2));
+          }
+
+          window.open(target.href, 'intent', windowOptions + ',width=' + width +
+                                             ',height=' + height + ',left=' + left + ',top=' + top);
+          e.returnValue = false;
+          e.preventDefault && e.preventDefault();
+        }
+      }
+    }
+
+    if (document.addEventListener) {
+      document.addEventListener('click', handleIntent, false);
+    } else if (document.attachEvent) {
+      document.attachEvent('onclick', handleIntent);
+    }
+    window.__twitterIntentHandler = true;
+  }());
+
+  </script>

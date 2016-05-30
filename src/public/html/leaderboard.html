@@ -1,0 +1,117 @@
+
+  <!-------------------------------------------------------------------------->
+  <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+  <!-- to classify a user's internet activity into different 'skills'.      -->
+  <!-- Copyright (C) 2016 Brian Redd                                        -->
+  <!--                                                                      -->
+  <!-- This program is free software: you can redistribute it and/or modify -->
+  <!-- it under the terms of the GNU General Public License as published by -->
+  <!-- the Free Software Foundation, either version 3 of the License, or    -->
+  <!-- (at your option) any later version.                                  -->
+  <!--                                                                      -->
+  <!-- This program is distributed in the hope that it will be useful,      -->
+  <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+  <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+  <!-- GNU General Public License for more details.                         -->
+  <!--                                                                      -->
+  <!-- You should have received a copy of the GNU General Public License    -->
+  <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+  <!-------------------------------------------------------------------------->
+
+  <link rel="stylesheet" href="css/leaderboard.css">
+
+  <div ng-show="isLoaded">
+
+    <!-- Header -->
+    <div class="container">
+      <div class="row">
+        <div class="jumbotron">
+          <div id="head-container">
+            <div id="header-title">Leaderboards</div>
+            <div id="skill-container">
+                <a href="https://www.twitter.com">
+                  <img id="skill-icon" src="image/twitter/logo-blue.png">
+                </a>
+            </div>
+            <select id="skill-select" class="form-control">
+              <option>Twitter</option>
+              <option ng-repeat="twitterSkill in twitterSkills">{{twitterSkill.name}}</option>
+            </select>
+          </div>
+        </div>
+      </div> <!-- end header row -->
+    </div> <!-- end header container -->
+
+    <div class="container">
+      <div class="row" id="entry-titles-container">
+        <div class="col-md-1 hidden-xs hidden-sm"></div>
+        <div class="col-sm-1 col-xs-2 entry-title">Rank</div>
+        <div id="user-entry-title" class="col-sm-1 hidden-xs entry-title">User</div>
+        <div id="user-entry-input-container" class="col-md-3 col-xs-4">
+          <input id="user-entry-input" type="text" class="form-control" ng-model="searchName">
+        </div>
+        <div id="go-button-container" class="col-xs-1">
+          <div id="go-button" class="go-button" ng-click="getCompetitorsWithScreenName()">
+            <span id="go-button-title">GO</span>
+          </div>
+        </div>
+        <div class="col-sm-1 entry-title hidden-xs">Level</div>
+        <div class="col-xs-1 entry-title hidden-sm hidden-md hidden-lg">Lvl</div>
+        <div class="col-md-2 col-sm-3 entry-title hidden-xs">Experience</div>
+        <div class="col-xs-2 entry-title hidden-sm hidden-md hidden-lg">Exp</div>
+        <div class="col-xs-1 entry-title"></div>
+        <div class="col-xs-1 hidden-sm"></div>
+      </div>
+      <div class="row">
+        <leaderboard-entry ng-repeat="user in users"  user="user" search-name="searchName"></leaderboard-entry>
+      </div>
+      <div class="row leaderboard-row"></div>
+      <paginate current-page-number="currentPage" end-page="lastPage" next="loadNext()" previous="loadPrevious()" load-page="loadPage(page)"></paginate>
+    </div>
+  </div>
+
+  <script>
+
+  $(document).ready(function() {
+
+    // Handle change of leaderboard skill
+    var skillSelect = $('#skill-select');
+    var skillContainer = $('#skill-container');
+
+    // Call getSkillLeaders when a new skills is chosen
+    skillSelect.change(function() {
+
+      skillContainer.empty();
+
+      if(skillSelect.val() == 'Twitter') {
+
+        skillContainer.html('<a id="twitter-link" href="https://www.twitter.com"></a>');
+        $('#twitter-link').html('<img id="skill-icon" src="image/twitter/logo-blue.png">');
+      } else {
+
+        var glyphicon = angular.element(skillContainer).scope().getGlyphicon(skillSelect.val());
+        skillContainer.append('<span class="glyphicon ' + glyphicon + ' skill-glyphicon"></span>');
+      }
+
+      // Call controller to retrieve users for selected skill
+      angular.element(skillContainer).scope().getSkillLeaders(skillSelect.val());
+    });
+
+    // Call getCompetitorsWithScreenName when user presses enter key when input is in focus
+    $("#user-entry-input").keyup(function (e) {
+      if (e.keyCode == 13) {
+        angular.element(skillContainer).scope().getCompetitorsWithScreenName();
+
+        $('#go-button').removeClass('go-button');
+        $('#go-button').addClass('go-button-enter');
+
+        window.setTimeout(function() {
+          $('#go-button').addClass('go-button');
+          $('#go-button').removeClass('go-button-enter');
+        }, 50);
+      }
+    });
+
+  });
+
+  </script>

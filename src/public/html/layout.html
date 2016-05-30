@@ -1,0 +1,176 @@
+
+  <!-------------------------------------------------------------------------->
+  <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+  <!-- to classify a user's internet activity into different 'skills'.      -->
+  <!-- Copyright (C) 2016 Brian Redd                                        -->
+  <!--                                                                      -->
+  <!-- This program is free software: you can redistribute it and/or modify -->
+  <!-- it under the terms of the GNU General Public License as published by -->
+  <!-- the Free Software Foundation, either version 3 of the License, or    -->
+  <!-- (at your option) any later version.                                  -->
+  <!--                                                                      -->
+  <!-- This program is distributed in the hope that it will be useful,      -->
+  <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+  <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+  <!-- GNU General Public License for more details.                         -->
+  <!--                                                                      -->
+  <!-- You should have received a copy of the GNU General Public License    -->
+  <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+  <!-------------------------------------------------------------------------->
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <base href="/">
+
+      <title>Augeo</title>
+
+      <!-- Favicon -->
+      <link rel="shortcut icon" type="image/x-icon" href="image/favicon.ico" />`
+
+      <!-- Bootstrap core CSS -->
+      <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="css/layout.css">
+
+    </head>
+
+    <!-- http://getbootstrap.com/examples/theme/ -->
+    <body ng-app="augeo" ng-controller="AppController">
+      <div class="wrapper">
+
+        <!-- Fixed Navbar -->
+        <div id="my-navbar-container" class="navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+          <div class="container-fluid">
+            <div class="row">
+              <div id="project-name-container">
+                <a class="header-text-font project-name-text" ui-sref="profile">Augeo</a>
+              </div>
+              <div class="header-action-container" ng-style="{'visibility':myStyle}">
+                <div id="leaderboard-text-container">
+                  <a class="header-action header-text-font" ui-sref="leaderboards">Leaderboards</a>
+                </div>
+                <div id="settings-text-container">
+                  <a href="" class="dropdown-toggle header-action header-text-font" data-toggle="dropdown">Settings<span class="caret"></span></a>
+                  <ul id="settings-dropdown" class="dropdown-menu" role="menu">
+                    <li><a ui-sref="twitterHistory">My Twitter History</a></li>
+                    <li class="clickable" onclick="showDeleteModal()"><a>Delete Account</a></li>
+                    <li class="divider"></li>
+                    <li><a ui-sref="logout">Log Out</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insert Views -->
+        <div class="main-content" ui-view="mainContent"></div>
+        <div class="push"></div>
+
+      </div> <!-- End Wrapper -->
+
+      <!-- Footer -->
+      <div class="footer container">
+        <div class="col-xs-8 col-lg-4 footer-description">
+          <p><strong class="footer-text-large">Augeo</strong> - an open source application that categorizes your online activity into different skills.
+            It gives you the power to view your interests in a quantitative way.
+          </p>
+          <br>
+          <p class="footer-text-small">
+            Have any suggestions or want to contribute? Head over <a href="https://github.com/bpred754/augeo" target="_blank">here</a> to find out more.
+          </p>
+        </div>
+        <div class="footer-legal col-xs-4 col-lg-8">
+          <p><a href="https://github.com/bpred754/augeo/blob/master/terms-of-service.md" target="_blank">Terms of Service</a></p>
+          <p><a href="https://github.com/bpred754/augeo/blob/master/privacy-policy.md" target="_blank">Privacy Policy</a></p>
+          <p>Copyright (c) 2016</p>
+        </div>
+      </div>
+
+      <!-- Delete Modal -->
+      <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="delete-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="delete-modal-label">Are you sure you want to delete your account?</h4>
+            </div>
+            <div id="delete-modal-body" class="modal-body">
+              <div class="col-xs-offset-1 col-xs-10"><p id="delete-error-message">{{removeErrorMessage}}</p></div>
+              <div class="col-xs-offset-1 col-xs-10">
+                <div class="col-xs-8">
+                    <input id="delete-password" class="form-control" type="password" ng-model="pass" placeholder="Password">
+                </div>
+                <div class="col-xs-4">
+                  <button type="button" class="btn btn-primary" ng-click="removeUser(pass)">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JavaScript Imports
+      ================================================== -->
+      <script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
+      <script type="text/javascript" src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="libs/angular/angular.js"></script> <!-- TODO CHANGE TO MIN -->
+      <script type="text/javascript" src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
+      <script type="text/javascript" src="libs/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
+
+      <!-- Layout Imports -->
+      <script type="text/javascript" src="javascript/angular-config.js"></script>
+      <script type="text/javascript" src="javascript/route-manager.js"></script>
+
+      <!-- Directives -->
+      <script type="text/javascript" src="javascript/directive/skill-view.js"></script>
+      <script type="text/javascript" src="javascript/directive/password-input.js"></script>
+      <script type="text/javascript" src="javascript/directive/leaderboard-entry.js"></script>
+      <script type="text/javascript" src="javascript/directive/paginate.js"></script>
+      <script type="text/javascript" src="javascript/directive/activity.js"></script>
+
+      <!-- Controllers -->
+      <script type="text/javascript" src="javascript/controller/app-controller.js"></script>
+      <script type="text/javascript" src="javascript/controller/errors/signup-error-controller.js"></script>
+      <script type="text/javascript" src="javascript/controller/login-controller.js"></script>
+      <script type="text/javascript" src="javascript/controller/logout-controller.js"></script>
+      <script type="text/javascript" src="javascript/controller/profile-controller.js"></script>
+      <script type="text/javascript" src="javascript/controller/twitter-history-controller.js"></script>
+      <script type="text/javascript" src="javascript/controller/leaderboard-controller.js"></script>
+      <script type="text/javascript" src="javascript/controller/view-activity-controller.js"></script>
+
+      <!-- Client Services -->
+      <script type="text/javascript" src="javascript/service/augeo-client-service.js"></script>
+      <script type="text/javascript" src="javascript/service/user-client-service.js"></script>
+      <script type="text/javascript" src="javascript/service/twitter-client-service.js"></script>
+      <script type="text/javascript" src="javascript/service/client-validator.js"></script>
+
+      <!-- Custom Libraries -->
+      <script type="text/javascript" src="javascript/lib/circular-progress/circular-progress.js"></script>
+
+      <!-- Layout page javascript -->
+      <script>
+
+      var showDeleteModal = function() {
+        $('#delete-modal').modal();
+      }
+
+      $(document).ready(function() {
+        $('#delete-modal').on('hidden.bs.modal', function () {
+          $('#delete-password').val('');
+          var scope = angular.element($("#delete-modal")).scope();
+          scope.$apply(function() {
+            scope.removeErrorMessage = '';
+          });
+        });
+      });
+
+      </script>
+
+    </body>
+  </html>
