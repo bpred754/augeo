@@ -1,4 +1,4 @@
-At Augeo, we collect and manage user data according to the following Privacy Policy. This document is part of Augeo's [Terms of Service]() 
+At Augeo, we collect and manage user data according to the following Privacy Policy. This document is part of Augeo's [Terms of Service](https://github.com/bpred754/augeo/blob/master/terms-of-service.md) 
 and by using Augeo.io (the “Website”), you agree to the terms of this Privacy Policy and the Terms of Service. Please read the Terms 
 of Service in their entirety, and refer to those for definitions and contacts.
 
