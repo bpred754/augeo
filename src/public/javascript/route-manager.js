@@ -22,7 +22,7 @@
   /* Description: Routes requests to controllers and views                   */
   /***************************************************************************/
 
-  augeo.config(function($stateProvider, $urlRouterProvider, $locationProvider, $logProvider) {
+  augeo.config(function($stateProvider, $urlRouterProvider, $locationProvider, $logProvider, $analyticsProvider) {
 
     $logProvider.debugEnabled(true);
 

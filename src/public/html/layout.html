@@ -119,9 +119,11 @@
       ================================================== -->
       <script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
       <script type="text/javascript" src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
-      <script type="text/javascript" src="libs/angular/angular.js"></script> <!-- TODO CHANGE TO MIN -->
+      <script type="text/javascript" src="libs/angular/angular.min.js"></script>
       <script type="text/javascript" src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
       <script type="text/javascript" src="libs/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
+      <script type="text/javascript" src="libs/angulartics/dist/angulartics.min.js"></script>
+      <script type="text/javascript" src="libs/angulartics-google-analytics/dist/angulartics-google-analytics.min.js"></script>
 
       <!-- Layout Imports -->
       <script type="text/javascript" src="javascript/angular-config.js"></script>
@@ -170,6 +172,16 @@
         });
       });
 
+      </script>
+
+      <!-- Google Analytics -->
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-70689834-2', 'auto');
+        //ga('send', 'pageview'); // Comment out for angulartics
       </script>
 
     </body>

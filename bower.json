@@ -1,13 +1,14 @@
 {
   "name": "Augeo",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "dependencies": {
-    "bootstrap": "3.3.6",
-    "font-awesome": "4.6.0",
-    "animate.css": "3.5.1",
     "angular": "1.5.3",
     "angular-route": "1.5.3",
     "angular-ui-router": "0.2.18",
+    "angulartics-google-analytics": "0.1.4",
+    "animate.css": "3.5.1",
+    "bootstrap": "3.3.6",
+    "font-awesome": "4.6.0",
     "ngInfiniteScroll": "1.0.0"
   }
 }

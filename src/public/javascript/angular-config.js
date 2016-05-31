@@ -18,4 +18,4 @@
   /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
   /***************************************************************************/
 
-  var augeo = angular.module('augeo', ['ui.router','infinite-scroll']);
+  var augeo = angular.module('augeo', ['ui.router','infinite-scroll', 'angulartics', 'angulartics.google.analytics']);
