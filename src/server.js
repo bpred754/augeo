@@ -84,7 +84,7 @@
 
   // Connect to Twitter if not in local environment
   if(process.env.ENV != 'local') {
-    twitterService.connectToTwitter(twitterRestQueue, streamQueue, function(){});
+    TwitterService.connectToTwitter(twitterRestQueue, streamQueue, function(){});
   }
 
   module.exports = app;
