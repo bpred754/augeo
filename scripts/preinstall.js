@@ -32,7 +32,7 @@
       return;
     }
 
-    fs.writeFile("./logs/progressLog.log", "", function(error) {
+    fs.writeFile("./logs/augeo.log", "", function(error) {
       if(error) {
           return;
       }
