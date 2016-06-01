@@ -30,7 +30,7 @@
   var logOptions = {
     name: 'AugeoLogger',
     stdoutLevel: 'trace',
-    logfile: '../logs/augeo.log',
+    logfile: './logs/augeo.log',
     logfileLevel: 'info'
   };
   var log = new Logger(logOptions);
