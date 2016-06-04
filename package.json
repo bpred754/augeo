@@ -1,6 +1,6 @@
 {
   "name": "augeo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Web application written with the MEAN stack that uses Natural Language Processing to classify a user's internet activity into different skills. In a nutshell, Augeo is the gamification of life.",
   "author": "Brian Redd <site_manager@brianredd.com> (http://brianredd.com)",
   "license": "GPL-3.0",

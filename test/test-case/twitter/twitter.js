@@ -37,7 +37,6 @@
   var ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN;
   var SCREEN_NAME = process.env.SCREEN_NAME;
   var SECRET_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN_SECRET;
-  var SCREEN_NAME = process.env.SCREEN_NAME;
   var FULL_NAME = process.env.FULL_NAME;
 
   // Global variables
