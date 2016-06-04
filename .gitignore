@@ -1,6 +1,5 @@
 # Logs
 /logs
-*.log
 
 # Runtime data
 pids
@@ -33,8 +32,11 @@ node_modules
 # All bower dependencies need to be installed on the local side
 src/public/libs
 
-#MongoDB data
+# MongoDB data
 data
 
 # Notes directory
 notes
+
+# WebStorm
+.idea/

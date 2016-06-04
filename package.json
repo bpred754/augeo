@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "description": "Web application written with the MEAN stack that uses Natural Language Processing to classify a user's internet activity into different skills. In a nutshell, Augeo is the gamification of life.",
   "author": "Brian Redd <site_manager@brianredd.com> (http://brianredd.com)",
-  "license":"GPL-3.0",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/bpred754/augeo.git"
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bpred754/augeo.git"
   },
-  "homepage":"http://augeo.io",
+  "homepage": "http://augeo.io",
   "bugs": {
-    "url":"https://github.com/bpred754/augeo/issues"
+    "url": "https://github.com/bpred754/augeo/issues"
   },
   "keywords": [
     "augeo",
@@ -33,6 +33,8 @@
     "mongoose": "4.4.12",
     "natural": "0.4.0",
     "oauth": "0.9.14",
+    "request": "2.72.0",
+    "sendgrid": "2.0.0",
     "twit": "2.2.3"
   },
   "devDependencies": {

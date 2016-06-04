@@ -28,6 +28,7 @@
   // Required local modules
   var Logger = require('../module/logger');
   var UserService = require('../service/user-service');
+  var EmailProvider = require('../module/email-provider');
 
   // Global variables
   var log = new Logger();
@@ -56,7 +57,7 @@
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       email: request.body.email,
-      password: request.body.password,
+      password: request.body.password
     }
 
     // Check if email exists
@@ -65,12 +66,28 @@
       if(userExists) {
         response.status(400).send('This email already exists. Please try another.');
       } else {
-        UserService.addUser(user, function() {
-          response.sendStatus(200);
-        }, function() {
-          response.status(400).send('Invalid input. Please try again.');
-        });
-      }
+
+        var addUser =  function(_user) {
+          UserService.addUser(_user, function () {
+            response.sendStatus(200);
+          }, function () {
+            response.status(400).send('Invalid input. Please try again.');
+          });
+        };
+
+        if(process.env.ENV == 'prod') {
+
+          // Add user to SendGrid contacts
+          EmailProvider.addRecipient(user, function (recipientId) {
+            EmailProvider.sendWelcomeEmail(user);
+
+            user.sendGridId = recipientId ? recipientId : '';
+            addUser(user);
+          });
+        } else {
+          addUser(user);
+        }
+      };
     });
   });
 
@@ -114,6 +131,12 @@
         if(error) {
           response.status(401).send('Incorrect password');
         } else if(user) {
+
+          if(process.env.ENV == 'prod') {
+            // Remove user from SendGrid contacts
+            EmailProvider.removeRecipient(user.sendGridId);
+          }
+
           // Destroy the session
           request.session.destroy();
           response.sendStatus(200);

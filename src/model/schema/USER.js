@@ -40,6 +40,7 @@
     lastName: String,
     email: String,
     password: String,
+    sendGridId: String,
     twitter: {
       twitterId: String,
       name: String,
@@ -76,6 +77,7 @@
       lastName: user.lastName,
       email: user.email,
       password: user.password,
+      sendGridId: user.sendGridId
     }, function(error, pUser) {
       if(error) {
         log.warn('Failed to add ' + user.email + ' to USER collection: ' + error);
