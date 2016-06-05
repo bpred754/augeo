@@ -34,6 +34,11 @@
     // Route middleware that will happen on every request
     app.use(function(req, res, next) {
 
+      // Redirect all non-secure requests as secured requests
+      if(req.headers['x-forwarded-proto'] !== 'https' && process.env.ENV == 'prod') {
+        return res.redirect(['https://', req.get('Host'), req.url].join(''));
+      }
+
       // Log each request
       log.trace(req.method + ' ' + req.originalUrl);
 
