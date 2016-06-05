@@ -24,7 +24,7 @@
   /***************************************************************************/
 
   // Required local modules
-  var App = require('./helper/test-config').app;
+  var App = require('../src/server');
   var Helper = require('./helper/db-helper');
   var Common = require('./test-case/common');
 

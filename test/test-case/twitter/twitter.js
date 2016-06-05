@@ -33,14 +33,8 @@
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
   var TwitterValidator = require('../../../src/validator/twitter-validator');
 
-  // Constants
-  var ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN;
-  var SCREEN_NAME = process.env.SCREEN_NAME;
-  var SECRET_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN_SECRET;
-  var FULL_NAME = process.env.FULL_NAME;
-
   // Global variables
-  var messenger = TwitterInterface.createTwitterMessenger(ACCESS_TOKEN, SECRET_ACCESS_TOKEN);
+  var messenger = TwitterInterface.createTwitterMessenger(process.env.TWITTER_ACCESS_TOKEN, process.env.TWITTER_ACCESS_TOKEN_SECRET);
 
   it('should receive all necessary tweet data from Twitter', function(done) {
     this.timeout(Common.TIMEOUT);
@@ -82,12 +76,12 @@
 
       data.length.should.be.above(0);
 
-      var mentions = TwitterInterfaceService.extractMentionData(data, SCREEN_NAME);
+      var mentions = TwitterInterfaceService.extractMentionData(data, process.env.TWITTER_SCREEN_NAME);
 
       Assert.strictEqual(data.length, mentions.length);
 
       for(var i = 0; i < mentions.length; i++) {
-        Assert.strictEqual(mentions[i].mentioneeScreenName, SCREEN_NAME);
+        Assert.strictEqual(mentions[i].mentioneeScreenName, process.env.TWITTER_SCREEN_NAME);
         mentions[i].tweetId.length.should.be.above(0);
       }
 
@@ -98,8 +92,8 @@
   it('should receive twitter information for authenticated user', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    TwitterInterface.getTwitterData(messenger, SCREEN_NAME, function(error, userData, response) {
-      Assert.strictEqual(FULL_NAME, userData.name);
+    TwitterInterface.getTwitterData(messenger, process.env.TWITTER_SCREEN_NAME, function(error, userData, response) {
+      Assert.strictEqual(process.env.TWITTER_FULL_NAME, userData.name);
       Assert.strictEqual(true, TwitterValidator.containsUserTwitterData(userData));
       done();
     });

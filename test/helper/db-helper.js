@@ -24,7 +24,6 @@
   /***************************************************************************/
 
   // Required local modules
-  var TestConfig = require('./test-config');
   var AugeoDB = require('../../src/model/database');
   var AugeoUtility = require('../../src/utility/augeo-utility');
   var Common = require('../test-case/common');
