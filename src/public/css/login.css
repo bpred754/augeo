@@ -37,7 +37,14 @@
   }
 
   #logo {
+    max-height:100%;
     max-width:100%;
+    position:absolute;
+    margin:auto;
+    top:0;
+    right:0;
+    bottom:0;
+    left:0;
   }
 
   #signup-container {
@@ -249,12 +256,6 @@
       display:initial;
       margin-left:0px;
       margin-top:0px;
-    }
-
-    #logo {
-      max-width:100%;
-      position:absolute;
-      bottom:0;
     }
 
     #logo-container {
