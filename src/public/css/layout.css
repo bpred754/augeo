@@ -50,25 +50,26 @@
     height:50px;
   }
 
-  #leaderboard-text-container {
-    width:130px;
-    height:50px;
-    float:left;
+  #header-project-name {
+    padding-left:20px;
   }
 
-  #project-name-container {
-    margin-left:30px;
+  #header-leaderboards-container {
+    text-align:center;
+  }
+
+  #header-settings {
+    padding-right:20px;
+  }
+
+  #header-settings-container {
+    text-align:right;
   }
 
   #settings-dropdown {
     right:0;
     left:initial;
-    margin-top:0px;
-  }
-
-  #settings-text-container {
-    width:110px;
-    float:right;
+    margin-top:12px;
   }
 
   .clickable {
@@ -113,30 +114,23 @@
     font-size:.9em;
   }
 
-  .header-action {
-    display: block;
-    margin:0 auto;
+  .header-element {
+    height:100%;
     font-size:1.3em;
+    display:flex;
+    justify-content:center;
+    align-content:center;
+    flex-direction:column;
   }
 
-  .header-action-container {
-    float:right;
-    width:255px;
-    margin-right:25px;
-  }
-
-  .header-text-font {
-    text-decoration:none;
-    padding:15px 15px;
-    line-height:20px;
-    float:left;
-    height:50px;
+  .header-text {
     color:#9d9d9d;
   }
 
-  .header-text-font:hover {
-    text-decoration:none;
+  .header-text:hover {
+    text-decoration: none;
     color:white;
+    cursor:pointer;
   }
 
   .main-content {
@@ -145,10 +139,6 @@
 
   .navbar-nav {
     float:right;
-  }
-
-  .project-name-text {
-    font-size:1.5em;
   }
 
   .push, .footer {
@@ -182,42 +172,20 @@
 
   @media(max-width:600px) {
 
-    #leaderboard-text-container {
-      width:125px;
-    }
-
-    #settings-text-container {
-      width:100px;
-      float:right;
-    }
-
     .footer p {
       font-size:.7em;
     }
 
-    .header-action-container {
-      float:right;
-      width:225px;
-      margin-right:0px;
+  }
+
+  /***************************************************************************/
+  /* Screen Size: small                                                      */
+  /***************************************************************************/
+
+  @media(min-width:768px) {
+
+    .fixed-header {
+      align-self:flex-end;
     }
 
-    .header-action {
-      display: block;
-      margin:0 auto;
-      font-size:1.1em;
-    }
-
-    .header-text-font {
-      font-size:1.1em;
-      text-decoration:none;
-      padding:15px 15px;
-      line-height:20px;
-      float:left;
-      height:50px;
-      color:#9d9d9d;
-    }
-
-    #project-name-container {
-      margin-left:10px;
-    }
   }
