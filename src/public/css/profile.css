@@ -62,8 +62,9 @@
     cursor:pointer;
   }
 
-  .fill-height {
-    height:100%;
+  .max-size {
+    max-height:100%;
+    max-width:100%;
   }
 
   .remove-right-margin {
