@@ -113,7 +113,7 @@
                   <password-input model="signupPassword"></password-input>
                 </td>
                 <td>
-                  <button type="submit" class="btn btn-default btn-lg" ng-click="validateAndDisclose()">Sign Up</button>
+                  <button type="submit" class="btn btn-default btn-lg" ng-click="validateAndConfirm()">Sign Up</button>
                 </td>
               </tr>
             </tbody>
@@ -126,22 +126,57 @@
     </div>
   </div>
 
-  <!-- Disclosure Modal -->
-  <div class="modal fade" id="disclosure-modal" tabindex="-1" role="dialog" aria-labelledby="disclosure-modal-label" aria-hidden="true">
+  <!-- Confirmation Modal -->
+  <div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="confirmation-modal-label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="disclosure-modal-label">Disclosure</h4>
+          <h4 class="modal-title x-large-text" id="confirmation-modal-label">Confirmation</h4>
         </div>
         <div class="modal-body">
-          This site is currently in Alpha and is Open Source. Due to these reasons this site is more susceptible to an attack
-          and a breach of your data. If you accept this risk, please continue. We hope you enjoy the site!
+          <div id="confirm-message" class="standard-text">
+            Hi {{signupFirstName}}, thanks for signing up with Augeo! Before continuing please confirm your email address and password:
+          </div>
+          <div>
+            <p class="text-align-center text-error" ng-show="confirmationError">{{confirmationError}}</p>
+          </div>
+          <div class="row">
+            <div id="confirm-email" class="col-xs-6 col-xs-offset-3">
+              <input class="form-control input-lg standard-text" type="email" placeholder="Confirm Email" ng-model="confirmEmail">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-6 col-xs-offset-3">
+              <input class="form-control input-lg standard-text password-input" type="password" placeholder="Confirm Password" ng-model="confirmPassword">'
+            </div>
+          </div>
+          <div >
+            Disclosure - this site is currently in Alpha and is Open Source. Due to these reasons this site is more susceptible to an attack
+            and a breach of your data. If you accept this risk, please continue. We hope you enjoy the site!
+          </div>
         </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="submitSignup()">Continue</button>
+          <button type="button" class="btn btn-primary" ng-click="submitSignup()">Continue</button>
           <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+
+    $('#confirmation-modal').on('hidden.bs.modal', function () {
+
+      // Remove input from confirmation email and password when modal closes
+      var scope = angular.element($('#front-page-container')).scope();
+      scope.$apply(function() {
+
+        scope.confirmationError = '';
+        scope.confirmEmail = '';
+        scope.confirmPassword = '';
+      });
+    })
+
+  </script>

@@ -22,6 +22,14 @@
   /* Description: css for login.html                                         */
   /***************************************************************************/
 
+  #confirm-email {
+    margin-bottom:15px;
+  }
+
+  #confirm-message {
+    margin-bottom:15px;
+  }
+
   #front-page-container {
     margin-right:0px;
     margin-left:0px;

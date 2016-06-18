@@ -56,37 +56,52 @@
     }; // End submitLogin
 
     $scope.submitSignup = function() {
-      // Add user to augeoDB
-      UserClientService.addUser($scope.user, function(addMessage, addStatus) {
 
-        if(addStatus == 200) {
+      if($scope.signupEmail == $scope.confirmEmail) {
 
-          // Login user
-          UserClientService.login($scope.user, function(loginMessage, loginStatus) {
+        if($scope.signupPassword == $scope.confirmPassword) {
 
-            if(loginStatus = 200) {
-              // Authenticate user with twitter
-              TwitterClientService.getAuthenticationData(function(authData, authStatus) {
+          // Close confirmation modal
+          $('#confirmation-modal').modal('toggle');
 
-                if(authStatus == 200) {
-                  // Go to Twitter Authentication page
-                  $window.location.href ='https://twitter.com/oauth/authenticate?oauth_token=' + authData.token;
+          // Add user to augeoDB
+          UserClientService.addUser($scope.user, function(addMessage, addStatus) {
+
+            if(addStatus == 200) {
+
+              // Login user
+              UserClientService.login($scope.user, function(loginMessage, loginStatus) {
+
+                if(loginStatus = 200) {
+                  // Authenticate user with twitter
+                  TwitterClientService.getAuthenticationData(function(authData, authStatus) {
+
+                    if(authStatus == 200) {
+                      // Go to Twitter Authentication page
+                      $window.location.href ='https://twitter.com/oauth/authenticate?oauth_token=' + authData.token;
+                    } else {
+                      $scope.signupMessage = authData.token;
+                    }
+                  }); // End authentication
                 } else {
-                  $scope.signupMessage = authData.token;
+                  $scope.signupMessage = loginMessage;
                 }
-              }); // End authentication
-             } else {
-             $scope.signupMessage = loginMessage;
-            }
 
-          }); // End login
+              }); // End login
+            } else {
+              $scope.signupMessage = addMessage;
+            }
+          }); // End addUser
+
         } else {
-          $scope.signupMessage = addMessage;
+          $scope.confirmationError = 'Passwords do not match. Please try again.';
         }
-      }); // End addUser
+      } else {
+        $scope.confirmationError = 'Emails do not match. Please try again.';
+      }
     };
 
-    $scope.validateAndDisclose = function() {
+    $scope.validateAndConfirm = function() {
 
       var user = {
         'firstName': $scope.signupFirstName,
@@ -103,7 +118,7 @@
           if(ClientValidator.isPasswordValid(user.password)) {
 
             if($scope.agreedToTerms === true) {
-              $('#disclosure-modal').modal();
+              $('#confirmation-modal').modal();
               $scope.user = user;
             } else {
               $scope.signupMessage = 'Must agree to Terms of Service';
