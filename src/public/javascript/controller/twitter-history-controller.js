@@ -53,7 +53,7 @@
         }
 
         // If the user is not a member display welcome modal
-        if(!pageData.isMember) {
+        if(pageData.isMember === false) {
           showModal();
         }
 
