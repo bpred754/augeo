@@ -28,12 +28,10 @@
 
   .experience {
     margin-top:9px;
-    color:#7D7D7D;
   }
 
   .experience-container {
     height:100%;
-    font-size:1.5em;
     text-align:center;
   }
 
@@ -50,10 +48,6 @@
     border-radius:6px;
   }
 
-  .leaderboard-entry-font {
-    font-size:1.7em;
-  }
-
   .level-container {
     height:100%;
     text-align:center;
@@ -62,10 +56,6 @@
   .name {
     margin-top:6px;
     cursor:pointer;
-  }
-
-  .name-container {
-    height:100%;
   }
 
   .number {
@@ -85,12 +75,10 @@
 
     .experience {
       margin-top:12px;
-      color:#7D7D7D;
     }
 
     .experience-container {
       height:100%;
-      font-size:1.1em;
       text-align:center;
     }
 
@@ -100,7 +88,7 @@
     }
 
     .leaderboard-entry-font {
-      font-size:1.1em;
+      font-size:1em;
     }
 
     .name {

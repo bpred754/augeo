@@ -22,7 +22,7 @@
     <div id="arrow-left-container">
       <div class="arrow-left" ng-class="{false: 'arrow-left-button'}[currentPageNumber == 1]" ng-click="previous()"></div>
     </div>
-    <div id="page-number-container">
+    <div id="page-number-container" class="subheading-text">
     <div ng-repeat="el in paginatorElements track by $index" class="{{el.class}}" ng-click="loadPage({page:el.value})">{{el.value}}</div>
     </div>
     <div id="arrow-right-container">

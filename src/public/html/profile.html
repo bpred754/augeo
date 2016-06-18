@@ -36,7 +36,7 @@
           </div>
           <div id="recent-activity-container">
               <div activity ng-if="!invalidProfile && tweetData" tweet-data="tweetData" init-message="initMessage" state="state"></div>
-              <div ng-if="invalidProfile" id="invalid-profile-text">Sorry, but this user does not exist.</div>
+              <div ng-if="invalidProfile" class="large-text text-align-center">Sorry, but this user does not exist.</div>
          </div>
         </div>
       </div>
@@ -44,7 +44,7 @@
   </div> <!-- end header container -->
 
   <!-- Logo -->
-  <div class="row">
+  <div class="row remove-right-margin">
 
     <!-- Skill Image/logo -->
     <div id="skill-icon-container" class="row">
@@ -53,7 +53,7 @@
   </div> <!-- end logo row -->
 
   <!-- Content -->
-  <div class="row" ng-show="isLoaded">
+  <div class="row remove-right-margin" ng-show="isLoaded">
     <div id="leftContainer" class="col-md-2 col-sm-2 col-xs-3">
     </div>
 

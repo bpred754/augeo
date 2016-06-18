@@ -70,7 +70,7 @@
         avatarImageElement = activityElement.find('.avatar-image');
         nameContainer = activityElement.find('.name-container');
         nameElement = activityElement.find('.name');
-        screenNameElement = activityElement.find('.screenName');
+        screenNameElement = activityElement.find('.screen-name');
         experienceContainerElement = activityElement.find('.experience-container');
         classificationElement = activityElement.find('.classification');
         textElement = $(activityElement).find('#tweet-text');
@@ -83,6 +83,23 @@
         retweetCountElement = activityElement.find('.retweet-count');
         favoriteIntent = activityElement.find('.favorite');
         favoriteCountElement = activityElement.find('.favorite-count');
+
+        // Twitter intent listeners
+        replyIntent.mouseenter(function() {
+          $(this).children('.tweet-action').attr('src','image/twitter/reply-hover.png')
+        }).mouseleave(function() {
+          $(this).children('.tweet-action').attr('src','image/twitter/default-reply.png');
+        });
+        retweetIntent.mouseenter(function() {
+          $(this).children('.tweet-action').attr('src','image/twitter/retweet-hover.png')
+        }).mouseleave(function() {
+          $(this).children('.tweet-action').attr('src','image/twitter/default-retweet.png');
+        });
+        favoriteIntent.mouseenter(function() {
+          $(this).children('.tweet-action').attr('src','image/twitter/favorite-hover.png')
+        }).mouseleave(function() {
+          $(this).children('.tweet-action').attr('src','image/twitter/default-favorite.png');
+        });
 
         var hasImageLoaded = false;
 

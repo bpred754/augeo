@@ -33,11 +33,6 @@
     padding-right: 0px;
   }
 
-  #invalid-profile-text {
-    text-align:center;
-    font-size:2em;
-  }
-
   #profile-pic {
     background-color:gray;
     height:100%;
@@ -69,6 +64,10 @@
 
   .fill-height {
     height:100%;
+  }
+
+  .remove-right-margin {
+    margin-right:0px;
   }
 
   .skill-row {

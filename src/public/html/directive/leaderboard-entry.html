@@ -22,19 +22,19 @@
 
   <div class="entry-container" ng-class="highlightEntry(user.screenName,searchName)">
     <div class="col-md-1 hidden-xs hidden-sm"></div>
-    <div class="number-container leaderboard-entry-font col-sm-1 col-xs-2">
+    <div class="number-container large-text col-sm-1 col-xs-2 leaderboard-entry-font">
       <div class="number" ng-bind="user.rank"></div>
     </div>
-    <div class="name-container leaderboard-entry-font col-md-5 col-sm-6 col-xs-5">
+    <div class="height-100 large-text col-md-5 col-sm-6 col-xs-5 leaderboard-entry-font">
       <div class="name" ng-bind="user.screenName" ui-sref="viewProfile({screenName:user.screenName})"></div>
     </div>
-    <div class="level-container leaderboard-entry-font col-xs-1">
+    <div class="level-container large-text col-xs-1 leaderboard-entry-font">
       <div class="number" ng-bind="user.level"></div>
     </div>
-    <div class="experience-container col-md-2 col-sm-3 col-xs-2">
+    <div class="experience-container large-text col-md-2 col-sm-2 col-xs-2 leaderboard-entry-font">
       <div class="experience" ng-bind="user.experience"></div>
     </div>
-    <div class="follow-container col-xs-1">
+    <div class="follow-container col-sm-2 col-xs-1">
       <div class="follow">
       </div>
     </div>

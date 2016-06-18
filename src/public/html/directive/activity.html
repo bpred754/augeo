@@ -26,12 +26,12 @@
         <img class="avatar-image">
       </a>
       <div class="name-container">
-        <a class="name"></a>
-        <a class="screen-name"></a>
+        <a class="name large-text"></a>
+        <a class="screen-name standard-text"></a>
       </div>
       <div class="experience-container">
         <div class="experience-wrapper">
-          <div class="experience"></div>
+          <div class="experience large-text"></div>
           <div class="classification-container">
             <div class="classification"></div>
           </div>
@@ -40,7 +40,7 @@
     </div>
 
     <div class="tweet-row2">
-        <p id="tweet-text"></p>
+        <p id="tweet-text" class="standard-text"></p>
         <a class="media-link">
           <img class="tweet-media">
         <a/>
@@ -48,49 +48,27 @@
 
     <div class="tweet-row3">
       <div class="tweet-footer">
-        <a class="timestamp"></a>
+        <a class="timestamp small-text text-secondary"></a>
         <div class="tweet-action-container">
           <a class="reply">
-            <img class="tweet-action" src="image/twitter/default-reply.png">
+            <img class="tweet-action small-text" src="image/twitter/default-reply.png">
           </a>
         </div>
         <div class="tweet-action-container">
           <a class="retweet">
-            <img class="tweet-action" src="image/twitter/default-retweet.png">
+            <img class="tweet-action small-text" src="image/twitter/default-retweet.png">
           </a>
         </div>
         <div class="retweet-count tweet-action-count"></div>
         <div class="tweet-action-container">
           <a class="favorite">
-            <img class="favorite-action tweet-action" src="image/twitter/default-favorite.png">
+            <img class="favorite-action tweet-action small-text" src="image/twitter/default-favorite.png">
           </a>
         </div>
         <div class="favorite-count tweet-action-count"></div>
       </div>
     </div>
   </div>
-
-  <script>
-
-    $('#reply').mouseenter(function() {
-      $(this).children('.tweet-action').attr('src','image/twitter/reply-hover.png')
-    }).mouseleave(function() {
-      $(this).children('.tweet-action').attr('src','image/twitter/default-reply.png');
-    });
-
-    $('#retweet').mouseenter(function() {
-      $(this).children('.tweet-action').attr('src','image/twitter/retweet-hover.png')
-    }).mouseleave(function() {
-      $(this).children('.tweet-action').attr('src','image/twitter/default-retweet.png');
-    });
-
-    $('#favorite').mouseenter(function() {
-      $(this).children('.tweet-action').attr('src','image/twitter/favorite-hover.png')
-    }).mouseleave(function() {
-      $(this).children('.tweet-action').attr('src','image/twitter/default-favorite.png');
-    });
-
-  </script>
 
   <script>
   // Twitter Intents handler

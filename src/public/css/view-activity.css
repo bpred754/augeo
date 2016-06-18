@@ -27,9 +27,7 @@
   }
 
   #header-title {
-    width:160px;
-    margin: 0 auto;
-    font-size:3.5em;
+    display:inline-block;
     margin-bottom:15px;
   }
 

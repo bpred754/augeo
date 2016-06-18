@@ -26,14 +26,14 @@
     <div class="container">
       <div class="row">
         <div class="jumbotron">
-          <div id="head-container">
-            <div id="header-title">Activity</div>
+          <div id="head-container" class="text-align-center">
+            <div id="header-title" class="x-large-text">View Activity</div>
             <div id="skill-container">
                 <a href="https://www.twitter.com">
                   <img id="skill-icon" src="image/twitter/logo-blue.png">
                 </a>
             </div>
-            <select id="skill-select" class="form-control">
+            <select id="skill-select" class="form-control standard-text">
               <option>Twitter</option>
               <option ng-repeat="twitterSkill in twitterSkills">{{twitterSkill.name}}</option>
             </select>

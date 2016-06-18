@@ -27,7 +27,7 @@
     width:250px;
     margin-left:auto;
     margin-right:auto;
-    margin-bottom:25px;
+    margin-top:25px;
   }
 
   #logo-image {
@@ -35,22 +35,13 @@
     max-width:100%
   }
 
-  .complete {
-    color:rgb(110, 182, 110);
-  }
-
   .status-container {
-    font-size:.7em;
     margin-top:2%;
   }
 
   .text-icon-container {
     text-align:center;
     margin-top:-3%;
-  }
-
-  .title-text {
-    font-size:1.2em
   }
 
   .twitter-history-glyphicon {
@@ -77,14 +68,8 @@
 
     #header-description {
       font-size:1em;
-      font-weight:300;
       margin-left:5%;
       margin-right:0%;
-    }
-
-    #header-title {
-      font-size:2em;
-      font-weight:300;
     }
 
     .text-icon {
@@ -104,10 +89,8 @@
     }
 
     .type-description {
-      font-size:1em;
       text-align:center;
       margin-top:43px;
-      font-weight: 300;
       line-height: 1.4;
     }
   }
@@ -123,15 +106,8 @@
     }
 
     #header-description {
-      font-size:1.3em;
-      font-weight:300;
       margin-left:5%;
       margin-right:0%;
-    }
-
-    #header-title {
-      font-size:3.5em;
-      font-weight:300;
     }
 
     .text-icon {
@@ -151,10 +127,8 @@
     }
 
     .type-description {
-      font-size:1.6em;
       text-align:center;
       margin-top:43px;
-      font-weight: 300;
       line-height: 1.4;
     }
   }
@@ -170,8 +144,6 @@
     }
 
     #header-description {
-      font-size:1.3em;
-      font-weight:300;
       margin-left:5%;
       margin-right:0%;
     }
@@ -192,8 +164,6 @@
     }
 
     #header-description {
-      font-size:1.3em;
-      font-weight:300;
       margin-left:5%;
       margin-right:0%;
     }
@@ -219,8 +189,6 @@
     }
 
     #header-description {
-      font-size:1.3em;
-      font-weight:300;
       margin-left:5%;
       margin-right:0%;
     }
@@ -241,8 +209,6 @@
     }
 
     #header-description {
-      font-size:1.3em;
-      font-weight:300;
       margin-left:5%;
       margin-right:15%;
     }

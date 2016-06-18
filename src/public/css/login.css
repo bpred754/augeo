@@ -53,8 +53,14 @@
     margin-bottom:30px;
   }
 
-  .description-icon-container {
+  .description-icon {
     height:100%;
+    display:block;
+    width:48px;
+    font-size:4.5em;
+    margin-left:auto;
+    margin-right:auto;
+    position:relative;
   }
 
   .divider {
@@ -64,11 +70,6 @@
     margin-left: auto;
     margin-right:auto;
     background-color: #9d9d9d;
-  }
-
-  .front-page-font {
-    font-size:24px;
-    font-weight:normal;
   }
 
   .front-page-form {
@@ -134,7 +135,6 @@
 
     #form-container {
       width:96%;
-      background-color:#eee;
       float:none;
       border-top-left-radius:10px;
       border-bottom-left-radius:10px;
@@ -148,21 +148,6 @@
     #logo-container {
       height:100%;
       width:50%;
-    }
-
-    .description-icon {
-      height:100%;
-      display:block;
-      width:48px;
-      font-size:3.5em;
-      margin-left:auto;
-      margin-right:auto;
-      position:relative;
-    }
-
-    .front-page-text {
-      text-align:center;
-      font-size:1em;
     }
   }
 
@@ -191,7 +176,6 @@
 
     #form-container {
       width:75%;
-      background-color:#eee;
       float:none;
       border-top-left-radius:10px;
       border-bottom-left-radius:10px;
@@ -205,21 +189,6 @@
     #logo-container {
       height:100%;
       width:50%;
-    }
-
-    .description-icon {
-      height:100%;
-      display:block;
-      width:48px;
-      font-size:3.5em;
-      margin-left:auto;
-      margin-right:auto;
-      position:relative;
-    }
-
-    .front-page-text {
-      text-align:center;
-      font-size:1.3em;
     }
   }
 
@@ -250,7 +219,6 @@
     #form-container {
       width:40%;
       float:right;
-      background-color:#eee;
       border-top-left-radius:10px;
       border-bottom-left-radius:10px;
       display:initial;
@@ -264,26 +232,11 @@
       position:relative;
     }
 
-    .description-icon {
-      height:100%;
-      display:block;
-      width:48px;
-      font-size:3.5em;
-      margin-left:auto;
-      margin-right:auto;
-      position:relative;
-    }
-
     .front-page-form {
       margin-top:5px;
       margin-left:0px;
       margin-bottom:5px;
       margin-right:0px;
-    }
-
-    .front-page-text {
-      text-align:center;
-      font-size:1.3em;
     }
 
     .message-container {
@@ -331,25 +284,10 @@
       width:50%;
     }
 
-    .description-icon {
-      height:100%;
-      display:block;
-      width:48px;
-      font-size:4.5em;
-      margin-left:auto;
-      margin-right:auto;
-      position:relative;
-    }
-
     .front-page-form {
       margin-top:5px;
       margin-left:15px;
       margin-bottom:15px;
-    }
-
-    .front-page-text {
-      text-align:center;
-      font-size:1.5em;
     }
 
     .message-container {

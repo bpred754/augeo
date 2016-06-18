@@ -140,6 +140,8 @@
       // Draw circular progress bar
       var barRadius = radius;
       var radiusPadding = barRadius*.2;
+      ctx.fillStyle = "#333"; // Specify the font colour.
+      ctx.strokeStyle = "#333"; // Specify the font colour.
       ctx.beginPath();
       ctx.arc(x, y, barRadius-radiusPadding, 0, angle, false);
       ctx.stroke();
@@ -174,7 +176,7 @@
 
       // Draw level under text
       if(text != '') {
-        ctx.font = 'normal normal 900 26px Arial';
+        ctx.font = 'normal normal 900 26px Helvetica Neue';
       } else {
         ctx.font = 'normal normal 900 40px Arial';
       }
@@ -182,7 +184,7 @@
       fontSize2 = ctx.font.match(/(\d+)px/);
       fontSize2 = fontSize ? fontSize[1] : 0;
       ctx.textAlign="start"; //Specify the text alignment
-      ctx.fillStyle = "#313131"; // Specify the font colour.
+      ctx.fillStyle = "#333"; // Specify the font colour.
       ctx.shadowColor = "#ADADAD"; // Specify the shadow colour.
       ctx.shadowOffsetX = 2;
       ctx.shadowOffsetY = 2;
@@ -191,10 +193,10 @@
       ctx.save();
 
       // Draw current experience
-      ctx.fillStyle = '#000000';
+      ctx.fillStyle = '#333';
       ctx.shadowColor = '#FFFFFF';
       ctx.shadowBlur = '0';
-      ctx.font = 'normal normal 600 12px Arial';
+      ctx.font = 'normal normal 600 12px Helvetica Neue';
       var tw3 = ctx.measureText(percent + '').width;
       fontSize3 = ctx.font.match(/(\d+)px/);
       fontSize3 = fontSize ? fontSize[1] : 0;
