@@ -156,7 +156,11 @@
       mentions: data.entities.user_mentions,
       hashtags: data.entities.hashtags,
       links: data.entities.urls,
-      media: ''
+      media:{
+        url:'',
+        height:0,
+        width:0
+      }
     };
 
     // If media exists
@@ -164,7 +168,9 @@
       var media = data.entities.media[0];
 
       // Add media to tweetData
-      tweetData.media = media.media_url_https + ':thumb';
+      tweetData.media.url = media.media_url_https + ':large';
+      tweetData.media.height = media.sizes.large.h;
+      tweetData.media.width = media.sizes.large.w;
 
       // Remove URL from tweet text
       tweetData.text = tweetData.text.replace(media.url,'');

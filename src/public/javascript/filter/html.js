@@ -18,4 +18,12 @@
   /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
   /***************************************************************************/
 
-  var augeo = angular.module('augeo', ['ui.router','infinite-scroll', 'angulartics', 'angulartics.google.analytics', 'angularGrid']);
+  /***************************************************************************/
+  /* Description: Filter to enforce scope string values are safe HTML        */
+  /***************************************************************************/
+
+  augeo.filter('html', ['$sce', function($sce) {
+    return function (text) {
+      return $sce.trustAsHtml(text);
+    }
+  }]);

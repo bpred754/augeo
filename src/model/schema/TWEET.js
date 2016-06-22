@@ -43,7 +43,11 @@
     text: String,
     classification: String,
     classificationGlyphicon: String,
-    media: String,
+    media: [{
+      url: String,
+      width: Number,
+      height: Number
+    }],
     date: String,
     experience: Number,
     retweetCount: Number,

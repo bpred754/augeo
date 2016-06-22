@@ -90,6 +90,29 @@
     color:rgb(110, 182, 110);
   }
 
+  /***************************************************************************/
+  /* Cards                                                                   */
+  /***************************************************************************/
+
+  .w3-card-4 {
+    box-shadow:0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)!important
+  }
+
+  .w3-card-8 {
+    box-shadow:0 8px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)!important
+  }
+
+  .w3-card-12 {
+    box-shadow:0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19)!important
+  }
+
+  .w3-card-16 {
+    box-shadow:0 16px 24px 0 rgba(0,0,0,0.22),0 25px 55px 0 rgba(0,0,0,0.21)!important
+  }
+  .w3-card-24 {
+    box-shadow:0 24px 24px 0 rgba(0,0,0,0.2),0 40px 77px 0 rgba(0,0,0,0.22)!important
+  }
+
 
 
 

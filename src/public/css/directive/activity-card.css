@@ -1,0 +1,163 @@
+
+/***************************************************************************/
+  /* Augeo.io is a web application that uses Natural Language Processing to  */
+  /* classify a user's internet activity into different 'skills'.            */
+  /* Copyright (C) 2016 Brian Redd                                           */
+  /*                                                                         */
+  /* This program is free software: you can redistribute it and/or modify    */
+  /* it under the terms of the GNU General Public License as published by    */
+  /* the Free Software Foundation, either version 3 of the License, or       */
+  /* (at your option) any later version.                                     */
+  /*                                                                         */
+  /* This program is distributed in the hope that it will be useful,         */
+  /* but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+  /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+  /* GNU General Public License for more details.                            */
+  /*                                                                         */
+  /* You should have received a copy of the GNU General Public License       */
+  /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
+  /***************************************************************************/
+
+  /***************************************************************************/
+  /* Description: css for activity-card.html                                 */
+  /***************************************************************************/
+
+  .activity-avatar {
+    border-radius:5px;
+  }
+
+  .activity-avatar-container {
+    height:100%;
+    width:48px;
+    float:left;
+  }
+
+  .activity-classification {
+    height:100%;
+    width:35px;
+    float:left;
+    font-size:2em;
+    padding-left:5px;
+  }
+
+  .activity-date {
+    margin-bottom:0px;
+    padding-top:6px;
+    padding-bottom:6px;
+  }
+
+  .activity-date-container {
+    height:100%;
+    width:100px;
+    float:left;
+  }
+
+  .activity-experience {
+    height:100%;
+    width:75px;
+    float:left;
+    text-align:right;
+  }
+
+  .activity-experience-container {
+    height:100%;
+    padding:5px
+  }
+
+  .activity-footer {
+    height:100%;
+    overflow:hidden;
+  }
+
+  .activity-footer a:hover {
+    color:#333;
+    text-decoration: none;
+  }
+
+  .activity-footer-container {
+    height:50px;
+    padding:10px;
+    padding:10px;
+    border-top: solid;
+    border-width: 1px;
+    border-color:#9d9d9d
+  }
+
+  .activity-header {
+    height:68px;
+    padding:10px;
+  }
+
+  .activity-header a:hover {
+    color:#9d9d9d;
+    text-decoration:none;
+  }
+
+  .activity-header-container {
+    max-height:184px;
+  }
+
+  .activity-header-right {
+    height:100%;
+    width:120px;
+    float:right;
+  }
+
+  .activity-intent {
+    width:20px;
+    padding-top:5px;
+    float:left;
+  }
+
+  .activity-intent:hover {
+    cursor:pointer;
+  }
+
+  .activity-intent-container {
+    height:100%;
+    width:50px;
+    float:left;
+  }
+
+  .activity-intent-count {
+    float:left;width:30px;
+    margin-bottom:0px;
+    padding-top:6px;
+    padding-left:6px;
+  }
+
+  .activity-logo {
+    max-width:100%;
+  }
+
+  .activity-logo-container {
+    height:100%;
+    width:30px;
+    float:right;
+  }
+
+  .activity-name {
+    margin-bottom:0px;
+  }
+
+  .activity-name-container {
+    height:100%;
+    overflow:hidden;
+    padding-left:10px;
+  }
+
+  .activity-text {
+    padding:10px;
+  }
+
+  .activity-grid-img {
+    width: 100%;
+    vertical-align: middle;
+    background-color: #fff;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .activity-grid-img.img-loaded {
+    visibility: visible;
+    opacity: 1;
+  }

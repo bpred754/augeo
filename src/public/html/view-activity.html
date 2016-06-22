@@ -42,13 +42,15 @@
       </div> <!-- end header row -->
     </div> <!-- end header container -->
 
-    <div id="tweet-container" infinite-scroll="getNewPage()" infinite-scroll-distance="0">
-      <div ng-repeat="tweet in tweets" class="activity">
-        <activity tweet-data="tweet" state="state">
-      </div>
+    <div id="activity-wrap" class="container">
+      <ul class="dynamic-grid" angular-grid="tweets" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
+        <li data-ng-repeat="tweet in tweets" class="w3-card-4 grid">
+          <activity-card tweet-data="tweet"></activity-card>
+        </li>
+      </ul>
     </div>
-    <div ng-show='!activityLoaded && !finishedLoading'>
-      <img id="loader" src="image/ajax-loader.gif">
+    <div ng-show='!finishedLoading'>
+      <img id="loader" src="image/ajax-loader.gif"/>
     </div>
   </div>
 

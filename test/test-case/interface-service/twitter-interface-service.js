@@ -100,7 +100,9 @@
     Assert.strictEqual(extractedtweet.mentions.length, 0);
     Assert.strictEqual(extractedtweet.hashtags.length, 0);
     Assert.strictEqual(extractedtweet.links.length, 0);
-    Assert.strictEqual(extractedtweet.media, '');
+    Assert.strictEqual(extractedtweet.media.url,'');
+    Assert.strictEqual(extractedtweet.media.height,0);
+    Assert.strictEqual(extractedtweet.media.width,0);
 
     var extractedTweetWithMention = TwitterInterfaceService.extractTweet(Common.rawTweetWithMention, true);
     Assert.strictEqual(extractedTweetWithMention.twitterId, Common.USER.twitter.twitterId);
@@ -119,7 +121,9 @@
     Assert.strictEqual(extractedTweetWithMention.mentions[0].screen_name, Common.ACTIONEE.twitter.screenName);
     Assert.strictEqual(extractedTweetWithMention.hashtags.length, 0);
     Assert.strictEqual(extractedTweetWithMention.links.length, 0);
-    Assert.strictEqual(extractedTweetWithMention.media, '');
+    Assert.strictEqual(extractedTweetWithMention.media.url,'');
+    Assert.strictEqual(extractedTweetWithMention.media.height,0);
+    Assert.strictEqual(extractedTweetWithMention.media.width,0);
 
     var extractedTweetWithHashtag = TwitterInterfaceService.extractTweet(Common.rawTweetWithHashtag, true);
     Assert.strictEqual(extractedTweetWithHashtag.twitterId, Common.USER.twitter.twitterId);
@@ -138,7 +142,9 @@
     Assert.strictEqual(extractedTweetWithHashtag.hashtags.length, 1);
     Assert.strictEqual(extractedTweetWithHashtag.hashtags[0].text, 'augeoBusiness');
     Assert.strictEqual(extractedTweetWithHashtag.links.length, 0);
-    Assert.strictEqual(extractedTweetWithHashtag.media, '');
+    Assert.strictEqual(extractedTweetWithHashtag.media.url,'');
+    Assert.strictEqual(extractedTweetWithHashtag.media.height,0);
+    Assert.strictEqual(extractedTweetWithHashtag.media.width,0);
 
     var extractedRetweet = TwitterInterfaceService.extractTweet(Common.rawRetweet, true);
     Assert.strictEqual(extractedRetweet.twitterId, Common.USER.twitter.twitterId);
@@ -158,7 +164,9 @@
     Assert.strictEqual(extractedRetweet.hashtags.length, 0);
     Assert.strictEqual(extractedRetweet.links.length, 1);
     Assert.strictEqual(extractedRetweet.links[0].url, 'http://t.co/oIyRqJ2jcv');
-    Assert.strictEqual(extractedRetweet.media, 'https://pbs.twimg.com/media/CBNbTEUW8AA5Yxj.jpg:thumb');
+    Assert.strictEqual(extractedRetweet.media.url, 'https://pbs.twimg.com/media/CBNbTEUW8AA5Yxj.jpg:large');
+    Assert.strictEqual(extractedRetweet.media.height, 150);
+    Assert.strictEqual(extractedRetweet.media.width, 150);
 
     done();
   });
@@ -374,5 +382,5 @@
     Assert.strictEqual(tweet.links.constructor, Array);
     tweet.links.length.should.be.above(-1);
     // media
-    Assert.strictEqual(typeof tweet.media, 'string');
+    Assert.strictEqual(typeof tweet.media, 'object');
   };

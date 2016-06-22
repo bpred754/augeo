@@ -54,12 +54,12 @@
   }
 
   .name {
-    margin-top:6px;
+    margin-top:9px;
     cursor:pointer;
   }
 
   .number {
-    margin-top:6px;
+    margin-top:9px;
   }
 
   .number-container {
@@ -74,7 +74,7 @@
   @media(max-width:767px) {
 
     .experience {
-      margin-top:12px;
+      margin-top:11px;
     }
 
     .experience-container {

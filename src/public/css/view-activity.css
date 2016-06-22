@@ -62,6 +62,25 @@
     margin-bottom: 20px;
   }
 
+  .dynamic-grid {
+    position: relative;
+    display: none;
+  }
+  .dynamic-grid.angular-grid {
+    display: block;
+  }
+
+  .grid {
+    position: absolute;
+    list-style: none;
+    background: #ffffff;;
+    box-sizing: border-box;
+    -webkit-transition: all 400ms ease;
+    transition: all 400ms ease;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
   .skill-glyphicon {
     font-size:125px;
   }

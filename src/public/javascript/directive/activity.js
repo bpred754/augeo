@@ -163,9 +163,10 @@
             textElement.append(text);
 
             // Set Media
-            if(media) {
+            if(media[0].url) {
+              var mediaString = media[0].url.substring(0, media[0].url.length - 5) + 'thumb';
               mediaElement.css('display', 'initial');
-              mediaElement.attr('src', media);
+              mediaElement.attr('src', mediaString);
               mediaLink.attr('href', 'https://www.twitter.com/statuses/'+ statusId);
             } else {
               mediaElement.css('display', 'none')

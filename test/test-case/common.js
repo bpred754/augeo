@@ -189,7 +189,13 @@
           url: "http://t.co/ckTdLeuet8",
           media_url_https: "https://pbs.twimg.com/media/CBNbTEUW8AA5Yxj.jpg",
           media_url: "http://pbs.twimg.com/media/CBNbTEUW8AA5Yxj.jpg",
-          indices: [99,121]
+          indices: [99,121],
+          sizes: {
+            large: {
+              w:150,
+              h:150
+            }
+          }
         },
       ],
     },
