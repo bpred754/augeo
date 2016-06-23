@@ -63,6 +63,7 @@
   @media(max-width:599px) {
 
     #head-container {
+      height:250px;
       margin-left:0px;
     }
 
@@ -70,6 +71,10 @@
       font-size:1em;
       margin-left:5%;
       margin-right:0%;
+    }
+
+    .history-text {
+      font-size: 1.3em;
     }
 
     .text-icon {
@@ -102,6 +107,7 @@
   @media(min-width:600px) {
 
     #head-container {
+      height:250px;
       margin-left:0px;
     }
 
@@ -139,10 +145,6 @@
 
   @media(min-width:767px) {
 
-    #head-container {
-      margin-left:0px;
-    }
-
     #header-description {
       margin-left:5%;
       margin-right:0%;
@@ -158,10 +160,6 @@
   /***************************************************************************/
 
   @media(min-width:850px) {
-
-    #head-container {
-      margin-left:0px;
-    }
 
     #header-description {
       margin-left:5%;
@@ -184,10 +182,6 @@
 
   @media(min-width:992px) {
 
-    #head-container {
-      margin-left:0px;
-    }
-
     #header-description {
       margin-left:5%;
       margin-right:0%;
@@ -205,6 +199,7 @@
   @media(min-width:1200px) {
 
     #head-container {
+      height:250px;
       margin-left:125px;
     }
 

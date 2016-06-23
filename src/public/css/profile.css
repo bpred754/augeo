@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   #header-container {
-    height:220px;
+    height:250px;
     display:-webkit-flex;
     display:flex;
   }
