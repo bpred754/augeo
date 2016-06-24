@@ -1,60 +1,60 @@
 
-  <!-------------------------------------------------------------------------->
-  <!-- Augeo.io is a web application that uses Natural Language Processing  -->
-  <!-- to classify a user's internet activity into different 'skills'.      -->
-  <!-- Copyright (C) 2016 Brian Redd                                        -->
-  <!--                                                                      -->
-  <!-- This program is free software: you can redistribute it and/or modify -->
-  <!-- it under the terms of the GNU General Public License as published by -->
-  <!-- the Free Software Foundation, either version 3 of the License, or    -->
-  <!-- (at your option) any later version.                                  -->
-  <!--                                                                      -->
-  <!-- This program is distributed in the hope that it will be useful,      -->
-  <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
-  <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
-  <!-- GNU General Public License for more details.                         -->
-  <!--                                                                      -->
-  <!-- You should have received a copy of the GNU General Public License    -->
-  <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
-  <!-------------------------------------------------------------------------->
+<!-------------------------------------------------------------------------->
+<!-- Augeo.io is a web application that uses Natural Language Processing  -->
+<!-- to classify a user's internet activity into different 'skills'.      -->
+<!-- Copyright (C) 2016 Brian Redd                                        -->
+<!--                                                                      -->
+<!-- This program is free software: you can redistribute it and/or modify -->
+<!-- it under the terms of the GNU General Public License as published by -->
+<!-- the Free Software Foundation, either version 3 of the License, or    -->
+<!-- (at your option) any later version.                                  -->
+<!--                                                                      -->
+<!-- This program is distributed in the hope that it will be useful,      -->
+<!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+<!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+<!-- GNU General Public License for more details.                         -->
+<!--                                                                      -->
+<!-- You should have received a copy of the GNU General Public License    -->
+<!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+<!-------------------------------------------------------------------------->
 
-  <link rel="stylesheet" href="css/view-activity.css">
+<link rel="stylesheet" href="css/view-activity.css">
 
-  <div ng-show="isLoaded">
+<div ng-show="isLoaded">
 
-    <!-- Header -->
-    <div class="container">
-      <div class="row">
-        <div class="jumbotron">
-          <div id="head-container" class="text-align-center">
-            <div id="header-title" class="x-large-text">View Activity</div>
-            <div id="skill-container">
-                <a href="https://www.twitter.com">
-                  <img id="skill-icon" src="image/twitter/logo-blue.png">
-                </a>
-            </div>
-            <select id="skill-select" class="form-control standard-text">
-              <option>Twitter</option>
-              <option ng-repeat="twitterSkill in twitterSkills">{{twitterSkill.name}}</option>
-            </select>
+  <!-- Header -->
+  <div class="container">
+    <div class="row">
+      <div class="jumbotron">
+        <div id="head-container" class="text-align-center">
+          <div id="header-title" class="x-large-text">View Activity</div>
+          <div id="skill-container">
+            <a href="https://www.twitter.com">
+              <img id="skill-icon" src="image/twitter/logo-blue.png">
+            </a>
           </div>
+          <select id="skill-select" class="form-control standard-text">
+            <option>Twitter</option>
+            <option ng-repeat="twitterSkill in twitterSkills">{{twitterSkill.name}}</option>
+          </select>
         </div>
-      </div> <!-- end header row -->
-    </div> <!-- end header container -->
+      </div>
+    </div> <!-- end header row -->
+  </div> <!-- end header container -->
 
-    <div id="activity-wrap" class="container">
-      <ul class="dynamic-grid" angular-grid="tweets" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
-        <li data-ng-repeat="tweet in tweets" class="w3-card-4 grid">
-          <activity-card tweet-data="tweet"></activity-card>
-        </li>
-      </ul>
-    </div>
-    <div ng-show='!finishedLoading'>
-      <img id="loader" src="image/ajax-loader.gif"/>
-    </div>
+  <div id="activity-wrap" class="container">
+    <ul class="dynamic-grid" angular-grid="tweets" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
+      <li data-ng-repeat="tweet in tweets" class="w3-card-4 grid">
+        <activity-card tweet-data="tweet" is-card="true"></activity-card>
+      </li>
+    </ul>
   </div>
+  <div ng-show='!finishedLoading'>
+    <img id="loader" src="image/ajax-loader.gif"/>
+  </div>
+</div>
 
-  <script>
+<script>
 
   $(document).ready(function() {
 
@@ -83,4 +83,4 @@
 
   });
 
-  </script>
+</script>

@@ -22,20 +22,12 @@
   /* Description: Binds data to profile.html                                 */
   /***************************************************************************/
 
-  augeo.controller('ProfileController', function($scope, $stateParams, TwitterClientService) {
+  augeo.controller('ProfileController', function($scope, $timeout, $interval, TwitterClientService, ActivityService) {
 
     // Internal functions
     var init = function() {
 
-      $scope.initMessage = 'Welcome to Augeo!';
       $scope.invalidProfile = false;
-
-      $scope.screenName = $stateParams.screenName;
-      if($scope.screenName) {
-        $scope.state = 'viewProfile';
-      } else {
-        $scope.state = 'profile';
-      }
 
       // Get user's Twitter profile image url, Twitter skill data, and Twitter sub skill data
       TwitterClientService.getProfileDisplayData($scope.screenName, function(data) {
@@ -74,8 +66,36 @@
           $scope.$broadcast('createCircularProgressBar', data.profileData);
         }
 
+        // Set recent activity
         if(data.recentActions) {
-          $scope.tweetData = data.recentActions;
+
+          var currentIndex = 0;
+          var formatTweets = true;
+
+          $scope.visible = true;
+          data.recentActions[0] = ActivityService.formatTweet(data.recentActions[0]);
+          $scope.currentTweet = data.recentActions[0];
+
+          // Transition logic
+          $interval(function() {
+            $scope.visible = false;
+            currentIndex++;
+
+            // Reset to first tweet
+            if(currentIndex == data.recentActions.length) {
+              currentIndex = 0;
+              formatTweets = false;
+            }
+
+            $timeout(function(){
+              if(formatTweets === true) {
+                data.recentActions[currentIndex] = ActivityService.formatTweet(data.recentActions[currentIndex]);
+              }
+              $scope.currentTweet = data.recentActions[currentIndex];
+
+              $scope.visible = true;
+            }, 1000);
+          }, 3500);
         }
 
         if(data.errorImageUrl) {

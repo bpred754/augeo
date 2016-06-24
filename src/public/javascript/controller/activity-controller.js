@@ -19,17 +19,32 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Javascript for activity-card directive                     */
+  /* Description: Javascript for activity directives                         */
   /***************************************************************************/
 
-  augeo.directive('activityCard', function() {
-    return {
-      restrict: 'E',
-      scope: {
-        'tweetData': '=',
-        'isCard': '='
-      },
-      templateUrl: 'html/directive/activity-card.html',
-      controller: 'ActivityController'
-    }
+  augeo.controller('ActivityController', function($scope, ActivityService) {
+
+    $scope.$watch(function() {
+      return $scope.tweetData;
+    }, function() {
+
+      if($scope.tweetData) {
+
+        $scope.tweetData.formatDate = function (date) {
+          $scope.tweetData.date = $scope.tweetData.date.substring(0, 11);
+          return $scope.tweetData.date;
+        }
+
+        $scope.tweetData.formatMedia = function (media) {
+          $scope.tweetData.media[0].url = $scope.tweetData.media[0].url.substring(0, $scope.tweetData.media[0].url.length - 6) + ":thumb";
+          return $scope.tweetData.media[0].url;
+        }
+
+        if($scope.isCard === true) {
+          $scope.tweetData.text = ActivityService.formatTweet($scope.tweetData).text
+        }
+      }
+    });
+
   });
+
