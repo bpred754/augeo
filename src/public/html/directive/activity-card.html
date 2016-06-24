@@ -35,14 +35,13 @@
                     </div>
                 </div>
                 <div class="activity-name-container">
-                    <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank" class="large-text text-primary activity-name">{{tweetData.name}}</sp></a>
+                    <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank" class="large-text text-primary activity-name">{{tweetData.name}}</a>
                     <div>
                         <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank" class="small-text text-primary">@{{tweetData.screenName}}</a>
                     </div>
                 </div>
             </div>
-            <div class="standard-text activity-text" ng-bind-html="tweetData.text | html">
-            </div>
+            <div class="standard-text activity-text" ng-bind-html="tweetData.text | html"></div>
         </div>
         <a href="https://twitter.com/statuses/{{tweetData.tweetId}}" target="_blank" ng-repeat="media in tweetData.media" ng-if="media.url">
             <img src="{{media.url}}" class="activity-grid-img" data-actual-width="{{media.width}}"  data-actual-height="{{media.height}}"/>

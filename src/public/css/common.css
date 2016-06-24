@@ -38,28 +38,28 @@
   /***************************************************************************/
 
   .large-text {
-    font-size: 1.6em;
-    font-weight:300;
+    font-size: 1.6em !important;
+    font-weight:300 !important;
   }
 
   .small-text {
-    font-size:1em;
-    font-weight:300;
+    font-size:1em !important;
+    font-weight:300 !important;
   }
 
   .standard-text {
-    font-size:1.3em;
-    font-weight:300;
+    font-size:1.3em !important;
+    font-weight:300 !important;
   }
 
   .subheading-text {
-    font-size:1.9em;
-    font-weight:normal;
+    font-size:1.9em !important;
+    font-weight:normal !important;
   }
 
   .x-large-text {
-    font-size:3.5em;
-    font-weight:300;
+    font-size:3.5em !important;
+    font-weight:300 !important;
   }
 
   /***************************************************************************/

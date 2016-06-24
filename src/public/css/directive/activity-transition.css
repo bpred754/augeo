@@ -19,20 +19,38 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: css for activity-card.html                                 */
+  /* Description: css for activity-transition.html                           */
   /***************************************************************************/
 
-  .activity-avatar {
-    border-radius:5px;
+  .at-avatar-container {
+    height:100%;
+    display:inline-block;
   }
 
-  .activity-avatar-container {
+  .at-avatar-image {
+    max-height:100%;
+    max-width:100%;
+    border-radius:6px;
+  }
+
+  .at-avatar-image-container {
     height:100%;
-    width:48px;
+    width:35px;
     float:left;
   }
 
-  .activity-classification {
+  .at-avatar-text {
+    float:left;
+    margin-bottom:0px;
+    padding-left:5px;
+  }
+
+  .at-center {
+    text-align:center;
+    height:100%;
+  }
+
+  .at-classification {
     height:100%;
     width:35px;
     float:left;
@@ -40,124 +58,112 @@
     padding-left:5px;
   }
 
-  .activity-date {
-    margin-bottom:0px;
-    padding-top:6px;
-    padding-bottom:6px;
+  .at-container {
+    max-height:250px;
   }
 
-  .activity-date-container {
-    height:100%;
-    width:100px;
+  .at-date-container {
+    display:flex;
+    align-items:flex-end;
+    min-height:100%;
     float:left;
   }
 
-  .activity-experience {
+  .at-date-container a:hover {
+    text-decoration: none;
+    color:#333;
+  }
+
+  .at-experience {
     height:100%;
     width:75px;
     float:left;
     text-align:right;
   }
 
-  .activity-experience-container {
-    height:100%;
-    padding:5px
-  }
-
-  .activity-footer {
-    height:100%;
-    overflow:hidden;
-  }
-
-  .activity-footer a:hover {
-    color:#333;
-    text-decoration: none;
-  }
-
-  .activity-footer-container {
-    height:50px;
-    padding:10px;
-    padding:10px;
-    border-top: solid;
-    border-width: 1px;
-    border-color:#9d9d9d
-  }
-
-  .activity-header {
-    height:68px;
-    padding:10px;
-  }
-
-  .activity-header a:hover {
-    color:#9d9d9d;
-    text-decoration:none;
-  }
-
-  .activity-header-container {
-    max-height:184px;
-  }
-
-  .activity-header-right {
-    height:100%;
+  .at-experience-container {
+    height:35px;
     width:120px;
-    float:right;
+    display:inline-block;
+    position:absolute;
+    margin-top:-20px;
   }
 
-  .activity-intent {
+  .at-experience-inner-container {
+    height:100%;
+    padding:5px;
+  }
+
+  .at-footer {
+    height:100%;
+    display:inline-block;
+  }
+
+  .at-footer-container {
+    height:30px;
+  }
+
+  .at-head-container {
+    height:35px;
+  }
+
+  .at-image {
+    height:115px;
+    width:115px;
+    border-radius:5px;
+  }
+
+  .at-image-container {
+    width:115px;
+    margin:0 auto;
+    padding-top:10px;
+  }
+
+  .at-intent {
     width:20px;
-    padding-top:5px;
+  }
+
+  .at-intent-container {
+    height:100%;
     float:left;
+    display:flex;
+    align-items:flex-end;
+    justify-content:flex-end;
+    min-height:100%;
+    width:40px;
   }
 
-  .activity-intent:hover {
-    cursor:pointer;
+  .at-intent-count {
+    display:flex;
+    align-items:flex-end;
+    min-height:100%;
   }
 
-  .activity-intent-container {
+  .at-intent-count-container {
     height:100%;
-    width:50px;
     float:left;
+    padding-left:5px;
   }
 
-  .activity-intent-count {
-    float:left;width:30px;
-    margin-bottom:0px;
-    padding-top:6px;
-    padding-left:6px;
+  .at-name {
+    color:#333;
+    margin-top:6px;
   }
 
-  .activity-logo {
-    max-width:100%;
+  .at-name:hover {
+    text-decoration: none;
+    color:#9d9d9d;
   }
 
-  .activity-logo-container {
-    height:100%;
-    width:30px;
-    float:right;
+  .at-screen-name {
+    margin-top:11px;
   }
 
-  .activity-name {
-    margin-bottom:0px;
+  .at-screen-name:hover {
+    text-decoration: none;
+    color:#333;
   }
 
-  .activity-name-container {
-    height:100%;
-    overflow:hidden;
-    padding-left:10px;
-  }
-
-  .activity-text {
-    padding:10px;
-  }
-
-  .activity-grid-img {
-    width: 100%;
-    vertical-align: middle;
-    background-color: #fff;
-    opacity: 0;
-    visibility: hidden;
-  }
-  .activity-grid-img.img-loaded {
-    visibility: visible;
-    opacity: 1;
+  .at-text-container {
+    padding-top:10px;
   }

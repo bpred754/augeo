@@ -19,17 +19,24 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Javascript for activity-card directive                     */
+  /* Description: Javascript for activity-transition directive               */
   /***************************************************************************/
 
-  augeo.directive('activityCard', function() {
+  augeo.directive('activityTransition', function($controller) {
     return {
       restrict: 'E',
       scope: {
         'tweetData': '=',
-        'isCard': '='
+        'visible': '='
       },
-      templateUrl: 'html/directive/activity-card.html',
-      controller: 'ActivityController'
+      templateUrl: 'html/directive/activity-transition.html',
+      controller: "ActivityController",
+      link: function(scope, element, attributes) {
+
+        scope.$watch('visible', function(val, oldVal) {
+          if(val === oldVal) return; // Skip initial call
+          element[val ? 'fadeIn' : 'fadeOut'](1000);
+        });
+      }
     }
   });

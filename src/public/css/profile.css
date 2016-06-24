@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   #header-container {
-    height:250px;
+    height:220px;
     display:-webkit-flex;
     display:flex;
   }
@@ -31,6 +31,10 @@
   #header-jumbotron {
     padding-left: 0px;
     padding-right: 0px;
+  }
+
+  #profile-avatar {
+    border-radius:6px;
   }
 
   #profile-pic {
@@ -45,9 +49,12 @@
     height:100%;
   }
 
+  #profile-transition {
+    width:100%;
+    align-self:center
+  }
+
   #recent-activity-container {
-    height:100%;
-    -webkit-flex:1;
     flex:1;
     margin-left:20px;
     margin-right:20px;
@@ -154,7 +161,8 @@
 
     #recent-activity-container {
       height:100%;
-      display:initial;
+      display:flex;
+      justify-content:center;
     }
 
     #small-screen {
@@ -181,11 +189,6 @@
       margin:0;
       padding-left:60px;
       padding-right:0px;
-    }
-
-    #recent-activity-container {
-      height:100%;
-      display:initial;
     }
 
     #small-screen {

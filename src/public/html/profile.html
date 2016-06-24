@@ -28,15 +28,14 @@
         <div id="header-container">
           <div id="profile-pic-container">
               <a id="profile-pic" href="https://www.twitter.com/{{screenName}}">
-                  <img class="max-size" src="{{profileImageUrl}}">
+                  <img id="profile-avatar" class="max-size" src="{{profileImageUrl}}">
               </a>
               <div id="view-activity-link">
                 <a ui-sref="viewActivity({screenName:screenName})">View All Activity</a>
               </div>
           </div>
           <div id="recent-activity-container">
-              <div activity ng-if="!invalidProfile && tweetData" tweet-data="tweetData" init-message="initMessage" state="state"></div>
-              <div ng-if="invalidProfile" class="large-text text-align-center">Sorry, but this user does not exist.</div>
+              <activity-transition ng-if="!invalidProfile && currentTweet" id= "profile-transition" visible="visible" tweet-data="currentTweet"></activity-transition>
          </div>
         </div>
       </div>
