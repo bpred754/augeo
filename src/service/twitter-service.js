@@ -622,6 +622,7 @@
 
       var mainSkill = user.twitter.skill;
       var mainSkillDisplay = {
+        name: 'Twitter',
         experience: mainSkill.experience,
         level: AugeoUtility.calculateLevel(mainSkill.experience),
         imageLink: mainSkill.imageLink,

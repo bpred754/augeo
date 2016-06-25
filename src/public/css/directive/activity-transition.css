@@ -100,7 +100,7 @@
   }
 
   .at-footer-container {
-    height:30px;
+    height:20px;
   }
 
   .at-head-container {
@@ -111,6 +111,7 @@
     height:115px;
     width:115px;
     border-radius:5px;
+    margin-bottom: 10px;
   }
 
   .at-image-container {

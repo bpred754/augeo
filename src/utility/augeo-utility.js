@@ -54,7 +54,7 @@
       var relativeExperience = experience - startExperience;
       var endExperience = exports.getLevelEndExperience(level);
       var difference = endExperience - startExperience;
-      levelProgress = Math.floor((relativeExperience/difference)*100);
+      levelProgress = Math.floor((relativeExperience/difference)*100)/100;
     }
 
     return levelProgress;

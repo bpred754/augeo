@@ -36,6 +36,7 @@
 
         if(data.profileData) {
           $scope.profileImageUrl= data.profileData.profileImageUrl;
+          $scope.mainSkill = data.profileData.skill;
           $scope.skills = data.profileData.subSkills;
 
           var mediumScreenArray = new Array();

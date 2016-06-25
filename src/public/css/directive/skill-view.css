@@ -22,48 +22,104 @@
   /* Description: css for skill-view.html                                    */
   /***************************************************************************/
 
-  #circular-augeo-image {
-    height:110px;
-    position:absolute;
-    z-index:1;
-    margin:auto;
-    top:0;
-    left:0;
-    right:0;
-    bottom:20px;
+  circle {
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
   }
 
-  #main-skill-icon {
-    font-size:4.5em;
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-  }
-
-  #main-skill-icon-container {
-    position : absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-  }
-
-  #subskill-icon-container {
-    display:inline-block;
-    width:100%
-  }
-
-  .augeo-canvas {
-    position:relative;
+  .sv-bottom-text-container {
     width:100%;
-    height:100%;
     text-align:center;
   }
 
-  .skill-container {
+  .sv-container {
+    margin:0 auto;
+    position:relative;
+  }
+
+  .sv-glyphicon {
+    font-size:6em;
+  }
+
+  .sv-image {
+    max-height:100%;
+    max-width:100%;
+  }
+
+  .sv-image-container {
     height:100%;
+    width:100%;
+  }
+
+  .sv-inner-circle-container {
+    position:absolute;
+  }
+
+  .sv-level {
+    font-size:3em;
+    font-weight:normal;
+  }
+
+  .sv-skill-name {
+    margin-bottom:0px
+  }
+
+  /***************************************************************************/
+  /* skill-view-subskill                                                     */
+  /***************************************************************************/
+
+  .svs-container {
+    height:185px;
+    width:185px;
+  }
+
+  .svs-glyphicon {
+    line-height:85px;
+  }
+
+  .svs-glyphicon-container {
+    height:85px;
+    width:85px;
+  }
+
+  .svs-inner-circle-container {
+    height:115px;
+    width:85px;
+    left:50px;
+    bottom:35px;
+  }
+
+  .svs-level {
+    height:30px;
+    width:85px;
+  }
+
+  /***************************************************************************/
+  /* skill-view-mainskill                                                    */
+  /***************************************************************************/
+
+  .svm-container {
+    height:250px;
+    width:250px;
+  }
+
+  .svm-glyphicon {
+    line-height:85px;
+  }
+
+  .svm-glyphicon-container {
+    height:130px;
+    width:150px;
+  }
+
+  .svm-inner-circle-container {
+    height:190px;
+    width:150px;
+    left:50px;
+    bottom:20px;
+  }
+
+  .svm-level {
+    height:30px;
+    width:150px;
   }

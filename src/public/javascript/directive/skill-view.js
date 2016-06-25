@@ -22,86 +22,21 @@
   /* Description: Custom html element to display skill data                  */
   /***************************************************************************/
 
-  augeo.directive('skillView', function($timeout) {
+  augeo.directive('skillView', function() {
     return {
-      restrict: 'AE',
+      restrict: 'E',
       scope: {
         skill: '=',
-        circleRadius: '=',
+        isMainSkill: '='
       },
       templateUrl: 'html/directive/skill-view.html',
-      link: function(scope, element, attributes) {
-
-        var createSubSkillProgressBar = function() {
-
-          // Set sub skills
-          if(scope.skill) {
-            createCircularProgressBar(scope,element);
-          }
+      controller: function($scope) {
+        if(!$scope.isMainSkill) {
+          $scope.isSubSkill = true;
+          $scope.skillViewSize = 185;
+        } else {
+          $scope.skillViewSize = 250;
         }
-
-        // Wait for DOM to load before creating progress bar
-        $timeout(createSubSkillProgressBar, 0);
-
-        // Set main skill
-        scope.$on('createCircularProgressBar', function(event, data) {
-            createCircularProgressBar(data, element);
-
-            // Set image
-            var canvas = $(element).find('.augeo-canvas');
-
-            var link = canvas.find('#image-link');
-            link.attr('href', data.skill.imageLink);
-
-            var image = canvas.find('#circular-augeo-image');
-            image.attr('src', data.skill.imageSrc);
-        });
       }
     }
   });
-
-  var createCircularProgressBar = function(scope, element) {
-    var n, endVal, id, progress;
-
-    var progressCanvasContainer = $(element).find('.augeo-canvas').find('.skill-icon-container');
-
-    canvasWidth = progressCanvasContainer.outerWidth();
-    canvasHeight = $(element).parent().outerHeight();
-
-    progress = new CircularProgress({
-      radius: scope.circleRadius,
-      lineWidth: 8,
-      canvasWidth: 430,
-      canvasHeight: canvasHeight,
-      text : {
-        value: scope.skill.name,
-        level: scope.skill.level,
-        startExperience: scope.skill.startExperience,
-        currentExperience: scope.skill.experience,
-        endExperience: scope.skill.endExperience,
-        font: 'bold 16px arial',
-      },
-      initial: {
-        strokeStyle: 'white',
-      }
-    });
-
-    // Attach circular progress bar to directive
-    progressCanvasContainer.append(progress.el);
-
-    n = 0;
-    var isComplete = false;
-    endVal = scope.skill.levelProgress;
-    id = setInterval(function () {
-      if (n == endVal) {
-        clearInterval(id);
-        isComplete = true;
-      }
-      progress.update(n++, isComplete);
-    }, 30); // speed of progress
-
-  };
-
-  var isSkillViewLoaded = function() {
-    return true;
-  }

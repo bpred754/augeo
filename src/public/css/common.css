@@ -21,16 +21,21 @@
   /* Description: common css for augeo application                           */
   /***************************************************************************/
 
+  .clickable {
+    cursor:pointer;
+  }
+
   .height-100 {
     height:100%;
   }
 
-  .text-align-center {
-    text-align:center;
+  .remove-margin {
+    margin-right:0px;
+    margin-left:0px;
   }
 
-  .clickable {
-    cursor:pointer;
+  .text-align-center {
+    text-align:center;
   }
 
   /***************************************************************************/
@@ -38,28 +43,28 @@
   /***************************************************************************/
 
   .large-text {
-    font-size: 1.6em !important;
-    font-weight:300 !important;
+    font-size: 1.6em;
+    font-weight:300;
   }
 
   .small-text {
-    font-size:1em !important;
-    font-weight:300 !important;
+    font-size:1em;
+    font-weight:300;
   }
 
   .standard-text {
-    font-size:1.3em !important;
-    font-weight:300 !important;
+    font-size:1.3em;
+    font-weight:300;
   }
 
   .subheading-text {
-    font-size:1.9em !important;
-    font-weight:normal !important;
+    font-size:1.9em;
+    font-weight:normal;
   }
 
   .x-large-text {
-    font-size:3.5em !important;
-    font-weight:300 !important;
+    font-size:3.5em;
+    font-weight:300;
   }
 
   /***************************************************************************/

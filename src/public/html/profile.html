@@ -19,7 +19,6 @@
   <!-------------------------------------------------------------------------->
 
   <link rel="stylesheet" href="css/profile.css">
-  <link rel="stylesheet" href="css/directive/skill-view.css">
 
   <!-- Header -->
   <div class="container" ng-show="isLoaded">
@@ -42,43 +41,43 @@
     </div> <!-- end header row -->
   </div> <!-- end header container -->
 
-  <!-- Logo -->
-  <div class="row remove-right-margin">
-
-    <!-- Skill Image/logo -->
-    <div id="skill-icon-container" class="row">
-      <div class="height-100" skill-view></div>
-    </div>
-  </div> <!-- end logo row -->
+  <!-- Skill Image/logo -->
+  <div id="skill-icon-container" class="row remove-margin">
+    <skill-view skill="mainSkill" is-main-skill="true"></skill-view>
+  </div>
 
   <!-- Content -->
-  <div class="row remove-right-margin" ng-show="isLoaded">
+  <div class="row remove-margin" ng-show="isLoaded">
     <div id="leftContainer" class="col-md-2 col-sm-2 col-xs-3">
     </div>
 
     <div id="content-container" class="col-md-8 col-sm-8 col-xs-6">
-      <!-- Place sub-skill views -->
       <div id="medium-screen" ng-repeat="row in mediumArray">
         <div class="row skill-row">
-          <div ng-repeat="cell in row" skill-view id="{{cell.id}}" class="col-md-4 height-100" skill=cell circle-radius="87"></div>
+          <div ng-repeat="cell in row" class="col-md-4 height-100">
+            <skill-view ng-if="cell" skill="cell"></skill-view>
+          </div>
         </div>
       </div>
 
       <div id="small-screen" ng-repeat="row in smallArray">
         <div class="row skill-row">
-          <div ng-repeat="cell in row" skill-view id="{{cell.id}}" class="col-sm-6 height-100" skill=cell circle-radius="87"></div>
+          <div ng-repeat="cell in row" class="col-sm-6 height-100" skill=cell>
+            <skill-view ng-if="cell" skill="cell"></skill-view>
+          </div>
         </div>
       </div>
 
       <div id="xsmall-screen" ng-repeat="elem in skills">
         <div class="row skill-row">
-          <div skill-view id="{{elem.id}}" class="col-xs-12 height-100" skill=elem circle-radius="87"></div>
+          <div class="col-xs-12 height-100">
+            <skill-view ng-if="elem" skill="elem"></skill-view>
+          </div>
         </div>
       </div>
 
+      <div id="rightContainer" class="col-md-2 col-sm-2 col-xs-3">
+      </div>
+
     </div> <!-- end content container -->
-
-    <div id="rightContainer" class="col-md-2 col-sm-2 col-xs-3">
-    </div>
-
   </div> <!-- end content row -->

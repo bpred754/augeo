@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "angular": "1.5.3",
+    "angular-progress-arc": "1.0.0",
     "angular-route": "1.5.3",
     "angular-ui-router": "0.2.18",
     "angulartics-google-analytics": "0.1.4",

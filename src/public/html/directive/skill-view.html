@@ -1,36 +1,40 @@
 
-  <!-------------------------------------------------------------------------->
-  <!-- Augeo.io is a web application that uses Natural Language Processing  -->
-  <!-- to classify a user's internet activity into different 'skills'.      -->
-  <!-- Copyright (C) 2016 Brian Redd                                        -->
-  <!--                                                                      -->
-  <!-- This program is free software: you can redistribute it and/or modify -->
-  <!-- it under the terms of the GNU General Public License as published by -->
-  <!-- the Free Software Foundation, either version 3 of the License, or    -->
-  <!-- (at your option) any later version.                                  -->
-  <!--                                                                      -->
-  <!-- This program is distributed in the hope that it will be useful,      -->
-  <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
-  <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
-  <!-- GNU General Public License for more details.                         -->
-  <!--                                                                      -->
-  <!-- You should have received a copy of the GNU General Public License    -->
-  <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
-  <!-------------------------------------------------------------------------->
+    <!-------------------------------------------------------------------------->
+    <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+    <!-- to classify a user's internet activity into different 'skills'.      -->
+    <!-- Copyright (C) 2016 Brian Redd                                        -->
+    <!--                                                                      -->
+    <!-- This program is free software: you can redistribute it and/or modify -->
+    <!-- it under the terms of the GNU General Public License as published by -->
+    <!-- the Free Software Foundation, either version 3 of the License, or    -->
+    <!-- (at your option) any later version.                                  -->
+    <!--                                                                      -->
+    <!-- This program is distributed in the hope that it will be useful,      -->
+    <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+    <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+    <!-- GNU General Public License for more details.                         -->
+    <!--                                                                      -->
+    <!-- You should have received a copy of the GNU General Public License    -->
+    <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+    <!-------------------------------------------------------------------------->
 
-  <div class="skill-container">
-    <div class="augeo-canvas">
+    <link rel="stylesheet" href="css/directive/skill-view.css">
 
-      <!-- Insert glyphicon -->
-      <div ng-if="skill.glyphicon != null" id="main-skill-icon-container" class="skill-icon-container">
-        <div id="main-skill-icon" class="customGlyphicon glyphicon {{skill.glyphicon}}"></div>
-      </div>
-
-      <!-- Insert image -->
-      <div ng-if="skill.glyphicon == null" id="subskill-icon-container" class="skill-icon-container">
-        <a id="image-link">
-          <img id="circular-augeo-image">
-        </a>
-      </div>
+    <div class="sv-container" ng-class="{'svs-container' : isSubSkill, 'svm-container': isMainSkill}">
+        <progress-arc size="{{skillViewSize}}" stroke="#333" stroke-width="10" complete="skill.levelProgress" background="#eee"></progress-arc>
+        <div class="sv-inner-circle-container" ng-class="{'svs-inner-circle-container': isSubSkill, 'svm-inner-circle-container': isMainSkill}">
+            <div ng-class="{'svs-glyphicon-container': isSubSkill, 'svm-glyphicon-container': isMainSkill}" class="text-align-center">
+                <span ng-if="skill.glyphicon != null" class="glyphicon {{skill.glyphicon}} sv-glyphicon" ng-class="{'svs-glyphicon': isSubSkill, 'svm-glyphicon': isMainSkill}"></span>
+                <div ng-if="skill.glyphicon == null" class="sv-image-container">
+                    <img src="image/twitter/logo-blue.png" class="sv-image"/>
+                </div>
+            </div>
+            <div class="text-primary text-align-center sv-level" ng-class="{'svs-level': isSubSkill, 'svm-level': isMainSkill}">
+                <p>{{skill.level}}</p>
+            </div>
+        </div>
     </div>
-  </div>
+    <div class="sv-bottom-text-container">
+        <p class="subheading-text primary-text sv-skill-name">{{skill.name}}</p>
+        <p class="large-text primary-text">{{skill.experience}} / {{skill.endExperience}}</p>
+    </div>
