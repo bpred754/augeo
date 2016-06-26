@@ -45,12 +45,12 @@
 
   it('should return correct progress for a given level and experience -- calculateLevelProgress()', function(done) {
     Assert.strictEqual(AugeoUtility.calculateLevelProgress(1, 0), 0);
-    Assert.strictEqual(AugeoUtility.calculateLevelProgress(2, 90), 25);
-    Assert.strictEqual(AugeoUtility.calculateLevelProgress(2, 100), 33);
+    Assert.strictEqual(AugeoUtility.calculateLevelProgress(2, 90), .25);
+    Assert.strictEqual(AugeoUtility.calculateLevelProgress(2, 100), .33);
     Assert.strictEqual(AugeoUtility.calculateLevelProgress(3, 180), 0);
-    Assert.strictEqual(AugeoUtility.calculateLevelProgress(9, 2670), 94);
-    Assert.strictEqual(AugeoUtility.calculateLevelProgress(10, 3030), 55);
-    Assert.strictEqual(AugeoUtility.calculateLevelProgress(2029, 123456789), 10);
+    Assert.strictEqual(AugeoUtility.calculateLevelProgress(9, 2670), .94);
+    Assert.strictEqual(AugeoUtility.calculateLevelProgress(10, 3030), .55);
+    Assert.strictEqual(AugeoUtility.calculateLevelProgress(2029, 123456789), .10);
     Assert.strictEqual(AugeoUtility.calculateLevelProgress(1, -1), 0);
     Assert.strictEqual(AugeoUtility.calculateLevelProgress(1, -10000), 0);
     Assert.strictEqual(AugeoUtility.calculateLevelProgress('test', -1), 0);
