@@ -73,6 +73,10 @@
       margin-right:0%;
     }
 
+    #th-title {
+      font-size:3em;
+    }
+
     .history-text {
       font-size: 1.3em;
     }
