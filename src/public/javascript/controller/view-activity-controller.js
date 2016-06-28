@@ -22,7 +22,7 @@
   /* Description: Binds data to view-activity.html                            */
   /***************************************************************************/
 
-  augeo.controller('ViewActivityController', function($rootScope, $scope, $stateParams, TwitterClientService) {
+  augeo.controller('ViewActivityController', function($rootScope, $scope, $stateParams, $window, TwitterClientService) {
 
     // Constants
     var MAX_ID = '9999999999999999999999999999999';
@@ -32,6 +32,29 @@
     $scope.finishedLoading = false;
     $scope.tweets = new Array();
     $scope.state = 'viewActivity';
+
+    // Hide Angular Grid if screen is small
+    var width = $window.innerWidth;
+    if(width > 764) {
+      $scope.isSmallScreen = false;
+    } else {
+      $scope.isSmallScreen = true;
+    }
+
+    // Bind to the window resize function and hide Angular Grid for small screens
+    angular.element($window).bind('resize', function(){
+
+      width = $window.innerWidth;
+
+      if(width > 764) {
+        $scope.isSmallScreen = false;
+      } else {
+        $scope.isSmallScreen = true;
+      }
+
+      // Manual $digest required as resize event is outside of angular
+      $scope.$digest();
+    });
 
     TwitterClientService.getActivityDisplayData(function(data) {
 

@@ -40,8 +40,9 @@
           return $scope.tweetData.media[0].url;
         }
 
-        if($scope.isCard === true) {
-          $scope.tweetData.text = ActivityService.formatTweet($scope.tweetData).text
+        if($scope.isCard === true && !$scope.tweetData.isTextFormatted) {
+          $scope.tweetData.text = ActivityService.formatTweet($scope.tweetData).text;
+          $scope.tweetData.isTextFormatted = true;
         }
       }
     });

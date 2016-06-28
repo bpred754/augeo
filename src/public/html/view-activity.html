@@ -43,11 +43,16 @@
   </div> <!-- end header container -->
 
   <div id="activity-wrap" class="container">
-    <ul class="dynamic-grid" angular-grid="tweets" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
+    <ul ng-if="isSmallScreen == false" class="dynamic-grid" angular-grid="tweets" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
       <li data-ng-repeat="tweet in tweets" class="w3-card-4 grid">
-        <activity-card tweet-data="tweet" is-card="true"></activity-card>
+        <activity-card tweet-data="tweet" is-card="true" is-small-screen="isSmallScreen"></activity-card>
       </li>
     </ul>
+    <div ng-if="isSmallScreen == true" class="activity-list" infinite-scroll="getNewPage()" infinite-scroll-distance="0">
+      <div ng-repeat="tweet in tweets" class="activity-list-card w3-card-4">
+        <activity-card tweet-data="tweet" is-card="true" is-small-screen="isSmallScreen"></activity-card>
+      </div>
+    </div>
   </div>
   <div ng-show='!finishedLoading'>
     <img id="loader" src="image/ajax-loader.gif"/>
@@ -58,7 +63,7 @@
 
   $(document).ready(function() {
 
-    // Handle change of leaderboard skill
+    // Handle change of view-activity skill
     var skillSelect = $('#skill-select');
     var skillContainer = $('#skill-container');
 
