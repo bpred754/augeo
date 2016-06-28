@@ -28,7 +28,7 @@
       scope: {
         'tweetData': '=',
         'isCard': '=',
-        'isSmallScreen': '='
+        'screenSize': '='
       },
       templateUrl: 'html/directive/activity-card.html',
       controller: 'ActivityController'

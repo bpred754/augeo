@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Binds data to view-activity.html                            */
+  /* Description: Binds data to view-activity.html                           */
   /***************************************************************************/
 
   augeo.controller('ViewActivityController', function($rootScope, $scope, $stateParams, $window, TwitterClientService) {
@@ -32,25 +32,11 @@
     $scope.finishedLoading = false;
     $scope.tweets = new Array();
     $scope.state = 'viewActivity';
+    $scope.screenSize = getScreenSize($window.innerWidth);
 
-    // Hide Angular Grid if screen is small
-    var width = $window.innerWidth;
-    if(width > 764) {
-      $scope.isSmallScreen = false;
-    } else {
-      $scope.isSmallScreen = true;
-    }
-
-    // Bind to the window resize function and hide Angular Grid for small screens
+    // Bind to the window resize function to hide Angular Grid for small screens
     angular.element($window).bind('resize', function(){
-
-      width = $window.innerWidth;
-
-      if(width > 764) {
-        $scope.isSmallScreen = false;
-      } else {
-        $scope.isSmallScreen = true;
-      }
+      $scope.screenSize = getScreenSize($window.innerWidth);
 
       // Manual $digest required as resize event is outside of angular
       $scope.$digest();
@@ -108,3 +94,19 @@
     };
 
   });
+
+  /***************************************************************************/
+  /* Private functions                                                       */
+  /***************************************************************************/
+
+  var getScreenSize = function(width) {
+    var screenSize;
+    if(width > 764) {
+      screenSize = 'large';
+    } else if(width > 500) {
+      screenSize = 'small';
+    } else {
+      screenSize = 'x-small';
+    }
+    return screenSize;
+  };
