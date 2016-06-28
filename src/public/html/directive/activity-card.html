@@ -35,16 +35,16 @@
                     </div>
                 </div>
                 <div class="activity-name-container">
-                    <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank" class="large-text text-primary activity-name">{{tweetData.name}}</a>
+                    <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank" ng-class="{'standard-text': screenSize == 'x-small', 'large-text': screenSize != 'x-small'}" class="text-primary activity-name">{{tweetData.name}}</a>
                     <div>
                         <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank" class="small-text text-primary">@{{tweetData.screenName}}</a>
                     </div>
                 </div>
             </div>
-            <div class="standard-text activity-text" ng-bind-html="tweetData.text | html"></div>
+            <div ng-class="{'small-text': screenSize == 'x-small', 'standard-text': screenSize != 'x-small'}" class="activity-text" ng-bind-html="tweetData.text | html"></div>
         </div>
         <a href="https://twitter.com/statuses/{{tweetData.tweetId}}" target="_blank" ng-repeat="media in tweetData.media" ng-if="media.url">
-            <img src="{{media.url}}" ng-class="{'activity-grid-img': isSmallScreen == false, 'activity-grid-img-ss': isSmallScreen == true}" data-actual-width="{{media.width}}"  data-actual-height="{{media.height}}"/>
+            <img src="{{media.url}}" ng-class="{'activity-grid-img': screenSize == 'large', 'activity-grid-img-ss': screenSize != 'large'}" data-actual-width="{{media.width}}"  data-actual-height="{{media.height}}"/>
         </a>
         <div class="activity-footer-container">
             <div class="activity-logo-container">
