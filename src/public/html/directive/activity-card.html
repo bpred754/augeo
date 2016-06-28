@@ -44,7 +44,7 @@
             <div class="standard-text activity-text" ng-bind-html="tweetData.text | html"></div>
         </div>
         <a href="https://twitter.com/statuses/{{tweetData.tweetId}}" target="_blank" ng-repeat="media in tweetData.media" ng-if="media.url">
-            <img src="{{media.url}}" class="activity-grid-img" data-actual-width="{{media.width}}"  data-actual-height="{{media.height}}"/>
+            <img src="{{media.url}}" ng-class="{'activity-grid-img': isSmallScreen == false, 'activity-grid-img-ss': isSmallScreen == true}" data-actual-width="{{media.width}}"  data-actual-height="{{media.height}}"/>
         </a>
         <div class="activity-footer-container">
             <div class="activity-logo-container">

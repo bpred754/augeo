@@ -27,7 +27,8 @@
       restrict: 'E',
       scope: {
         'tweetData': '=',
-        'isCard': '='
+        'isCard': '=',
+        'isSmallScreen': '='
       },
       templateUrl: 'html/directive/activity-card.html',
       controller: 'ActivityController'

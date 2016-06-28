@@ -157,7 +157,13 @@
     opacity: 0;
     visibility: hidden;
   }
+
   .activity-grid-img.img-loaded {
     visibility: visible;
     opacity: 1;
+  }
+
+  .activity-grid-img-ss {
+    width: 100%;
+    vertical-align: middle;
   }
