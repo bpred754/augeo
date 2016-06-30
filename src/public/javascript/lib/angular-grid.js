@@ -627,9 +627,9 @@
                     $timeout(function() {
                       //to handle scroll appearance
                       reflowGrids();
-                    }, 25);
+                    }, 250);
                   });
-                }, 25);
+                }, 250);
               }
 
               scope.$watch('model', watch, true);
