@@ -126,7 +126,7 @@
   // Get the main skill display data
   exports.getMainSkill = function(experience) {
     return {
-      imageSrc: 'image/twitter/logo-blue.png',
+      imageSrc: 'image/twitter/logo-blue-medium.png',
       imageLink: 'https://www.twitter.com',
       level: AugeoUtility.calculateLevel(experience),
       experience: experience,

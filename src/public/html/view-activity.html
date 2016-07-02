@@ -28,7 +28,7 @@
           <div id="header-title" class="x-large-text">View Activity</div>
           <div id="skill-container">
             <a href="https://www.twitter.com">
-              <img id="skill-icon" src="image/twitter/logo-blue.png">
+              <img id="skill-icon" src="image/twitter/logo-blue-medium.png">
             </a>
           </div>
           <select id="skill-select" class="form-control standard-text">
@@ -73,7 +73,7 @@
       if(skillSelect.val() == 'Twitter') {
 
         skillContainer.html('<a id="twitter-link" href="https://www.twitter.com"></a>');
-        $('#twitter-link').html('<img id="skill-icon" src="image/twitter/logo-blue.png">');
+        $('#twitter-link').html('<img id="skill-icon" src="image/twitter/logo-blue-medium.png">');
       } else {
 
         var glyphicon = angular.element(skillContainer).scope().getGlyphicon(skillSelect.val());

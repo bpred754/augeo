@@ -209,7 +209,7 @@
   it('should return the correct data for the users Twitter skill', function(done) {
 
     var mainSkill = TwitterUtility.getMainSkill(180);
-    Assert.strictEqual(mainSkill.imageSrc, 'image/twitter/logo-blue.png');
+    Assert.strictEqual(mainSkill.imageSrc, 'image/twitter/logo-blue-medium.png');
     Assert.strictEqual(mainSkill.imageLink, 'https://www.twitter.com');
     Assert.strictEqual(mainSkill.level, 3);
     Assert.strictEqual(mainSkill.rank, 0);
