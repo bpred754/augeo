@@ -69,7 +69,7 @@
 
           scope.$watch('user.screenName', function(newVal) {
 
-            var entryContainer = $(elem).children().eq(1)[0];
+            var entryContainer = $(elem).children().eq(0)[0];
             var twitterFollowButton = $(entryContainer).find('.follow-container');
             twitterFollowButton.empty();
 

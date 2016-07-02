@@ -29,9 +29,6 @@ node_modules
 # Mac OSX file storage information
 .DS_Store
 
-# All bower dependencies need to be installed on the local side
-src/public/libs
-
 # MongoDB data
 data
 
@@ -44,3 +41,5 @@ notes
 # Browserify
 bundle.js
 bundle.map.js
+main-css.bundle.js
+main-css.bundle.map.js

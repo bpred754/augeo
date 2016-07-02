@@ -70,6 +70,7 @@
 
   // Configure static files location
   app.use(Express.static(Path.join(__dirname, 'public')));
+  app.use(Express.static(Path.join(__dirname, '../node_modules/bootstrap/dist/fonts')));
 
   // Map requests to a route handler
   AugeoApi.mapRequests(app);

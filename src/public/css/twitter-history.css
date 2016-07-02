@@ -22,7 +22,7 @@
   /* Description: css for twitter-history.html                                */
   /***************************************************************************/
 
-  #logo {
+  #th-logo {
     height:250px;
     width:250px;
     margin-left:auto;
@@ -30,7 +30,7 @@
     margin-top:25px;
   }
 
-  #logo-image {
+  #th-logo-image {
     max-height:100%;
     max-width:100%
   }

@@ -1,6 +1,6 @@
 {
   "name": "augeo",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Web application written with the MEAN stack that uses Natural Language Processing to classify a user's internet activity into different skills. In a nutshell, Augeo is the gamification of life.",
   "author": "Brian Redd <brianredd@augeo.io> (http://brianredd.com)",
   "license": "GPL-3.0",
@@ -29,10 +29,10 @@
     "bcrypt": "0.8.5",
     "body-parser": "1.15.0",
     "bootstrap": "3.3.6",
-    "bower": "1.7.9",
     "browserify": "13.0.1",
+    "browserify-css": "0.9.1",
     "bunyan": "1.8.1",
-    "compression": "^1.6.2",
+    "compression": "1.6.2",
     "cookie-parser": "1.4.1",
     "express": "4.13.4",
     "express-session": "1.13.0",
@@ -54,12 +54,20 @@
     "supertest": "1.2.0",
     "watchify": "3.7.0"
   },
+  "browserify-css": {
+    "autoInject": true,
+    "minify": true,
+    "rootDir": ".",
+    "rebaseUrls": false
+  },
   "scripts": {
     "preinstall": "node scripts/preinstall.js",
-    "postinstall": "bower install && browserify src/public/javascript/main.js | uglifyjs -cm > src/public/javascript/bundle.js",
+    "postinstall": "browserify src/public/javascript/main.js | uglifyjs -cm > src/public/javascript/bundle.js && browserify -t browserify-css src/public/javascript/main-css.js > src/public/javascript/main-css.bundle.js",
     "pretest": "node scripts/test/db-cleanup.js",
     "test": "istanbul cover node_modules/mocha/bin/_mocha test/hub.js",
     "posttest": "node scripts/test/db-cleanup.js",
+    "watch-js": "watchify src/public/javascript/main.js --debug -o 'exorcist src/public/javascript/bundle.map.js > src/public/javascript/bundle.js' -v",
+    "watch-css": "watchify src/public/javascript/main-css.js --debug -t browserify-css -o 'exorcist src/public/javascript/main-css.bundle.map.js > src/public/javascript/main-css.bundle.js' -v",
     "start": "node src/server.js"
   },
   "engines": {
@@ -70,14 +78,14 @@
     "scripts",
     "src",
     "test",
-    ".bowerrc",
     ".gitignore",
     "CONTRIBUTING.md",
     "LICENSE",
     "Makefile",
     "Procfile",
     "README.md",
-    "bower.json",
-    "environment.env"
+    "environment.env",
+    "privacy-policty.md",
+    "terms-of-service.md"
   ]
 }

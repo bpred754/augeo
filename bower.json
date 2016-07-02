@@ -1,7 +1,0 @@
-{
-  "name": "augeo",
-  "version": "0.1.1",
-  "dependencies": {
-    "bootstrap": "3.3.6"
-  }
-}
