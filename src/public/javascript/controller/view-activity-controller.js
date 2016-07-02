@@ -22,7 +22,28 @@
   /* Description: Binds data to view-activity.html                           */
   /***************************************************************************/
 
-  augeo.controller('ViewActivityController', function($rootScope, $scope, $stateParams, $window, TwitterClientService) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($rootScope, $scope, $stateParams, $window, TwitterClientService) {
+
+    /***************************************************************************/
+    /* Private functions                                                       */
+    /***************************************************************************/
+
+    var getScreenSize = function(width) {
+      var screenSize;
+      if(width > 764) {
+        screenSize = 'large';
+      } else if(width > 500) {
+        screenSize = 'small';
+      } else {
+        screenSize = 'x-small';
+      }
+      return screenSize;
+    };
+
+    /***************************************************************************/
+    /* Controller start                                                        */
+    /***************************************************************************/
 
     // Constants
     var MAX_ID = '9999999999999999999999999999999';
@@ -92,21 +113,4 @@
       $scope.finishedLoading = false;
       $scope.getNewPage();
     };
-
-  });
-
-  /***************************************************************************/
-  /* Private functions                                                       */
-  /***************************************************************************/
-
-  var getScreenSize = function(width) {
-    var screenSize;
-    if(width > 764) {
-      screenSize = 'large';
-    } else if(width > 500) {
-      screenSize = 'small';
-    } else {
-      screenSize = 'x-small';
-    }
-    return screenSize;
   };

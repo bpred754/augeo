@@ -22,7 +22,8 @@
   /* Description: Singleton that fetches and manipulates data from Augeo API  */
   /****************************************************************************/
 
-  augeo.service('AugeoClientService', function($http, $state) {
+  // Reminder: Update service/index.js when service params are modified
+  module.exports = function($http, $state) {
 
     this.getAugeoAPI = function(url, parameters, callback) {
       $http({ method: 'GET', url: url, params: parameters}).
@@ -45,4 +46,4 @@
       });
     };
 
-  });
+  };

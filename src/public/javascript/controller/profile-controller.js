@@ -22,7 +22,8 @@
   /* Description: Binds data to profile.html                                 */
   /***************************************************************************/
 
-  augeo.controller('ProfileController', function($scope, $timeout, $interval, TwitterClientService, ActivityService) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, $timeout, $interval, TwitterClientService, ActivityService) {
 
     // Internal functions
     var init = function() {
@@ -108,4 +109,4 @@
 
     // Initialize Profile page
     init();
-  });
+  };

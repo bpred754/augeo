@@ -19,47 +19,16 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton that provides validating functions               */
+  /* Description: Google Analytics handler                                   */
   /***************************************************************************/
 
-  // Reminder: Update service/index.js when service params are modified
   module.exports = function() {
 
-    var VALID_CHARACTER_REGEX = new RegExp('^(\\w|[!@#$%^&*(){}\\[\\]|?., ])+');
-
-    this.isEmailValid = function(email) {
-      var isValid = false;
-
-      if(email) {
-        if(email.indexOf('@') != -1 && email.match(VALID_CHARACTER_REGEX)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
-
-    this.isPasswordValid = function(password) {
-      isValid = false;
-
-      if(password) {
-        var passwordRegex = new RegExp('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})');
-        if(password.match(VALID_CHARACTER_REGEX) && password.match(passwordRegex)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
-
-    this.isStringAlphabetic = function(string) {
-      var isValid = false;
-
-      if(string) {
-        var alphabeticRegex = new RegExp('^[a-zA-Z]+$');
-        if(string.match(alphabeticRegex)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-70689834-2', 'auto');
+    //ga('send', 'pageview'); // Comment out for angulartics
 
   };

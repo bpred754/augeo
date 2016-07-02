@@ -22,7 +22,8 @@
   /* Description: Calls UserClientService to logout user                     */
   /***************************************************************************/
 
-  augeo.controller('LogoutController', function($scope, $controller, UserClientService) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, $controller, UserClientService) {
 
     // Import loginController methods
     $controller('LoginController', { $scope: $scope });
@@ -32,4 +33,4 @@
       $scope.loginMessage = response.status; // Set message
     });
 
-  }); // End controller
+  }; // End controller

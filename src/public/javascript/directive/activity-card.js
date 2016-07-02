@@ -22,7 +22,8 @@
   /* Description: Javascript for activity-card directive                     */
   /***************************************************************************/
 
-  augeo.directive('activityCard', function() {
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
     return {
       restrict: 'E',
       scope: {
@@ -33,4 +34,4 @@
       templateUrl: 'html/directive/activity-card.html',
       controller: 'ActivityController'
     }
-  });
+  };

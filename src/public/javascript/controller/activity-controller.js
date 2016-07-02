@@ -22,7 +22,8 @@
   /* Description: Javascript for activity directives                         */
   /***************************************************************************/
 
-  augeo.controller('ActivityController', function($scope, ActivityService) {
+   // Reminder: Update controller/index.js when controller params are modified
+   module.exports = function($scope, ActivityService) {
 
     $scope.$watch(function() {
       return $scope.tweetData;
@@ -46,6 +47,5 @@
         }
       }
     });
-
-  });
+  };
 

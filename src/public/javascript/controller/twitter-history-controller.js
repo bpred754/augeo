@@ -22,7 +22,8 @@
   /* Description: Binds data to twitter-history.html                          */
   /***************************************************************************/
 
-  augeo.controller('TwitterHistoryController', function($scope, TwitterClientService) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, TwitterClientService) {
 
     $scope.setMember = function() {
       TwitterClientService.setMember(function(status){
@@ -64,4 +65,4 @@
     // Initialize Twitter History page
     $scope.setTwitterHistoryPageData();
 
-  });
+  };

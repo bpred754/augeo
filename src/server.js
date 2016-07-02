@@ -24,6 +24,7 @@
   var Express = require('express');
   var Path = require('path');
   var Session = require('express-session');
+  var Compression = require('compression');
 
   // Logger
   var Logger = require('./module/logger');
@@ -64,6 +65,8 @@
     saveUninitialized: true // Forces a session that is "uninitialized" to be saved to the store
     })
   );
+
+  app.use(Compression());
 
   // Configure static files location
   app.use(Express.static(Path.join(__dirname, 'public')));

@@ -22,7 +22,8 @@
   /* Description: Binds data to login.html                                   */
   /***************************************************************************/
 
-  augeo.controller('LoginController', function($scope, $window, $state, UserClientService, TwitterClientService, ClientValidator) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, $window, $state, UserClientService, TwitterClientService, ClientValidator) {
 
     // Constants
     var INVALID_LOGIN = 'Invalid email address or password'
@@ -134,4 +135,4 @@
      }
 
    }; // End validateAndDisclose
-  }); // End controller
+  }; // End controller

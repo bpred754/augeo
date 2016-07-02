@@ -22,7 +22,8 @@
   /* Description: Controller for the application                             */
   /***************************************************************************/
 
-  augeo.controller('AppController', function($scope, $state, UserClientService) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, $state, UserClientService) {
 
     $scope.$on('$stateChangeStart',
       function(event, toState, toParams, fromState, fromParams){
@@ -52,4 +53,4 @@
           }
         });
       };
-  });
+  };

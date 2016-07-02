@@ -22,7 +22,8 @@
   /* Description: Binds data to leaderboard.html                             */
   /***************************************************************************/
 
-  augeo.controller('LeaderboardController', function($scope, TwitterClientService) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, TwitterClientService) {
 
     // Constants
     var USERS_PER_PAGE = 25;
@@ -169,4 +170,4 @@
     }
 
     init();
-  });
+  };

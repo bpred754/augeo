@@ -18,5 +18,11 @@
   /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
   /***************************************************************************/
 
-  var augeo = angular.module('augeo', ['ui.router','infinite-scroll', 'angulartics', 'angulartics.google.analytics',
-    'angularGrid', 'angular-progress-arc']);
+  /***************************************************************************/
+  /* Description: Index file that requires all Angular config components for */
+  /*   browserify                                                            */
+  /***************************************************************************/
+
+  var augeo = require('angular').module('augeo');
+
+  augeo.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$analyticsProvider', require('./route-manager')]);

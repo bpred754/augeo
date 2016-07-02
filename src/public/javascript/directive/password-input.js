@@ -22,7 +22,8 @@
   /* Description: Custom html element to take password input                    */
   /***************************************************************************/
 
-  augeo.directive('passwordInput', function() {
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
     return {
       restrict: 'E',
       template:'<input class="form-control input-lg password-input" type="password" placeholder="Password" ng-model="bindModel">',
@@ -38,4 +39,4 @@
         });
       }
     }
-  });
+  };

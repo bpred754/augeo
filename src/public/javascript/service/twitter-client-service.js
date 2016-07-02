@@ -22,7 +22,31 @@
   /* Description: Singleton that fetches data for Augeo's twitter-api.       */
   /***************************************************************************/
 
-  augeo.service('TwitterClientService', function(AugeoClientService) {
+  // Reminder: Update service/index.js when service params are modified
+  module.exports = function(AugeoClientService) {
+
+    /***************************************************************************/
+    /* Private Functions                                                       */
+    /***************************************************************************/
+
+    var formatTime = function(seconds) {
+      var minutes = Math.floor(seconds/60);
+      var hours = Math.floor(minutes/60);
+      var days = Math.floor(hours/24);
+      seconds = seconds%60;
+
+      var timeString = '';
+      if(days < 1) {
+        timeString = hours + 'h ' + minutes + 'm ' + seconds + 's';
+      } else {
+        timeString = days + 'd ' + hours + 'h ' + minutes + 'm';
+      }
+      return timeString;
+    };
+
+    /***************************************************************************/
+    /* Service starts                                                          */
+    /***************************************************************************/
 
     this.getActivityDisplayData = function(callback) {
       var parameters = null;
@@ -108,24 +132,4 @@
         callback(data);
       });
     };
-
-    /***************************************************************************/
-    /* Private Functions                                                       */
-    /***************************************************************************/
-
-    var formatTime = function(seconds) {
-      var minutes = Math.floor(seconds/60);
-      var hours = Math.floor(minutes/60);
-      var days = Math.floor(hours/24);
-      seconds = seconds%60;
-
-      var timeString = '';
-      if(days < 1) {
-        timeString = hours + 'h ' + minutes + 'm ' + seconds + 's';
-      } else {
-        timeString = days + 'd ' + hours + 'h ' + minutes + 'm';
-      }
-      return timeString;
-    };
-
-  });
+  };

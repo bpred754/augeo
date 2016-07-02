@@ -40,3 +40,7 @@ notes
 
 # WebStorm
 .idea/
+
+# Browserify
+bundle.js
+bundle.map.js

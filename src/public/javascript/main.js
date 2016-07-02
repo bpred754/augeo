@@ -19,47 +19,33 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton that provides validating functions               */
+  /* Description: File used by browserify to bundle javascript               */
   /***************************************************************************/
 
-  // Reminder: Update service/index.js when service params are modified
-  module.exports = function() {
+  window.jQuery = $ = require('jquery');
 
-    var VALID_CHARACTER_REGEX = new RegExp('^(\\w|[!@#$%^&*(){}\\[\\]|?., ])+');
+  // Require node_module libraries
+  require('angular');
+  require('angulartics');
+  require('angular-ui-router');
+  require('bootstrap/dist/js/bootstrap');
 
-    this.isEmailValid = function(email) {
-      var isValid = false;
+  // Require local libraries
+  require('./lib/angular-grid');
+  require('./lib/angular-progress-arc')();
+  require('./lib/google-analytics')();
 
-      if(email) {
-        if(email.indexOf('@') != -1 && email.match(VALID_CHARACTER_REGEX)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
+  // Initialize angular module
+  angular.module('augeo', ['ui.router', 'angulartics', require('angulartics-google-analytics'), 'angularGrid', 'angular-progress-arc']);
 
-    this.isPasswordValid = function(password) {
-      isValid = false;
+  // Grab angular components from public directories that contain an index.js
+  require('./config');
+  require('./controller');
+  require('./directive');
+  require('./service');
+  require('./filter');
 
-      if(password) {
-        var passwordRegex = new RegExp('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})');
-        if(password.match(VALID_CHARACTER_REGEX) && password.match(passwordRegex)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
-
-    this.isStringAlphabetic = function(string) {
-      var isValid = false;
-
-      if(string) {
-        var alphabeticRegex = new RegExp('^[a-zA-Z]+$');
-        if(string.match(alphabeticRegex)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
-
-  };
+  // Require libraries after page is ready
+  $(document).ready(function() {
+    require('./lib/twitter-intent')();
+  });

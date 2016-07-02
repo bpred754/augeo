@@ -22,7 +22,8 @@
   /* Description: Javascript for activity-transition directive               */
   /***************************************************************************/
 
-  augeo.directive('activityTransition', function($controller) {
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
     return {
       restrict: 'E',
       scope: {
@@ -39,4 +40,4 @@
         });
       }
     }
-  });
+  };

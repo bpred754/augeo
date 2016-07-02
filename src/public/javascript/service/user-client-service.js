@@ -22,7 +22,8 @@
   /* Description: Singleton that fetches data from Augeo's user-api          */
   /***************************************************************************/
 
-  augeo.service('UserClientService', function(AugeoClientService) {
+  // Reminder: Update service/index.js when service params are modified
+  module.exports = function(AugeoClientService) {
 
     this.addUser = function(user, callback) {
       AugeoClientService.postAugeoAPI('user-api/add', user, callback);
@@ -49,4 +50,4 @@
       AugeoClientService.postAugeoAPI('user-api/logout', parameters, callback);
     };
 
-  });
+  };

@@ -17,49 +17,13 @@
   /* You should have received a copy of the GNU General Public License       */
   /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
   /***************************************************************************/
-
+  
   /***************************************************************************/
-  /* Description: Singleton that provides validating functions               */
+  /* Description: Index file that requires all error controllers for         */
+  /*   browserify                                                            */
   /***************************************************************************/
 
-  // Reminder: Update service/index.js when service params are modified
-  module.exports = function() {
+  var augeo = require('angular').module('augeo');
 
-    var VALID_CHARACTER_REGEX = new RegExp('^(\\w|[!@#$%^&*(){}\\[\\]|?., ])+');
+  augeo.controller('SignupErrorController', ['$scope', '$controller', require('./signup-error-controller')]);
 
-    this.isEmailValid = function(email) {
-      var isValid = false;
-
-      if(email) {
-        if(email.indexOf('@') != -1 && email.match(VALID_CHARACTER_REGEX)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
-
-    this.isPasswordValid = function(password) {
-      isValid = false;
-
-      if(password) {
-        var passwordRegex = new RegExp('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})');
-        if(password.match(VALID_CHARACTER_REGEX) && password.match(passwordRegex)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
-
-    this.isStringAlphabetic = function(string) {
-      var isValid = false;
-
-      if(string) {
-        var alphabeticRegex = new RegExp('^[a-zA-Z]+$');
-        if(string.match(alphabeticRegex)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
-
-  };

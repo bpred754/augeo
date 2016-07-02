@@ -116,126 +116,26 @@
         </div>
       </div>
 
-      <!-- JavaScript Imports
-      ================================================== -->
-      <script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
-      <script type="text/javascript" src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
-      <script type="text/javascript" src="libs/angular/angular.min.js"></script>
-      <script type="text/javascript" src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
-      <script type="text/javascript" src="libs/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
-      <script type="text/javascript" src="libs/angulartics/dist/angulartics.min.js"></script>
-      <script type="text/javascript" src="libs/angulartics-google-analytics/dist/angulartics-google-analytics.min.js"></script>
-      <script type="text/javascript" src="libs/angular-progress-arc/angular-progress-arc.min.js"></script>
+      <!-- JavaScript -->
+      <script type="text/javascript" src="javascript/bundle.js"></script>
 
-      <!-- Layout Imports -->
-      <script type="text/javascript" src="javascript/angular-config.js"></script>
-      <script type="text/javascript" src="javascript/route-manager.js"></script>
-
-      <!-- Directives -->
-      <script type="text/javascript" src="javascript/directive/skill-view.js"></script>
-      <script type="text/javascript" src="javascript/directive/password-input.js"></script>
-      <script type="text/javascript" src="javascript/directive/leaderboard-entry.js"></script>
-      <script type="text/javascript" src="javascript/directive/paginate.js"></script>
-      <script type="text/javascript" src="javascript/directive/activity-card.js"></script>
-      <script type="text/javascript" src="javascript/directive/activity-transition.js"></script>
-
-      <!-- Controllers -->
-      <script type="text/javascript" src="javascript/controller/app-controller.js"></script>
-      <script type="text/javascript" src="javascript/controller/errors/signup-error-controller.js"></script>
-      <script type="text/javascript" src="javascript/controller/login-controller.js"></script>
-      <script type="text/javascript" src="javascript/controller/logout-controller.js"></script>
-      <script type="text/javascript" src="javascript/controller/profile-controller.js"></script>
-      <script type="text/javascript" src="javascript/controller/twitter-history-controller.js"></script>
-      <script type="text/javascript" src="javascript/controller/leaderboard-controller.js"></script>
-      <script type="text/javascript" src="javascript/controller/view-activity-controller.js"></script>
-      <script type="text/javascript" src="javascript/controller/activity-controller.js"></script>
-
-      <!-- Client Services -->
-      <script type="text/javascript" src="javascript/service/augeo-client-service.js"></script>
-      <script type="text/javascript" src="javascript/service/user-client-service.js"></script>
-      <script type="text/javascript" src="javascript/service/twitter-client-service.js"></script>
-      <script type="text/javascript" src="javascript/service/client-validator.js"></script>
-      <script type="text/javascript" src="javascript/service/activity-service.js"></script>
-
-      <!-- Filters -->
-      <script type="text/javascript" src="javascript/filter/html.js"></script>
-
-      <!-- Custom Libraries -->
-      <script type="text/javascript" src="javascript/lib/angular-grid.js"></script>
-
-      <!-- Layout page javascript -->
       <script>
 
-      var showDeleteModal = function() {
-        $('#delete-modal').modal();
-      }
+        var showDeleteModal = function() {
+          $('#delete-modal').modal();
+        }
 
-      $(document).ready(function() {
-        $('#delete-modal').on('hidden.bs.modal', function () {
-          $('#delete-password').val('');
-          var scope = angular.element($("#delete-modal")).scope();
-          scope.$apply(function() {
-            scope.removeErrorMessage = '';
+        $(document).ready(function() {
+          $('#delete-modal').on('hidden.bs.modal', function () {
+            $('#delete-password').val('');
+            var scope = angular.element($("#delete-modal")).scope();
+            scope.$apply(function() {
+              scope.removeErrorMessage = '';
+            });
           });
+
         });
 
-        // Twitter Intents handler
-        (function() {
-          if (window.__twitterIntentHandler) return;
-          var intentRegex = /twitter\.com(\:\d{2,4})?\/intent\/(\w+)/,
-                  windowOptions = 'scrollbars=yes,resizable=yes,toolbar=no,location=yes',
-                  width = 550,
-                  height = 420,
-                  winHeight = screen.height,
-                  winWidth = screen.width;
-
-          function handleIntent(e) {
-            e = e || window.event;
-            var target = e.target || e.srcElement,
-                    m, left, top;
-
-            while (target && target.nodeName.toLowerCase() !== 'a') {
-              target = target.parentNode;
-            }
-
-            if (target && target.nodeName.toLowerCase() === 'a' && target.href) {
-              m = target.href.match(intentRegex);
-              if (m) {
-                left = Math.round((winWidth / 2) - (width / 2));
-                top = 0;
-
-                if (winHeight > height) {
-                  top = Math.round((winHeight / 2) - (height / 2));
-                }
-
-                window.open(target.href, 'intent', windowOptions + ',width=' + width +
-                        ',height=' + height + ',left=' + left + ',top=' + top);
-                e.returnValue = false;
-                e.preventDefault && e.preventDefault();
-              }
-            }
-          }
-
-          if (document.addEventListener) {
-            document.addEventListener('click', handleIntent, false);
-          } else if (document.attachEvent) {
-            document.attachEvent('onclick', handleIntent);
-          }
-          window.__twitterIntentHandler = true;
-        }());
-
-      });
-
-      </script>
-
-      <!-- Google Analytics -->
-      <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-70689834-2', 'auto');
-        //ga('send', 'pageview'); // Comment out for angulartics
       </script>
 
     </body>

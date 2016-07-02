@@ -19,47 +19,53 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton that provides validating functions               */
+  /* Description: Twitter intents handler                                    */
   /***************************************************************************/
 
-  // Reminder: Update service/index.js when service params are modified
   module.exports = function() {
 
-    var VALID_CHARACTER_REGEX = new RegExp('^(\\w|[!@#$%^&*(){}\\[\\]|?., ])+');
+    (function () {
+      if (window.__twitterIntentHandler) return;
+      var intentRegex = /twitter\.com(\:\d{2,4})?\/intent\/(\w+)/,
+        windowOptions = 'scrollbars=yes,resizable=yes,toolbar=no,location=yes',
+        width = 550,
+        height = 420,
+        winHeight = screen.height,
+        winWidth = screen.width;
 
-    this.isEmailValid = function(email) {
-      var isValid = false;
+      function handleIntent(e) {
+        e = e || window.event;
+        var target = e.target || e.srcElement,
+          m, left, top;
 
-      if(email) {
-        if(email.indexOf('@') != -1 && email.match(VALID_CHARACTER_REGEX)) {
-          isValid = true;
+        while (target && target.nodeName.toLowerCase() !== 'a') {
+          target = target.parentNode;
+        }
+
+        if (target && target.nodeName.toLowerCase() === 'a' && target.href) {
+          m = target.href.match(intentRegex);
+          if (m) {
+            left = Math.round((winWidth / 2) - (width / 2));
+            top = 0;
+
+            if (winHeight > height) {
+              top = Math.round((winHeight / 2) - (height / 2));
+            }
+
+            window.open(target.href, 'intent', windowOptions + ',width=' + width +
+              ',height=' + height + ',left=' + left + ',top=' + top);
+            e.returnValue = false;
+            e.preventDefault && e.preventDefault();
+          }
         }
       }
-      return isValid;
-    };
 
-    this.isPasswordValid = function(password) {
-      isValid = false;
-
-      if(password) {
-        var passwordRegex = new RegExp('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})');
-        if(password.match(VALID_CHARACTER_REGEX) && password.match(passwordRegex)) {
-          isValid = true;
-        }
+      if (document.addEventListener) {
+        document.addEventListener('click', handleIntent, false);
+      } else if (document.attachEvent) {
+        document.attachEvent('onclick', handleIntent);
       }
-      return isValid;
-    };
-
-    this.isStringAlphabetic = function(string) {
-      var isValid = false;
-
-      if(string) {
-        var alphabeticRegex = new RegExp('^[a-zA-Z]+$');
-        if(string.match(alphabeticRegex)) {
-          isValid = true;
-        }
-      }
-      return isValid;
-    };
-
+      window.__twitterIntentHandler = true;
+    }());
   };
+

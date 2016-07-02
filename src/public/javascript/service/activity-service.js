@@ -22,7 +22,8 @@
   /* Description: Singleton that contains logic for activity controllers     */
   /***************************************************************************/
 
-  augeo.service('ActivityService', function() {
+  // Reminder: Update service/index.js when service params are modified
+  module.exports = function() {
 
     this.formatTweet = function(inTweet) {
 
@@ -65,7 +66,7 @@
       tweet.text = html;
       return tweet;
     };
-  });
+  };
 
 
 

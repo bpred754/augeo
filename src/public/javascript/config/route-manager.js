@@ -22,9 +22,7 @@
   /* Description: Routes requests to controllers and views                   */
   /***************************************************************************/
 
-  augeo.config(function($stateProvider, $urlRouterProvider, $locationProvider, $logProvider, $analyticsProvider) {
-
-    $logProvider.debugEnabled(true);
+  module.exports = function($stateProvider, $urlRouterProvider, $locationProvider, $analyticsProvider) {
 
     $urlRouterProvider.otherwise('/profile');
 
@@ -132,4 +130,4 @@
 
     // Remove # from url
     $locationProvider.html5Mode(true);
-  });
+  };

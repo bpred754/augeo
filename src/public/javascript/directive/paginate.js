@@ -22,7 +22,8 @@
   /* Description: Custom html element to paginate a list of information.     */
   /***************************************************************************/
 
-  augeo.directive('paginate', function() {
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
     return {
         restrict: 'AE',
         scope: {
@@ -186,4 +187,4 @@
           };
         }
       }
-  });
+  };

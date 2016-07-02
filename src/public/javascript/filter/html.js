@@ -22,8 +22,9 @@
   /* Description: Filter to enforce scope string values are safe HTML        */
   /***************************************************************************/
 
-  augeo.filter('html', ['$sce', function($sce) {
+  // Reminder: Update filter/index.js when filter params are modified
+  module.exports = function($sce) {
     return function (text) {
       return $sce.trustAsHtml(text);
     }
-  }]);
+  };

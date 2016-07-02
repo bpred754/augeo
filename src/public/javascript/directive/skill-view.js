@@ -22,7 +22,8 @@
   /* Description: Custom html element to display skill data                  */
   /***************************************************************************/
 
-  augeo.directive('skillView', function() {
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
     return {
       restrict: 'E',
       scope: {
@@ -30,13 +31,13 @@
         isMainSkill: '='
       },
       templateUrl: 'html/directive/skill-view.html',
-      controller: function($scope) {
+      controller: ['$scope', function($scope) {
         if(!$scope.isMainSkill) {
           $scope.isSubSkill = true;
           $scope.skillViewSize = 185;
         } else {
           $scope.skillViewSize = 250;
         }
-      }
+      }]
     }
-  });
+  };

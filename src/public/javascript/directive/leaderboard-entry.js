@@ -23,7 +23,8 @@
   /*              leaderboard screen.                                        */
   /***************************************************************************/
 
-  augeo.directive('leaderboardEntry', function($window, TwitterClientService) {
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
     return {
         restrict: 'E',
         scope: {
@@ -82,4 +83,4 @@
           });
         }
     }
-  });
+  };
