@@ -35,30 +35,33 @@
     $scope.setTwitterHistoryPageData = function() {
       TwitterClientService.getTwitterHistoryPageData(function(pageData) {
 
-        $scope.tweetDTO = {
-          isComplete: false,
-          waitTime: pageData.tweetWaitTime
-        };
+        if(pageData != 'Unauthorized') {
 
-        $scope.mentionDTO = {
-          isComplete: false,
-          waitTime: pageData.mentionWaitTime
-        };
+          $scope.tweetDTO = {
+            isComplete: false,
+            waitTime: pageData.tweetWaitTime
+          };
 
-        if(pageData.tweetWaitTime == -1) {
-          $scope.tweetDTO.isComplete = true;
+          $scope.mentionDTO = {
+            isComplete: false,
+            waitTime: pageData.mentionWaitTime
+          };
+
+          if (pageData.tweetWaitTime == -1) {
+            $scope.tweetDTO.isComplete = true;
+          }
+
+          if (pageData.mentionWaitTime == -1) {
+            $scope.mentionDTO.isComplete = true;
+          }
+
+          // If the user is not a member display welcome modal
+          if (pageData.isMember === false) {
+            showModal();
+          }
+
+          $scope.isLoaded = true;
         }
-
-        if(pageData.mentionWaitTime == -1) {
-          $scope.mentionDTO.isComplete = true;
-        }
-
-        // If the user is not a member display welcome modal
-        if(pageData.isMember === false) {
-          showModal();
-        }
-
-        $scope.isLoaded = true;
       });
     };
 

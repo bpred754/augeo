@@ -34,15 +34,18 @@
 
       TwitterClientService.getLeaderboardDisplayData (function(data) {
 
-        $scope.searchName = data.screenName;
-        $scope.twitterSkills = data.skills;
-        $scope.lastPage = Math.ceil(data.numberUsers/USERS_PER_PAGE);
+        if(data != 'Unauthorized') {
 
-        TwitterClientService.getCompetitors(data.screenName, $scope.currentTwitterSkill, function(inUsers) {
-          $scope.isLoaded = true;
-          $scope.currentPage = Math.ceil(inUsers[0].rank/USERS_PER_PAGE);
-          $scope.users = inUsers;
-        });
+          $scope.searchName = data.screenName;
+          $scope.twitterSkills = data.skills;
+          $scope.lastPage = Math.ceil(data.numberUsers / USERS_PER_PAGE);
+
+          TwitterClientService.getCompetitors(data.screenName, $scope.currentTwitterSkill, function (inUsers) {
+            $scope.isLoaded = true;
+            $scope.currentPage = Math.ceil(inUsers[0].rank / USERS_PER_PAGE);
+            $scope.users = inUsers;
+          });
+        }
 
       });
     };

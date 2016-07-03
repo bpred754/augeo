@@ -25,6 +25,8 @@
   // Reminder: Update controller/index.js when controller params are modified
   module.exports = function($scope, $state, UserClientService) {
 
+    $scope.layoutNavbar = 'hidden';
+
     $scope.$on('$stateChangeStart',
       function(event, toState, toParams, fromState, fromParams){
 
@@ -32,12 +34,12 @@
 
           if(toState.name != 'logout') {
             if(user.firstName) {
-              $scope.myStyle = 'iniitial';
+              $scope.layoutNavbar = 'initial';
             } else {
-              $scope.myStyle = 'hidden';
+              $scope.layoutNavbar = 'hidden';
             }
           } else {
-            $scope.myStyle = 'hidden';
+            $scope.layoutNavbar = 'hidden';
           }
         });
       });

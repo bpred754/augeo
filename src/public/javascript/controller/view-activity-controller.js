@@ -65,16 +65,19 @@
 
     TwitterClientService.getActivityDisplayData(function(data) {
 
-      $scope.isLoaded = true;
+      if(data != 'Unauthorized') {
 
-      if($stateParams.screenName) {
-        $scope.screenName = $stateParams.screenName;
-      } else {
-        $scope.screenName = data.screenName;
+        $scope.isLoaded = true;
+
+        if ($stateParams.screenName) {
+          $scope.screenName = $stateParams.screenName;
+        } else {
+          $scope.screenName = data.screenName;
+        }
+
+        $scope.twitterSkills = data.skills;
+        $scope.setSkillActivity('Twitter');
       }
-
-      $scope.twitterSkills = data.skills;
-      $scope.setSkillActivity('Twitter');
     });
 
     $scope.getGlyphicon = function(name) {

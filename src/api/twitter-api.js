@@ -185,7 +185,7 @@
     }
 
     if(!isValid) {
-      response.sendStatus(400);
+      response.sendStatus(401);
     }
   });
 
