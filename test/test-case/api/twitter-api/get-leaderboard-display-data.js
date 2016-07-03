@@ -42,7 +42,7 @@
 
       agent
         .get('/twitter-api/getLeaderboardDisplayData')
-        .expect(400)
+        .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
