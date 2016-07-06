@@ -27,11 +27,12 @@
           <div id="head-container" class="text-align-center">
             <div id="header-title" class="x-large-text">Leaderboards</div>
             <div id="skill-container">
-                <a href="https://www.twitter.com">
-                  <img id="skill-icon" src="image/twitter/logo-blue-medium.png">
-                </a>
+              <a ng-if="currentTwitterSkill == 'Twitter'" href="https://www.twitter.com">
+                <img id="skill-icon" src="image/twitter/logo-blue-medium.png">
+              </a>
+              <span ng-if="currentTwitterSkill != 'Twitter'" class="glyphicon {{getGlyphicon()}} skill-glyphicon"></span>
             </div>
-            <select id="skill-select" class="form-control standard-text">
+            <select id="skill-select" class="form-control standard-text" ng-model="currentTwitterSkill" ng-change="getCompetitors()">
               <option>Twitter</option>
               <option ng-repeat="twitterSkill in twitterSkills">{{twitterSkill.name}}</option>
             </select>
@@ -49,7 +50,7 @@
           <input id="user-entry-input" type="text" class="form-control standard-text" ng-model="searchName">
         </div>
         <div id="go-button-container" class="col-xs-1">
-          <div id="go-button" class="standard-text btn btn-default btn-small" ng-click="getCompetitorsWithScreenName()">
+          <div id="go-button" class="standard-text btn btn-default btn-small" ng-click="getCompetitors()">
             <span id="go-button-title">GO</span>
           </div>
         </div>
@@ -70,46 +71,23 @@
 
   <script>
 
-  $(document).ready(function() {
+    $(document).ready(function() {
 
-    // Handle change of leaderboard skill
-    var skillSelect = $('#skill-select');
-    var skillContainer = $('#skill-container');
+      // Call getCompetitors when user presses enter key when input is in focus
+      $("#user-entry-input").keyup(function (e) {
+        if (e.keyCode == 13) {
+          angular.element($('#skill-container')).scope().getCompetitors();
 
-    // Call getSkillLeaders when a new skills is chosen
-    skillSelect.change(function() {
+          $('#go-button').removeClass('go-button');
+          $('#go-button').addClass('go-button-enter');
 
-      skillContainer.empty();
+          window.setTimeout(function() {
+            $('#go-button').addClass('go-button');
+            $('#go-button').removeClass('go-button-enter');
+          }, 50);
+        }
+      });
 
-      if(skillSelect.val() == 'Twitter') {
-
-        skillContainer.html('<a id="twitter-link" href="https://www.twitter.com"></a>');
-        $('#twitter-link').html('<img id="skill-icon" src="image/twitter/logo-blue-medium.png">');
-      } else {
-
-        var glyphicon = angular.element(skillContainer).scope().getGlyphicon(skillSelect.val());
-        skillContainer.append('<span class="glyphicon ' + glyphicon + ' skill-glyphicon"></span>');
-      }
-
-      // Call controller to retrieve users for selected skill
-      angular.element(skillContainer).scope().getSkillLeaders(skillSelect.val());
     });
-
-    // Call getCompetitorsWithScreenName when user presses enter key when input is in focus
-    $("#user-entry-input").keyup(function (e) {
-      if (e.keyCode == 13) {
-        angular.element(skillContainer).scope().getCompetitorsWithScreenName();
-
-        $('#go-button').removeClass('go-button');
-        $('#go-button').addClass('go-button-enter');
-
-        window.setTimeout(function() {
-          $('#go-button').addClass('go-button');
-          $('#go-button').removeClass('go-button-enter');
-        }, 50);
-      }
-    });
-
-  });
 
   </script>

@@ -50,44 +50,41 @@
       });
     };
 
-    $scope.getCompetitorsWithScreenName = function() {
-      TwitterClientService.getCompetitors($scope.searchName, $scope.currentTwitterSkill, function(inUsers) {
-        setUsers(inUsers);
+    $scope.getCompetitors= function() {
 
-        // Get rank of first user in page
-        var firstRank = inUsers[0].rank;
+      if($scope.searchName.length > 0) {
+        TwitterClientService.getCompetitors($scope.searchName, $scope.currentTwitterSkill, function (inUsers) {
+          setUsers(inUsers);
 
-        // Set page number
-        var pageNumber = Math.ceil(firstRank/USERS_PER_PAGE);
-        $scope.currentPage = pageNumber;
-      });
+          // Get rank of first user in page
+          var firstRank = inUsers[0].rank;
+
+          // Set page number
+          var pageNumber = Math.ceil(firstRank / USERS_PER_PAGE);
+          $scope.currentPage = pageNumber;
+        });
+      } else {
+
+        // Get top of leaderboard
+        var startRank = 0;
+        var endRank = USERS_PER_PAGE - 1;
+
+        TwitterClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
+          setUsers(inUsers);
+          $scope.currentPage = 1;
+        });
+      }
     };
 
-    $scope.getGlyphicon = function(name) {
+    $scope.getGlyphicon = function() {
       var glyphicon = '';
       for(var i = 0; i < $scope.twitterSkills.length; i++) {
-        if($scope.twitterSkills[i].name == name) {
+        if($scope.twitterSkills[i].name == $scope.currentTwitterSkill) {
           glyphicon = $scope.twitterSkills[i].glyphicon;
           break;
         }
       }
       return glyphicon;
-    };
-
-    $scope.getSkillLeaders = function(skill) {
-
-      $scope.currentTwitterSkill = skill;
-
-      TwitterClientService.getCompetitors($scope.searchName, skill, function(inUsers) {
-        setUsers(inUsers);
-
-        // Get rank of first user in page
-        var firstRank = inUsers[0].rank;
-
-        // Set page number
-        var pageNumber = Math.ceil(firstRank/USERS_PER_PAGE);
-        $scope.currentPage = pageNumber;
-      });
     };
 
     $scope.loadNext = function() {
