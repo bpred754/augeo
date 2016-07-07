@@ -36,8 +36,8 @@
 
     var agent = Request.agent(app);
 
-    // Invalid screen name in session
-    it('should return status 401 - invalid screen name in session', function(done) {
+    // Invalid username in session
+    it('should return status 401 - invalid username in session', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
@@ -49,8 +49,8 @@
         });
     });
 
-    // Valid screen name in session
-    it('should return status 200 - valid screen name in session', function(done) {
+    // Valid username in session
+    it('should return status 200 - valid username in session', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
@@ -67,7 +67,7 @@
             .end(function(error1, response1) {
               Should.not.exist(error1);
 
-              Assert.strictEqual(response1.body.screenName, Common.USER.twitter.screenName);
+              Assert.strictEqual(response1.body.username, Common.USER.username);
 
               var skills = response1.body.skills;
               var actualSkills = TwitterUtility.getSubSkills();

@@ -62,7 +62,7 @@
         <div class="col-xs-1 hidden-sm"></div>
       </div>
       <div class="row">
-        <leaderboard-entry ng-repeat="user in users"  user="user" search-name="searchName"></leaderboard-entry>
+        <leaderboard-entry ng-repeat="user in users" user="user" search-name="searchName"></leaderboard-entry>
       </div>
       <div class="row leaderboard-row"></div>
       <paginate current-page-number="currentPage" end-page="lastPage" next="loadNext()" previous="loadPrevious()" load-page="loadPage(page)"></paginate>

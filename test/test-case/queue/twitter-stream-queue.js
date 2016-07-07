@@ -62,8 +62,8 @@
             Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.getTweetExperience() + TwitterUtility.getRetweetExperience());
 
             // Verify ranks
-            User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank1) {
-              User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank1) {
+            User.getSkillRank(Common.USER.username, 'Twitter', function(userRank1) {
+              User.getSkillRank(Common.ACTIONEE.username, 'Twitter', function(actioneeRank1) {
                 userRank1.should.be.below(actioneeRank1);
                 done();
               });
@@ -111,8 +111,8 @@
                   Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.getTweetExperience());
 
                   // Verify ranks
-                  User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank1) {
-                    User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank1) {
+                  User.getSkillRank(Common.USER.username, 'Twitter', function(userRank1) {
+                    User.getSkillRank(Common.ACTIONEE.username, 'Twitter', function(actioneeRank1) {
                       userRank1.should.be.below(actioneeRank1);
                       done();
                     });
@@ -179,8 +179,8 @@
                       Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.getTweetExperience());
 
                       // Verify ranks
-                      User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank1) {
-                        User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank1) {
+                      User.getSkillRank(Common.USER.username, 'Twitter', function(userRank1) {
+                        User.getSkillRank(Common.ACTIONEE.username, 'Twitter', function(actioneeRank1) {
                           userRank1.should.be.below(actioneeRank1);
                           done();
                         });
@@ -215,8 +215,8 @@
       streamQueue.addAction(queueData1, function() {
 
         // Verify ranks
-        User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank0) {
-          User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank0) {
+        User.getSkillRank(Common.USER.username, 'Twitter', function(userRank0) {
+          User.getSkillRank(Common.ACTIONEE.username, 'Twitter', function(actioneeRank0) {
             userRank0.should.be.below(actioneeRank0);
 
             // Get original experience for User and Actionee
@@ -244,8 +244,8 @@
                     Assert.strictEqual(userAfterExperience, initialUserExperience - TwitterUtility.getTweetExperience() - TwitterUtility.getRetweetExperience());
 
                     // Verify ranks
-                    User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank1) {
-                      User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank1) {
+                    User.getSkillRank(Common.USER.username, 'Twitter', function(userRank1) {
+                      User.getSkillRank(Common.ACTIONEE.username, 'Twitter', function(actioneeRank1) {
                         userRank1.should.be.above(actioneeRank1);
                         done();
                       });

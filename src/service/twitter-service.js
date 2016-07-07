@@ -188,21 +188,21 @@
     Tweet.getLatestTweetId(screenName, callback);
   };
 
-  exports.getCompetitors = function(screenName, skill, callback, rollback) {
+  exports.getCompetitors = function(username, skill, callback, rollback) {
 
-    if(TwitterValidator.isSkillValid(skill) && TwitterValidator.isScreenNameValid(screenName)) {
+    if(TwitterValidator.isSkillValid(skill) && AugeoValidator.isUsernameValid(username)) {
 
-      User.checkExistingTwitterUser(screenName, function(userExists) {
+      User.doesUsernameExist(username, function(userExists) {
 
         if(!userExists) {
           getCompetitorsWithRankPrivate(1, USERS_PER_PAGE, skill, callback);
         } else {
 
           // Get users skill rank
-          User.getSkillRank(screenName, skill, function(rank) {
+          User.getSkillRank(username, skill, function(rank) {
 
             // Divisor = Users rank divided by USERS_PER_PAGE.
-            var divisor
+            var divisor;
             if(rank % USERS_PER_PAGE == 0) {
               divisor = rank/USERS_PER_PAGE -1;
             } else {
@@ -210,10 +210,7 @@
             }
 
             var startRank = divisor * USERS_PER_PAGE + 1;
-            var startRankType = typeof startRank;
-
             var endRank = (divisor + 1) * USERS_PER_PAGE;
-            var endRankType = typeof endRank;
 
             // Get users with skill rank greater than or equal to 25*Divisor and less than 25*(Divisor+1)
             getCompetitorsInPage(skill, startRank, endRank, callback);
@@ -240,15 +237,15 @@
   };
 
   // Format necessary data to display on users profile
-  exports.getProfileDisplayData = function(userScreenName, targetScreenName, callback, rollback) {
+  exports.getProfileDisplayData = function(username, targetUsername, callback, rollback) {
 
     var errorImageUrl = 'image/logo.png';
 
-    if(targetScreenName && TwitterValidator.isScreenNameValid(targetScreenName)) {
-      User.checkExistingTwitterUser(targetScreenName, function(targetScreenNameExists) {
+    if(targetUsername && AugeoValidator.isUsernameValid(targetUsername)) {
+      User.doesUsernameExist(targetUsername, function(targetUsernameExists) {
 
-        if(targetScreenNameExists) {
-          getProfileDisplayDataPrivate(targetScreenName, callback);
+        if(targetUsernameExists) {
+          getProfileDisplayDataPrivate(targetUsername, callback);
         } else {
 
           var errorData = {
@@ -259,12 +256,12 @@
         }
       });
     } else {
-      if(TwitterValidator.isScreenNameValid(userScreenName)) {
+      if(AugeoValidator.isUsernameValid(username)) {
 
-        User.checkExistingTwitterUser(userScreenName, function(userScreenNameExists) {
+        User.doesUsernameExist(username, function(usernameExists) {
 
-          if(userScreenNameExists) {
-            getProfileDisplayDataPrivate(userScreenName, callback);
+          if(usernameExists) {
+            getProfileDisplayDataPrivate(username, callback);
           } else {
 
             var errorData = {
@@ -325,20 +322,29 @@
     }
   };
 
-  exports.getSkillActivity = function(screenName, skill, tweetId, callback, rollback) {
+  exports.getSkillActivity = function(username, skill, tweetId, callback, rollback) {
 
-    if(TwitterValidator.isScreenNameValid(screenName)) {
-      Mention.getMentions(screenName, function(mentionTweetIds) {
+    if(AugeoValidator.isUsernameValid(username)) {
 
-        if(TwitterValidator.isSkillValid(skill) && AugeoValidator.isNumberValid(tweetId)) {
+      User.getUserWithUsername(username, function(user) {
 
-          Tweet.getSkillActivity(screenName, mentionTweetIds, skill, ACTIVITY_PER_PAGE, tweetId, function(tweets) {
+        if(user) {
+          var screenName = user.twitter.screenName;
+          Mention.getMentions(screenName, function (mentionTweetIds) {
 
-            var data = {
-              activity: tweets
+            if (TwitterValidator.isSkillValid(skill) && AugeoValidator.isNumberValid(tweetId)) {
+
+              Tweet.getSkillActivity(screenName, mentionTweetIds, skill, ACTIVITY_PER_PAGE, tweetId, function (tweets) {
+
+                var data = {
+                  activity: tweets
+                }
+
+                callback(data);
+              });
+            } else {
+              rollback();
             }
-
-            callback(data);
           });
         } else {
           rollback();
@@ -381,36 +387,6 @@
       callback(false);
     }
   };
-
-  exports.isSessionScreenNameDefined = function(request) {
-    var isDefined = false;
-
-    if(request) {
-      if(request.session) {
-        if(request.session.user) {
-          if(request.session.user.twitter) {
-            if(request.session.user.twitter.screenName) {
-              isDefined = true;
-            }
-          }
-        }
-      }
-    }
-    return isDefined;
-  }
-
-  exports.isSessionUserDefined = function(request) {
-    var isDefined = false;
-
-    if(request) {
-      if(request.session) {
-        if(request.session.user) {
-          isDefined = true;
-        }
-      }
-    }
-    return isDefined;
-  }
 
   // Call DB to remove all users with an undefined Twitter Id
   exports.removeInvalidUser = function(session, callback) {
@@ -574,10 +550,9 @@
           competitor = competitors[i].twitter.subSkills[0];
         }
 
-        var competitorScreenName = competitors[i].twitter.screenName;
-
         var user = {
-          screenName: competitorScreenName,
+          username: competitors[i].username,
+          twitterScreenName: competitors[i].twitter.screenName,
           rank: competitor.rank,
           level: competitor.level,
           experience: competitor.experience
@@ -608,17 +583,14 @@
         endRank = maxRank;
       }
 
-      var startRankType = typeof startRank;
-      var endRankType = typeof endRank;
-
       getCompetitorsInPage(skill, startRank, endRank, callback);
 
     });
   };
 
-  var getProfileDisplayDataPrivate = function(screenName, callback) {
+  var getProfileDisplayDataPrivate = function(username, callback) {
 
-    User.getUserWithScreenName(screenName, function(user) {
+    User.getUserWithUsername(username, function(user) {
 
       var mainSkill = user.twitter.skill;
       var mainSkillDisplay = {
@@ -651,15 +623,14 @@
         displaySkills.push(subSkillDisplay);
       }
 
-      Mention.getMentions(screenName, function(mentionTweetIds) {
-        Tweet.getSkillActivity(screenName, mentionTweetIds, null, 10, null, function(tweets) {
+      Mention.getMentions(user.twitter.screenName, function(mentionTweetIds) {
+        Tweet.getSkillActivity(user.twitter.screenName, mentionTweetIds, null, 10, null, function(tweets) {
 
           var displayData = {
             profileData: {
               'profileImageUrl': user.twitter.profileImageUrl,
               'skill': mainSkillDisplay,
-              'subSkills': displaySkills,
-              'circleRadius': 125
+              'subSkills': displaySkills
             },
             recentActions: tweets
           };

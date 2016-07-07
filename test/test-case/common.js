@@ -27,6 +27,7 @@
     lastName: 'Tester',
     fullName: 'Test Tester',
     email: 'tester@gmail.com',
+    username: 'tester',
     password: '!Test1',
     twitter: {
       twitterId: '1000000000',
@@ -44,6 +45,7 @@
     lastName: 'Actionee',
     fullName: 'Twitter Actionee',
     email: 'actionee@gmail.com',
+    username: 'actionee',
     password: '!Test1',
     twitter: {
       twitterId: '2000000000',

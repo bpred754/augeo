@@ -39,8 +39,8 @@
 
     var agent = Request.agent(app);
 
-    // Screen name does not exist in session
-    it('should return status 400 - invalid screen name in session', function(done) {
+    // Username does not exist in session
+    it('should return status 401 - invalid username in session', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent

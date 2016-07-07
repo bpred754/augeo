@@ -35,8 +35,8 @@
 
     var agent = Request.agent(app);
 
-    // Invalid screen name in session
-    it('should return status 401 - invalid screen name in session', function(done) {
+    // Invalid username in session
+    it('should return status 401 - invalid username in session', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
@@ -48,8 +48,8 @@
         });
     });
 
-    // Valid screen name in session and invalid screenName parameter
-    it('should return status 400 - valid screen name in session and invalid screenName parameter', function(done) {
+    // Valid username in session and invalid username parameter
+    it('should return status 401 - valid username in session and invalid username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
@@ -61,7 +61,7 @@
           Should.not.exist(error0);
 
           agent
-            .get('/twitter-api/getProfileDisplayData?screenName=invalid')
+            .get('/twitter-api/getProfileDisplayData?username=invalid')
             .expect(401)
             .end(function(error1, response1) {
               Should.not.exist(error1);
@@ -71,10 +71,10 @@
         });
     });
 
-    it('should return return 200 - valid screen name in session and valid screen name parameter', function(done) {
+    it('should return return 200 - valid username in session and valid username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
-        .get('/twitter-api/getProfileDisplayData?screenName=' + Common.USER.twitter.screenName)
+        .get('/twitter-api/getProfileDisplayData?username=' + Common.USER.username)
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -83,13 +83,12 @@
           Should.exist(profileData.profileImageUrl);
           Should.exist(profileData.skill);
           Should.exist(profileData.subSkills);
-          Should.exist(profileData.circleRadius);
 
           done();
         });
     });
 
-    it('should return return 200 - valid screen name in session and no screen name parameter', function(done) {
+    it('should return return 200 - valid username in session and no username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
@@ -102,7 +101,6 @@
           Should.exist(profileData.profileImageUrl);
           Should.exist(profileData.skill);
           Should.exist(profileData.subSkills);
-          Should.exist(profileData.circleRadius);
 
           done();
         });

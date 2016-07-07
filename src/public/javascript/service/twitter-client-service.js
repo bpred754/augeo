@@ -62,9 +62,9 @@
       });
     };
 
-    this.getCompetitors = function(screenName, skill, callback) {
+    this.getCompetitors = function(username, skill, callback) {
       var parameters = {
-        screenName: screenName,
+        username: username,
         skill: skill
       };
 
@@ -85,16 +85,16 @@
       });
     };
 
-    this.getProfileDisplayData = function(screenName, callback) {
-      var parameters = {screenName:screenName};
+    this.getProfileDisplayData = function(username, callback) {
+      var parameters = {username:username};
       AugeoClientService.getAugeoAPI('twitter-api/getProfileDisplayData', parameters, function(data) {
           callback(data);
       });
     };
 
-    this.getSkillActivity = function(screenName, skill, id, callback) {
+    this.getSkillActivity = function(username, skill, id, callback) {
       var parameters = {
-        screenName:screenName,
+        username:username,
         skill:skill,
         tweetId: id
       };

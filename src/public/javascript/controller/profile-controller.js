@@ -23,15 +23,16 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $timeout, $interval, TwitterClientService, ActivityService) {
+  module.exports = function($scope, $timeout, $interval, $stateParams, TwitterClientService, ActivityService) {
 
     // Internal functions
     var init = function() {
 
       $scope.invalidProfile = false;
+      $scope.username = $stateParams.username;
 
       // Get user's Twitter profile image url, Twitter skill data, and Twitter sub skill data
-      TwitterClientService.getProfileDisplayData($scope.screenName, function(data) {
+      TwitterClientService.getProfileDisplayData($scope.username, function(data) {
 
         if(data != 'Unauthorized') {
 
@@ -65,9 +66,6 @@
               smallScreenArray.push(innerArray);
             }
             $scope.smallArray = smallScreenArray;
-
-            // Call directive to create main circlular progress bar
-            $scope.$broadcast('createCircularProgressBar', data.profileData);
           }
 
           // Set recent activity

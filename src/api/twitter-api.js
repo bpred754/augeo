@@ -27,6 +27,7 @@
 
   // Required local modules
   var Logger = require('../module/logger');
+  var SessionValidator = require('../validator/session-validator');
   var TwitterInterfaceService = require('../interface-service/twitter-interface-service');
   var TwitterRestQueue = require('../queue/twitter-rest-queue');
   var TwitterService = require('../service/twitter-service');
@@ -71,7 +72,7 @@
               userData.accessToken = oauth_access_token;
               userData.secretAccessToken = oauth_access_token_secret;
 
-              if(TwitterService.isSessionUserDefined(request)) {
+              if(SessionValidator.isUserDefined(request)) {
 
                 // Update user's Twitter information
                 TwitterService.updateTwitterInfo(request.session.user._id, userData, function() {
@@ -116,9 +117,9 @@
     var isValid = false;
 
     var jsonResponse = {};
-    if(TwitterService.isSessionScreenNameDefined(request)) {
+    if(SessionValidator.isUsernameDefined(request)) {
       isValid = true;
-      jsonResponse.screenName = request.session.user.twitter.screenName;
+      jsonResponse.username = request.session.user.username;
       jsonResponse.skills = TwitterService.getTwitterSkills();
     }
 
@@ -147,17 +148,17 @@
   });
 
   TwitterRouter.get('/getCompetitors', function(request, response) {
-    var screenName = request.query.screenName;
+    var username = request.query.username;
     var startRank = request.query.startRank;
     var endRank = request.query.endRank;
     var skill = request.query.skill;
 
     var rollback = function() {
-      response.sendStatus(400);
+      response.sendStatus(404);
     };
 
-    if(screenName) {
-      TwitterService.getCompetitors(screenName, skill, function(users) {
+    if(username) {
+      TwitterService.getCompetitors(username, skill, function(users) {
         response.status(200).json(users);
       }, rollback);
     } else {
@@ -172,12 +173,12 @@
 
     // If user exists in session get leaderboard display data
     var jsonResponse = {};
-    if(TwitterService.isSessionScreenNameDefined(request)) {
+    if(SessionValidator.isUsernameDefined(request)) {
       isValid = true;
 
       TwitterService.getNumberUsers(function(numUsers) {
 
-        jsonResponse.screenName = request.session.user.twitter.screenName;
+        jsonResponse.username = request.session.user.username;
         jsonResponse.skills = TwitterService.getTwitterSkills();
         jsonResponse.numberUsers = numUsers;
         response.status(200).json(jsonResponse);
@@ -190,21 +191,21 @@
   });
 
   TwitterRouter.get('/getProfileDisplayData', function(request, response) {
-    var inScreenName = request.query.screenName;
+    var inUsername = request.query.username;
 
     var rollback = function() {
       response.sendStatus(401);
     };
 
-    var targetScreenName;
-    var userScreenName;
-    if(inScreenName) {
-      targetScreenName = inScreenName
+    var targetUsername;
+    var username;
+    if(inUsername) {
+      targetUsername = inUsername
     }
-    if (TwitterService.isSessionScreenNameDefined(request)) { // If user exists in session get profile data
-      userScreenName = request.session.user.twitter.screenName;
+    if (SessionValidator.isUsernameDefined(request)) { // If user exists in session get profile data
+      username = request.session.user.username;
 
-      TwitterService.getProfileDisplayData(userScreenName, targetScreenName, function(displayData) {
+      TwitterService.getProfileDisplayData(username, targetUsername, function(displayData) {
 
         if(displayData.errorImageUrl) {
           response.status(401).json(displayData);
@@ -218,15 +219,15 @@
   });
 
   TwitterRouter.get('/getSkillActivity', function(request, response) {
-    var screenName = request.query.screenName;
+    var username = request.query.username;
     var skill = request.query.skill;
     var tweetId = request.query.tweetId;
 
     var rollback = function() {
-      response.sendStatus(400);
+      response.sendStatus(404);
     };
 
-    TwitterService.getSkillActivity(screenName, skill, tweetId, function(newData) {
+    TwitterService.getSkillActivity(username, skill, tweetId, function(newData) {
       response.status(200).json(newData);
     }, rollback);
   });
@@ -238,7 +239,7 @@
     };
 
     // If user exists in session get profile data
-    if(TwitterService.isSessionUserDefined(request)) {
+    if(SessionValidator.isUserDefined(request)) {
       var userId = request.session.user._id;
 
       TwitterService.isMember(userId, function(isMember) {
@@ -270,8 +271,7 @@
 
   TwitterRouter.post('/setMember', function(request, response) {
 
-    var jsonResponse = {};
-    if(TwitterService.isSessionUserDefined(request)) {
+    if(SessionValidator.isUserDefined(request)) {
       TwitterService.setMember(request.session.user._id, function(){
         response.sendStatus(200);
       });

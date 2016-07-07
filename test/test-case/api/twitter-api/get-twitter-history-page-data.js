@@ -40,8 +40,8 @@
 
     var agent = Request.agent(app);
 
-    // Screen name does not exist in session
-    it('should return status 401 - invalid screen name in session - getTwitterHistoryPageData', function(done) {
+    // Username does not exist in session
+    it('should return status 401 - invalid username in session - getTwitterHistoryPageData', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
@@ -53,8 +53,8 @@
         });
     });
 
-    // Screen name does not exist in session
-    it('should return status 400 - invalid screen name in session - setMember', function(done) {
+    // Username does not exist in session
+    it('should return status 401 - invalid username in session - setMember', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent

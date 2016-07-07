@@ -36,7 +36,11 @@
       if(AugeoValidator.isStringAlphabetic(user.firstName) &&
          AugeoValidator.isStringAlphabetic(user.lastName) &&
          AugeoValidator.isEmailValid(user.email) &&
+         AugeoValidator.isUsernameValid(user.username) &&
          AugeoValidator.isPasswordValid(user.password)) {
+
+           // Make sure email is lowercase
+           user.email = user.email.toLowerCase();
 
            // Encrypt password
            Bcrypt.genSalt(10, function(genSaltError, salt) {
@@ -65,10 +69,18 @@
 
   };
 
-  exports.checkExistingAugeoUser = function(email, callback) {
-
+  exports.doesEmailExist = function(email, callback) {
     if(AugeoValidator.isEmailValid(email)) {
-      User.checkExistingAugeoUser(email, callback);
+      email = email.toLowerCase();
+      User.doesEmailExist(email, callback);
+    } else {
+      callback(false);
+    }
+  };
+  
+  exports.doesUsernameExist = function(username, callback) {
+    if(AugeoValidator.isUsernameValid(username)) {
+      User.doesUsernameExist(username, callback);
     } else {
       callback(false);
     }

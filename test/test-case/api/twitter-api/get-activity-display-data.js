@@ -34,8 +34,8 @@
 
     var agent = Request.agent(app);
 
-    // Session screen name invalid
-    it('should return status 400 - invalid session screen name', function(done) {
+    // Session username invalid
+    it('should return status 401 - invalid session username', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
@@ -47,7 +47,7 @@
         });
     });
 
-    it('should return status 200 -- valid session screen name', function(done) {
+    it('should return status 200 -- valid session username', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user

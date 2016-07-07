@@ -32,6 +32,7 @@
   var AugeoDB = require('../../../src/model/database');
   var AugeoUtility = require('../../../src/utility/augeo-utility');
   var Common = require('../common');
+  var SessionValidator = require('../../../src/validator/session-validator');
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
   var TwitterService = require('../../../src/service/twitter-service');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
@@ -380,11 +381,11 @@
   it('Should return competitors given a skill and a user -- getCompetitors()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    var invalidScreenName = '%%';
-    TwitterService.getCompetitors(invalidScreenName, 'Twitter', function(){}, function() {
+    var invalidUsername = '%%';
+    TwitterService.getCompetitors(invalidUsername, 'Twitter', function(){}, function() {
 
       var invalidSkill = 'invalidSkill';
-      TwitterService.getCompetitors(Common.USER.twitter.screenName, invalidSkill, function(){}, function() {
+      TwitterService.getCompetitors(Common.USER.username, invalidSkill, function(){}, function() {
 
         // Get competitors for user that doesn't exist
         TwitterService.getCompetitors('invalid', 'Twitter', function(competitorsForInvalid) {
@@ -393,20 +394,20 @@
           competitorsForInvalid.length.should.be.above(0);
           for(var i = 0; i < competitorsForInvalid.length; i++) {
             competitorsForInvalid[i].rank.should.be.above(maxRank0);
-            Assert.ok(competitorsForInvalid[i].screenName);
+            Assert.ok(competitorsForInvalid[i].username);
             Assert.ok(competitorsForInvalid[i].rank);
             Assert.ok(competitorsForInvalid[i].experience);
             Assert.ok(competitorsForInvalid[i].level);
             maxRank0 = competitorsForInvalid[i].rank;
           }
 
-          TwitterService.getCompetitors(Common.USER.twitter.screenName, 'Twitter', function(competitorsForValid) {
+          TwitterService.getCompetitors(Common.USER.username, 'Twitter', function(competitorsForValid) {
 
             var maxRank1 = 0;
             competitorsForValid.length.should.be.above(0);
             for(var i = 0; i < competitorsForValid.length; i++) {
               competitorsForInvalid[i].rank.should.be.above(maxRank1);
-              Assert.ok(competitorsForValid[i].screenName);
+              Assert.ok(competitorsForValid[i].username);
               Assert.ok(competitorsForValid[i].rank);
               Assert.ok(competitorsForValid[i].experience);
               Assert.ok(competitorsForValid[i].level);
@@ -439,7 +440,7 @@
             users.length.should.be.above(0);
             users.length.should.be.below(6);
             for(var i = 0; i < users.length; i++) {
-              Assert.ok(users[i].screenName);
+              Assert.ok(users[i].username);
               Assert.ok(users[i].rank);
               Assert.ok(users[i].experience);
               Assert.ok(users[i].level);
@@ -467,39 +468,37 @@
   it('should return profile display data -- getProfileDisplayData()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    // Valid targetScreenName && targetScreenName doesnt exists
-    var targetScreenName = 'target';
-    TwitterService.getProfileDisplayData(Common.USER.twitter.screenName, targetScreenName, function(data0) {
+    // Valid targetUsername && targetUserame doesn't exists
+    var targetUsername = 'target';
+    TwitterService.getProfileDisplayData(Common.USER.username, targetUsername, function(data0) {
       Assert.strictEqual(data0.errorImageUrl, 'image/logo.png');
 
-      // Valid targetScreenName && targetScreenName exists
-      TwitterService.getProfileDisplayData(Common.USER.twitter.sreenName, Common.USER.twitter.screenName, function(data1) {
+      // Valid targetUsername && targetUsername exists
+      TwitterService.getProfileDisplayData(Common.USER.username, Common.USER.username, function(data1) {
 
         Assert.ok(data1.profileData);
         Assert.ok(data1.profileData.profileImageUrl);
         Assert.ok(data1.profileData.skill);
         Assert.ok(data1.profileData.subSkills);
-        Assert.ok(data1.profileData.circleRadius);
         Assert.ok(data1.recentActions);
         data1.recentActions.length.should.be.above(0);
 
-        // Invalid target && valid userScreenName && userScreenName doesnt exists
-        TwitterService.getProfileDisplayData('screenName', '', function(data2){
+        // Invalid target && valid userUsername && username doesn't exists
+        TwitterService.getProfileDisplayData('username', '', function(data2){
 
           Assert.strictEqual(data2.errorImageUrl, 'image/logo.png');
 
-          // Invalid target && valid userScreenName && userScreenName exists
-          TwitterService.getProfileDisplayData(Common.USER.twitter.screenName, '', function(data3) {
+          // Invalid target && valid username && username exists
+          TwitterService.getProfileDisplayData(Common.USER.username, '', function(data3) {
 
             Assert.ok(data3.profileData);
             Assert.ok(data3.profileData.profileImageUrl);
             Assert.ok(data3.profileData.skill);
             Assert.ok(data3.profileData.subSkills);
-            Assert.ok(data3.profileData.circleRadius);
             Assert.ok(data3.recentActions);
             data3.recentActions.length.should.be.above(0);
 
-            // Invalid target and invalid userScreenName
+            // Invalid target and invalid username
             TwitterService.getProfileDisplayData('', '', function(){}, function() {
               done();
             });
@@ -560,26 +559,26 @@
   });
 
   // getSkillActivity
-  it('should return skill activity for a user screenName, skill, and tweetId -- getSkillActivity()', function(done) {
+  it('should return skill activity for a user username, skill, and tweetId -- getSkillActivity()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    // Invalid screenName
+    // Invalid username
     TwitterService.getSkillActivity('', 'Twitter', '0', function(){}, function() {
 
       // Invalid skills
-      TwitterService.getSkillActivity(Common.USER.twitter.screenName, 'invalidSkill', '0', function(){}, function() {
+      TwitterService.getSkillActivity(Common.USER.username, 'invalidSkill', '0', function(){}, function() {
 
         // Invalid tweetId
-        TwitterService.getSkillActivity(Common.USER.twitter.screenName, 'Twitter', '', function(){}, function() {
+        TwitterService.getSkillActivity(Common.USER.username, 'Twitter', '', function(){}, function() {
 
           // Valid input - no max
-          TwitterService.getSkillActivity(Common.USER.twitter.screenName, 'Twitter', '9999999999999999999999999999999', function(data0) {
+          TwitterService.getSkillActivity(Common.USER.username, 'Twitter', '9999999999999999999999999999999', function(data0) {
             Assert.ok(data0.activity);
             data0.activity.length.should.be.above(0);
             var maxId = data0.activity[0].tweetId;
 
             // Valid input - max tweet ID
-            TwitterService.getSkillActivity(Common.USER.twitter.screenName, 'Twitter', maxId, function(data1) {
+            TwitterService.getSkillActivity(Common.USER.username, 'Twitter', maxId, function(data1) {
               Assert.ok(data1.activity);
               data1.activity.length.should.be.above(0);
               Assert.notStrictEqual(data1.activity[0].tweetId, maxId);
@@ -698,72 +697,27 @@
     });
   });
 
-  // isSessionScreenNameDefined
-  it('should return a boolean signifying if sessionScreenName is defined -- isSessionScreenNameDefined()', function(done) {
+  // isUserDefined
+  it('should return a boolean signifying if the session user is defined -- isUserDefined()', function(done) {
     this.timeout(Common.TIMEOUT);
 
     var nullRequest;
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullRequest), false);
+    Assert.strictEqual(SessionValidator.isUserDefined(nullRequest), false);
 
     var nullSession = {};
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullSession), false);
+    Assert.strictEqual(SessionValidator.isUserDefined(nullSession), false);
 
     var nullUser = {
       session: {}
     };
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullUser), false);
-
-    var nullTwitter = {
-      session: {
-        user: {}
-      }
-    };
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullTwitter), false);
-
-    var nullScreenName = {
-      session: {
-        user: {
-          twitter:{}
-        }
-      }
-    };
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullScreenName), false);
-
-    var valid = {
-      session: {
-        user: {
-          twitter: {
-            screenName: Common.USER.twitter.screenName
-          }
-        }
-      }
-    };
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(valid), true);
-
-    done();
-  });
-
-  // isSessionUserDefined
-  it('should return a boolean signifying if the session user is defined -- isSessionUserDefined()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    var nullRequest;
-    Assert.strictEqual(TwitterService.isSessionUserDefined(nullRequest), false);
-
-    var nullSession = {};
-    Assert.strictEqual(TwitterService.isSessionUserDefined(nullSession), false);
-
-    var nullUser = {
-      session: {}
-    };
-    Assert.strictEqual(TwitterService.isSessionUserDefined(nullUser), false);
+    Assert.strictEqual(SessionValidator.isUserDefined(nullUser), false);
 
     var valid = {
       session: {
         user: Common.USER
       }
     };
-    Assert.strictEqual(TwitterService.isSessionUserDefined(valid), true);
+    Assert.strictEqual(SessionValidator.isUserDefined(valid), true);
 
     done();
   });

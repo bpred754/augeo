@@ -108,6 +108,7 @@
         'firstName': $scope.signupFirstName,
         'lastName': $scope.signupLastName,
         'email': $scope.signupEmail,
+        'username': $scope.signupUsername,
         'password': $scope.signupPassword,
       };
 
@@ -115,18 +116,23 @@
       if(ClientValidator.isStringAlphabetic(user.firstName) && ClientValidator.isStringAlphabetic(user.lastName)) {
 
         if(ClientValidator.isEmailValid(user.email)) {
+          
+          if(ClientValidator.isUsernameValid(user.username)) {
 
-          if(ClientValidator.isPasswordValid(user.password)) {
+            if (ClientValidator.isPasswordValid(user.password)) {
 
-            if($scope.agreedToTerms === true) {
-              $('#confirmation-modal').modal();
-              $scope.user = user;
+              if ($scope.agreedToTerms === true) {
+                $('#confirmation-modal').modal();
+                $scope.user = user;
+              } else {
+                $scope.signupMessage = 'Must agree to Terms of Service';
+              }
             } else {
-              $scope.signupMessage = 'Must agree to Terms of Service';
+              $scope.signupMessage = 'Password requires a capital, lowercase, and number. Must have 6 to 20 characters'
             }
-         } else {
-           $scope.signupMessage = 'Password requires a capital, lowercase, and number. Must have 6 to 20 characters'
-         }
+          } else {
+            $scope.signupMessage = 'Username must be 1 to 15 characters - underscores included'
+          }
        } else {
          $scope.signupMessage = 'Invalid email address';
        }

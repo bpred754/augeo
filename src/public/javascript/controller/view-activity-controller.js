@@ -69,10 +69,10 @@
 
         $scope.isLoaded = true;
 
-        if ($stateParams.screenName) {
-          $scope.screenName = $stateParams.screenName;
+        if ($stateParams.username) {
+          $scope.username = $stateParams.username;
         } else {
-          $scope.screenName = data.screenName;
+          $scope.username = data.username;
         }
 
         $scope.twitterSkills = data.skills;
@@ -95,7 +95,7 @@
 
       if($scope.activityLoaded) {
         $scope.activityLoaded = false;
-        TwitterClientService.getSkillActivity($scope.screenName, $scope.currentSkill, maxId, function(data) {
+        TwitterClientService.getSkillActivity($scope.username, $scope.currentSkill, maxId, function(data) {
           if(data.activity.length > 0) {
             $scope.tweets = $scope.tweets.concat(data.activity);
             maxId =  data.activity[data.activity.length-1].tweetId;

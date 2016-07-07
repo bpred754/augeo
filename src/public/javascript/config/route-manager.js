@@ -109,7 +109,7 @@
         })
 
         .state('viewActivity', {
-            url:'/viewActivity/:screenName',
+            url:'/viewActivity/:username',
             views: {
               'mainContent': {
                 templateUrl:'html/view-activity.html',
@@ -119,7 +119,7 @@
         })
 
         .state('viewProfile', {
-          url: '/profile/:screenName',
+          url: '/profile/:username',
           views: {
             'mainContent' : {
               templateUrl: 'html/profile.html',

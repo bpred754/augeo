@@ -86,10 +86,10 @@
       </div>
     </div>
     <div id="form-container" class="col-xs-6 background-secondary">
-      <div class="message-container">
+      <div ng-if="loginMessage" class="message-container">
         <p class="message">{{loginMessage}}</p>
       </div>
-      <div id="login-container" class="row">
+      <div class="row" ng-class="{'login-container': !loginMessage, 'login-container-message':loginMessage}">
         <form class="front-page-form" role="form">
           <div class="inline-form-container">
             <label class="control-label subheading-text">Login</label>
@@ -110,11 +110,11 @@
         </form>
       </div>
       <div class="divider"></div>
-      <div class="message-container">
+      <div ng-if="signupMessage" class="message-container">
         <p class="message">{{signupMessage}}</p>
       </div>
 
-      <div id="signup-container" class="row">
+      <div class="row" ng-class="{'login-container': !signupMessage, 'login-container-message':signupMessage}">
         <form class="front-page-form" role="form">
           <table class="inline-form-container">
             <tbody>
@@ -135,6 +135,9 @@
           </table>
           <div class="inline-form-container">
             <input class="form-control input-lg" type="email" placeholder="Email Address" ng-model="signupEmail">
+          </div>
+          <div class="inline-form-container">
+            <input class="form-control input-lg" type="text" placeholder="Username" ng-model="signupUsername">
           </div>
           <table>
             <tbody>

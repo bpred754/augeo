@@ -50,6 +50,7 @@
       firstName: '!Test',
       lastName: Common.USER.lastName,
       email: Common.USER.email,
+      username: Common.USER.username,
       password: Common.USER.password
     };
 
@@ -59,6 +60,7 @@
         firstName: Common.USER.firstName,
         lastName: '!Tester',
         email: Common.USER.email,
+        username: Common.USER.username,
         password: Common.USER.password
       };
 
@@ -68,47 +70,76 @@
           firstName: Common.USER.firstName,
           lastName: Common.USER.lastName,
           email: 'email',
+          username: Common.USER.username,
           password: Common.USER.password
         };
 
         UserService.addUser(invalidEmail, callbackFailure, function() {
 
-          var invalidPassword = {
+
+          var invalidUsername = {
             firstName: Common.USER.firstName,
             lastName: Common.USER.lastName,
             email: Common.USER.email,
-            password: '<'
-          };
+            username: '%username%',
+            password: Common.USER.password
+          }
 
-          UserService.addUser(invalidPassword, callbackFailure, function() {
+          UserService.addUser(invalidUsername, callbackFailure, function() {
 
-            UserService.addUser(Common.USER, function(user) {
+            var invalidPassword = {
+              firstName: Common.USER.firstName,
+              lastName: Common.USER.lastName,
+              email: Common.USER.email,
+              username: Common.USER.username,
+              password: '<'
+            };
 
-              Assert.strictEqual(user.firstName, Common.USER.firstName);
-              Assert.strictEqual(user.lastName, Common.USER.lastName);
-              Assert.strictEqual(user.email, Common.USER.email);
-              done();
-            }, rollbackFailure);
+            UserService.addUser(invalidPassword, callbackFailure, function() {
+
+              UserService.addUser(Common.USER, function(user) {
+
+                Assert.strictEqual(user.firstName, Common.USER.firstName);
+                Assert.strictEqual(user.lastName, Common.USER.lastName);
+                Assert.strictEqual(user.email, Common.USER.email);
+                Assert.strictEqual(user.username, Common.USER.username);
+                done();
+              }, rollbackFailure);
+            });
           });
         });
       });
     });
   });
 
-  // checkExistingAugeoUser
-  it('should find Augeo user in AugeoDB -- checkExistingAugeoUser()', function(done) {
+  // doesEmailExist
+  it('should find Augeo email in AugeoDB -- doesEmailExist()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    UserService.checkExistingAugeoUser('email', function(userExists0) {
+    UserService.doesEmailExist('email', function(userExists0) {
 
       Assert.strictEqual(userExists0, false);
 
-      UserService.checkExistingAugeoUser(Common.USER.email, function(userExists1) {
+      UserService.doesEmailExist(Common.USER.email, function(userExists1) {
 
         Assert.strictEqual(userExists1, true);
         done();
       });
     });
+  });
+
+  // doesUsernameExist
+  it('should find Augeo username in AugeoDB -- doesUsernameExist()', function(done) {
+    this.timeout(Common.TIMEOUT);
+
+    UserService.doesUsernameExist('username', function(userExists0) {
+      Assert.strictEqual(userExists0, false);
+
+      UserService.doesUsernameExist(Common.USER.username, function(userExists1) {
+        Assert.strictEqual(userExists1, true);
+        done();
+      });
+    })
   });
 
   // login
@@ -134,6 +165,7 @@
           Assert.strictEqual(user.firstName, Common.USER.firstName);
           Assert.strictEqual(user.lastName, Common.USER.lastName);
           Assert.strictEqual(user.email, Common.USER.email);
+          Assert.strictEqual(user.username, Common.USER.username);
 
           done();
         }, rollbackFailure);

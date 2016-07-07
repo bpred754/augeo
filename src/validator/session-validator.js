@@ -19,19 +19,29 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all controllers for browserify    */
+  /* Description: Validates session data                                     */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  exports.isUserDefined = function(request) {
+    var isDefined = false;
 
-  augeo.controller('AppController', ['$scope', '$state', 'UserClientService', require('./app-controller')]);
-  augeo.controller('ActivityController', ['$scope', 'ActivityService', require('./activity-controller')]);
-  augeo.controller('LeaderboardController', ['$scope', 'TwitterClientService', require('./leaderboard-controller')]);
-  augeo.controller('LoginController', ['$scope', '$window', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
-  augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', '$timeout', '$interval', '$stateParams', 'TwitterClientService', 'ActivityService', require('./profile-controller')]);
-  augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'TwitterClientService', require('./view-activity-controller')]);
+    if(request) {
+      if(request.session) {
+        if(request.session.user) {
+          isDefined = true;
+        }
+      }
+    }
+    return isDefined;
+  };
 
-  // Error controllers
-  augeo.controller('SignupErrorController', require('./error'));
+  exports.isUsernameDefined = function(request) {
+    var isDefined = false;
+
+    if(exports.isUserDefined(request)) {
+      if(request.session.user.username) {
+        isDefined = true;
+      }
+    }
+    return isDefined;
+  };

@@ -34,13 +34,13 @@
 
     var agent = Request.agent(app);
 
-    // Invalid screen name parameter
-    it('should return status 401 - invalid screen name parameter', function(done) {
+    // Invalid username parameter
+    it('should return status 200 - invalid username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getCompetitors?screenName=invalidScreenName&skill=Twitter')
-        .expect(400)
+        .get('/twitter-api/getCompetitors?username=invalidUsername&skill=Twitter')
+        .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
@@ -48,31 +48,31 @@
     });
 
     // Invalid skill parameter
-    it('should return status 401 - invalid skill parameter', function(done) {
+    it('should return status 404 - invalid skill parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getCompetitors?screenName=' + Common.USER.twitter.screenName + '&skill=invalidSkill')
-        .expect(400)
+        .get('/twitter-api/getCompetitors?username=' + Common.USER.username + '&skill=invalidSkill')
+        .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
         });
     });
 
-    // Valid screen name and skill with extra params (start and end rank)
+    // Valid username and skill with extra params (start and end rank)
     it('should return status 200 - valid request with extra parameters', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getCompetitors?screenName=' + Common.USER.twitter.screenName + '&skill=Twitter&startRank=1&endRank=10')
+        .get('/twitter-api/getCompetitors?username=' + Common.USER.username + '&skill=Twitter&startRank=1&endRank=10')
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
           response.body.length.should.be.above(0);
 
           var item = response.body[0];
-          item.screenName.length.should.be.above(0);
+          item.username.length.should.be.above(0);
           item.rank.should.be.above(0);
           item.level.should.be.above(0);
           item.experience.should.be.aboveOrEqual(0);
@@ -81,33 +81,33 @@
         });
     });
 
-    it('should return status 400 - missing start rank parameter', function(done) {
+    it('should return status 404 - missing start rank parameter', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
         .get('/twitter-api/getCompetitors?endRank=2&skill=Twitter')
-        .expect(400)
+        .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
         });
     });
 
-    it('should return status 400 - missing start rank parameter', function(done) {
+    it('should return status 404 - missing start rank parameter', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
         .get('/twitter-api/getCompetitors?startRank=1&skill=Twitter')
-        .expect(400)
+        .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
         });
     });
 
-    it('should return status 400 - missing skill parameter', function(done) {
+    it('should return status 404 - missing skill parameter', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
         .get('/twitter-api/getCompetitors?startRank=1&endRank=2')
-        .expect(400)
+        .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
@@ -124,7 +124,7 @@
           response.body.length.should.be.above(0);
 
           var item = response.body[0];
-          item.screenName.length.should.be.above(0);
+          item.username.length.should.be.above(0);
           item.rank.should.be.above(0);
           item.level.should.be.above(0);
           item.experience.should.be.aboveOrEqual(0);

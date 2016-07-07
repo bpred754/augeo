@@ -61,7 +61,7 @@
   };
 
   exports.isPasswordValid = function(password) {
-    isValid = false;
+    var isValid = false;
 
     if(password) {
       var passwordRegex = new RegExp('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})');
@@ -78,6 +78,18 @@
     if(string) {
       var alphabeticRegex = new RegExp('^[a-zA-Z]+$');
       if(string.match(alphabeticRegex)) {
+        isValid = true;
+      }
+    }
+    return isValid;
+  };
+
+  exports.isUsernameValid = function(username) {
+    var isValid = false;
+
+    if(username) {
+      var usernameRegex = new RegExp('^[a-zA-Z0-9_]{1,15}$');
+      if(username.match(usernameRegex)) {
         isValid = true;
       }
     }

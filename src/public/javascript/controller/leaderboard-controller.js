@@ -36,11 +36,11 @@
 
         if(data != 'Unauthorized') {
 
-          $scope.searchName = data.screenName;
+          $scope.searchName = data.username;
           $scope.twitterSkills = data.skills;
           $scope.lastPage = Math.ceil(data.numberUsers / USERS_PER_PAGE);
 
-          TwitterClientService.getCompetitors(data.screenName, $scope.currentTwitterSkill, function (inUsers) {
+          TwitterClientService.getCompetitors(data.username, $scope.currentTwitterSkill, function (inUsers) {
             $scope.isLoaded = true;
             $scope.currentPage = Math.ceil(inUsers[0].rank / USERS_PER_PAGE);
             $scope.users = inUsers;
@@ -147,7 +147,7 @@
           } else if(!user) { // If number of inUsers is greater than USER_PER_PAGE then push new element on to the array
             $scope.users.push({
               rank: inUser.rank,
-              screenName: inUser.screenName,
+              username: inUser.username,
               level: inUser.level,
               experience: inUser.experience
             });
@@ -164,7 +164,8 @@
 
     var setUser = function(user, inUser) {
       user.rank = inUser.rank;
-      user.screenName = inUser.screenName;
+      user.username = inUser.username;
+      user.twitterScreenName = inUser.twitterScreenName;
       user.level = inUser.level;
       user.experience = inUser.experience;
     }

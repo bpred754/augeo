@@ -39,6 +39,7 @@
     firstName: String,
     lastName: String,
     email: String,
+    username: String,
     password: String,
     sendGridId: String,
     twitter: {
@@ -76,6 +77,7 @@
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      username: user.username,
       password: user.password,
       sendGridId: user.sendGridId
     }, function(error, pUser) {
@@ -131,23 +133,6 @@
     });
   };
 
-  USER.statics.checkExistingAugeoUser = function(email, callback) {
-    return this.count({email:email}, function(error, count) {
-      if(error) {
-        log.warn('Failed to find count for ' + email + ' from USER collection: ' + error);
-      } else {
-        log.info('Successfully checked if ' + email + ' exists in USER collection');
-
-        var userExists = false;
-        if(count > 0) {
-          userExists = true;
-        }
-
-        callback(userExists);
-      }
-    });
-  };
-
   USER.statics.checkExistingTwitterUser = function(screenName, callback) {
     this.count({'twitter.screenName':screenName}, function(error, count) {
       if(error) {
@@ -160,6 +145,36 @@
         }
         callback(userExists);
       }
+    });
+  };
+
+  USER.statics.doesEmailExist = function(email, callback) {
+    var emailExists = false;
+    return this.count({email:{'$regex': email, $options: 'i'}}, function(error, count) {
+      if(error) {
+        log.warn('Failed to find count for ' + email + ' from USER collection: ' + error);
+      } else {
+        log.info('Successfully checked if ' + email + ' exists in USER collection');
+        if(count > 0) {
+          emailExists = true;
+        }
+      }
+      callback(emailExists);
+    });
+  };
+
+  USER.statics.doesUsernameExist = function(username, callback) {
+    var usernameExists = false;
+    this.count({'username':{'$regex': username, $options: 'i'}}, function(error, count) {
+      if(error) {
+        log.warn('Failed to check if username: ' + username + ' exists. Error: ' + error);
+      } else {
+        log.info('Successfully checked if username: ' + username + ' exists');
+        if(count > 0) {
+          usernameExists = true;
+        }
+      }
+      callback(usernameExists);
     });
   };
 
@@ -183,6 +198,7 @@
           'twitter.skill.rank': {$gte:startRank, $lte:endRank}
         },
         { // Specify attributes to return
+          'username': 1,
           'twitter.screenName':1,
           'twitter.skill.rank':1,
           'twitter.skill.level':1,
@@ -205,6 +221,7 @@
 
       // Build query
       var fields = getSubSkillQuery(skill);
+      fields.$project['username'] = 1;
       fields.$project['twitter.screenName'] = 1;
 
       this.aggregate([
@@ -295,16 +312,16 @@
     });
   }
 
-  USER.statics.getSkillRank = function(screenName, skill, callback) {
+  USER.statics.getSkillRank = function(username, skill, callback) {
 
     if(skill === 'Twitter') {
 
-      this.findOne({'twitter.screenName':screenName}, {'twitter.skill.rank':1}, function(error, data) {
+      this.findOne({'username':{'$regex': username, $options: 'i'}}, {'twitter.skill.rank':1}, function(error, data) {
 
         if(error) {
-          log.warn('Failed to find ' + screenName + ' rank for ' + skill + '. Error: ' + error);
+          log.warn('Failed to find ' + username + ' rank for ' + skill + '. Error: ' + error);
         } else {
-          log.info('Successfully found ' + screenName + ' rank for ' + skill + '. Rank: ' + rank);
+          log.info('Successfully found ' + username + ' rank for ' + skill + '. Rank: ' + data);
           var rank = data.twitter.skill.rank;
 
           callback(rank);
@@ -317,16 +334,16 @@
         {
           "$match":
           {
-            "twitter.screenName": screenName
+            "username": {'$regex': username, $options: 'i'}
           }
         },
         getSubSkillQuery(skill)
       ],
       function(error, data) {
         if(error) {
-          log.warn('Failed to find ' + screenName + 'rank for skill: ' + skill + '. Error: ' + error);
+          log.warn('Failed to find ' + username + 'rank for skill: ' + skill + '. Error: ' + error);
         }
-        log.info('Successfully found ' + screenName + ' rank for skill ' + skill + '. Rank: ' + data[0].twitter.subSkills[0].rank);
+        log.info('Successfully found ' + username + ' rank for skill ' + skill + '. Rank: ' + data[0].twitter.subSkills[0].rank);
         callback(data[0].twitter.subSkills[0].rank);
       });
     }
@@ -393,7 +410,7 @@
   };
 
   USER.statics.getUserWithEmail = function(email, callback) {
-    return this.findOne({email:email}, function(error, user) {
+    return this.findOne({email:{'$regex': email, $options: 'i'}}, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + email + ' from USER collection: ' + error);
       } else {
@@ -436,6 +453,17 @@
     });
   };
 
+  USER.statics.getUserWithUsername = function(username, callback) {
+    return this.findOne({'username':username}, function(error, user) {
+      if(error) {
+        log.warn('Failed to retrieve ' + username + ' from USER collection: ' + error);
+      } else {
+        log.info('Successfully retrieved ' + username + ' from USER collection');
+        callback(user);
+      }
+    });
+  };
+
   USER.statics.isMember = function(id, callback) {
 
     return this.count({'_id':id, 'twitter.isMember':true}, function(error, count) {
@@ -455,7 +483,7 @@
   };
 
   USER.statics.remove = function(email, callback) {
-    this.findOneAndRemove({'email':email}, function(error, user) {
+    this.findOneAndRemove({'email':{'$regex': email, $options: 'i'}}, function(error, user) {
       if(error) {
         log.warn('Failed to remove ' + email + ' from USERS. Error: ' + error);
       } else {

@@ -57,36 +57,45 @@
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       email: request.body.email,
+      username: request.body.username,
       password: request.body.password
     }
 
     // Check if email exists
-    UserService.checkExistingAugeoUser(user.email, function(userExists) {
+    UserService.doesEmailExist(user.email, function(emailExists) {
 
-      if(userExists) {
+      if(emailExists) {
         response.status(400).send('This email already exists. Please try another.');
       } else {
 
-        var addUser =  function(_user) {
-          UserService.addUser(_user, function () {
-            response.sendStatus(200);
-          }, function () {
-            response.status(400).send('Invalid input. Please try again.');
-          });
-        };
+        UserService.doesUsernameExist(user.username, function(usernameExists) {
 
-        if(process.env.ENV == 'prod') {
+          if(usernameExists) {
+            response.status(400).send('This username already exists. Please try another.');
+          } else {
 
-          // Add user to SendGrid contacts
-          EmailProvider.addRecipient(user, function (recipientId) {
-            EmailProvider.sendWelcomeEmail(user);
+            var addUser = function (_user) {
+              UserService.addUser(_user, function () {
+                response.sendStatus(200);
+              }, function () {
+                response.status(400).send('Invalid input. Please try again.');
+              });
+            };
 
-            user.sendGridId = recipientId ? recipientId : '';
-            addUser(user);
-          });
-        } else {
-          addUser(user);
-        }
+            if (process.env.ENV == 'prod') {
+
+              // Add user to SendGrid contacts
+              EmailProvider.addRecipient(user, function (recipientId) {
+                EmailProvider.sendWelcomeEmail(user);
+
+                user.sendGridId = recipientId ? recipientId : '';
+                addUser(user);
+              });
+            } else {
+              addUser(user);
+            }
+          }
+        });
       };
     });
   });
