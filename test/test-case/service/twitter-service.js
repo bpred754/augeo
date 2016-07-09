@@ -453,28 +453,17 @@
     });
   });
 
-  // getNumberUsers
-  it('should return the number of users in the database', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    TwitterService.getNumberUsers(function(numberUsers) {
-      Assert.ok(numberUsers);
-      numberUsers.should.be.above(0);
-      done();
-    });
-  });
-
-  // getProfileDisplayData
-  it('should return profile display data -- getProfileDisplayData()', function(done) {
+  // getDashboardDisplayData
+  it('should return dashboard display data -- getDashboardDisplayData()', function(done) {
     this.timeout(Common.TIMEOUT);
 
     // Valid targetUsername && targetUserame doesn't exists
     var targetUsername = 'target';
-    TwitterService.getProfileDisplayData(Common.USER.username, targetUsername, function(data0) {
+    TwitterService.getDashboardDisplayData(Common.USER.username, targetUsername, function(data0) {
       Assert.strictEqual(data0.errorImageUrl, 'image/logo.png');
 
       // Valid targetUsername && targetUsername exists
-      TwitterService.getProfileDisplayData(Common.USER.username, Common.USER.username, function(data1) {
+      TwitterService.getDashboardDisplayData(Common.USER.username, Common.USER.username, function(data1) {
 
         Assert.ok(data1.profileData);
         Assert.ok(data1.profileData.profileImageUrl);
@@ -484,12 +473,12 @@
         data1.recentActions.length.should.be.above(0);
 
         // Invalid target && valid userUsername && username doesn't exists
-        TwitterService.getProfileDisplayData('username', '', function(data2){
+        TwitterService.getDashboardDisplayData('username', '', function(data2){
 
           Assert.strictEqual(data2.errorImageUrl, 'image/logo.png');
 
           // Invalid target && valid username && username exists
-          TwitterService.getProfileDisplayData(Common.USER.username, '', function(data3) {
+          TwitterService.getDashboardDisplayData(Common.USER.username, '', function(data3) {
 
             Assert.ok(data3.profileData);
             Assert.ok(data3.profileData.profileImageUrl);
@@ -499,13 +488,24 @@
             data3.recentActions.length.should.be.above(0);
 
             // Invalid target and invalid username
-            TwitterService.getProfileDisplayData('', '', function(){}, function() {
+            TwitterService.getDashboardDisplayData('', '', function(){}, function() {
               done();
             });
           }, function(){});
         }, function(){});
       }, function(){});
     }, function(){});
+  });
+
+  // getNumberUsers
+  it('should return the number of users in the database', function(done) {
+    this.timeout(Common.TIMEOUT);
+
+    TwitterService.getNumberUsers(function(numberUsers) {
+      Assert.ok(numberUsers);
+      numberUsers.should.be.above(0);
+      done();
+    });
   });
 
   // getQueueData

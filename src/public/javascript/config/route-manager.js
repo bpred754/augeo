@@ -24,109 +24,109 @@
 
   module.exports = function($stateProvider, $urlRouterProvider, $locationProvider, $analyticsProvider) {
 
-    $urlRouterProvider.otherwise('/profile');
+    $urlRouterProvider.otherwise('/dashboard');
 
     $stateProvider
 
-        .state('activity', {
-            url:'/viewActivity',
-            views: {
-              'mainContent': {
-                templateUrl:'html/view-activity.html',
-                controller: 'ViewActivityController'
-              }
-            }
-        })
-
-        .state('leaderboards', {
-            url:'/leaderboards',
-            views: {
-              'mainContent': {
-                templateUrl:'html/leaderboard.html',
-                controller: 'LeaderboardController'
-              }
-            }
-        })
-
-        .state('login', {
-          url:'/login',
+      .state('activity', {
+          url:'/viewActivity',
           views: {
             'mainContent': {
-              templateUrl:'html/login.html',
-              controller: 'LoginController'
+              templateUrl:'html/view-activity.html',
+              controller: 'ViewActivityController'
             }
           }
-        })
+      })
 
-        .state('logout', {
-          url:'/logout',
+      .state('dashboard', {
+        url: '/dashboard',
+        views: {
+          'mainContent' : {
+            templateUrl: 'html/dashboard.html',
+            controller:'DashboardController'
+          }
+        }
+      })
+
+      .state('leaderboards', {
+          url:'/leaderboards',
           views: {
             'mainContent': {
-              templateUrl: 'html/login.html',
-              controller: 'LogoutController'
+              templateUrl:'html/leaderboard.html',
+              controller: 'LeaderboardController'
             }
           }
-        })
+      })
 
-        .state('profile', {
-          url: '/profile',
-          views: {
-            'mainContent' : {
-              templateUrl: 'html/profile.html',
-              controller:'ProfileController'
-            }
+      .state('login', {
+        url:'/login',
+        views: {
+          'mainContent': {
+            templateUrl:'html/login.html',
+            controller: 'LoginController'
           }
-        })
+        }
+      })
 
-        .state('signup', {
-          url:'/signup',
+      .state('logout', {
+        url:'/logout',
+        views: {
+          'mainContent': {
+            templateUrl: 'html/login.html',
+            controller: 'LogoutController'
+          }
+        }
+      })
+
+      .state('signup', {
+        url:'/signup',
+        views: {
+          'mainContent': {
+            templateUrl:'html/login.html',
+            controller: 'LoginController'
+          }
+        }
+      })
+
+      .state('signupError', {
+        url:'/signup/error',
+        views: {
+          'mainContent': {
+            templateUrl:'html/login.html',
+            controller: 'SignupErrorController'
+          }
+        }
+      })
+
+      .state('twitterHistory', {
+        url:'/twitterHistory',
+        views: {
+          'mainContent': {
+            templateUrl:'html/twitter-history.html',
+            controller: 'TwitterHistoryController'
+          }
+        }
+      })
+
+      .state('viewActivity', {
+          url:'/viewActivity/:username',
           views: {
             'mainContent': {
-              templateUrl:'html/login.html',
-              controller: 'LoginController'
+              templateUrl:'html/view-activity.html',
+              controller: 'ViewActivityController'
             }
           }
-        })
+      })
 
-        .state('signupError', {
-          url:'/signup/error',
-          views: {
-            'mainContent': {
-              templateUrl:'html/login.html',
-              controller: 'SignupErrorController'
-            }
+      .state('viewDashboard', {
+        url: '/dashboard/:username',
+        views: {
+          'mainContent' : {
+            templateUrl: 'html/dashboard.html',
+            controller:'DashboardController'
           }
-        })
-
-        .state('twitterHistory', {
-          url:'/twitterHistory',
-          views: {
-            'mainContent': {
-              templateUrl:'html/twitter-history.html',
-              controller: 'TwitterHistoryController'
-            }
-          }
-        })
-
-        .state('viewActivity', {
-            url:'/viewActivity/:username',
-            views: {
-              'mainContent': {
-                templateUrl:'html/view-activity.html',
-                controller: 'ViewActivityController'
-              }
-            }
-        })
-
-        .state('viewProfile', {
-          url: '/profile/:username',
-          views: {
-            'mainContent' : {
-              templateUrl: 'html/profile.html',
-              controller:'ProfileController'
-            }
-          }
-        })
+        }
+      });
 
     // Remove # from url
     $locationProvider.html5Mode(true);

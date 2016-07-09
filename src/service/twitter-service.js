@@ -232,12 +232,8 @@
     }
   };
 
-  exports.getNumberUsers = function(callback) {
-    User.getNumberUsers(callback);
-  };
-
-  // Format necessary data to display on users profile
-  exports.getProfileDisplayData = function(username, targetUsername, callback, rollback) {
+  // Format necessary data to display on users dashboard
+  exports.getDashboardDisplayData = function(username, targetUsername, callback, rollback) {
 
     var errorImageUrl = 'image/logo.png';
 
@@ -245,7 +241,7 @@
       User.doesUsernameExist(targetUsername, function(targetUsernameExists) {
 
         if(targetUsernameExists) {
-          getProfileDisplayDataPrivate(targetUsername, callback);
+          getDashboardDisplayDataPrivate(targetUsername, callback);
         } else {
 
           var errorData = {
@@ -261,7 +257,7 @@
         User.doesUsernameExist(username, function(usernameExists) {
 
           if(usernameExists) {
-            getProfileDisplayDataPrivate(username, callback);
+            getDashboardDisplayDataPrivate(username, callback);
           } else {
 
             var errorData = {
@@ -275,6 +271,10 @@
         rollback();
       }
     }
+  };
+
+  exports.getNumberUsers = function(callback) {
+    User.getNumberUsers(callback);
   };
 
   exports.getQueueData = function(userId, screenName, callback, rollback) {
@@ -588,7 +588,7 @@
     });
   };
 
-  var getProfileDisplayDataPrivate = function(username, callback) {
+  var getDashboardDisplayDataPrivate = function(username, callback) {
 
     User.getUserWithUsername(username, function(user) {
 
@@ -609,7 +609,7 @@
       for(var i = 0; i < subSkills.length; i++) {
         var subSkill = subSkills[i];
 
-        subSkillDisplay = {
+        var subSkillDisplay = {
           name: subSkill.name,
           glyphicon: subSkill.glyphicon,
           experience: subSkill.experience,

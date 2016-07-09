@@ -20,7 +20,7 @@
 
   /***************************************************************************/
   /* Description: Unit test cases for api/twitter-api                        */
-  /*              'getProfileDisplayData' requests                           */
+  /*              'getDashboardDisplayData' requests                           */
   /***************************************************************************/
 
   // Required libraries
@@ -40,7 +40,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getProfileDisplayData')
+        .get('/twitter-api/getDashboardDisplayData')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -61,7 +61,7 @@
           Should.not.exist(error0);
 
           agent
-            .get('/twitter-api/getProfileDisplayData?username=invalid')
+            .get('/twitter-api/getDashboardDisplayData?username=invalid')
             .expect(401)
             .end(function(error1, response1) {
               Should.not.exist(error1);
@@ -74,7 +74,7 @@
     it('should return return 200 - valid username in session and valid username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
-        .get('/twitter-api/getProfileDisplayData?username=' + Common.USER.username)
+        .get('/twitter-api/getDashboardDisplayData?username=' + Common.USER.username)
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -92,7 +92,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getProfileDisplayData')
+        .get('/twitter-api/getDashboardDisplayData')
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);

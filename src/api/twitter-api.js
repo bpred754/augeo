@@ -168,6 +168,34 @@
     }
   });
 
+  TwitterRouter.get('/getDashboardDisplayData', function(request, response) {
+    var inUsername = request.query.username;
+
+    var rollback = function() {
+      response.sendStatus(401);
+    };
+
+    var targetUsername;
+    var username;
+    if(inUsername) {
+      targetUsername = inUsername
+    }
+    if (SessionValidator.isUsernameDefined(request)) { // If user exists in session get dashboard data
+      username = request.session.user.username;
+
+      TwitterService.getDashboardDisplayData(username, targetUsername, function(displayData) {
+
+        if(displayData.errorImageUrl) {
+          response.status(401).json(displayData);
+        } else {
+          response.status(200).json(displayData)
+        }
+      }, rollback);
+    } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
+      rollback();
+    }
+  });
+
   TwitterRouter.get('/getLeaderboardDisplayData', function(request, response) {
     var isValid = false;
 
@@ -187,34 +215,6 @@
 
     if(!isValid) {
       response.sendStatus(401);
-    }
-  });
-
-  TwitterRouter.get('/getProfileDisplayData', function(request, response) {
-    var inUsername = request.query.username;
-
-    var rollback = function() {
-      response.sendStatus(401);
-    };
-
-    var targetUsername;
-    var username;
-    if(inUsername) {
-      targetUsername = inUsername
-    }
-    if (SessionValidator.isUsernameDefined(request)) { // If user exists in session get profile data
-      username = request.session.user.username;
-
-      TwitterService.getProfileDisplayData(username, targetUsername, function(displayData) {
-
-        if(displayData.errorImageUrl) {
-          response.status(401).json(displayData);
-        } else {
-          response.status(200).json(displayData)
-        }
-      }, rollback);
-    } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
-      rollback();
     }
   });
 

@@ -43,8 +43,8 @@
         UserClientService.login(user, function(message, status) {
 
           if(status == 200) {
-            // Go to profile page
-            $state.go('profile');
+            // Go to dashboard page
+            $state.go('dashboard');
           } else {
             $scope.loginMessage = message; // Set error message
             $scope.$broadcast('removeText'); // Remove text from password input

@@ -29,6 +29,7 @@
     email: 'tester@gmail.com',
     username: 'tester',
     password: '!Test1',
+    profileImg: 'image/avatar-medium.png',
     twitter: {
       twitterId: '1000000000',
       accessToken: '000',
@@ -47,6 +48,7 @@
     email: 'actionee@gmail.com',
     username: 'actionee',
     password: '!Test1',
+    profileImg: 'image/avatar-medium.png',
     twitter: {
       twitterId: '2000000000',
       accessToken: '100',

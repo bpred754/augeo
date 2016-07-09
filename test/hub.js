@@ -97,8 +97,8 @@
     importTests('callback', './test-case/api/twitter-api/callback', App);
     importTests('getActivityDisplayData', './test-case/api/twitter-api/get-activity-display-data', App);
     importTests('getCompetitors', './test-case/api/twitter-api/get-competitors', App);
+    importTests('getDashboardDisplayData', './test-case/api/twitter-api/get-dashboard-display-data', App);
     importTests('getLeaderboardDisplayData', './test-case/api/twitter-api/get-leaderboard-display-data', App);
-    importTests('getProfileDisplayData', './test-case/api/twitter-api/get-profile-display-data', App);
     importTests('getSkillActivity', './test-case/api/twitter-api/get-skill-activity', App);
     importTests('getTwitterHistoryPageData & setMember', './test-case/api/twitter-api/get-twitter-history-page-data', App);
   });

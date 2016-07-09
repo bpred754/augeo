@@ -44,7 +44,7 @@
         <!-- Fixed Navbar -->
         <div id="lyt-navbar-container" class="navbar-default background-primary navbar-fixed-top" role="navigation">
           <div class="lyt-header-app-name">
-            <a id="lyt-header-project-name" class="lyt-header-text text-secondary large-text" ui-sref="profile">Augeo</a>
+            <a id="lyt-header-project-name" class="lyt-header-text text-secondary large-text" ui-sref="dashboard">Augeo</a>
           </div>
           <div class="height-100" ng-style="{'visibility':layoutNavbar}">
             <div class="lyt-header-settings-container">
@@ -52,7 +52,7 @@
                 <img src="{{profileIcon}}" class="lyt-header-img lyt-header-text header-tooltip" ng-class="{'lyt-header-icon-glow': layoutNavbar != 'hidden'}" data-toggle="profile-tooltip" data-placement="bottom" title="Profile & Settings"/>
               </a>
               <ul id="lyt-settings-dropdown" class="dropdown-menu" role="menu">
-                <li><a ui-sref="profile" class="small-text">Profile</a></li>
+                <li><a ui-sref="dashboard" class="small-text">Dashboard</a></li>
                 <li><a ui-sref="twitterHistory" class="small-text">My Twitter History</a></li>
                 <li class="clickable small-text" onclick="showDeleteModal()"><a>Delete Account</a></li>
                 <li class="divider"></li>

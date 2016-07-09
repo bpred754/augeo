@@ -21,18 +21,18 @@
   <!-- Header -->
   <div class="container" ng-show="isLoaded">
     <div class="row">
-      <div id="header-jumbotron" class="jumbotron">
-        <div id="header-container">
-          <div id="profile-pic-container">
-              <a id="profile-pic" href="https://www.twitter.com/{{screenName}}">
-                  <img id="profile-avatar" class="max-size" src="{{profileImageUrl}}">
+      <div id="db-header-jumbotron" class="jumbotron">
+        <div id="db-header-container">
+          <div id="db-img-container">
+              <a id="db-img" href="https://www.twitter.com/{{screenName}}">
+                  <img id="db-avatar" class="db-max-size" src="{{profileImageUrl}}">
               </a>
-              <div id="view-activity-link">
+              <div id="db-view-activity-link">
                 <a ui-sref="viewActivity({username:username})">View All Activity</a>
               </div>
           </div>
-          <div id="recent-activity-container">
-              <activity-transition ng-if="!invalidProfile && currentTweet" id= "profile-transition" visible="visible" tweet-data="currentTweet" screen-name="screenName"></activity-transition>
+          <div id="db-recent-activity-container">
+              <activity-transition ng-if="!invalidUser && currentTweet" id= "db-transition" visible="visible" tweet-data="currentTweet" screen-name="screenName"></activity-transition>
          </div>
         </div>
       </div>
@@ -40,7 +40,7 @@
   </div> <!-- end header container -->
 
   <!-- Skill Image/logo -->
-  <div id="skill-icon-container" class="row remove-margin" ng-show="isLoaded">
+  <div id="db-skill-icon-container" class="row remove-margin" ng-show="isLoaded">
     <skill-view skill="mainSkill" is-main-skill="true"></skill-view>
   </div>
 
@@ -49,24 +49,24 @@
     <div id="leftContainer" class="col-md-2 col-sm-2 col-xs-1"></div>
 
     <div id="content-container" class="col-md-8 col-sm-8 col-xs-10">
-      <div id="medium-screen" ng-repeat="row in mediumArray">
-        <div class="row skill-row">
+      <div id="db-medium-screen" ng-repeat="row in mediumArray">
+        <div class="row db-skill-row">
           <div ng-repeat="cell in row" class="col-md-4 height-100">
             <skill-view ng-if="cell" skill="cell"></skill-view>
           </div>
         </div>
       </div>
 
-      <div id="small-screen" ng-repeat="row in smallArray">
-        <div class="row skill-row">
+      <div id="db-small-screen" ng-repeat="row in smallArray">
+        <div class="row db-skill-row">
           <div ng-repeat="cell in row" class="col-sm-6 height-100" skill=cell>
             <skill-view ng-if="cell" skill="cell"></skill-view>
           </div>
         </div>
       </div>
 
-      <div id="xsmall-screen" ng-repeat="elem in skills">
-        <div class="row skill-row">
+      <div id="db-xsmall-screen" ng-repeat="elem in skills">
+        <div class="row db-skill-row">
           <div class="col-xs-12 height-100">
             <skill-view ng-if="elem" skill="elem"></skill-view>
           </div>

@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Binds data to profile.html                                 */
+  /* Description: Binds data to dashboard.html                                 */
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
@@ -28,11 +28,11 @@
     // Internal functions
     var init = function() {
 
-      $scope.invalidProfile = false;
+      $scope.invalidUser = false;
       $scope.username = $stateParams.username;
 
-      // Get user's Twitter profile image url, Twitter skill data, and Twitter sub skill data
-      TwitterClientService.getProfileDisplayData($scope.username, function(data) {
+      // Get user's profile image and Augeo skill data
+      TwitterClientService.getDashboardDisplayData($scope.username, function(data) {
 
         if(data != 'Unauthorized') {
 
@@ -102,13 +102,13 @@
           }
 
           if (data.errorImageUrl) {
-            $scope.invalidProfile = true;
+            $scope.invalidUser = true;
             $scope.profileImageUrl = data.errorImageUrl
           }
         }
       });
     };
 
-    // Initialize Profile page
+    // Initialize dashboard page
     init();
   };

@@ -85,9 +85,9 @@
       });
     };
 
-    this.getProfileDisplayData = function(username, callback) {
+    this.getDashboardDisplayData = function(username, callback) {
       var parameters = {username:username};
-      AugeoClientService.getAugeoAPI('twitter-api/getProfileDisplayData', parameters, function(data) {
+      AugeoClientService.getAugeoAPI('twitter-api/getDashboardDisplayData', parameters, function(data) {
           callback(data);
       });
     };

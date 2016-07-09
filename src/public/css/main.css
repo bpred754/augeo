@@ -39,9 +39,9 @@
   @import url('./layout.css');
 
   /* Screens */
+  @import url('./dashboard.css');
   @import url('./leaderboard.css');
   @import url('./login.css');
-  @import url('./profile.css');
   @import url('./twitter-history.css');
   @import url('./view-activity.css');
 
