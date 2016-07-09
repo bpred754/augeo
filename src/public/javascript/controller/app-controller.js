@@ -32,6 +32,8 @@
 
         UserClientService.getCurrentUser(function(user, status) {
 
+          $scope.profileIcon = user.profileIcon;
+
           if(toState.name != 'logout') {
             if(user.firstName) {
               $scope.layoutNavbar = 'initial';

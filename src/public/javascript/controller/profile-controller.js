@@ -39,6 +39,7 @@
           $scope.isLoaded = true;
 
           if (data.profileData) {
+            $scope.screenName = data.profileData.screenName;
             $scope.profileImageUrl = data.profileData.profileImageUrl;
             $scope.mainSkill = data.profileData.skill;
             $scope.skills = data.profileData.subSkills;

@@ -628,7 +628,8 @@
 
           var displayData = {
             profileData: {
-              'profileImageUrl': user.twitter.profileImageUrl,
+              'screenName': user.twitter.screenName,
+              'profileImageUrl': user.profileImg,
               'skill': mainSkillDisplay,
               'subSkills': displaySkills
             },

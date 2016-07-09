@@ -42,6 +42,8 @@
     username: String,
     password: String,
     sendGridId: String,
+    profileImg: String,
+    profileIcon: String,
     twitter: {
       twitterId: String,
       name: String,
@@ -79,7 +81,9 @@
       email: user.email,
       username: user.username,
       password: user.password,
-      sendGridId: user.sendGridId
+      sendGridId: user.sendGridId,
+      profileImg: user.profileImg,
+      profileIcon: user.profileIcon
     }, function(error, pUser) {
       if(error) {
         log.warn('Failed to add ' + user.email + ' to USER collection: ' + error);

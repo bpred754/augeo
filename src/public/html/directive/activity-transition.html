@@ -22,7 +22,7 @@
         <div class="at-head-container">
             <div class="at-center">
                 <div class="at-avatar-container">
-                    <div class="at-avatar-image-container">
+                    <div ng-if="screenName != tweetData.screenName" class="at-avatar-image-container">
                         <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank">
                             <img src="{{tweetData.avatarImageSrc}}" class="at-avatar-image"/>
                         </a>

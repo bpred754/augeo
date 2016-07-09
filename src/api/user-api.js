@@ -58,7 +58,9 @@
       lastName: request.body.lastName,
       email: request.body.email,
       username: request.body.username,
-      password: request.body.password
+      password: request.body.password,
+      profileImg: 'image/avatar-medium.png',
+      profileIcon: 'image/avatar-small.png'
     }
 
     // Check if email exists
