@@ -19,20 +19,19 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all controllers for browserify    */
+  /* Description: Service for profile popup                                  */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Reminder: Update service/index.js when service params are modified
+  module.exports = function() {
 
-  augeo.controller('AppController', ['$scope', '$state', 'UserClientService', 'ProfileService', require('./app-controller')]);
-  augeo.controller('ActivityController', ['$scope', 'ActivityService', require('./activity-controller')]);
-  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'TwitterClientService', 'ActivityService', 'ProfileService', require('./dashboard-controller')]);
-  augeo.controller('LeaderboardController', ['$scope', 'TwitterClientService', require('./leaderboard-controller')]);
-  augeo.controller('LoginController', ['$scope', '$window', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
-  augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', 'ProfileService', 'UserClientService', require('./profile-controller')]);
-  augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'TwitterClientService', require('./view-activity-controller')]);
+    var targetUser = '';
 
-  // Error controllers
-  augeo.controller('SignupErrorController', require('./error'));
+    this.setTargetUser = function(inTargetUser) {
+      targetUser = inTargetUser;
+    };
+
+    this.getTargetUser = function() {
+      return targetUser;
+    }
+  };

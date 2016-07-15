@@ -73,7 +73,7 @@
               // Login user
               UserClientService.login($scope.user, function(loginMessage, loginStatus) {
 
-                if(loginStatus = 200) {
+                if(loginStatus == 200) {
                   // Authenticate user with twitter
                   TwitterClientService.getAuthenticationData(function(authData, authStatus) {
 

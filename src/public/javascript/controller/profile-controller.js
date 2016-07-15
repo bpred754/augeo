@@ -19,20 +19,54 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all controllers for browserify    */
+  /* Description: Controller for profile popup                               */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, ProfileService, UserClientService) {
 
-  augeo.controller('AppController', ['$scope', '$state', 'UserClientService', 'ProfileService', require('./app-controller')]);
-  augeo.controller('ActivityController', ['$scope', 'ActivityService', require('./activity-controller')]);
-  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'TwitterClientService', 'ActivityService', 'ProfileService', require('./dashboard-controller')]);
-  augeo.controller('LeaderboardController', ['$scope', 'TwitterClientService', require('./leaderboard-controller')]);
-  augeo.controller('LoginController', ['$scope', '$window', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
-  augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', 'ProfileService', 'UserClientService', require('./profile-controller')]);
-  augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'TwitterClientService', require('./view-activity-controller')]);
+    $scope.isGlobalUser = false;
+    $scope.isEditMode = true;
 
-  // Error controllers
-  augeo.controller('SignupErrorController', require('./error'));
+    $scope.editProfile = function() {
+      $scope.isEditMode = true;
+    }
+
+    $scope.saveProfileData = function() {
+      UserClientService.saveProfileData($scope.targetUser, function(user){
+
+        // Update global User object
+        $scope.User = user;
+      });
+    };
+
+    $scope.viewAsOther = function() {
+      $scope.isEditMode = false;
+    }
+
+    $scope.$watch(function() {
+      return ProfileService.getTargetUser();
+    }, function(newValue, oldValue) {
+
+      if(newValue != oldValue) {
+
+        $scope.targetUser = newValue;
+        $scope.targetUser.name = newValue.firstName + ' ' + newValue.lastName;
+
+        if(newValue.twitterScreenName || (newValue.twitter && newValue.twitter.screenName)) {
+          $scope.targetUser.hasTwitterAuthentication = true;
+        } else {
+          $scope.targetUser.hasTwitterAuthentication = false;
+        }
+
+        if($scope.targetUser.username != $scope.User.username) {
+          $scope.isGlobalUser = false;
+          $scope.isEditMode = false;
+        } else {
+          $scope.isGlobalUser = true;
+          $scope.isEditMode = true;
+        }
+     }
+    });
+  };
+

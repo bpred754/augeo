@@ -100,8 +100,8 @@
   };
 
   exports.cleanUsers = function(callback) {
-    User.remove('tester@gmail.com', function(user1) {
-      User.remove('actionee@gmail.com', function(user2) {
+    User.remove('tester', function(user1) {
+      User.remove('actionee', function(user2) {
         callback();
       });
     });

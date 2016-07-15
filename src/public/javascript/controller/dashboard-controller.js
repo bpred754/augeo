@@ -23,26 +23,25 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $timeout, $interval, $stateParams, TwitterClientService, ActivityService) {
+  module.exports = function($scope, $timeout, $interval, $stateParams, TwitterClientService, ActivityService, ProfileService) {
 
     // Internal functions
     var init = function() {
 
       $scope.invalidUser = false;
-      $scope.username = $stateParams.username;
+      $scope.targetUsername = $stateParams.username;
 
       // Get user's profile image and Augeo skill data
-      TwitterClientService.getDashboardDisplayData($scope.username, function(data) {
+      TwitterClientService.getDashboardDisplayData($scope.targetUsername, function(data) {
 
         if(data != 'Unauthorized') {
 
           $scope.isLoaded = true;
 
-          if (data.profileData) {
-            $scope.screenName = data.profileData.screenName;
-            $scope.profileImageUrl = data.profileData.profileImageUrl;
-            $scope.mainSkill = data.profileData.skill;
-            $scope.skills = data.profileData.subSkills;
+          if(data.dashboardData) {
+            $scope.profileData = data.dashboardData.user;
+            $scope.mainSkill = data.dashboardData.skill;
+            $scope.skills = data.dashboardData.subSkills;
 
             var mediumScreenArray = new Array();
             var mediumCount = 0;
@@ -103,10 +102,22 @@
 
           if (data.errorImageUrl) {
             $scope.invalidUser = true;
-            $scope.profileImageUrl = data.errorImageUrl
+            $scope.profileData.profileImg = data.errorImageUrl
           }
         }
       });
+    };
+
+    $scope.showProfile = function() {
+
+      var targetUser = $scope.profileData;
+      if($scope.User.username == $scope.profileData.username) {
+        targetUser = $scope.User;
+      }
+
+      ProfileService.setTargetUser(targetUser);
+
+      showProfileModal();
     };
 
     // Initialize dashboard page

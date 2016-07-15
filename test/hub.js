@@ -90,6 +90,7 @@
     importTests('Login', './test-case/api/user-api/login');
     importTests('Session', './test-case/api/user-api/session');
     importTests('Remove User', './test-case/api/user-api/remove-user', App);
+    importTests('Save Profile Data', './test-case/api/user-api/save-profile-data', App)
   });
 
   describe('Twitter API', function() {

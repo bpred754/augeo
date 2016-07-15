@@ -49,9 +49,10 @@
           <div class="height-100" ng-style="{'visibility':layoutNavbar}">
             <div class="lyt-header-settings-container">
               <a class="lyt-header-image-container dropdown-toggle" data-toggle="dropdown">
-                <img src="{{profileIcon}}" class="lyt-header-img lyt-header-text header-tooltip" ng-class="{'lyt-header-icon-glow': layoutNavbar != 'hidden'}" data-toggle="profile-tooltip" data-placement="bottom" title="Profile & Settings"/>
+                <img src="{{User.profileIcon}}" class="lyt-header-img lyt-header-text header-tooltip" ng-class="{'lyt-header-icon-glow': layoutNavbar != 'hidden'}" data-toggle="profile-tooltip" data-placement="bottom" title="Profile & Settings"/>
               </a>
               <ul id="lyt-settings-dropdown" class="dropdown-menu" role="menu">
+                <li class="clickable small-text" ng-click="showProfile()"><a>Profile</a></li>
                 <li><a ui-sref="dashboard" class="small-text">Dashboard</a></li>
                 <li><a ui-sref="twitterHistory" class="small-text">My Twitter History</a></li>
                 <li class="clickable small-text" onclick="showDeleteModal()"><a>Delete Account</a></li>
@@ -94,6 +95,71 @@
         </div>
       </div>
 
+      <!-- Profile Modal -->
+      <div class="modal fade" id="profile-modal" tabindex="-1" role="dialog" aria-labelledby="profile-modal-label" aria-hidden="true" ng-controller="ProfileController">
+        <div class="modal-dialog" id="profile-modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <div class="modal-title subheading-text text-primary" id="profile-modal-label">{{targetUser.name}}</div>
+              <div class="modal-title standard-text text-primary">{{targetUser.username}}</div>
+            </div>
+            <div id="profile-modal-body" class="modal-body row">
+              <div id="profile-img-container">
+                <img class="profile-img" src="{{targetUser.profileImg}}"/>
+              </div>
+              <div id="profile-body-container">
+                <!-- Authenticate with Twitter -->
+                <div id="profile-auth-container" ng-if="isEditMode && !targetUser.hasTwitterAuthentication && isGlobalUser">
+                  <div id="profile-auth-inner-container">
+                    <p class="standard-text text-primary text-align-center">Authenticate with Twitter to start tracking your experience</p>
+                    <div class="horizontal-center">
+                     <button type="button" class="btn btn-primary small-text">Authenticate</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Bio - Edit Mode -->
+                <div ng-if="isEditMode && isGlobalUser">
+                  <div class="profile-label">
+                    <p class="standard-text text-primary">Public Bio</p>
+                  </div>
+                  <div class="horizontal-center profile-field-input-container">
+                      <input type="text" class="form-control small-text profile-field-input" placeholder="Profession" ng-model="targetUser.profession"/>
+                  </div>
+                  <div class="horizontal-center profile-field-input-container">
+                      <input type="text" class="form-control small-text profile-field-input" placeholder="Location" ng-model="targetUser.location"/>
+                  </div>
+                  <div class="horizontal-center profile-field-input-container">
+                      <input type="text" class="form-control small-text profile-field-input" placeholder="Website" ng-model="targetUser.website"/>
+                  </div>
+                  <div class="profile-label profile-label-description">
+                      <p class="standard-text text-primary">Description</p>
+                  </div>
+                  <div class="horizontal-center">
+                      <textarea id="profile-description-field" class="form-control small-text profile-field-input" placeholder="Tell us about yourself..." ng-model="targetUser.description" maxlength="180"></textarea>
+                  </div>
+                </div>
+                <!-- Bio - View Mode -->
+                <div ng-if="!isEditMode">
+                  <p id="profile-description" class="standard-text text-primary text-align-center">{{targetUser.description}}</p>
+                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.profession}}</p>
+                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.location}}</p>
+                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.website}}</p>
+                </div>
+                <!-- View As Link -->
+                <div class="profile-edit-view-link" ng-if="isEditMode && isGlobalUser">
+                  <p class="small-text augeo-link" ng-click="viewAsOther()">View as other Augeo user</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer" ng-if="isGlobalUser">
+              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="saveProfileData()" ng-if="isEditMode">Save</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="editProfile()" ng-if="!isEditMode">Edit Profile</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Delete Modal -->
       <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="delete-modal-label" aria-hidden="true">
         <div class="modal-dialog">
@@ -124,9 +190,15 @@
 
         var showDeleteModal = function() {
           $('#delete-modal').modal();
-        }
+        };
+
+        var showProfileModal = function() {
+          $('#profile-modal').modal();
+        };
 
         $(document).ready(function() {
+
+          // Remove entered data in delete modal inputs
           $('#delete-modal').on('hidden.bs.modal', function () {
             $('#delete-password').val('');
             var scope = angular.element($("#delete-modal")).scope();

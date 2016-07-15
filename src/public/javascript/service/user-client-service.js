@@ -29,11 +29,6 @@
       AugeoClientService.postAugeoAPI('user-api/add', user, callback);
     };
 
-    this.removeUser = function(password, callback) {
-      var parameters = {password:password}
-      AugeoClientService.postAugeoAPI('user-api/remove', parameters, callback)
-    }
-
     this.getCurrentUser = function(callback) {
       var parameters = null;
       AugeoClientService.getAugeoAPI('user-api/getCurrentUser', parameters, function(user, status) {
@@ -48,6 +43,22 @@
     this.logout = function(callback) {
       var parameters = null;
       AugeoClientService.postAugeoAPI('user-api/logout', parameters, callback);
+    };
+
+    this.removeUser = function(password, callback) {
+      var parameters = {password:password}
+      AugeoClientService.postAugeoAPI('user-api/remove', parameters, callback)
+    };
+
+    this.saveProfileData = function(user, callback) {
+      var parameters = {
+        username: user.username,
+        profession: user.profession,
+        location: user.location,
+        website: user.website,
+        description: user.description
+      };
+      AugeoClientService.postAugeoAPI('user-api/saveProfileData', parameters, callback);
     };
 
   };

@@ -142,6 +142,22 @@
     })
   });
 
+  // getSessionUser
+  it('should retrieve user information from database for current session -- getSessionUser', function(done) {
+
+    // Invalid username
+    UserService.getSessionUser('###', function(){}, function() {
+
+      // Valid
+      UserService.getSessionUser(Common.USER.username, function(user) {
+        Assert.strictEqual(user.firstName, Common.USER.firstName);
+        Assert.strictEqual(user.lastName, Common.USER.lastName);
+
+        done();
+      });
+    });
+  });
+
   // login
   it('should login Augeo user -- login()', function(done) {
     this.timeout(Common.TIMEOUT);
@@ -164,7 +180,6 @@
 
           Assert.strictEqual(user.firstName, Common.USER.firstName);
           Assert.strictEqual(user.lastName, Common.USER.lastName);
-          Assert.strictEqual(user.email, Common.USER.email);
           Assert.strictEqual(user.username, Common.USER.username);
 
           done();
@@ -192,27 +207,27 @@
       UserService.removeUser('!!!', Common.ACTIONEE.password, callbackFailure, function() {
 
         // Invalid password - execute callback with error
-        UserService.removeUser(Common.ACTIONEE.email, null, function(error0, user0) {
+        UserService.removeUser(Common.ACTIONEE.username, null, function(error0, user0) {
           Assert.strictEqual(error0, true);
           Should.not.exist(user0);
 
-          // User does not exist for given email - execute rollback
-          UserService.removeUser('blah@blah.com', Common.ACTIONEE.password, callbackFailure, function() {
+          // User does not exist for given username - execute rollback
+          UserService.removeUser('blah', Common.ACTIONEE.password, callbackFailure, function() {
 
             // Password does not match password in database - execute callback with error
-            UserService.removeUser(Common.ACTIONEE.email, 'password', function(error1, user1) {
+            UserService.removeUser(Common.ACTIONEE.username, 'password', function(error1, user1) {
               Assert.strictEqual(error1, true);
               Should.not.exist(user1);
 
               // Success
-              UserService.removeUser(Common.ACTIONEE.email, Common.ACTIONEE.password, function(error2, user2) {
+              UserService.removeUser(Common.ACTIONEE.username, Common.ACTIONEE.password, function(error2, user2) {
                 Assert.strictEqual(error2, false);
 
                 // Validate that returned user does not have password
                 Should.not.exist(user2.password);
 
                 // Validate that returned user is not in USER table
-                User.getUserWithEmail(Common.ACTIONEE.email, function(user3) {
+                User.getUserWithUsername(Common.ACTIONEE.username, function(user3) {
                   Should.not.exist(user3);
                   done();
                 });
@@ -223,3 +238,35 @@
       });
     }, rollbackFailure);
   });
+
+  // saveProfileData
+  it('should save profile data to database with given profile data -- saveProfileData()', function(done) {
+
+    // Verify USER is in database
+    User.getUserWithUsername(Common.USER.username, function(user) {
+      Assert.strictEqual(user.firstName, Common.USER.firstName);
+      Assert.strictEqual(user.profession, '');
+      Assert.strictEqual(user.location, '');
+      Assert.strictEqual(user.website, '');
+      Assert.strictEqual(user.description, '');
+
+      var profileData = {
+        username: user.username,
+        profession: 'QA',
+        location: 'United States',
+        website: 'augeo.io',
+        description: 'Test user for Augeo application'
+      };
+
+      UserService.saveProfileData(profileData, function(userAfter) {
+        Assert.strictEqual(userAfter.username, profileData.username);
+        Assert.strictEqual(userAfter.profession, profileData.profession);
+        Assert.strictEqual(userAfter.location, profileData.location);
+        Assert.strictEqual(userAfter.website, profileData.website);
+        Assert.strictEqual(userAfter.description, profileData.description);
+        done();
+      });
+    });
+  });
+
+

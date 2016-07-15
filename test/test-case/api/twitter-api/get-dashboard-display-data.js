@@ -79,10 +79,10 @@
         .end(function(error, response) {
           Should.not.exist(error);
 
-          var profileData = response.body.profileData;
-          Should.exist(profileData.profileImageUrl);
-          Should.exist(profileData.skill);
-          Should.exist(profileData.subSkills);
+          var dashboardData = response.body.dashboardData;
+          Should.exist(dashboardData.user.profileImg);
+          Should.exist(dashboardData.skill);
+          Should.exist(dashboardData.subSkills);
 
           done();
         });
@@ -97,10 +97,10 @@
         .end(function(error, response) {
           Should.not.exist(error);
 
-          var profileData = response.body.profileData;
-          Should.exist(profileData.profileImageUrl);
-          Should.exist(profileData.skill);
-          Should.exist(profileData.subSkills);
+          var dashboardData = response.body.dashboardData;
+          Should.exist(dashboardData.user.profileImg);
+          Should.exist(dashboardData.skill);
+          Should.exist(dashboardData.subSkills);
 
           done();
         });

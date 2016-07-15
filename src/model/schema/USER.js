@@ -33,6 +33,24 @@
 
   // Global variables
   var log = new Logger();
+  var clientSafeProjection = {
+    'firstName': 1,
+    'lastName': 1,
+    'username': 1,
+    'profileImg': 1,
+    'profileIcon': 1,
+    'profession': 1,
+    'location': 1,
+    'website': 1,
+    'description': 1,
+    'twitter.twitterId': 1,
+    'twitter.name': 1,
+    'twitter.screenName': 1,
+    'twitter.profileImageUrl': 1,
+    'twitter.isMember': 1,
+    'twitter.skill': 1,
+    'twitter.subSkills': 1
+  };
 
   // Schema declaration
   var USER = Mongoose.Schema({
@@ -44,6 +62,10 @@
     sendGridId: String,
     profileImg: String,
     profileIcon: String,
+    profession: String,
+    location: String,
+    website: String,
+    description: String,
     twitter: {
       twitterId: String,
       name: String,
@@ -83,7 +105,11 @@
       password: user.password,
       sendGridId: user.sendGridId,
       profileImg: user.profileImg,
-      profileIcon: user.profileIcon
+      profileIcon: user.profileIcon,
+      profession: '',
+      location: '',
+      website: '',
+      description: '',
     }, function(error, pUser) {
       if(error) {
         log.warn('Failed to add ' + user.email + ' to USER collection: ' + error);
@@ -302,19 +328,37 @@
     });
   };
 
-  USER.statics.getSecretToken = function(id, callback) {
-    this.findOne({_id:id}, {'twitter.secretToken':1}, function(error, data) {
-
+  USER.statics.getPasswordWithEmail = function(email, callback) {
+    this.findOne({email:{'$regex': email, $options: 'i'}}, {password:1}, function(error, data) {
       if(error) {
-        log.warn('Failed to find secretToken for user with ID: ' + id + '. Error: ' + error);
+        log.warn('Failed to find password for email: ' + email + '. Error:' + error);
         callback();
       } else {
-        log.info('Successfully found secretToken for user with ID: ' + id);
-        var secretToken = data.twitter.secretToken;
-        callback(secretToken);
+        log.info('Successfully retrieved password for email: ' + email);
+        if(data && data.password) {
+          callback(data.password)
+        } else {
+          callback();
+        }
       }
     });
-  }
+  };
+  
+  USER.statics.getPasswordWithUsername = function(username, callback) {
+    this.findOne({username:{'$regex': username, $options: 'i'}}, {password:1}, function(error, data) {
+      if(error) {
+        log.warn('Failed to find password for username: ' + username + '. Error:' + error);
+        callback();
+      } else {
+        log.info('Successfully retrieved password for username: ' + username);
+        if(data && data.password) {
+          callback(data.password)
+        } else {
+          callback();
+        }
+      }
+    });
+  };
 
   USER.statics.getSkillRank = function(username, skill, callback) {
 
@@ -371,17 +415,19 @@
     );
   };
 
-  USER.statics.getTokens = function(id, callback) {
-    return this.findOne({_id:id}, {'twitter.accessToken':1, 'twitter.secretAccessToken':1}, function(error, data) {
+  USER.statics.getTwitterTokens = function(id, callback) {
+    return this.findOne({_id:id}, {'twitter.accessToken':1, 'twitter.secretAccessToken':1, 'twitter.secretToken':1}, function(error, data) {
       if(error) {
         log.warn('Failed to retrieve users access tokens with id:' + id + '. ' + error);
+        callback();
       } else {
         log.info('Successfully retrieved users access tokens with id:'+ id);
 
         if(data) {
           var tokens = {
             accessToken: data.twitter.accessToken,
-            secretAccessToken: data.twitter.secretAccessToken
+            secretAccessToken: data.twitter.secretAccessToken,
+            secretToken: data.twitter.secretToken
           }
           callback(tokens);
         } else {
@@ -414,7 +460,7 @@
   };
 
   USER.statics.getUserWithEmail = function(email, callback) {
-    return this.findOne({email:{'$regex': email, $options: 'i'}}, function(error, user) {
+    return this.findOne({email:{'$regex': email, $options: 'i'}}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + email + ' from USER collection: ' + error);
       } else {
@@ -425,7 +471,7 @@
   };
 
   USER.statics.getUserWithId = function(id, callback) {
-    return this.findOne({_id:id}, function(error, user) {
+    return this.findOne({_id:id}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + id + ' from USER collection: ' + error);
       } else {
@@ -436,7 +482,7 @@
   };
 
   USER.statics.getUserWithScreenName = function(screenName, callback) {
-    return this.findOne({'twitter.screenName':screenName}, function(error, user) {
+    return this.findOne({'twitter.screenName':screenName}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + screenName + ' from USER collection: ' + error);
       } else {
@@ -447,7 +493,7 @@
   };
 
   USER.statics.getUserWithTwitterId = function(twitterId, callback) {
-    return this.findOne({'twitter.twitterId':twitterId}, function(error, user) {
+    return this.findOne({'twitter.twitterId':twitterId}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + twitterId + ' from USER collection: ' + error);
       } else {
@@ -458,7 +504,7 @@
   };
 
   USER.statics.getUserWithUsername = function(username, callback) {
-    return this.findOne({'username':username}, function(error, user) {
+    return this.findOne({'username':{'$regex': username, $options: 'i'}}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + username + ' from USER collection: ' + error);
       } else {
@@ -486,12 +532,12 @@
     });
   };
 
-  USER.statics.remove = function(email, callback) {
-    this.findOneAndRemove({'email':{'$regex': email, $options: 'i'}}, function(error, user) {
+  USER.statics.remove = function(username, callback) {
+    this.findOneAndRemove({'username':{'$regex': username, $options: 'i'}}, function(error, user) {
       if(error) {
-        log.warn('Failed to remove ' + email + ' from USERS. Error: ' + error);
+        log.warn('Failed to remove ' + username + ' from USERS. Error: ' + error);
       } else {
-        log.info('Successfully removed user ' + email + ' from the database.');
+        log.info('Successfully removed user ' + username + ' from the database.');
         callback(user);
       }
     });
@@ -500,7 +546,7 @@
   USER.statics.saveDocument = function(doc, callback) {
     doc.save(function(error) {
       if(error) {
-        log.warn('Failed to save USER documnent. ' + error);
+        log.warn('Failed to save USER document. ' + error);
       } else {
         log.info('Sucessfully saved USER document.');
         if(callback) {
@@ -510,14 +556,39 @@
     });
   };
 
+  USER.statics.saveProfileData = function(profileData, callback) {
+
+    var query = {username: profileData.username};
+    var update = {
+      $set:{
+        "profession": profileData.profession,
+        "location": profileData.location,
+        "website": profileData.website,
+        "description": profileData.description
+      }
+    };
+
+    var options = {multi:false};
+
+    return this.update(query, update, options, function(error, n) {
+      if(error) {
+        log.warn('Failed to update profile data: ' + error);
+        callback(false);
+      } else {
+        log.info('Successfully updated profile data');
+        callback(true);
+      }
+    });
+  };
+
   USER.statics.setMember = function(id, callback) {
     return this.findOne({_id:id}, function(error, doc) {
 
       if(error) {
-        log.warn('Failed to find user with id:' + id + ' to set as a memeber. ' + error);
+        log.warn('Failed to find user with id:' + id + ' to set as a member. ' + error);
         callback(false);
       } else {
-        log.info('Successfully found user with id:' + id + ' to set as a memeber');
+        log.info('Successfully found user with id:' + id + ' to set as a member');
         if(doc) {
           doc.twitter.isMember = true;
           doc.save(function(error) {
@@ -562,6 +633,8 @@
     var query = {_id:id};
     var update = {
                     $set:{
+                      "profileImg": data.profileImageUrl,
+                      "profileIcon": data.profileIcon,
                       "twitter.accessToken": data.accessToken,
                       "twitter.secretAccessToken": data.secretAccessToken,
                       "twitter.twitterId": data.twitterId,

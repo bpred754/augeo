@@ -282,7 +282,7 @@
     if (AugeoValidator.isMongooseObjectIdValid(userId) && TwitterValidator.isScreenNameValid(screenName)) {
 
       // Get user's access tokens
-      User.getTokens(userId, function(tokens) {
+      User.getTwitterTokens(userId, function(tokens) {
 
         if(tokens) {
           User.checkExistingTwitterUser(screenName, function(userExists) {
@@ -366,9 +366,9 @@
 
   exports.getUserSecretToken = function(session, callback, rollback) {
     if(TwitterValidator.isSessionValid(session)) {
-      User.getSecretToken(session.user._id, function(oauthSecretToken) {
-        if(oauthSecretToken) {
-          callback(oauthSecretToken);
+      User.getTwitterTokens(session.user._id, function(tokens) {
+        if(tokens && tokens.secretToken) {
+          callback(tokens.secretToken);
         } else {
           rollback();
         }
@@ -391,7 +391,7 @@
   // Call DB to remove all users with an undefined Twitter Id
   exports.removeInvalidUser = function(session, callback) {
     if(TwitterValidator.isSessionValid(session)) {
-      User.remove(session.user.email, callback);
+      User.remove(session.user.username, callback);
     }
   };
 
@@ -592,6 +592,18 @@
 
     User.getUserWithUsername(username, function(user) {
 
+      var profileData = {
+        username: username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        location: user.location,
+        profession: user.profession,
+        profileImg: user.profileImg,
+        website: user.website,
+        description: user.description,
+        twitterScreenName: user.twitter.screenName
+      };
+
       var mainSkill = user.twitter.skill;
       var mainSkillDisplay = {
         name: 'Twitter',
@@ -627,9 +639,8 @@
         Tweet.getSkillActivity(user.twitter.screenName, mentionTweetIds, null, 10, null, function(tweets) {
 
           var displayData = {
-            profileData: {
-              'screenName': user.twitter.screenName,
-              'profileImageUrl': user.profileImg,
+            dashboardData: {
+              'user': profileData,
               'skill': mainSkillDisplay,
               'subSkills': displaySkills
             },

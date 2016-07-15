@@ -62,6 +62,49 @@
     margin-top:-1px;
   }
 
+  #profile-auth-container {
+    height:100%;
+    display:flex;
+    justify-content:center;
+    margin-bottom:15px;
+  }
+
+  #profile-auth-inner-container {
+    height:100%;
+    width:80%;
+    border-style:solid;
+    border-color:#a94442;
+    padding-top:15px;
+    padding-bottom:15px;
+  }
+
+  #profile-body-container {
+    padding-top:15px;
+    padding-bottom:15px;
+    width:100%;
+  }
+
+  #profile-description {
+    margin-bottom:15px;
+  }
+
+  #profile-description-field {
+    resize:none;
+    height:90px;
+  }
+
+  #profile-img-container {
+    height:150px;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    width:100%;
+  }
+
+  #profile-modal-body {
+    padding-bottom:0px;
+  }
+
   .lyt-footer {
     padding-top:15px;
     width:100%;
@@ -163,6 +206,39 @@
     height:auto !important;
     height:100%;
     margin:0 auto -150px; /* This must be the negative value of .push, .footer height*/
+  }
+
+  .profile-attr{
+    margin-bottom:0px;
+    font-weight:500;
+  }
+
+  .profile-edit-view-link {
+    margin-top:40px;
+    text-align:center;
+  }
+
+  .profile-field-input {
+    width:260px;
+    float:left;
+  }
+
+  .profile-field-input-container {
+    padding-bottom:5px;
+  }
+
+  .profile-img {
+    max-height:100%;
+    max-width:100%;
+    border-radius:10px
+  }
+
+  .profile-label {
+    padding-left:20px;
+  }
+
+  .profile-label-description {
+    margin-top:15px;
   }
 
   .tooltip-arrow,

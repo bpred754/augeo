@@ -41,7 +41,11 @@
     log.info('Getting current user from session: ' + request.session.user);
 
     if(request.session.user) {
-      response.status(200).send(request.session.user);
+      UserService.getSessionUser(request.session.user.username, function(user) {
+        response.status(200).send(user);
+      }, function() {
+        response.sendStatus(401);
+      });
     } else {
       response.sendStatus(200);
     }
@@ -61,7 +65,7 @@
       password: request.body.password,
       profileImg: 'image/avatar-medium.png',
       profileIcon: 'image/avatar-small.png'
-    }
+    };
 
     // Check if email exists
     UserService.doesEmailExist(user.email, function(emailExists) {
@@ -138,7 +142,7 @@
     var rollback = function() {response.status(400).send('Failed to delete user');};
 
     if(request.session.user) {
-      UserService.removeUser(request.session.user.email, request.body.password, function(error, user) {
+      UserService.removeUser(request.session.user.username, request.body.password, function(error, user) {
         if(error) {
           response.status(401).send('Incorrect password');
         } else if(user) {
@@ -157,6 +161,31 @@
       }, rollback);
     } else {
       rollback();
+    }
+  });
+
+  UserRouter.post('/saveProfileData', function(request, response) {
+
+    var profileData = {
+      username: request.body.username,
+      profession: request.body.profession,
+      location : request.body.location,
+      website: request.body.website,
+      description: request.body.description
+    };
+
+    if(request.session.user && request.session.user.username == profileData.username) {
+      UserService.saveProfileData(profileData, function(user) {
+
+        if(user) {
+          response.status(200).send(user);
+        } else {
+          response.status(400).send('Failed to save profile data')
+        }
+
+      });
+    } else {
+      response.sendStatus(401);
     }
   });
 

@@ -277,6 +277,7 @@
           name: twitterData.name,
           screenName: screenName,
           profileImageUrl: profileImageUrl,
+          profileIcon: url,
           isMember: false,
           skill: TwitterUtility.getMainSkill(0),
           subSkills: subSkills,

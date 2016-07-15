@@ -24,15 +24,17 @@
       <div id="db-header-jumbotron" class="jumbotron">
         <div id="db-header-container">
           <div id="db-img-container">
-              <a id="db-img" href="https://www.twitter.com/{{screenName}}">
-                  <img id="db-avatar" class="db-max-size" src="{{profileImageUrl}}">
+              <a id="db-img" ng-click="showProfile()">
+                  <img id="db-avatar" class="db-max-size" src="{{profileData.profileImg}}">
               </a>
-              <div id="db-view-activity-link">
-                <a ui-sref="viewActivity({username:username})">View All Activity</a>
+              <div id="db-links">
+                <span class="small-text augeo-link" ng-click="showProfile()">Profile</span>
+                <span class="small-text">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                <span><a class="small-text augeo-link" ui-sref="viewActivity({username:profileData.username})">Activity</a></span>
               </div>
           </div>
           <div id="db-recent-activity-container">
-              <activity-transition ng-if="!invalidUser && currentTweet" id= "db-transition" visible="visible" tweet-data="currentTweet" screen-name="screenName"></activity-transition>
+              <activity-transition ng-if="!invalidUser && currentTweet" id= "db-transition" visible="visible" tweet-data="currentTweet" screen-name="profileData.twitterScreenName"></activity-transition>
          </div>
         </div>
       </div>

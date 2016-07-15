@@ -86,21 +86,29 @@
     }
   };
 
+  exports.getSessionUser = function(username, callback, rollback) {
+    if(AugeoValidator.isUsernameValid(username)) {
+      User.getUserWithUsername(username, function(user) {
+        callback(user);
+      });
+    } else {
+      rollback();
+    }
+  };
+
   exports.login = function(email, password, callback, rollback) {
 
     if(AugeoValidator.isEmailValid(email) && AugeoValidator.isPasswordValid(password)) {
 
-      User.getUserWithEmail(email, function(user){
+      User.getPasswordWithEmail(email, function(dbPassword){
 
-        if(user) {
+        if(dbPassword) {
           // Load hash from your password DB.
-          var hash = user.password;
-          Bcrypt.compare(password, hash, function(err, isMatch) {
+          Bcrypt.compare(password, dbPassword, function(err, isMatch) {
             if(isMatch) {
-              // Remove password attribute from object
-              user = user.toObject();
-              delete user.password;
-              callback(user);
+              User.getUserWithEmail(email, function(user) {
+                callback(user);
+              });
             } else {
               rollback();
             }
@@ -114,18 +122,16 @@
     }
   };
 
-  exports.removeUser = function(email, password, callback, rollback) {
+  exports.removeUser = function(username, password, callback, rollback) {
 
-    if(AugeoValidator.isEmailValid(email)) {
+    if(AugeoValidator.isUsernameValid(username)) {
       if(AugeoValidator.isPasswordValid(password)) {
-        User.getUserWithEmail(email, function(user) {
-          if(user) {
-            // Load hash from password DB
-            var hash = user.password;
+        User.getPasswordWithUsername(username, function(hash) {
+          if(hash) {
             Bcrypt.compare(password, hash, function(err, isMatch) {
               if(isMatch) {
                 // Remove user
-                User.remove(email, function(removedUser) {
+                User.remove(username, function(removedUser) {
                   // Remove password attribute from object
                   removedUser = removedUser.toObject();
                   delete removedUser.password;
@@ -145,4 +151,17 @@
     } else {
       rollback();
     }
+  };
+
+  exports.saveProfileData = function(profileData, callback) {
+    User.saveProfileData(profileData, function(saveSuccessful) {
+
+      if(saveSuccessful) {
+        User.getUserWithUsername(profileData.username, function(user) {
+          callback(user);
+        });
+      } else {
+        callback();
+      }
+    });
   };

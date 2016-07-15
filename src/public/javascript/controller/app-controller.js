@@ -23,38 +23,43 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $state, UserClientService) {
+  module.exports = function($scope, $state, UserClientService, ProfileController) {
 
     $scope.layoutNavbar = 'hidden';
 
-    $scope.$on('$stateChangeStart',
-      function(event, toState, toParams, fromState, fromParams){
+    $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
-        UserClientService.getCurrentUser(function(user, status) {
+      UserClientService.getCurrentUser(function(user, status) {
 
-          $scope.profileIcon = user.profileIcon;
+        // Set global User object
+        $scope.User = user;
 
-          if(toState.name != 'logout') {
-            if(user.firstName) {
-              $scope.layoutNavbar = 'initial';
-            } else {
-              $scope.layoutNavbar = 'hidden';
-            }
+        if(toState.name != 'logout') {
+          if(user.firstName) {
+            $scope.layoutNavbar = 'initial';
           } else {
             $scope.layoutNavbar = 'hidden';
           }
-        });
+        } else {
+          $scope.layoutNavbar = 'hidden';
+        }
       });
+    });
 
-      $scope.removeErrorMessage = '';
-      $scope.removeUser = function(password) {
-        UserClientService.removeUser(password, function(data, status) {
-          if(status == 200) {
-            $state.go('logout');
-            $('#delete-modal').modal('toggle');
-          } else {
-            $scope.removeErrorMessage = data;
-          }
-        });
-      };
+    $scope.removeErrorMessage = '';
+    $scope.removeUser = function(password) {
+      UserClientService.removeUser(password, function(data, status) {
+        if(status == 200) {
+          $state.go('logout');
+          $('#delete-modal').modal('toggle');
+        } else {
+          $scope.removeErrorMessage = data;
+        }
+      });
+    };
+
+    $scope.showProfile = function() {
+      ProfileController.setTargetUser($scope.User)
+      showProfileModal();
+    };
   };

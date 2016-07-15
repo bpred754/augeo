@@ -62,7 +62,7 @@
 
   @media(max-width:599px) {
 
-    #head-container {
+    #th-head-container {
       height:250px;
       margin-left:0px;
     }
@@ -110,7 +110,7 @@
 
   @media(min-width:600px) {
 
-    #head-container {
+    #th-head-container {
       height:250px;
       margin-left:0px;
     }
@@ -202,7 +202,7 @@
 
   @media(min-width:1200px) {
 
-    #head-container {
+    #th-head-container {
       height:250px;
       margin-left:125px;
     }
