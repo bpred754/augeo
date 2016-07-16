@@ -72,7 +72,7 @@
         if ($stateParams.username) {
           $scope.username = $stateParams.username;
         } else {
-          $scope.username = data.username;
+          $scope.username = $scope.User.username;
         }
 
         $scope.twitterSkills = data.skills;

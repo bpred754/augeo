@@ -118,7 +118,6 @@
     var jsonResponse = {};
     if(SessionValidator.isUsernameDefined(request)) {
       isValid = true;
-      jsonResponse.username = request.session.user.username;
       jsonResponse.skills = AugeoUtility.SUB_SKILLS;
     }
 
@@ -205,7 +204,6 @@
 
       TwitterService.getNumberUsers(function(numUsers) {
 
-        jsonResponse.username = request.session.user.username;
         jsonResponse.skills = AugeoUtility.SUB_SKILLS;
         jsonResponse.numberUsers = numUsers;
         response.status(200).json(jsonResponse);

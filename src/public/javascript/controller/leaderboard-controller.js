@@ -36,11 +36,11 @@
 
         if(data != 'Unauthorized') {
 
-          $scope.searchName = data.username;
+          $scope.searchName = $scope.User.username;
           $scope.twitterSkills = data.skills;
           $scope.lastPage = Math.ceil(data.numberUsers / USERS_PER_PAGE);
 
-          TwitterClientService.getCompetitors(data.username, $scope.currentTwitterSkill, function (inUsers) {
+          TwitterClientService.getCompetitors($scope.searchName, $scope.currentTwitterSkill, function (inUsers) {
             $scope.isLoaded = true;
             $scope.currentPage = Math.ceil(inUsers[0].rank / USERS_PER_PAGE);
             $scope.users = inUsers;
