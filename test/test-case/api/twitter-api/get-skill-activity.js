@@ -101,7 +101,7 @@
       TwitterService.addAction(action0, tweet0, mention0, function(classification0) {
 
         agent
-          .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Twitter&tweetId=9999999999999999999999999999999')
+          .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo&tweetId=9999999999999999999999999999999')
           .expect(200)
           .end(function(error, response) {
             Should.not.exist(error);

@@ -27,13 +27,13 @@
           <div id="head-container" class="text-align-center">
             <div id="header-title" class="x-large-text">Leaderboards</div>
             <div id="skill-container">
-              <a ng-if="currentTwitterSkill == 'Twitter'" href="https://www.twitter.com">
-                <img id="skill-icon" src="image/twitter/logo-blue-medium.png">
+              <a ng-if="currentTwitterSkill == 'Augeo'">
+                <img id="skill-icon" src="image/augeo-logo-medium.png">
               </a>
-              <span ng-if="currentTwitterSkill != 'Twitter'" class="glyphicon {{getGlyphicon()}} skill-glyphicon"></span>
+              <span ng-if="currentTwitterSkill != 'Augeo'" class="glyphicon {{getGlyphicon()}} skill-glyphicon"></span>
             </div>
             <select id="skill-select" class="form-control standard-text" ng-model="currentTwitterSkill" ng-change="getCompetitors()">
-              <option>Twitter</option>
+              <option>Augeo</option>
               <option ng-repeat="twitterSkill in twitterSkills">{{twitterSkill.name}}</option>
             </select>
           </div>

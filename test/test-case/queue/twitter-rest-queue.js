@@ -103,8 +103,8 @@
 
                   // Verify user experience is updated
                   User.getUserWithEmail(Common.USER.email, function(user) {
-                    var expectedExperience = initialUser.twitter.skill.experience + TwitterUtility.MENTION_EXPERIENCE * mentionsAdded;
-                    Assert.strictEqual(user.twitter.skill.experience, expectedExperience);
+                    var expectedExperience = initialUser.skill.experience + TwitterUtility.MENTION_EXPERIENCE * mentionsAdded;
+                    Assert.strictEqual(user.skill.experience, expectedExperience);
                     callDone();
                   });
                 });
@@ -194,7 +194,7 @@
 
                   // Verify user experience is updated
                   User.getUserWithEmail(Common.USER.email, function(user) {
-                    user.twitter.skill.experience.should.be.aboveOrEqual(initialUser.twitter.skill.experience + tweetsAdded*TwitterUtility.TWEET_EXPERIENCE);
+                    user.skill.experience.should.be.aboveOrEqual(initialUser.skill.experience + tweetsAdded*TwitterUtility.TWEET_EXPERIENCE);
                     callDone();
                   });
                 });

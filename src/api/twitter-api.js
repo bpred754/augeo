@@ -95,7 +95,9 @@
                     }
 
                     // Set user's Twitter session data
-                    request.session.user.twitter.screenName = screenName;
+                    request.session.user.twitter = {
+                      screenName: screenName
+                    };
 
                     response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
                   }, rollback);
@@ -244,7 +246,7 @@
         tweetWaitTime: ''
       };
 
-      if(request.session.user.twitter.screenName) {
+      if(request.session.user.twitter) {
         pageData.mentionWaitTime = restQueue.getUsersMentionWaitTime(userId);
         pageData.tweetWaitTime = restQueue.getUsersTweetWaitTime(userId);
       } else {

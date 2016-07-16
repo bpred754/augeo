@@ -80,7 +80,7 @@
     if(skill) {
       var subSkills = AugeoUtility.SUB_SKILLS;
       for(var i = 0; i < subSkills.length; i++) {
-        if(skill === subSkills[i].name || skill === 'Twitter') {
+        if(skill === subSkills[i].name || skill === 'Augeo') {
           isValid = true;
         }
       }

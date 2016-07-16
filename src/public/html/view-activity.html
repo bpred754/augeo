@@ -28,11 +28,11 @@
           <div id="header-title" class="x-large-text">View Activity</div>
           <div id="skill-container">
             <a href="https://www.twitter.com">
-              <img id="skill-icon" src="image/twitter/logo-blue-medium.png">
+              <img id="skill-icon" src="image/augeo-logo-medium.png">
             </a>
           </div>
           <select id="skill-select" class="form-control standard-text">
-            <option>Twitter</option>
+            <option>Augeo</option>
             <option ng-repeat="twitterSkill in twitterSkills">{{twitterSkill.name}}</option>
           </select>
         </div>
@@ -79,10 +79,8 @@
 
       skillContainer.empty();
 
-      if(skillSelect.val() == 'Twitter') {
-
-        skillContainer.html('<a id="twitter-link" href="https://www.twitter.com"></a>');
-        $('#twitter-link').html('<img id="skill-icon" src="image/twitter/logo-blue-medium.png">');
+      if(skillSelect.val() == 'Augeo') {
+        skillContainer.html('<img id="skill-icon" src="image/augeo-logo-medium.png">');
       } else {
 
         var glyphicon = angular.element(skillContainer).scope().getGlyphicon(skillSelect.val());

@@ -46,7 +46,7 @@
         }
         if($scope.User.username && toState.name != 'signupError') {
           // Display welcome popup if user has not authenticated with Twitter and has not viewed it within this session
-          if (!$scope.User.twitter.screenName && !$scope.isWelcomeModalViewed) {
+          if (!$scope.User.twitter && !$scope.isWelcomeModalViewed) {
             $scope.isWelcomeModalViewed = true;
             $scope.aboutModalHeading = 'Welcome to Augeo!'
             showAboutModal();

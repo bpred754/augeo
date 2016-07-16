@@ -35,10 +35,10 @@
       accessToken: '000',
       secretAccessToken: '000',
       screenName: 'testScreenName',
-      profileImageUrl: '',
-      skill: {
-        imageSrc: 'image/augeo-logo-medium.png'
-      }
+      profileImageUrl: ''
+    },
+    skill: {
+      imageSrc: 'image/augeo-logo-medium.png'
     }
   };
 
@@ -55,10 +55,10 @@
       accessToken: '100',
       secretAccessToken: '100',
       screenName: 'twitterActionee',
-      profileImageUrl: 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg',
-      skill: {
-        imageSrc: 'image/twitter/logo-blue-medium.png'
-      }
+      profileImageUrl: 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg'
+    },
+    skill: {
+      imageSrc: 'image/twitter/logo-blue-medium.png'
     }
   };
 

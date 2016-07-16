@@ -76,7 +76,7 @@
         }
 
         $scope.twitterSkills = data.skills;
-        $scope.setSkillActivity('Twitter');
+        $scope.setSkillActivity('Augeo');
       }
     });
 

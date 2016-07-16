@@ -106,8 +106,8 @@
 
                 User.getNumberUsers(function(numUsers) {
 
-                  Assert.strictEqual(user.twitter.skill.rank, numUsers);
-                  Assert.strictEqual(user.twitter.subSkills[0].rank, numUsers)
+                  Assert.strictEqual(user.skill.rank, numUsers);
+                  Assert.strictEqual(user.subSkills[0].rank, numUsers);
 
                   done();
                 });

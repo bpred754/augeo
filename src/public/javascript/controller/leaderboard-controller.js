@@ -30,7 +30,7 @@
 
     var init = function() {
 
-      $scope.currentTwitterSkill = 'Twitter';
+      $scope.currentTwitterSkill = 'Augeo';
 
       TwitterClientService.getLeaderboardDisplayData (function(data) {
 

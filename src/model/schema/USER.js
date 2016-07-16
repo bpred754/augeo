@@ -47,8 +47,8 @@
     'twitter.name': 1,
     'twitter.screenName': 1,
     'twitter.profileImageUrl': 1,
-    'twitter.skill': 1,
-    'twitter.subSkills': 1
+    'skill': 1,
+    'subSkills': 1
   };
 
   // Schema declaration
@@ -72,21 +72,21 @@
       profileImageUrl: String,
       accessToken: String,
       secretAccessToken:String,
-      secretToken:String,
-      skill: {
-        imageSrc: String,
-        level: Number,
-        experience: Number,
-        rank:Number
-      },
-      subSkills:[{
-        name: String,
-        glyphicon: String,
-        experience: Number,
-        level: Number,
-        rank:Number
-      }]
-    }
+      secretToken:String
+    },
+    skill: {
+      imageSrc: String,
+      level: Number,
+      experience: Number,
+      rank:Number
+    },
+    subSkills:[{
+      name: String,
+      glyphicon: String,
+      experience: Number,
+      level: Number,
+      rank:Number
+    }]
   });
 
   /***************************************************************************/
@@ -107,10 +107,8 @@
       location: '',
       website: '',
       description: '',
-      twitter: {
-        subSkills: user.subSkills,
-        skill: user.skill
-      }
+      subSkills: user.subSkills,
+      skill: user.skill
     }, function(error, pUser) {
       if(error) {
         log.warn('Failed to add ' + user.email + ' to USER collection: ' + error);
@@ -222,22 +220,22 @@
 
   USER.statics.getCompetitorsInPage = function(skill, startRank, endRank, callback) {
 
-    if(skill === 'Twitter') {
+    if(skill === 'Augeo') {
 
       this.find(
         { // Get users where rank is >= startRank and <= endRank
-          'twitter.skill.rank': {$gte:startRank, $lte:endRank}
+          'skill.rank': {$gte:startRank, $lte:endRank}
         },
         { // Specify attributes to return
           'username': 1,
           'twitter.screenName':1,
-          'twitter.skill.rank':1,
-          'twitter.skill.level':1,
-          'twitter.skill.experience':1
+          'skill.rank':1,
+          'skill.level':1,
+          'skill.experience':1
         },
         {
           sort: {
-            'twitter.skill.rank':1
+            'skill.rank':1
           }
         },
         function(error, competitors) {
@@ -260,13 +258,13 @@
         {
           '$match':
           {
-            "twitter.subSkills.rank": {$gte:startRank, $lte:endRank},
+            'subSkills.rank': {$gte:startRank, $lte:endRank},
           }
         },
         {
           '$sort':
           {
-            'twitter.subSkills.rank': 1,
+            'subSkills.rank': 1,
           }
         }
       ],
@@ -283,13 +281,13 @@
 
   USER.statics.getMaxRank = function(skill, callback) {
 
-    if(skill === 'Twitter') {
+    if(skill === 'Augeo') {
       // Find max rank
-      this.find({},{'twitter.skill.rank':1}, {sort:{'twitter.skill.rank':-1}, limit:1}, function(error, data) {
+      this.find({},{'skill.rank':1}, {sort:{'skill.rank':-1}, limit:1}, function(error, data) {
         if(error) {
           log.warn('Failed to find max rank for skill ' + skill + '. Error: ' + error);
         } else {
-          var maxRank = data[0].twitter.skill.rank;
+          var maxRank = data[0].skill.rank;
           log.info('Successfully found max rank for skill ' + skill + '. MaxRank: ' + maxRank);
           callback(maxRank);
         }
@@ -299,7 +297,7 @@
         getSubSkillQuery(skill),
         {
           "$sort": {
-            "twitter.subSkills.rank": -1
+            "subSkills.rank": -1
           }
         },
         {
@@ -310,7 +308,7 @@
         if(error) {
           log.warn('Failed to find max rank for skill: ' + skill + '. Error: ' + error);
         }
-        var maxRank = data[0].twitter.subSkills[0].rank;
+        var maxRank = data[0].subSkills[0].rank;
         log.info('Successfully found max rank for skill ' + skill + '. MaxRank: ' + maxRank);
 
         callback(maxRank);
@@ -363,15 +361,15 @@
 
   USER.statics.getSkillRank = function(username, skill, callback) {
 
-    if(skill === 'Twitter') {
+    if(skill === 'Augeo') {
 
-      this.findOne({'username':{'$regex': username, $options: 'i'}}, {'twitter.skill.rank':1}, function(error, data) {
+      this.findOne({'username':{'$regex': username, $options: 'i'}}, {'skill.rank':1}, function(error, data) {
 
         if(error) {
           log.warn('Failed to find ' + username + ' rank for ' + skill + '. Error: ' + error);
         } else {
           log.info('Successfully found ' + username + ' rank for ' + skill + '. Rank: ' + data);
-          var rank = data.twitter.skill.rank;
+          var rank = data.skill.rank;
 
           callback(rank);
         }
@@ -392,8 +390,8 @@
         if(error) {
           log.warn('Failed to find ' + username + 'rank for skill: ' + skill + '. Error: ' + error);
         }
-        log.info('Successfully found ' + username + ' rank for skill ' + skill + '. Rank: ' + data[0].twitter.subSkills[0].rank);
-        callback(data[0].twitter.subSkills[0].rank);
+        log.info('Successfully found ' + username + ' rank for skill ' + skill + '. Rank: ' + data[0].subSkills[0].rank);
+        callback(data[0].subSkills[0].rank);
       });
     }
   };
@@ -402,7 +400,7 @@
     this.aggregate([
         getSubSkillQuery(skill),
         {
-          "$sort": { "twitter.subSkills.experience": -1 }
+          "$sort": { "subSkills.experience": -1 }
         }
       ],
       function(error,docs) {
@@ -439,7 +437,7 @@
   };
 
   USER.statics.getTwitterRanks = function(callback) {
-    return this.find({}, '', {sort: {'twitter.skill.experience':-1}}, function(error, docs) {
+    return this.find({}, '', {sort: {'skill.experience':-1}}, function(error, docs) {
       if(error) {
         log.warn('Failed to update Twitter Ranks. Error:' + error);
       } else {
@@ -567,13 +565,13 @@
   USER.statics.updateSubSkillRank = function(doc, rank, index, callback) {
 
     var setModifier = { $set: {} };
-    setModifier.$set['twitter.subSkills.' + index + '.rank'] = Math.round(rank);
+    setModifier.$set['subSkills.' + index + '.rank'] = Math.round(rank);
 
     this.update({_id: doc._id}, setModifier, function(error, n) {
       if(error) {
-        log.info('Failed to update ' + doc.twitter.subSkills[0].name + ' rank. Error: ' + error);
+        log.info('Failed to update ' + doc.subSkills[0].name + ' rank. Error: ' + error);
       } else {
-        log.info('Successfully updated ' + doc.twitter.subSkills[0].name + ' rank');
+        log.info('Successfully updated ' + doc.subSkills[0].name + ' rank');
         if(callback) {
           callback(n);
         }
@@ -622,9 +620,9 @@
       } else {
         log.info('Successfully found user with id:' + id + ' to update Twitter experience .');
 
-        doc.twitter.skill.experience += experience.mainSkillExperience;
-        doc.twitter.skill.level = AugeoUtility.calculateLevel(doc.twitter.skill.experience);
-        doc.twitter.subSkills.forEach(function(subSkill){
+        doc.skill.experience += experience.mainSkillExperience;
+        doc.skill.level = AugeoUtility.calculateLevel(doc.skill.experience);
+        doc.subSkills.forEach(function(subSkill){
           subSkill.experience += experience.subSkillsExperience[subSkill.name];
           subSkill.level = AugeoUtility.calculateLevel(subSkill.experience);
         });
@@ -649,11 +647,11 @@
       var subSkillQuery =
         { "$project": // Specifies the fields to be returned
           {
-              "twitter.subSkills": {
+              "subSkills": {
                   "$setDifference": [ // Relative compliment of the second set relative to the first
                       { "$map": // Applies an expression to each item in an array and returns an array with the applied results
                         {
-                            "input": "$twitter.subSkills", // Expression that resolves to an array
+                            "input": "$subSkills", // Expression that resolves to an array
                             "as": "subSkill", // The variable name for the items in the input array
                             "in": { // The expression to apply to each item in the input array
                               "$cond": [ // Evaluates a boolean expression to return one of the two specified return expressions {if expression, then, else}

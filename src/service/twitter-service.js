@@ -432,7 +432,7 @@
       User.getSubSkillRanks(subSkill, function(docs) {
         docs.forEach(function(p){
           rank +=1;
-          p.twitter.subSkills[0].rank = rank;
+          p.subSkills[0].rank = rank;
           if (numUsers == rank) {
             User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill), callback);
           } else {
@@ -462,7 +462,7 @@
       User.getTwitterRanks(function(docs) {
         docs.forEach(function(p){
           rank +=1;
-          p.twitter.skill.rank = rank;
+          p.skill.rank = rank;
 
           if(rank == numUsers) {
             User.saveDocument(p,callback);
@@ -516,15 +516,15 @@
       for(var i = 0; i < competitors.length; i++) {
 
         var competitor;
-        if(skill === 'Twitter') {
-          competitor = competitors[i].twitter.skill;
+        if(skill === 'Augeo') {
+          competitor = competitors[i].skill;
         } else {
-          competitor = competitors[i].twitter.subSkills[0];
+          competitor = competitors[i].subSkills[0];
         }
 
         var user = {
           username: competitors[i].username,
-          twitterScreenName: competitors[i].twitter.screenName,
+          twitterScreenName: competitors[i].twitter ? competitors[i].twitter.screenName : null,
           rank: competitor.rank,
           level: competitor.level,
           experience: competitor.experience
@@ -576,7 +576,7 @@
         twitterScreenName: user.twitter.screenName
       };
 
-      var mainSkill = user.twitter.skill;
+      var mainSkill = user.skill;
       var mainSkillDisplay = {
         name: 'Augeo',
         experience: mainSkill.experience,
@@ -587,7 +587,7 @@
         levelProgress: AugeoUtility.calculateLevelProgress(mainSkill.level, mainSkill.experience)
       }
 
-      var subSkills = user.twitter.subSkills;
+      var subSkills = user.subSkills;
       var displaySkills = new Array();
       for(var i = 0; i < subSkills.length; i++) {
         var subSkill = subSkills[i];
