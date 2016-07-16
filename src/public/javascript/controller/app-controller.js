@@ -48,7 +48,8 @@
           // Display welcome popup if user has not authenticated with Twitter and has not viewed it within this session
           if (!$scope.User.twitter.screenName && !$scope.isWelcomeModalViewed) {
             $scope.isWelcomeModalViewed = true;
-            showWelcomeModal();
+            $scope.aboutModalHeading = 'Welcome to Augeo!'
+            showAboutModal();
           }
         }
 
@@ -59,13 +60,18 @@
     $scope.removeUser = function(password) {
       UserClientService.removeUser(password, function(data, status) {
         if(status == 200) {
-          $state.go('logout');
+          $state.go('login');
           $('#delete-modal').modal('toggle');
         } else {
           $scope.removeErrorMessage = data;
         }
       });
     };
+
+    $scope.showAboutModal = function() {
+      $scope.aboutModalHeading = 'About';
+      showAboutModal();
+    }
 
     $scope.showProfile = function() {
       ProfileController.setTargetUser($scope.User)

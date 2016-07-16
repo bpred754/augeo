@@ -39,6 +39,24 @@
     text-decoration:none;
   }
 
+  #about-logo {
+    height:250px;
+    width:250px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:25px;
+  }
+
+  #about-logo-image {
+    max-height:100%;
+    max-width:100%
+  }
+
+  #about-modal-content {
+    padding-left:15px;
+    padding-right:15px;
+  }
+
   #lyt-delete-error-message {
     padding-left:20px;
     margin-bottom:5px;

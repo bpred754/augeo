@@ -76,24 +76,6 @@
     align-self:center
   }
 
-  #welcome-logo {
-    height:250px;
-    width:250px;
-    margin-left:auto;
-    margin-right:auto;
-    margin-top:25px;
-  }
-
-  #welcome-logo-image {
-    max-height:100%;
-    max-width:100%
-  }
-
-  #welcome-modal-content {
-    padding-left:15px;
-    padding-right:15px;
-  }
-
   .db-max-size {
     max-height:100%;
     max-width:100%;
