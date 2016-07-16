@@ -84,42 +84,33 @@
     // Success
     it('should return status 302 - updates user info with twitter, adds user to rest and stream queues', function(done) {
       this.timeout(Common.TIMEOUT);
+      
+        // Login in user
+        agent
+          .post('/user-api/login')
+          .send(Common.LOGIN_USER)
+          .expect(200)
+          .end(function(error1, response1) {
+            Should.not.exist(error1);
 
-      // Add user to database
-      agent
-        .post('/user-api/add')
-        .send(Common.USER)
-        .expect(200)
-        .end(function(error0, response0) {
-          Should.not.exist(error0);
+            // Set oauth request token
+            agent
+              .get('/twitter-api/getAuthenticationData')
+              .expect(200)
+              .end(function(error2, response2) {
+                Should.not.exist(error2);
+                response2.body.should.have.property('token');
 
-          // Login in user
-          agent
-            .post('/user-api/login')
-            .send(Common.LOGIN_USER)
-            .expect(200)
-            .end(function(error1, response1) {
-              Should.not.exist(error1);
-
-              // Set oauth request token
-              agent
-                .get('/twitter-api/getAuthenticationData')
-                .expect(200)
-                .end(function(error2, response2) {
-                  Should.not.exist(error2);
-                  response2.body.should.have.property('token');
-
-                  // Hit callback with query params
-                  agent
-                    .get('/twitter-api/callback?oauth_token=999&oauth_verifier=999')
-                    .expect(302)
-                    .end(function(error3, response3) {
-                      Should.not.exist(error3);
-                      Assert.strictEqual(response3.headers.location, process.env.AUGEO_HOME + '/twitterHistory');
-                      done();
-                    });
-                });
-            });
-        });
+                // Hit callback with query params
+                agent
+                  .get('/twitter-api/callback?oauth_token=999&oauth_verifier=999')
+                  .expect(302)
+                  .end(function(error3, response3) {
+                    Should.not.exist(error3);
+                    Assert.strictEqual(response3.headers.location, process.env.AUGEO_HOME + '/twitterHistory');
+                    done();
+                  });
+              });
+          });
       });
     };

@@ -67,8 +67,6 @@
             .end(function(error1, response1) {
               Should.not.exist(error1);
 
-              Assert.strictEqual(response1.body.username, Common.USER.username);
-
               var skills = response1.body.skills;
               var actualSkills = AugeoUtility.SUB_SKILLS;
 

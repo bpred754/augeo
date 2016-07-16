@@ -26,9 +26,10 @@
   var UserRouter = require('express').Router();
 
   // Required local modules
-  var Logger = require('../module/logger');
-  var UserService = require('../service/user-service');
   var EmailProvider = require('../module/email-provider');
+  var Logger = require('../module/logger');
+  var SessionValidator = require('../validator/session-validator');
+  var UserService = require('../service/user-service');
 
   // Global variables
   var log = new Logger();
@@ -67,43 +68,50 @@
       profileIcon: 'image/avatar-small.png'
     };
 
-    // Check if email exists
-    UserService.doesEmailExist(user.email, function(emailExists) {
+    // Make sure user is not logged in
+    if(!SessionValidator.isUserDefined(request)) {
 
-      if(emailExists) {
-        response.status(400).send('This email already exists. Please try another.');
-      } else {
+      // Check if email exists
+      UserService.doesEmailExist(user.email, function (emailExists) {
 
-        UserService.doesUsernameExist(user.username, function(usernameExists) {
+        if (emailExists) {
+          response.status(400).send('This email already exists. Please try another.');
+        } else {
 
-          if(usernameExists) {
-            response.status(400).send('This username already exists. Please try another.');
-          } else {
+          UserService.doesUsernameExist(user.username, function (usernameExists) {
 
-            var addUser = function (_user) {
-              UserService.addUser(_user, function () {
-                response.sendStatus(200);
-              }, function () {
-                response.status(400).send('Invalid input. Please try again.');
-              });
-            };
-
-            if (process.env.ENV == 'prod') {
-
-              // Add user to SendGrid contacts
-              EmailProvider.addRecipient(user, function (recipientId) {
-                EmailProvider.sendWelcomeEmail(user);
-
-                user.sendGridId = recipientId ? recipientId : '';
-                addUser(user);
-              });
+            if (usernameExists) {
+              response.status(400).send('This username already exists. Please try another.');
             } else {
-              addUser(user);
+
+              var addUser = function (_user) {
+                UserService.addUser(_user, function () {
+                  response.sendStatus(200);
+                }, function () {
+                  response.status(400).send('Invalid input. Please try again.');
+                });
+              };
+
+              if (process.env.ENV == 'prod') {
+
+                // Add user to SendGrid contacts
+                EmailProvider.addRecipient(user, function (recipientId) {
+                  EmailProvider.sendWelcomeEmail(user);
+
+                  user.sendGridId = recipientId ? recipientId : '';
+                  addUser(user);
+                });
+              } else {
+                addUser(user);
+              }
             }
-          }
-        });
-      };
-    });
+          });
+        }
+        ;
+      });
+    } else {
+      response.status(400).send('Cannot signup when logged in');
+    }
   });
 
   UserRouter.post('/login', function(request, response) {
