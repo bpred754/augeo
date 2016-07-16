@@ -24,6 +24,7 @@
 
   // Required libraries
   var AugeoDB = require('../model/database');
+  var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
   var Bcrypt = require('bcrypt');
 
@@ -55,7 +56,25 @@
                  } else {
                    var newUser = Object.create(user);
                    newUser.password = hash;
-                   User.add(newUser, callback);
+
+                   // Initialize skill data
+                   newUser.subSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS));
+                   newUser.skill = AugeoUtility.getMainSkill(0);
+
+                   // Set user's ranks to be number of users
+                   User.getNumberUsers(function(numUsers) {
+                     numUsers++; // Add one for this user
+
+                     // Set Augeo skill to number of users
+                     newUser.skill.rank = numUsers;
+
+                     // Loop through user data and set ranks
+                     for (var i = 0; i < newUser.subSkills.length; i++) {
+                       newUser.subSkills[i].rank = numUsers;
+                     }
+
+                     User.add(newUser, callback);
+                   });
                  }
                });
              }

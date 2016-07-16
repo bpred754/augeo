@@ -30,7 +30,7 @@
 
   // Required local modules
   var Common = require('../../common');
-  var TwitterUtility = require('../../../../src/utility/twitter-utility');
+  var AugeoUtility = require('../../../../src/utility/augeo-utility');
 
   module.exports = function(app) {
 
@@ -70,7 +70,7 @@
               Assert.strictEqual(response1.body.username, Common.USER.username);
 
               var skills = response1.body.skills;
-              var actualSkills = TwitterUtility.getSubSkills();
+              var actualSkills = AugeoUtility.SUB_SKILLS;
 
               skills.length.should.be.above(0);
 

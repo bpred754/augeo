@@ -101,7 +101,7 @@
     importTests('getDashboardDisplayData', './test-case/api/twitter-api/get-dashboard-display-data', App);
     importTests('getLeaderboardDisplayData', './test-case/api/twitter-api/get-leaderboard-display-data', App);
     importTests('getSkillActivity', './test-case/api/twitter-api/get-skill-activity', App);
-    importTests('getTwitterHistoryPageData & setMember', './test-case/api/twitter-api/get-twitter-history-page-data', App);
+    importTests('getTwitterHistoryPageData', './test-case/api/twitter-api/get-twitter-history-page-data', App);
   });
 
   describe('Twitter', function() {

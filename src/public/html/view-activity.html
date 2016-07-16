@@ -40,6 +40,15 @@
     </div> <!-- end header row -->
   </div> <!-- end header container -->
 
+  <div id="va-auth-container" ng-if="!User.twitter.screenName && username == User.username">
+    <div>
+      <p class="standard-text text-primary text-align-center">Authenticate with Twitter to start tracking your Activity</p>
+      <div class="horizontal-center">
+        <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+      </div>
+    </div>
+  </div>
+
   <div id="activity-wrap" class="container">
     <ul ng-if="screenSize == 'large'" class="dynamic-grid" angular-grid="tweets" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
       <li data-ng-repeat="tweet in tweets" class="w3-card-4 grid">

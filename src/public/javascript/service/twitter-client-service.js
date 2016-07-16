@@ -125,11 +125,4 @@
         callback(data);
       });
     };
-
-    this.setMember = function(callback) {
-      var parameters = null;
-      AugeoClientService.postAugeoAPI('twitter-api/setMember', parameters, function(data) {
-        callback(data);
-      });
-    };
   };

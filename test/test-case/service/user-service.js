@@ -103,7 +103,14 @@
                 Assert.strictEqual(user.lastName, Common.USER.lastName);
                 Assert.strictEqual(user.email, Common.USER.email);
                 Assert.strictEqual(user.username, Common.USER.username);
-                done();
+
+                User.getNumberUsers(function(numUsers) {
+
+                  Assert.strictEqual(user.twitter.skill.rank, numUsers);
+                  Assert.strictEqual(user.twitter.subSkills[0].rank, numUsers)
+
+                  done();
+                });
               }, rollbackFailure);
             });
           });

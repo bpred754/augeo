@@ -23,9 +23,10 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $state, UserClientService, ProfileController) {
+  module.exports = function($scope, $state, $window, UserClientService, ProfileController, TwitterClientService) {
 
     $scope.layoutNavbar = 'hidden';
+    $scope.isWelcomeModalViewed = false;
 
     $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
@@ -43,6 +44,14 @@
         } else {
           $scope.layoutNavbar = 'hidden';
         }
+        if($scope.User.username && toState.name != 'signupError') {
+          // Display welcome popup if user has not authenticated with Twitter and has not viewed it within this session
+          if (!$scope.User.twitter.screenName && !$scope.isWelcomeModalViewed) {
+            $scope.isWelcomeModalViewed = true;
+            showWelcomeModal();
+          }
+        }
+
       });
     });
 
@@ -61,5 +70,19 @@
     $scope.showProfile = function() {
       ProfileController.setTargetUser($scope.User)
       showProfileModal();
+    };
+
+    $scope.submitTwitterAuthentication = function() {
+      // Authenticate user with twitter
+      TwitterClientService.getAuthenticationData(function(authData, authStatus) {
+
+        if(authStatus == 200) {
+          // Go to Twitter Authentication page
+          $window.location.href ='https://twitter.com/oauth/authenticate?oauth_token=' + authData.token;
+        } else {
+          $state.go('login');
+          $scope.loginMessage = 'Failed to Authenticate with Twitter'
+        }
+      }); // End authentication
     };
   };

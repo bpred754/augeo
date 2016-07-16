@@ -26,6 +26,7 @@
   var TwitterRouter = require('express').Router();
 
   // Required local modules
+  var AugeoUtility = require('../utility/augeo-utility');
   var Logger = require('../module/logger');
   var SessionValidator = require('../validator/session-validator');
   var TwitterInterfaceService = require('../interface-service/twitter-interface-service');
@@ -48,8 +49,6 @@
     var session = request.session;
 
     var rollback = function() {
-      TwitterService.removeInvalidUser(session, function(){}); // Remove user from DB
-      request.session.destroy(); // Destroy the session
       response.redirect(301, process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
     };
 
@@ -120,7 +119,7 @@
     if(SessionValidator.isUsernameDefined(request)) {
       isValid = true;
       jsonResponse.username = request.session.user.username;
-      jsonResponse.skills = TwitterService.getTwitterSkills();
+      jsonResponse.skills = AugeoUtility.SUB_SKILLS;
     }
 
     if(isValid == false) {
@@ -207,7 +206,7 @@
       TwitterService.getNumberUsers(function(numUsers) {
 
         jsonResponse.username = request.session.user.username;
-        jsonResponse.skills = TwitterService.getTwitterSkills();
+        jsonResponse.skills = AugeoUtility.SUB_SKILLS;
         jsonResponse.numberUsers = numUsers;
         response.status(200).json(jsonResponse);
       });
@@ -242,41 +241,22 @@
     if(SessionValidator.isUserDefined(request)) {
       var userId = request.session.user._id;
 
-      TwitterService.isMember(userId, function(isMember) {
+      var pageData = {
+        mentionWaitTime: '',
+        tweetWaitTime: ''
+      };
 
-        var pageData = {
-          isMember: isMember,
-          mentionWaitTime: '',
-          tweetWaitTime: ''
-        };
+      if(request.session.user.twitter.screenName) {
+        pageData.mentionWaitTime = restQueue.getUsersMentionWaitTime(userId);
+        pageData.tweetWaitTime = restQueue.getUsersTweetWaitTime(userId);
+      } else {
+        pageData.mentionWaitTime = restQueue.getMentionsWaitTime();
+        pageData.tweetWaitTime = restQueue.getTweetsWaitTime();
+      }
 
-        if(isMember) {
-          pageData.mentionWaitTime = restQueue.getUsersMentionWaitTime(userId);
-          pageData.tweetWaitTime = restQueue.getUsersTweetWaitTime(userId);
-        } else {
-          pageData.mentionWaitTime = restQueue.getMentionsWaitTime();
-          pageData.tweetWaitTime = restQueue.getTweetsWaitTime();
-        }
-
-        response.status(200).json(pageData);
-      });
+      response.status(200).json(pageData);
     } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
       rollback();
-    }
-  });
-
-  /***************************************************************************/
-  /* POST Requests                                                           */
-  /***************************************************************************/
-
-  TwitterRouter.post('/setMember', function(request, response) {
-
-    if(SessionValidator.isUserDefined(request)) {
-      TwitterService.setMember(request.session.user._id, function(){
-        response.sendStatus(200);
-      });
-    } else {
-      response.sendStatus(401);
     }
   });
 

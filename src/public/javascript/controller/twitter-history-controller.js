@@ -25,13 +25,6 @@
   // Reminder: Update controller/index.js when controller params are modified
   module.exports = function($scope, TwitterClientService) {
 
-    $scope.setMember = function() {
-      TwitterClientService.setMember(function(status){
-
-        $scope.setTwitterHistoryPageData();
-      });
-    };
-
     $scope.setTwitterHistoryPageData = function() {
       TwitterClientService.getTwitterHistoryPageData(function(pageData) {
 
@@ -53,11 +46,6 @@
 
           if (pageData.mentionWaitTime == -1) {
             $scope.mentionDTO.isComplete = true;
-          }
-
-          // If the user is not a member display welcome modal
-          if (pageData.isMember === false) {
-            showModal();
           }
 
           $scope.isLoaded = true;

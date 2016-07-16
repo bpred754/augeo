@@ -69,7 +69,7 @@
           }
 
           // Set recent activity
-          if (data.recentActions) {
+          if (data.recentActions.length > 0) {
 
             var currentIndex = 0;
             var formatTweets = true;

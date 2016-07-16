@@ -34,7 +34,6 @@
   var Logger = require('../module/logger');
   var TwitterInterfaceService = require('../interface-service/twitter-interface-service');
   var TwitterService = require('../service/twitter-service');
-  var TwitterUtility = require('../utility/twitter-utility');
 
   // Constants
   var CHECK_QUEUE_OPEN_TIMEOUT = 500;
@@ -517,7 +516,7 @@
 
     TwitterService.updateTwitterRanks(function() {
 
-      var subSkills = TwitterUtility.getSubSkills();
+      var subSkills = AugeoUtility.SUB_SKILLS;
 
       // Recursively set sub skill ranks
       (function updateRanksClojure(i) {

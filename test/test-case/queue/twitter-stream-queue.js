@@ -59,7 +59,7 @@
           // Verify experience gained
           User.getUserWithEmail(Common.USER.email, function(userAfter) {
             var userAfterExperience = userAfter.twitter.skill.experience;
-            Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.getTweetExperience() + TwitterUtility.getRetweetExperience());
+            Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
 
             // Verify ranks
             User.getSkillRank(Common.USER.username, 'Twitter', function(userRank1) {
@@ -107,8 +107,8 @@
                   var actioneeAfterExperience = actioneeAfter.twitter.skill.experience;
 
                   // Verify experience gained
-                  Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.getMentionExperience());
-                  Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.getTweetExperience());
+                  Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.MENTION_EXPERIENCE);
+                  Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.TWEET_EXPERIENCE);
 
                   // Verify ranks
                   User.getSkillRank(Common.USER.username, 'Twitter', function(userRank1) {
@@ -144,7 +144,7 @@
         // Insert User's tweet to be retweeted
         streamQueue.addAction(queueData0, function() {
 
-          initialUserExperience += (Common.rawStandardTweet.retweet_count * TwitterUtility.getRetweetExperience()) + (Common.rawStandardTweet.favorite_count * TwitterUtility.getFavoriteExperience());
+          initialUserExperience += (Common.rawStandardTweet.retweet_count * TwitterUtility.RETWEET_EXPERIENCE) + (Common.rawStandardTweet.favorite_count * TwitterUtility.FAVORITE_EXPERIENCE);
 
           // Verify tweet is in database
           Tweet.findTweet(Common.rawStandardTweet.id_str, function(originalTweet) {
@@ -175,8 +175,8 @@
                       var actioneeAfterExperience = actioneeAfter.twitter.skill.experience;
 
                       // Verify experience gained
-                      Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.getTweetExperience() + TwitterUtility.getRetweetExperience());
-                      Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.getTweetExperience());
+                      Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
+                      Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.TWEET_EXPERIENCE);
 
                       // Verify ranks
                       User.getSkillRank(Common.USER.username, 'Twitter', function(userRank1) {
@@ -241,7 +241,7 @@
                   // Verify experience removed
                   User.getUserWithEmail(Common.USER.email, function(userAfter) {
                     var userAfterExperience = userAfter.twitter.skill.experience;
-                    Assert.strictEqual(userAfterExperience, initialUserExperience - TwitterUtility.getTweetExperience() - TwitterUtility.getRetweetExperience());
+                    Assert.strictEqual(userAfterExperience, initialUserExperience - TwitterUtility.TWEET_EXPERIENCE - TwitterUtility.RETWEET_EXPERIENCE);
 
                     // Verify ranks
                     User.getSkillRank(Common.USER.username, 'Twitter', function(userRank1) {

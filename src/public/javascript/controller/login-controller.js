@@ -23,11 +23,10 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $window, $state, UserClientService, TwitterClientService, ClientValidator) {
+  module.exports = function($scope, $state, UserClientService, TwitterClientService, ClientValidator) {
 
     // Constants
     var INVALID_LOGIN = 'Invalid email address or password'
-    var VALID_CHARACTER_REGEX = new RegExp('^(\\w|[!@#$%^&*(){}\\[\\]|?., ])+');
 
     $scope.submitLogin = function() {
 
@@ -43,7 +42,6 @@
         UserClientService.login(user, function(message, status) {
 
           if(status == 200) {
-            // Go to dashboard page
             $state.go('dashboard');
           } else {
             $scope.loginMessage = message; // Set error message
@@ -74,16 +72,7 @@
               UserClientService.login($scope.user, function(loginMessage, loginStatus) {
 
                 if(loginStatus == 200) {
-                  // Authenticate user with twitter
-                  TwitterClientService.getAuthenticationData(function(authData, authStatus) {
-
-                    if(authStatus == 200) {
-                      // Go to Twitter Authentication page
-                      $window.location.href ='https://twitter.com/oauth/authenticate?oauth_token=' + authData.token;
-                    } else {
-                      $scope.signupMessage = authData.token;
-                    }
-                  }); // End authentication
+                  $state.go('dashboard');
                 } else {
                   $scope.signupMessage = loginMessage;
                 }

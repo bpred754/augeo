@@ -66,14 +66,14 @@
     height:100%;
     display:flex;
     justify-content:center;
-    margin-bottom:15px;
+    margin-top:15px;
   }
 
   #profile-auth-inner-container {
     height:100%;
     width:80%;
     border-style:solid;
-    border-color:#a94442;
+    border-color:#333;
     padding-top:15px;
     padding-bottom:15px;
   }
@@ -213,8 +213,13 @@
     font-weight:500;
   }
 
+  .profile-auth-text {
+    padding-left:10px;
+    padding-right:10px;
+  }
+
   .profile-edit-view-link {
-    margin-top:40px;
+    margin-top:25px;
     text-align:center;
   }
 

@@ -109,15 +109,6 @@
                 <img class="profile-img" src="{{targetUser.profileImg}}"/>
               </div>
               <div id="profile-body-container">
-                <!-- Authenticate with Twitter -->
-                <div id="profile-auth-container" ng-if="isEditMode && !targetUser.hasTwitterAuthentication && isGlobalUser">
-                  <div id="profile-auth-inner-container">
-                    <p class="standard-text text-primary text-align-center">Authenticate with Twitter to start tracking your experience</p>
-                    <div class="horizontal-center">
-                     <button type="button" class="btn btn-primary small-text">Authenticate</button>
-                    </div>
-                  </div>
-                </div>
                 <!-- Bio - Edit Mode -->
                 <div ng-if="isEditMode && isGlobalUser">
                   <div class="profile-label">
@@ -137,6 +128,15 @@
                   </div>
                   <div class="horizontal-center">
                       <textarea id="profile-description-field" class="form-control small-text profile-field-input" placeholder="Tell us about yourself..." ng-model="targetUser.description" maxlength="180"></textarea>
+                  </div>
+                </div>
+                <!-- Authenticate with Twitter -->
+                <div id="profile-auth-container" ng-if="isEditMode && !targetUser.hasTwitterAuthentication && isGlobalUser">
+                  <div id="profile-auth-inner-container">
+                    <p class="standard-text text-primary text-align-center profile-auth-text">Authenticate with Twitter to start tracking your experience</p>
+                    <div class="horizontal-center">
+                      <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+                    </div>
                   </div>
                 </div>
                 <!-- Bio - View Mode -->
@@ -175,9 +175,38 @@
                     <input id="delete-password" class="form-control standard-text" type="password" ng-model="pass" placeholder="Password">
                 </div>
                 <div class="col-xs-4">
-                  <button type="button" class="btn btn-primary standard-text" ng-click="removeUser(pass)">Delete</button>
+                  <button type="button" class="btn btn-danger standard-text" ng-click="removeUser(pass)">Delete</button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Welcome Modal -->
+      <div class="modal fade" id="welcome-modal" tabindex="-1" role="dialog" aria-labelledby="welcome-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div id="welcome-modal-content" class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 id="welcome-modal-label" class="x-large-text">Welcome to Augeo!</h4>
+            </div>
+            <div class="modal-body standard-text">
+              Augeo is a tool that gives you the power to view your interests in a quantitative way. It's common sense...
+              the more you do something the better you become. In this case, we take your Twitter feed and categorize your
+              tweets/mentions into different skills. Experience is then awarded to each post depending on the amount of
+              activity the post generates. As your experience grows, you will gain levels and be ranked among other Augeo
+              users. Although the current application only takes Twitter activity into consideration, the
+              <a href="https://github.com/bpred754/augeo/wiki/Vision" target="_blank">vision</a> for Augeo is much larger.
+              Our intention is to expand to a vast set of interfaces, from other sites and blogs to health related apps
+              such as FitBit. The possibilities are endless. In a nutshell, Augeo is the gamification of life.
+            </div>
+            <div id="welcome-logo">
+              <img id="welcome-logo-image" src="image/augeo-logo-medium.png">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="submitTwitterAuthentication()">Authenticate with Twitter</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Later</button>
             </div>
           </div>
         </div>
@@ -194,6 +223,10 @@
 
         var showProfileModal = function() {
           $('#profile-modal').modal();
+        };
+
+        var showWelcomeModal = function() {
+          $('#welcome-modal').modal();
         };
 
         $(document).ready(function() {

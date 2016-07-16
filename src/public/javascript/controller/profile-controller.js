@@ -36,7 +36,7 @@
       UserClientService.saveProfileData($scope.targetUser, function(user){
 
         // Update global User object
-        $scope.User = user;
+        $scope.$parent.User = user;
       });
     };
 

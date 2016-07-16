@@ -47,7 +47,6 @@
     'twitter.name': 1,
     'twitter.screenName': 1,
     'twitter.profileImageUrl': 1,
-    'twitter.isMember': 1,
     'twitter.skill': 1,
     'twitter.subSkills': 1
   };
@@ -74,10 +73,8 @@
       accessToken: String,
       secretAccessToken:String,
       secretToken:String,
-      isMember: Boolean,
       skill: {
         imageSrc: String,
-        imageLink: String,
         level: Number,
         experience: Number,
         rank:Number
@@ -110,6 +107,10 @@
       location: '',
       website: '',
       description: '',
+      twitter: {
+        subSkills: user.subSkills,
+        skill: user.skill
+      }
     }, function(error, pUser) {
       if(error) {
         log.warn('Failed to add ' + user.email + ' to USER collection: ' + error);
@@ -514,24 +515,6 @@
     });
   };
 
-  USER.statics.isMember = function(id, callback) {
-
-    return this.count({'_id':id, 'twitter.isMember':true}, function(error, count) {
-      var isMember = false;
-      if(error) {
-        log.warn('Failed to check if user with id: ' + id + ' is a member. ERROR: ' + error);
-      } else {
-        if(count > 0) {
-          log.info('Successfully checked that user with id: ' + id + ' is a member');
-          isMember = true;
-        } else {
-          log.info('Successfully checked that user with id: ' + id + ' is NOT a member');
-        }
-      }
-      callback(isMember);
-    });
-  };
-
   USER.statics.remove = function(username, callback) {
     this.findOneAndRemove({'username':{'$regex': username, $options: 'i'}}, function(error, user) {
       if(error) {
@@ -581,32 +564,6 @@
     });
   };
 
-  USER.statics.setMember = function(id, callback) {
-    return this.findOne({_id:id}, function(error, doc) {
-
-      if(error) {
-        log.warn('Failed to find user with id:' + id + ' to set as a member. ' + error);
-        callback(false);
-      } else {
-        log.info('Successfully found user with id:' + id + ' to set as a member');
-        if(doc) {
-          doc.twitter.isMember = true;
-          doc.save(function(error) {
-            if(error) {
-              log.warn('Failed to set member for user with id:' + id + '. ' + error);
-              callback(false);
-            } else {
-              log.info('Successfully set member for user with id:' + id);
-              callback(true);
-            }
-          });
-        } else {
-          callback(false);
-        }
-      }
-    })
-  };
-
   USER.statics.updateSubSkillRank = function(doc, rank, index, callback) {
 
     var setModifier = { $set: {} };
@@ -641,9 +598,6 @@
                       "twitter.name": data.name,
                       "twitter.screenName": data.screenName,
                       "twitter.profileImageUrl": data.profileImageUrl,
-                      "twitter.isMember": data.isMember,
-                      "twitter.skill": data.skill,
-                      "twitter.subSkills": data.subSkills
                     }
                  };
 

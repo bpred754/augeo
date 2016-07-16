@@ -293,10 +293,6 @@
         Assert.strictEqual(userData.name, Common.USER.fullName);
         Assert.strictEqual(userData.screenName, Common.USER.twitter.screenName);
         Assert.strictEqual(userData.profileImageUrl, 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg');
-        Assert.strictEqual(userData.isMember, false);
-        userData.skill.level.should.be.above(0);
-        Assert.strictEqual(userData.subSkills.length, 9);
-        Assert.strictEqual(userData.subSkills[0].name, 'Books');
 
         done();
       }, rollbackFailure);

@@ -72,9 +72,7 @@
             Assert.strictEqual(userAfterUpdate.twitter.twitterId, Common.USER.twitter.twitterId);
             Assert.strictEqual(userAfterUpdate.twitter.name, Common.USER.fullName);
             Assert.strictEqual(userAfterUpdate.twitter.screenName, Common.USER.twitter.screenName);
-            Assert.strictEqual(userAfterUpdate.twitter.isMember, false);
-            Assert.strictEqual(userAfterUpdate.twitter.skill.imageSrc, Common.USER.twitter.imageSrc);
-            Assert.strictEqual(userAfterUpdate.twitter.skill.imageLink, Common.USER.twitter.imageLink);
+            Assert.strictEqual(userAfterUpdate.twitter.skill.imageSrc, Common.USER.twitter.skill.imageSrc);
             Assert.strictEqual(userAfterUpdate.twitter.skill.level, 1);
             Assert.strictEqual(userAfterUpdate.twitter.skill.experience, 0);
 
@@ -108,7 +106,7 @@
 
         // Verify tweet was added
         Tweet.findTweet(tweet0.tweetId, function(returnedTweet0) {
-          Assert.strictEqual(returnedTweet0[0].experience, TwitterUtility.getTweetExperience() + TwitterUtility.getRetweetExperience());
+          Assert.strictEqual(returnedTweet0[0].experience, TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
           experience += returnedTweet0[0].experience;
 
           // Verify experience was added to twitter skill
@@ -125,7 +123,7 @@
               // Verify tweet was added for user doing the mentioning
               Tweet.findTweet(tweet1.tweetId, function(returnedTweet1) {
                 Assert.strictEqual(returnedTweet1[0].screenName, Common.ACTIONEE.twitter.screenName);
-                Assert.strictEqual(returnedTweet1[0].experience, TwitterUtility.getTweetExperience());
+                Assert.strictEqual(returnedTweet1[0].experience, TwitterUtility.TWEET_EXPERIENCE);
                 experience += returnedTweet1[0].experience;
 
                 Mention.getMention(tweet1.tweetId, function(returnedMention0) {
@@ -150,13 +148,13 @@
                         // Verify tweet was added for user doing retweeting
                         Tweet.findTweet(tweet2.tweetId, function(returnedTweet3) {
                           Assert.strictEqual(returnedTweet3[0].screenName, Common.ACTIONEE.twitter.screenName);
-                          Assert.strictEqual(returnedTweet3[0].experience, TwitterUtility.getTweetExperience());
-                          experience += TwitterUtility.getRetweetExperience();
+                          Assert.strictEqual(returnedTweet3[0].experience, TwitterUtility.TWEET_EXPERIENCE);
+                          experience += TwitterUtility.RETWEET_EXPERIENCE;
 
                           // Verify original tweet's experience and retweet count increased
                           Tweet.findTweet(action2.retweetId, function(returnedTweet4) {
 
-                            Assert.strictEqual(returnedTweet4[0].experience, originalTweetExperience + TwitterUtility.getRetweetExperience());
+                            Assert.strictEqual(returnedTweet4[0].experience, originalTweetExperience + TwitterUtility.RETWEET_EXPERIENCE);
                             Assert.strictEqual(returnedTweet4[0].retweetCount, originalRetweetCount + 1);
 
                             // Verify user's skill experience
@@ -212,7 +210,7 @@
         var initialExperience = userBefore.twitter.skill.experience;
         TwitterService.addMentions(userBefore._id, Common.USER.twitter.screenName, mentionTweets, filteredMentions, function() {
           User.getUserWithScreenName(Common.USER.twitter.screenName, function(userAfter) {
-            Assert.strictEqual(userAfter.twitter.skill.experience, initialExperience + count * TwitterUtility.getMentionExperience());
+            Assert.strictEqual(userAfter.twitter.skill.experience, initialExperience + count * TwitterUtility.MENTION_EXPERIENCE);
 
             // Asyncronous method calls in loop - Using Recursion
             (function checkMentions(i) {
@@ -263,7 +261,7 @@
         tweetIDs.push(tweets[i].tweetId);
         var classification = tweets[i].classification;
         tweetClassifications.push(classification);
-        subSkillExperiences[TwitterUtility.getSkillIndex(classification)] += tweets[i].experience;
+        subSkillExperiences[AugeoUtility.getSkillIndex(classification)] += tweets[i].experience;
       };
 
       User.getUserWithUsername(Common.USER.username, function(userBefore) {
@@ -658,47 +656,6 @@
     });
   });
 
-  // setMember && isMember
-  it('should return if the user is a member of not -- setMember() && isMember()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Invalid Mongoose ID
-    var invalidID = '%';
-    TwitterService.isMember(invalidID, function(isMember0) {
-      Assert.strictEqual(isMember0, false);
-
-      // Valid MongooseID - user ID doesn't exists
-      var nonExistentID = '123456789012345678901234';
-      TwitterService.isMember(nonExistentID, function(isMember1) {
-        Assert.strictEqual(isMember1, false);
-
-        // Valid
-        User.getUserWithUsername(Common.USER.username, function(user) {
-
-          TwitterService.isMember(user._id.toString(), function(isMember2) {
-            Assert.strictEqual(isMember2, false);
-
-            // set USER with user that doesn't exist
-            TwitterService.setMember(nonExistentID, function(isMember3) {
-              Assert.strictEqual(isMember3, false);
-
-              // Set USER as member
-              TwitterService.setMember(user._id.toString(), function(isMember4) {
-                Assert.strictEqual(isMember4, true);
-
-                // Verify isMember
-                TwitterService.isMember(user._id.toString(), function(isMember5) {
-                  Assert.strictEqual(isMember5, true);
-                  done();
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-
   // isUserDefined
   it('should return a boolean signifying if the session user is defined -- isUserDefined()', function(done) {
     this.timeout(Common.TIMEOUT);
@@ -825,79 +782,89 @@
       Assert.ok(baseExperience);
       Assert.ok(baseSubSkillRank);
 
-      var newUser = {
-        firstName: Common.ACTIONEE.firstName,
-        lastName: Common.ACTIONEE.lastName,
-        username: Common.ACTIONEE.username,
-        password: Common.ACTIONEE.password
-      };
+      User.getNumberUsers(function(numUsers) {
+        numUsers++;
 
-      // Verify new user is not in database
-      User.getUserWithUsername(newUser.username, function(user1) {
-        Should.not.exist(user1);
+        var newUserSkill = AugeoUtility.getMainSkill(0);
+        newUserSkill.rank = numUsers;
 
-        // Add new user to database
-        User.add(newUser, function(user2) {
+        var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS));
+        for(var i = 0; i < newUserSubSkills.length; i++) {
+          newUserSubSkills[i].rank = numUsers;
+        }
 
-          var newUserSubSkills = TwitterUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills()));
+        var newUser = {
+          firstName: Common.ACTIONEE.firstName,
+          lastName: Common.ACTIONEE.lastName,
+          username: Common.ACTIONEE.username,
+          password: Common.ACTIONEE.password,
+          skill: newUserSkill,
+          subSkills: newUserSubSkills
+        };
 
-          var twitterData = {
-            twitterId: Common.ACTIONEE.twitter.twitterId,
-            name: Common.ACTIONEE.fullName,
-            screenName: Common.ACTIONEE.twitter.screenName,
-            profileImageUrl: Common.ACTIONEE.twitter.profileImageUrl,
-            isMember: false,
-            accessToken: Common.ACTIONEE.twitter.accessToken,
-            secretAccessToken: Common.ACTIONEE.twitter.secretAccessToken,
-            skill: TwitterUtility.getMainSkill(0),
-            subSkills: newUserSubSkills
-          };
+        // Verify new user is not in database
+        User.getUserWithUsername(newUser.username, function(user1) {
+          Should.not.exist(user1);
 
-          // Update new user's twitter information
-          TwitterService.updateTwitterInfo(user2._id.toString(), twitterData, function() {
+          // Add new user to database
+          User.add(newUser, function(user2) {
 
-            // Verify new user's skill and subSkill rank is higher than Common.USER
-            User.getUserWithUsername(Common.ACTIONEE.username, function(user3) {
-              var newUserSkillRank = user3.twitter.skill.rank;
-              var newUserSubSkillRank = user3.twitter.subSkills[baseIndex].rank;
+            var twitterData = {
+              twitterId: Common.ACTIONEE.twitter.twitterId,
+              name: Common.ACTIONEE.fullName,
+              screenName: Common.ACTIONEE.twitter.screenName,
+              profileImageUrl: Common.ACTIONEE.twitter.profileImageUrl,
+              accessToken: Common.ACTIONEE.twitter.accessToken,
+              secretAccessToken: Common.ACTIONEE.twitter.secretAccessToken,
+            };
 
-              newUserSkillRank.should.be.above(baseSkillRank);
-              newUserSubSkillRank.should.be.above(baseSubSkillRank);
+            // Update new user's twitter information
+            TwitterService.updateTwitterInfo(user2._id.toString(), twitterData, function() {
 
-              var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills());
-              updateSubSkillExperiences[TwitterUtility.getSubSkills()[baseIndex].name] = baseExperience*100;
-              var updateExperience = {
-                mainSkillExperience: baseExperience*100,
-                subSkillsExperience: updateSubSkillExperiences
-              }
+              // Verify new user's skill and subSkill rank is higher than Common.USER
+              User.getUserWithUsername(Common.ACTIONEE.username, function(user3) {
 
-              // Update new user's subSkill experience to be more than Common.USER - use User.updateTwitterSkillData
-              User.updateTwitterSkillData(user3._id, updateExperience, function() {
+                var newUserSkillRank = user3.twitter.skill.rank;
+                var newUserSubSkillRank = user3.twitter.subSkills[baseIndex].rank;
 
-                // Update Twitter ranks
-                TwitterService.updateTwitterRanks(function() {
+                newUserSkillRank.should.be.above(baseSkillRank);
+                newUserSubSkillRank.should.be.above(baseSubSkillRank);
 
-                  // Update sub skill ranks
-                  TwitterService.updateSubSkillRanks(general.name, function() {
+                var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
+                updateSubSkillExperiences[AugeoUtility.SUB_SKILLS[baseIndex].name] = baseExperience*100;
+                var updateExperience = {
+                  mainSkillExperience: baseExperience*100,
+                  subSkillsExperience: updateSubSkillExperiences
+                }
 
-                    User.getUserWithUsername(Common.USER.username, function(user4) {
+                // Update new user's subSkill experience to be more than Common.USER - use User.updateTwitterSkillData
+                User.updateTwitterSkillData(user3._id, updateExperience, function() {
 
-                      // Update baseline variables
-                      baseSkillRank = user4.twitter.skill.rank;
-                      baseSubSkillRank = user4.twitter.subSkills[baseIndex].rank;
+                  // Update Twitter ranks
+                  TwitterService.updateTwitterRanks(function() {
 
-                      // Verify new user's subSkill rank is lower than Common.USER
-                      User.getUserWithUsername(Common.ACTIONEE.username, function(user5) {
-                        user5.twitter.skill.rank.should.be.below(baseSkillRank);
-                        user5.twitter.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
-                        done();
+                    // Update sub skill ranks
+                    TwitterService.updateSubSkillRanks(general.name, function() {
+
+                      User.getUserWithUsername(Common.USER.username, function(user4) {
+
+                        // Update baseline variables
+                        baseSkillRank = user4.twitter.skill.rank;
+                        baseSubSkillRank = user4.twitter.subSkills[baseIndex].rank;
+
+                        // Verify new user's subSkill rank is lower than Common.USER
+                        User.getUserWithUsername(Common.ACTIONEE.username, function(user5) {
+                          user5.twitter.skill.rank.should.be.below(baseSkillRank);
+                          user5.twitter.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
+                          done();
+                        });
                       });
                     });
                   });
                 });
               });
-            });
-          }, function(){});
+            }, function(){});
+          });
         });
       });
     });

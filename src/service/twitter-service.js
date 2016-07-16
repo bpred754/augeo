@@ -355,10 +355,6 @@
     }
   };
 
-  exports.getTwitterSkills = function() {
-    return TwitterUtility.getSubSkills();
-  };
-
   // Call DB to get all users Twitter Id's
   exports.getUsers = function(callback) {
     User.getUsers(callback);
@@ -377,16 +373,6 @@
       rollback();
     }
   }
-
-  // Call DB to check if user is a member
-  exports.isMember = function(userId, callback){
-
-    if(AugeoValidator.isMongooseObjectIdValid(userId)) {
-      User.isMember(userId, callback);
-    } else {
-      callback(false);
-    }
-  };
 
   // Call DB to remove all users with an undefined Twitter Id
   exports.removeInvalidUser = function(session, callback) {
@@ -413,7 +399,7 @@
       Tweet.removeTweet(tweetData.id_str, function() {
 
         // Set subskills experience
-        var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills());
+        var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
         subSkillsExperience[classification] += tweetExperience;
 
         var experience = {
@@ -448,9 +434,9 @@
           rank +=1;
           p.twitter.subSkills[0].rank = rank;
           if (numUsers == rank) {
-            User.updateSubSkillRank(p, rank, TwitterUtility.getSkillIndex(subSkill), callback);
+            User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill), callback);
           } else {
-            User.updateSubSkillRank(p, rank, TwitterUtility.getSkillIndex(subSkill));
+            User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill));
           }
         });
       });
@@ -462,21 +448,7 @@
 
     // Validate userId
     if(AugeoValidator.isMongooseObjectIdValid(userId)) {
-
-      // Set user's ranks to be number of users
-      User.getNumberUsers(function(numUsers) {
-
-        // Set Twitter skill to number of users
-        userData.skill.rank = numUsers;
-
-        // Loop through user data and set ranks
-        var subSkills = userData.subSkills;
-        for(var i = 0; i < subSkills.length; i++) {
-          subSkills[i].rank = numUsers;
-        }
-
-        User.updateTwitterInfo(userId, userData, callback);
-      });
+      User.updateTwitterInfo(userId, userData, callback);
     } else {
       rollback();
     }
@@ -510,14 +482,14 @@
   var calculateTwitterExperience = function(tweets, screenName, isMention) {
 
     var mainSkillExperience = 0;
-    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills());
+    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
     for(var i = 0; i < tweets.length; i++) {
       var tweet = tweets[i];
 
       var experienceGained = 0;
 
       if(isMention) {
-        experienceGained = TwitterUtility.getMentionExperience();
+        experienceGained = TwitterUtility.MENTION_EXPERIENCE;
       } else {
         experienceGained = tweet.experience;
       }
@@ -606,10 +578,9 @@
 
       var mainSkill = user.twitter.skill;
       var mainSkillDisplay = {
-        name: 'Twitter',
+        name: 'Augeo',
         experience: mainSkill.experience,
         level: AugeoUtility.calculateLevel(mainSkill.experience),
-        imageLink: mainSkill.imageLink,
         imageSrc: mainSkill.imageSrc,
         startExperience: AugeoUtility.getLevelStartExperience(mainSkill.level),
         endExperience: AugeoUtility.getLevelEndExperience(mainSkill.level),
@@ -659,7 +630,7 @@
     var tweetExperience = TwitterUtility.getExperience(tweet, userName, isRetweet);
 
     // Set subskills experience
-    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills());
+    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
     subSkillsExperience[tweet.classification] += tweetExperience;
 
     return {

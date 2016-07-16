@@ -36,8 +36,9 @@
       secretAccessToken: '000',
       screenName: 'testScreenName',
       profileImageUrl: '',
-      imageSrc: 'image/twitter/logo-blue-medium.png',
-      imageLink: 'https://www.twitter.com'
+      skill: {
+        imageSrc: 'image/augeo-logo-medium.png'
+      }
     }
   };
 
@@ -55,8 +56,9 @@
       secretAccessToken: '100',
       screenName: 'twitterActionee',
       profileImageUrl: 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg',
-      imageSrc: 'image/twitter/logo-blue-medium.png',
-      imageLink: 'https://www.twitter.com'
+      skill: {
+        imageSrc: 'image/twitter/logo-blue-medium.png'
+      }
     }
   };
 

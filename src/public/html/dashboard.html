@@ -34,7 +34,15 @@
               </div>
           </div>
           <div id="db-recent-activity-container">
-              <activity-transition ng-if="!invalidUser && currentTweet" id= "db-transition" visible="visible" tweet-data="currentTweet" screen-name="profileData.twitterScreenName"></activity-transition>
+            <activity-transition ng-if="!invalidUser && currentTweet" id= "db-transition" visible="visible" tweet-data="currentTweet" screen-name="profileData.twitterScreenName"></activity-transition>
+            <div id="db-auth-container" ng-if="!invalidUser && !User.twitter.screenName && profileData.username == User.username">
+              <div>
+                <p class="standard-text text-primary text-align-center">Authenticate with Twitter to start tracking your experience</p>
+                <div class="horizontal-center">
+                  <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+                </div>
+              </div>
+            </div>
          </div>
         </div>
       </div>

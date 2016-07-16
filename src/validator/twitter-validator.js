@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Required local modules
-  var TwitterUtility = require('../utility/twitter-utility');
+  var AugeoUtility = require('../utility/augeo-utility');
 
   exports.containsUserTwitterData = function(data) {
     var containsData = false;
@@ -78,7 +78,7 @@
     var isValid = false;
 
     if(skill) {
-      var subSkills = TwitterUtility.getSubSkills();
+      var subSkills = AugeoUtility.SUB_SKILLS;
       for(var i = 0; i < subSkills.length; i++) {
         if(skill === subSkills[i].name || skill === 'Twitter') {
           isValid = true;
