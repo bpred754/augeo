@@ -35,6 +35,7 @@
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
   var TwitterService = require('../../../src/service/twitter-service');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
+  var UserService = require('../../../src/service/user-service');
 
   // Global variables
   var User = AugeoDB.model('User');
@@ -46,7 +47,7 @@
     this.timeout(Common.TIMEOUT);
 
     // Get Test Tester's user id from database
-    User.getUserWithEmail(Common.USER.email, function(user) {
+    User.getUserWithUsername(Common.USER.username, function(user) {
 
       Assert.ok(user._id);
       var userId = user._id.toString();
@@ -64,23 +65,18 @@
         TwitterService.updateTwitterInfo(userId, userData, function() {
 
           // Retrieve Test Tester again from database to verify information was updated
-          User.getUserWithEmail(Common.USER.email, function(userAfterUpdate) {
+          User.getUserWithUsername(Common.USER.username, function(userAfterUpdate) {
 
             Assert.strictEqual(userAfterUpdate.firstName, Common.USER.firstName);
             Assert.strictEqual(userAfterUpdate.lastName, Common.USER.lastName);
-            Assert.strictEqual(userAfterUpdate.email, Common.USER.email);
-            Assert.strictEqual(userAfterUpdate.twitter.accessToken, Common.USER.twitter.accessToken);
-            Assert.strictEqual(userAfterUpdate.twitter.secretAccessToken, Common.USER.twitter.secretAccessToken);
             Assert.strictEqual(userAfterUpdate.twitter.twitterId, Common.USER.twitter.twitterId);
             Assert.strictEqual(userAfterUpdate.twitter.name, Common.USER.fullName);
             Assert.strictEqual(userAfterUpdate.twitter.screenName, Common.USER.twitter.screenName);
-            Assert.strictEqual(userAfterUpdate.twitter.isMember, false);
-            Assert.strictEqual(userAfterUpdate.twitter.skill.imageSrc, Common.USER.twitter.imageSrc);
-            Assert.strictEqual(userAfterUpdate.twitter.skill.imageLink, Common.USER.twitter.imageLink);
-            Assert.strictEqual(userAfterUpdate.twitter.skill.level, 1);
-            Assert.strictEqual(userAfterUpdate.twitter.skill.experience, 0);
+            Assert.strictEqual(userAfterUpdate.skill.imageSrc, Common.USER.skill.imageSrc);
+            Assert.strictEqual(userAfterUpdate.skill.level, 1);
+            Assert.strictEqual(userAfterUpdate.skill.experience, 0);
 
-            var subSkills = userAfterUpdate.twitter.subSkills;
+            var subSkills = userAfterUpdate.subSkills;
             for(var i = 0; i < subSkills.length; i++) {
               Assert.strictEqual(subSkills[i].level, 1);
               Assert.strictEqual(subSkills[i].experience, 0);
@@ -103,19 +99,19 @@
 
     var experience = 0;
     // Determine initial skill experience
-    User.getUserWithEmail(Common.USER.email, function(user0) {
-      experience = user0.twitter.skill.experience;
+    User.getUserWithUsername(Common.USER.username, function(user0) {
+      experience = user0.skill.experience;
 
       TwitterService.addAction(action0, tweet0, mention0, function(classification0) {
 
         // Verify tweet was added
         Tweet.findTweet(tweet0.tweetId, function(returnedTweet0) {
-          Assert.strictEqual(returnedTweet0[0].experience, TwitterUtility.getTweetExperience() + TwitterUtility.getRetweetExperience());
+          Assert.strictEqual(returnedTweet0[0].experience, TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
           experience += returnedTweet0[0].experience;
 
           // Verify experience was added to twitter skill
-          User.getUserWithEmail(Common.USER.email, function(user1) {
-            Assert.strictEqual(user1.twitter.skill.experience, experience);
+          User.getUserWithUsername(Common.USER.username, function(user1) {
+            Assert.strictEqual(user1.skill.experience, experience);
 
             // A tweet with Test Tester mentioned
             var action1 = TwitterInterfaceService.extractAction(Common.rawMentionOfTestUser);
@@ -127,15 +123,15 @@
               // Verify tweet was added for user doing the mentioning
               Tweet.findTweet(tweet1.tweetId, function(returnedTweet1) {
                 Assert.strictEqual(returnedTweet1[0].screenName, Common.ACTIONEE.twitter.screenName);
-                Assert.strictEqual(returnedTweet1[0].experience, TwitterUtility.getTweetExperience());
+                Assert.strictEqual(returnedTweet1[0].experience, TwitterUtility.TWEET_EXPERIENCE);
                 experience += returnedTweet1[0].experience;
 
                 Mention.getMention(tweet1.tweetId, function(returnedMention0) {
                   Assert.strictEqual(returnedMention0[0].mentioneeScreenName, Common.USER.twitter.screenName);
 
                   // Verify experience was added to twitter skill
-                  User.getUserWithEmail(Common.USER.email, function(user2) {
-                    Assert.strictEqual(user2.twitter.skill.experience, experience);
+                  User.getUserWithUsername(Common.USER.username, function(user2) {
+                    Assert.strictEqual(user2.skill.experience, experience);
 
                     // User retweets Test Tester's post
                     var action2 = TwitterInterfaceService.extractAction(Common.rawRetweetOfUser);
@@ -152,18 +148,18 @@
                         // Verify tweet was added for user doing retweeting
                         Tweet.findTweet(tweet2.tweetId, function(returnedTweet3) {
                           Assert.strictEqual(returnedTweet3[0].screenName, Common.ACTIONEE.twitter.screenName);
-                          Assert.strictEqual(returnedTweet3[0].experience, TwitterUtility.getTweetExperience());
-                          experience += TwitterUtility.getRetweetExperience();
+                          Assert.strictEqual(returnedTweet3[0].experience, TwitterUtility.TWEET_EXPERIENCE);
+                          experience += TwitterUtility.RETWEET_EXPERIENCE;
 
                           // Verify original tweet's experience and retweet count increased
                           Tweet.findTweet(action2.retweetId, function(returnedTweet4) {
 
-                            Assert.strictEqual(returnedTweet4[0].experience, originalTweetExperience + TwitterUtility.getRetweetExperience());
+                            Assert.strictEqual(returnedTweet4[0].experience, originalTweetExperience + TwitterUtility.RETWEET_EXPERIENCE);
                             Assert.strictEqual(returnedTweet4[0].retweetCount, originalRetweetCount + 1);
 
                             // Verify user's skill experience
-                            User.getUserWithEmail(Common.USER.email, function(user3) {
-                              Assert.strictEqual(user3.twitter.skill.experience, experience);
+                            User.getUserWithUsername(Common.USER.username, function(user3) {
+                              Assert.strictEqual(user3.skill.experience, experience);
                               done();
                             });
                           });
@@ -211,10 +207,10 @@
       }
 
       User.getUserWithScreenName(Common.USER.twitter.screenName, function(userBefore) {
-        var initialExperience = userBefore.twitter.skill.experience;
+        var initialExperience = userBefore.skill.experience;
         TwitterService.addMentions(userBefore._id, Common.USER.twitter.screenName, mentionTweets, filteredMentions, function() {
           User.getUserWithScreenName(Common.USER.twitter.screenName, function(userAfter) {
-            Assert.strictEqual(userAfter.twitter.skill.experience, initialExperience + count * TwitterUtility.getMentionExperience());
+            Assert.strictEqual(userAfter.skill.experience, initialExperience + count * TwitterUtility.MENTION_EXPERIENCE);
 
             // Asyncronous method calls in loop - Using Recursion
             (function checkMentions(i) {
@@ -265,27 +261,27 @@
         tweetIDs.push(tweets[i].tweetId);
         var classification = tweets[i].classification;
         tweetClassifications.push(classification);
-        subSkillExperiences[TwitterUtility.getSkillIndex(classification)] += tweets[i].experience;
+        subSkillExperiences[AugeoUtility.getSkillIndex(classification)] += tweets[i].experience;
       };
 
-      User.getUserWithEmail(Common.USER.email, function(userBefore) {
-        var initialExperience = userBefore.twitter.skill.experience;
+      User.getUserWithUsername(Common.USER.username, function(userBefore) {
+        var initialExperience = userBefore.skill.experience;
 
         var initialSubSkillExperiences = [0,0,0,0,0,0,0,0,0];
         for(var i = 0; i < initialSubSkillExperiences.length; i++) {
-          initialSubSkillExperiences[i] = userBefore.twitter.subSkills[i].experience;
+          initialSubSkillExperiences[i] = userBefore.subSkills[i].experience;
         }
 
-        TwitterService.addTweets(userBefore._id, Common.USER.email, tweets, function() {
-          User.getUserWithEmail(Common.USER.email, function(userAfter) {
+        TwitterService.addTweets(userBefore._id, Common.USER.twitter.screenName, tweets, function() {
+          User.getUserWithUsername(Common.USER.username, function(userAfter) {
 
             // Verify Twitter experience is updated
-            Assert.strictEqual(userAfter.twitter.skill.experience, initialExperience + addedExperience);
+            Assert.strictEqual(userAfter.skill.experience, initialExperience + addedExperience);
 
             // Verify Twitter subskills are updated
             for(var i = 0; i < subSkillExperiences.length; i++) {
               if(subSkillExperiences[i] > 0) {
-                Assert.strictEqual(userAfter.twitter.subSkills[i].experience, initialSubSkillExperiences[i] + subSkillExperiences[i]);
+                Assert.strictEqual(userAfter.subSkills[i].experience, initialSubSkillExperiences[i] + subSkillExperiences[i]);
               }
             }
 
@@ -313,7 +309,9 @@
     this.timeout(Common.TIMEOUT);
 
     var invalidSession = {
-      user : Common.USER
+      session: {
+        user : Common.USER
+      }
     };
 
     // Generate sample secretToken
@@ -323,11 +321,13 @@
       TwitterService.addUserSecretToken(invalidSession, secretToken, function() {}, function() {
 
         var invalidID = {
-          user: {
-            _id: '',
-            firstName: Common.USER.firstName,
-            lastName: Common.USER.lastName,
-            email: Common.USER.email
+          session: {
+            user: {
+              _id: '',
+              firstName: Common.USER.firstName,
+              lastName: Common.USER.lastName,
+              username: Common.USER.username
+            }
           }
         };
 
@@ -335,17 +335,17 @@
         TwitterService.addUserSecretToken(invalidID, secretToken, function(){}, function() {
 
           // Get user's _id from database
-          User.getUserWithEmail(Common.USER.email, function(userBefore) {
+          User.getUserWithUsername(Common.USER.username, function(user) {
 
             var validSession = invalidID;
-            validSession.user._id = userBefore._id;
+            validSession.session.user._id = user._id;
 
             // Should add user's secret token to database successfully
             TwitterService.addUserSecretToken(validSession, secretToken, function() {
 
               // Verify user's secret token was updated
-              User.getUserWithEmail(Common.USER.email, function(userAfter) {
-                Assert.strictEqual(userAfter.twitter.secretToken, secretToken);
+              User.getTwitterTokens(user._id, function(tokens) {
+                Assert.strictEqual(tokens.secretToken, secretToken);
                 done();
               });
             }, function(){});
@@ -366,141 +366,56 @@
         Assert.strictEqual(doesExist0, false);
 
         // Get user's access token
-        User.getUserWithEmail(Common.USER.email, function(user) {
-          TwitterService.checkExistingAccessToken(user.twitter.accessToken, function(doesExist1) {
-            Assert.strictEqual(doesExist1, true);
-            done();
+        User.getUserWithUsername(Common.USER.username, function(user) {
+          User.getTwitterTokens(user._id, function(tokens) {
+            TwitterService.checkExistingAccessToken(tokens.accessToken, function(doesExist1) {
+              Assert.strictEqual(doesExist1, true);
+              done();
+            });
           });
         });
       });
     }, function(){});
   });
 
-  // getCompetitors
-  it('Should return competitors given a skill and a user -- getCompetitors()', function(done) {
+  // getDashboardDisplayData
+  it('should return dashboard display data -- getDashboardDisplayData()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    var invalidScreenName = '%%';
-    TwitterService.getCompetitors(invalidScreenName, 'Twitter', function(){}, function() {
-
-      var invalidSkill = 'invalidSkill';
-      TwitterService.getCompetitors(Common.USER.twitter.screenName, invalidSkill, function(){}, function() {
-
-        // Get competitors for user that doesn't exist
-        TwitterService.getCompetitors('invalid', 'Twitter', function(competitorsForInvalid) {
-
-          var maxRank0 = 0;
-          competitorsForInvalid.length.should.be.above(0);
-          for(var i = 0; i < competitorsForInvalid.length; i++) {
-            competitorsForInvalid[i].rank.should.be.above(maxRank0);
-            Assert.ok(competitorsForInvalid[i].screenName);
-            Assert.ok(competitorsForInvalid[i].rank);
-            Assert.ok(competitorsForInvalid[i].experience);
-            Assert.ok(competitorsForInvalid[i].level);
-            maxRank0 = competitorsForInvalid[i].rank;
-          }
-
-          TwitterService.getCompetitors(Common.USER.twitter.screenName, 'Twitter', function(competitorsForValid) {
-
-            var maxRank1 = 0;
-            competitorsForValid.length.should.be.above(0);
-            for(var i = 0; i < competitorsForValid.length; i++) {
-              competitorsForInvalid[i].rank.should.be.above(maxRank1);
-              Assert.ok(competitorsForValid[i].screenName);
-              Assert.ok(competitorsForValid[i].rank);
-              Assert.ok(competitorsForValid[i].experience);
-              Assert.ok(competitorsForValid[i].level);
-              maxRank1 = competitorsForInvalid[i].rank;
-            }
-            done();
-          }, function(){});
-        }, function(){});
-      });
-    });
-  });
-
-
-  // getCompetitorsWithRank
-  it('should return competitors within a start and end rank -- getCompetitorsWithRank()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Invalid start rank
-    TwitterService.getCompetitorsWithRank('!', '5', 'Twitter', function(){}, function() {
-
-      // Invalid end rank
-      TwitterService.getCompetitorsWithRank('1', '%', 'Twitter', function(){}, function() {
-
-        // Invalid skill
-        TwitterService.getCompetitorsWithRank('1', '5', 'invalid', function(){}, function() {
-
-          // Valid input
-          TwitterService.getCompetitorsWithRank('1', '5', 'Twitter', function(users) {
-
-            users.length.should.be.above(0);
-            users.length.should.be.below(6);
-            for(var i = 0; i < users.length; i++) {
-              Assert.ok(users[i].screenName);
-              Assert.ok(users[i].rank);
-              Assert.ok(users[i].experience);
-              Assert.ok(users[i].level);
-              Assert.strictEqual(users[i].rank, i+1);
-            }
-            done();
-          }, function(){});
-        });
-      });
-    });
-  });
-
-  // getNumberUsers
-  it('should return the number of users in the database', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    TwitterService.getNumberUsers(function(numberUsers) {
-      Assert.ok(numberUsers);
-      numberUsers.should.be.above(0);
-      done();
-    });
-  });
-
-  // getProfileDisplayData
-  it('should return profile display data -- getProfileDisplayData()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Valid targetScreenName && targetScreenName doesnt exists
-    var targetScreenName = 'target';
-    TwitterService.getProfileDisplayData(Common.USER.twitter.screenName, targetScreenName, function(data0) {
+    // Valid targetUsername && targetUserame doesn't exists
+    var targetUsername = 'target';
+    TwitterService.getDashboardDisplayData(Common.USER.username, targetUsername, function(data0) {
       Assert.strictEqual(data0.errorImageUrl, 'image/logo.png');
 
-      // Valid targetScreenName && targetScreenName exists
-      TwitterService.getProfileDisplayData(Common.USER.twitter.sreenName, Common.USER.twitter.screenName, function(data1) {
+      // Valid targetUsername && targetUsername exists
+      TwitterService.getDashboardDisplayData(Common.USER.username, Common.USER.username, function(data1) {
 
-        Assert.ok(data1.profileData);
-        Assert.ok(data1.profileData.profileImageUrl);
-        Assert.ok(data1.profileData.skill);
-        Assert.ok(data1.profileData.subSkills);
-        Assert.ok(data1.profileData.circleRadius);
+        Assert.ok(data1.dashboardData);
+        Assert.ok(data1.dashboardData.user);
+        Assert.ok(data1.dashboardData.user.profileImg);
+        Assert.ok(data1.dashboardData.skill);
+        Assert.ok(data1.dashboardData.subSkills);
         Assert.ok(data1.recentActions);
         data1.recentActions.length.should.be.above(0);
 
-        // Invalid target && valid userScreenName && userScreenName doesnt exists
-        TwitterService.getProfileDisplayData('screenName', '', function(data2){
+        // Invalid target && valid userUsername && username doesn't exists
+        TwitterService.getDashboardDisplayData('username', '', function(data2){
 
           Assert.strictEqual(data2.errorImageUrl, 'image/logo.png');
 
-          // Invalid target && valid userScreenName && userScreenName exists
-          TwitterService.getProfileDisplayData(Common.USER.twitter.screenName, '', function(data3) {
+          // Invalid target && valid username && username exists
+          TwitterService.getDashboardDisplayData(Common.USER.username, '', function(data3) {
 
-            Assert.ok(data3.profileData);
-            Assert.ok(data3.profileData.profileImageUrl);
-            Assert.ok(data3.profileData.skill);
-            Assert.ok(data3.profileData.subSkills);
-            Assert.ok(data3.profileData.circleRadius);
+            Assert.ok(data3.dashboardData);
+            Assert.ok(data1.dashboardData.user);
+            Assert.ok(data3.dashboardData.user.profileImg);
+            Assert.ok(data3.dashboardData.skill);
+            Assert.ok(data3.dashboardData.subSkills);
             Assert.ok(data3.recentActions);
             data3.recentActions.length.should.be.above(0);
 
-            // Invalid target and invalid userScreenName
-            TwitterService.getProfileDisplayData('', '', function(){}, function() {
+            // Invalid target and invalid username
+            TwitterService.getDashboardDisplayData('', '', function(){}, function() {
               done();
             });
           }, function(){});
@@ -517,41 +432,44 @@
     TwitterService.getQueueData('', Common.USER.twitter.screenName, function(){}, function() {
 
       // Get user's id
-      User.getUserWithEmail(Common.USER.email, function(user) {
+      User.getUserWithUsername(Common.USER.username, function(user) {
 
-        // Invalid screenName
-        TwitterService.getQueueData(user._id.toString(), '', function(){}, function(){
+        User.getTwitterTokens(user._id, function(tokens) {
 
-          // Create user id that doesnt exist
-          var changedID = user._id.toString();
-          for(var i = 0; i < changedID.length; i++) {
-            if(changedID[i] != '1') {
-              changedID = changedID.substring(0, i) + '1' + changedID.substring(i+1);
-              break;
+          // Invalid screenName
+          TwitterService.getQueueData(user._id.toString(), '', function(){}, function(){
+
+            // Create user id that doesnt exist
+            var changedID = user._id.toString();
+            for(var i = 0; i < changedID.length; i++) {
+              if(changedID[i] != '1') {
+                changedID = changedID.substring(0, i) + '1' + changedID.substring(i+1);
+                break;
+              }
             }
-          }
 
-          // Invalid tokens - userId doesnt exists
-          TwitterService.getQueueData(changedID, Common.USER.twitter.screenName, function(){}, function() {
+            // Invalid tokens - userId doesnt exists
+            TwitterService.getQueueData(changedID, Common.USER.twitter.screenName, function(){}, function() {
 
-            // UserId exists && screenName doesnt exist
-            TwitterService.getQueueData(user._id.toString(), 'screenName', function(){}, function() {
+              // UserId exists && screenName doesnt exist
+              TwitterService.getQueueData(user._id.toString(), 'screenName', function(){}, function() {
 
-              // UserId exists && screeName exists
-              TwitterService.getQueueData(user._id.toString(), Common.USER.twitter.screenName, function(queueData) {
-                Assert.ok(queueData.tweetQueueData);
-                Assert.strictEqual(queueData.tweetQueueData.userId.toString(), user._id.toString());
-                Assert.strictEqual(queueData.tweetQueueData.screenName, user.twitter.screenName);
-                Assert.strictEqual(queueData.tweetQueueData.accessToken, user.twitter.accessToken);
-                Assert.strictEqual(queueData.tweetQueueData.secretAccessToken, user.twitter.secretAccessToken);
+                // UserId exists && screeName exists
+                TwitterService.getQueueData(user._id.toString(), Common.USER.twitter.screenName, function(queueData) {
+                  Assert.ok(queueData.tweetQueueData);
+                  Assert.strictEqual(queueData.tweetQueueData.userId.toString(), user._id.toString());
+                  Assert.strictEqual(queueData.tweetQueueData.screenName, user.twitter.screenName);
+                  Assert.strictEqual(queueData.tweetQueueData.accessToken, tokens.accessToken);
+                  Assert.strictEqual(queueData.tweetQueueData.secretAccessToken, tokens.secretAccessToken);
 
-                Assert.ok(queueData.mentionQueueData);
-                Assert.strictEqual(queueData.mentionQueueData.userId.toString(), user._id.toString());
-                Assert.strictEqual(queueData.mentionQueueData.screenName, user.twitter.screenName);
-                Assert.strictEqual(queueData.mentionQueueData.accessToken, user.twitter.accessToken);
-                Assert.strictEqual(queueData.mentionQueueData.secretAccessToken, user.twitter.secretAccessToken);
-                done();
-              }, function(){})
+                  Assert.ok(queueData.mentionQueueData);
+                  Assert.strictEqual(queueData.mentionQueueData.userId.toString(), user._id.toString());
+                  Assert.strictEqual(queueData.mentionQueueData.screenName, user.twitter.screenName);
+                  Assert.strictEqual(queueData.mentionQueueData.accessToken, tokens.accessToken);
+                  Assert.strictEqual(queueData.mentionQueueData.secretAccessToken, tokens.secretAccessToken);
+                  done();
+                }, function(){})
+              });
             });
           });
         });
@@ -560,26 +478,26 @@
   });
 
   // getSkillActivity
-  it('should return skill activity for a user screenName, skill, and tweetId -- getSkillActivity()', function(done) {
+  it('should return skill activity for a user username, skill, and tweetId -- getSkillActivity()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    // Invalid screenName
-    TwitterService.getSkillActivity('', 'Twitter', '0', function(){}, function() {
+    // Invalid username
+    TwitterService.getSkillActivity('', 'Augeo', '0', function(){}, function() {
 
       // Invalid skills
-      TwitterService.getSkillActivity(Common.USER.twitter.screenName, 'invalidSkill', '0', function(){}, function() {
+      TwitterService.getSkillActivity(Common.USER.username, 'invalidSkill', '0', function(){}, function() {
 
         // Invalid tweetId
-        TwitterService.getSkillActivity(Common.USER.twitter.screenName, 'Twitter', '', function(){}, function() {
+        TwitterService.getSkillActivity(Common.USER.username, 'Augeo', '', function(){}, function() {
 
           // Valid input - no max
-          TwitterService.getSkillActivity(Common.USER.twitter.screenName, 'Twitter', '9999999999999999999999999999999', function(data0) {
+          TwitterService.getSkillActivity(Common.USER.username, 'Augeo', '9999999999999999999999999999999', function(data0) {
             Assert.ok(data0.activity);
             data0.activity.length.should.be.above(0);
             var maxId = data0.activity[0].tweetId;
 
             // Valid input - max tweet ID
-            TwitterService.getSkillActivity(Common.USER.twitter.screenName, 'Twitter', maxId, function(data1) {
+            TwitterService.getSkillActivity(Common.USER.username, 'Augeo', maxId, function(data1) {
               Assert.ok(data1.activity);
               data1.activity.length.should.be.above(0);
               Assert.notStrictEqual(data1.activity[0].tweetId, maxId);
@@ -610,45 +528,18 @@
   it('should return users secret token -- getUserSecretToken()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    var invalidSession = {
-      user: {
-          firstName: Common.USER.firstName,
-          lastName: Common.USER.lastName,
-          email: Common.USER.email
-      }
-    };
-
     // Invalid session - missing user._id
-    TwitterService.getUserSecretToken(invalidSession, function(){}, function() {
-
-
-      var notExistentID = {
-        user: {
-          _id: '0',
-          firstName: Common.USER.firstName,
-          lastName: Common.USER.lastName,
-          email: Common.USER.email
-        }
-      };
+    TwitterService.getUserSecretToken(null, function(){}, function() {
 
       // Valid session- user ID doesn't exists
-      TwitterService.getUserSecretToken(notExistentID, function(){}, function() {
-
+      TwitterService.getUserSecretToken('0', function(){}, function() {
 
         // Valid session
-        User.getUserWithEmail(Common.USER.email, function(user) {
+        User.getUserWithUsername(Common.USER.username, function(user) {
 
           var userID = user._id.toString();
-          var session = {
-            user: {
-              _id: userID,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              email: user.email
-            }
-          }
 
-          TwitterService.getUserSecretToken(session, function(secretToken) {
+          TwitterService.getUserSecretToken(userID, function(secretToken) {
             Assert.strictEqual(secretToken.length, 32);
             done();
           }, function(){});
@@ -657,150 +548,41 @@
     });
   });
 
-  // setMember && isMember
-  it('should return if the user is a member of not -- setMember() && isMember()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Invalid Mongoose ID
-    var invalidID = '%';
-    TwitterService.isMember(invalidID, function(isMember0) {
-      Assert.strictEqual(isMember0, false);
-
-      // Valid MongooseID - user ID doesn't exists
-      var nonExistentID = '123456789012345678901234';
-      TwitterService.isMember(nonExistentID, function(isMember1) {
-        Assert.strictEqual(isMember1, false);
-
-        // Valid
-        User.getUserWithEmail(Common.USER.email, function(user) {
-
-          TwitterService.isMember(user._id.toString(), function(isMember2) {
-            Assert.strictEqual(isMember2, false);
-
-            // set USER with user that doesn't exist
-            TwitterService.setMember(nonExistentID, function(isMember3) {
-              Assert.strictEqual(isMember3, false);
-
-              // Set USER as member
-              TwitterService.setMember(user._id.toString(), function(isMember4) {
-                Assert.strictEqual(isMember4, true);
-
-                // Verify isMember
-                TwitterService.isMember(user._id.toString(), function(isMember5) {
-                  Assert.strictEqual(isMember5, true);
-                  done();
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-
-  // isSessionScreenNameDefined
-  it('should return a boolean signifying if sessionScreenName is defined -- isSessionScreenNameDefined()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    var nullRequest;
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullRequest), false);
-
-    var nullSession = {};
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullSession), false);
-
-    var nullUser = {
-      session: {}
-    };
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullUser), false);
-
-    var nullTwitter = {
-      session: {
-        user: {}
-      }
-    };
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullTwitter), false);
-
-    var nullScreenName = {
-      session: {
-        user: {
-          twitter:{}
-        }
-      }
-    };
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(nullScreenName), false);
-
-    var valid = {
-      session: {
-        user: {
-          twitter: {
-            screenName: Common.USER.twitter.screenName
-          }
-        }
-      }
-    };
-    Assert.strictEqual(TwitterService.isSessionScreenNameDefined(valid), true);
-
-    done();
-  });
-
-  // isSessionUserDefined
-  it('should return a boolean signifying if the session user is defined -- isSessionUserDefined()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    var nullRequest;
-    Assert.strictEqual(TwitterService.isSessionUserDefined(nullRequest), false);
-
-    var nullSession = {};
-    Assert.strictEqual(TwitterService.isSessionUserDefined(nullSession), false);
-
-    var nullUser = {
-      session: {}
-    };
-    Assert.strictEqual(TwitterService.isSessionUserDefined(nullUser), false);
-
-    var valid = {
-      session: {
-        user: Common.USER
-      }
-    };
-    Assert.strictEqual(TwitterService.isSessionUserDefined(valid), true);
-
-    done();
-  });
-
   // removeInvalidUser
-  it('should remove user from database with a specified email -- removeInvalidUser()', function(done) {
+  it('should remove user from database with a specified username -- removeInvalidUser()', function(done) {
     this.timeout(Common.TIMEOUT);
 
     var invalidUser = {
       _id: '001',
       firstName: 'blah',
       lastName: 'blah blah',
-      email: 'blah@email.com',
+      username: 'blahblahblah',
       password: 'blahblah'
     }
 
-    var session = {
-      user: invalidUser
+    var request = {
+      session: {
+        user: invalidUser
+      }
     };
 
     // Verify user to be added is not in DB
-    User.getUserWithEmail(invalidUser.email, function(user0) {
+    User.getUserWithUsername(invalidUser.username, function(user0) {
       Should.not.exist(user0);
 
       // Add invalid user
       User.add(invalidUser, function() {
 
         // Verify new user in db
-        User.getUserWithEmail(invalidUser.email, function(user1) {
+        User.getUserWithUsername(invalidUser.username, function(user1) {
           Assert.strictEqual(user1.firstName, invalidUser.firstName);
 
           // Remove invalid users
-          TwitterService.removeInvalidUser(session, function(user2) {
+          UserService.removeUser(request.session.user.username, function(user2) {
             Assert.strictEqual(user2.firstName, invalidUser.firstName)
 
             // Verify user is no longer in db
-            User.getUserWithEmail(invalidUser.email, function(user3) {
+            User.getUserWithUsername(invalidUser.username, function(user3) {
               Should.not.exist(user3);
               done();
             });
@@ -815,8 +597,8 @@
 
     // Determine initial skill experience
     var experience = 0;
-    User.getUserWithEmail(Common.USER.email, function(user0) {
-      experience = user0.twitter.skill.experience;
+    User.getUserWithUsername(Common.USER.username, function(user0) {
+      experience = user0.skill.experience;
 
       // Verify tweet exists
       Tweet.findTweet(Common.rawStandardTweet.id_str, function(returnedTweet0) {
@@ -836,112 +618,11 @@
             Assert.strictEqual(0, returnedTweet1.length);
 
             // Verify experience was removed from twitter skill
-            User.getUserWithEmail(Common.USER.email, function(user1) {
-              Assert.strictEqual(user1.twitter.skill.experience, experience);
+            User.getUserWithUsername(Common.USER.username, function(user1) {
+              Assert.strictEqual(user1.skill.experience, experience);
               done();
             });
           });
-        });
-      });
-    });
-  });
-
-  // updateTwitterRanks & updateSubSkillRanks
-  it('should update the skill and sub skill ranks for all users -- updateSubSkillRanks() & updateTwitterRanks()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Retrieve baseline skill for Common user
-    User.getUserWithEmail(Common.USER.email, function(user0) {
-
-      var baseSkillRank = user0.twitter.skill.rank;
-
-      var baseIndex = 4;
-      var general = user0.twitter.subSkills[baseIndex];
-      var baseExperience = general.experience;
-      var baseSubSkillRank = general.rank;
-
-      baseSkillRank.should.be.above(0);
-      baseExperience.should.be.above(0);
-      baseSubSkillRank.should.be.above(0);
-
-      Assert.ok(baseSkillRank);
-      Assert.ok(baseIndex);
-      Assert.ok(baseExperience);
-      Assert.ok(baseSubSkillRank);
-
-      var newUser = {
-        firstName: Common.ACTIONEE.firstName,
-        lastName: Common.ACTIONEE.lastName,
-        email: Common.ACTIONEE.email,
-        password: Common.ACTIONEE.password
-      };
-
-      // Verify new user is not in database
-      User.getUserWithEmail(newUser.email, function(user1) {
-        Should.not.exist(user1);
-
-        // Add new user to database
-        User.add(newUser, function(user2) {
-
-          var newUserSubSkills = TwitterUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills()));
-
-          var twitterData = {
-            twitterId: Common.ACTIONEE.twitter.twitterId,
-            name: Common.ACTIONEE.fullName,
-            screenName: Common.ACTIONEE.twitter.screenName,
-            profileImageUrl: Common.ACTIONEE.twitter.profileImageUrl,
-            isMember: false,
-            accessToken: Common.ACTIONEE.twitter.accessToken,
-            secretAccessToken: Common.ACTIONEE.twitter.secretAccessToken,
-            skill: TwitterUtility.getMainSkill(0),
-            subSkills: newUserSubSkills
-          };
-
-          // Update new user's twitter information
-          TwitterService.updateTwitterInfo(user2._id.toString(), twitterData, function() {
-
-            // Verify new user's skill and subSkill rank is higher than Common.USER
-            User.getUserWithEmail(Common.ACTIONEE.email, function(user3) {
-              var newUserSkillRank = user3.twitter.skill.rank;
-              var newUserSubSkillRank = user3.twitter.subSkills[baseIndex].rank;
-
-              newUserSkillRank.should.be.above(baseSkillRank);
-              newUserSubSkillRank.should.be.above(baseSubSkillRank);
-
-              var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills());
-              updateSubSkillExperiences[TwitterUtility.getSubSkills()[baseIndex].name] = baseExperience*100;
-              var updateExperience = {
-                mainSkillExperience: baseExperience*100,
-                subSkillsExperience: updateSubSkillExperiences
-              }
-
-              // Update new user's subSkill experience to be more than Common.USER - use User.updateTwitterSkillData
-              User.updateTwitterSkillData(user3._id, updateExperience, function() {
-
-                // Update Twitter ranks
-                TwitterService.updateTwitterRanks(function() {
-
-                  // Update sub skill ranks
-                  TwitterService.updateSubSkillRanks(general.name, function() {
-
-                    User.getUserWithEmail(Common.USER.email, function(user4) {
-
-                      // Update baseline variables
-                      baseSkillRank = user4.twitter.skill.rank;
-                      baseSubSkillRank = user4.twitter.subSkills[baseIndex].rank;
-
-                      // Verify new user's subSkill rank is lower than Common.USER
-                      User.getUserWithEmail(Common.ACTIONEE.email, function(user5) {
-                        user5.twitter.skill.rank.should.be.below(baseSkillRank);
-                        user5.twitter.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
-                        done();
-                      });
-                    });
-                  });
-                });
-              });
-            });
-          }, function(){});
         });
       });
     });

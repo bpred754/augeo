@@ -19,97 +19,54 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Binds data to profile.html                                 */
+  /* Description: Controller for profile popup                               */
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $timeout, $interval, TwitterClientService, ActivityService) {
+  module.exports = function($scope, ProfileService, UserClientService) {
 
-    // Internal functions
-    var init = function() {
+    $scope.isGlobalUser = false;
+    $scope.isEditMode = true;
 
-      $scope.invalidProfile = false;
+    $scope.editProfile = function() {
+      $scope.isEditMode = true;
+    }
 
-      // Get user's Twitter profile image url, Twitter skill data, and Twitter sub skill data
-      TwitterClientService.getProfileDisplayData($scope.screenName, function(data) {
+    $scope.saveProfileData = function() {
+      UserClientService.saveProfileData($scope.targetUser, function(user){
 
-        if(data != 'Unauthorized') {
-
-          $scope.isLoaded = true;
-
-          if (data.profileData) {
-            $scope.profileImageUrl = data.profileData.profileImageUrl;
-            $scope.mainSkill = data.profileData.skill;
-            $scope.skills = data.profileData.subSkills;
-
-            var mediumScreenArray = new Array();
-            var mediumCount = 0;
-            for (var i = 0; i < 3; i++) {
-              var innerArray = new Array();
-              for (var j = 0; j < 3; j++) {
-                innerArray.push($scope.skills[mediumCount]);
-                mediumCount++;
-              }
-              mediumScreenArray.push(innerArray);
-            }
-            $scope.mediumArray = mediumScreenArray;
-
-            var smallScreenArray = new Array();
-            var smallCount = 0;
-            for (var i = 0; i < 5; i++) {
-              var innerArray = new Array();
-              for (var j = 0; j < 2; j++) {
-                innerArray.push($scope.skills[smallCount]);
-                smallCount++;
-              }
-              smallScreenArray.push(innerArray);
-            }
-            $scope.smallArray = smallScreenArray;
-
-            // Call directive to create main circlular progress bar
-            $scope.$broadcast('createCircularProgressBar', data.profileData);
-          }
-
-          // Set recent activity
-          if (data.recentActions) {
-
-            var currentIndex = 0;
-            var formatTweets = true;
-
-            $scope.visible = true;
-            data.recentActions[0] = ActivityService.formatTweet(data.recentActions[0]);
-            $scope.currentTweet = data.recentActions[0];
-
-            // Transition logic
-            $interval(function () {
-              $scope.visible = false;
-              currentIndex++;
-
-              // Reset to first tweet
-              if (currentIndex == data.recentActions.length) {
-                currentIndex = 0;
-                formatTweets = false;
-              }
-
-              $timeout(function () {
-                if (formatTweets === true) {
-                  data.recentActions[currentIndex] = ActivityService.formatTweet(data.recentActions[currentIndex]);
-                }
-                $scope.currentTweet = data.recentActions[currentIndex];
-
-                $scope.visible = true;
-              }, 1000);
-            }, 3500);
-          }
-
-          if (data.errorImageUrl) {
-            $scope.invalidProfile = true;
-            $scope.profileImageUrl = data.errorImageUrl
-          }
-        }
+        // Update global User object
+        $scope.$parent.User = user;
       });
     };
 
-    // Initialize Profile page
-    init();
+    $scope.viewAsOther = function() {
+      $scope.isEditMode = false;
+    }
+
+    $scope.$watch(function() {
+      return ProfileService.getTargetUser();
+    }, function(newValue, oldValue) {
+
+      if(newValue != oldValue) {
+
+        $scope.targetUser = newValue;
+        $scope.targetUser.name = newValue.firstName + ' ' + newValue.lastName;
+
+        if(newValue.twitterScreenName || (newValue.twitter && newValue.twitter.screenName)) {
+          $scope.targetUser.hasTwitterAuthentication = true;
+        } else {
+          $scope.targetUser.hasTwitterAuthentication = false;
+        }
+
+        if($scope.targetUser.username != $scope.User.username) {
+          $scope.isGlobalUser = false;
+          $scope.isEditMode = false;
+        } else {
+          $scope.isGlobalUser = true;
+          $scope.isEditMode = true;
+        }
+     }
+    });
   };
+

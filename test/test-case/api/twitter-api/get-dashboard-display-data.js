@@ -20,7 +20,7 @@
 
   /***************************************************************************/
   /* Description: Unit test cases for api/twitter-api                        */
-  /*              'getLeaderboardDisplayData' requests                       */
+  /*              'getDashboardDisplayData' requests                         */
   /***************************************************************************/
 
   // Required libraries
@@ -30,18 +30,17 @@
 
   // Required local modules
   var Common = require('../../common');
-  var TwitterUtility = require('../../../../src/utility/twitter-utility');
 
   module.exports = function(app) {
 
     var agent = Request.agent(app);
 
-    // Invalid screen name in session
-    it('should return status 401 - invalid screen name in session', function(done) {
+    // Invalid username in session
+    it('should return status 401 - invalid username in session', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getLeaderboardDisplayData')
+        .get('/twitter-api/getDashboardDisplayData')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -49,8 +48,8 @@
         });
     });
 
-    // Valid screen name in session
-    it('should return status 200 - valid screen name in session', function(done) {
+    // Valid username in session and invalid username parameter
+    it('should return status 401 - valid username in session and invalid username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
@@ -62,25 +61,48 @@
           Should.not.exist(error0);
 
           agent
-            .get('/twitter-api/getLeaderboardDisplayData')
-            .expect(200)
+            .get('/twitter-api/getDashboardDisplayData?username=invalid')
+            .expect(401)
             .end(function(error1, response1) {
               Should.not.exist(error1);
-
-              Assert.strictEqual(response1.body.screenName, Common.USER.twitter.screenName);
-
-              var skills = response1.body.skills;
-              var actualSkills = TwitterUtility.getSubSkills();
-
-              skills.length.should.be.above(0);
-
-              for(var i = 0; i < skills.length; i++) {
-                Assert.strictEqual(skills[i].name, actualSkills[i].name);
-                Assert.strictEqual(skills[i].glyphicon, actualSkills[i].glyphicon);
-              }
-
+              Assert.strictEqual(response1.body.errorImageUrl, 'image/logo.png');
               done();
             });
+        });
+    });
+
+    it('should return return 200 - valid username in session and valid username parameter', function(done) {
+      this.timeout(Common.TIMEOUT);
+      agent
+        .get('/twitter-api/getDashboardDisplayData?username=' + Common.USER.username)
+        .expect(200)
+        .end(function(error, response) {
+          Should.not.exist(error);
+
+          var dashboardData = response.body.dashboardData;
+          Should.exist(dashboardData.user.profileImg);
+          Should.exist(dashboardData.skill);
+          Should.exist(dashboardData.subSkills);
+
+          done();
+        });
+    });
+
+    it('should return return 200 - valid username in session and no username parameter', function(done) {
+      this.timeout(Common.TIMEOUT);
+
+      agent
+        .get('/twitter-api/getDashboardDisplayData')
+        .expect(200)
+        .end(function(error, response) {
+          Should.not.exist(error);
+
+          var dashboardData = response.body.dashboardData;
+          Should.exist(dashboardData.user.profileImg);
+          Should.exist(dashboardData.skill);
+          Should.exist(dashboardData.subSkills);
+
+          done();
         });
     });
 

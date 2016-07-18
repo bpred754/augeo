@@ -150,7 +150,7 @@
       };
     }
 
-    if(skill && skill != 'Twitter') {
+    if(skill && skill != 'Augeo') {
       query.classification = skill;
     }
 

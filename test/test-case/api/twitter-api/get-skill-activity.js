@@ -37,13 +37,13 @@
 
     var agent = Request.agent(app);
 
-    // Missing screen name parameter
-    it('should return status 400 - missing screen name parameter', function(done) {
+    // Missing username parameter
+    it('should return status 404 - missing username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?skill=Twitter&tweetID=9999999999999999999999999999999')
-        .expect(400)
+        .get('/twitter-api/getSkillActivity?skill=Augeo&tweetID=9999999999999999999999999999999')
+        .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
@@ -51,12 +51,12 @@
     });
 
     // Missing skill parameter
-    it('should return status 400 - missing skill parameter', function(done) {
+    it('should return status 404 - missing skill parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?screenName=' + Common.USER.twitter.screenName + '&tweetID=9999999999999999999999999999999')
-        .expect(400)
+        .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&tweetID=9999999999999999999999999999999')
+        .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
@@ -64,29 +64,27 @@
     });
 
     // Missing tweetId parameter
-    it('should return status 400 - missing tweetId parameter', function(done) {
+    it('should return status 404 - missing tweetId parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?screenName=' + Common.USER.twitter.screenName + '&skill=Twitter')
-        .expect(400)
+        .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo')
+        .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
         });
     });
 
-    // Non existant screenName parameter
-    it('should return status 200 - non existant screen name parameter', function(done) {
+    // Non existent username parameter
+    it('should return status 404 - non existent username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?screenName=invalid&skill=Twitter&tweetId=9999999999999999999999999999999')
-        .expect(200)
+        .get('/twitter-api/getSkillActivity?username=invalid&skill=Augeo&tweetId=9999999999999999999999999999999')
+        .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
-          Should.exist(response.body.activity)
-          Assert.strictEqual(response.body.activity.length, 0);
           done();
         });
     });
@@ -103,7 +101,7 @@
       TwitterService.addAction(action0, tweet0, mention0, function(classification0) {
 
         agent
-          .get('/twitter-api/getSkillActivity?screenName=testScreenName&skill=Twitter&tweetId=9999999999999999999999999999999')
+          .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo&tweetId=9999999999999999999999999999999')
           .expect(200)
           .end(function(error, response) {
             Should.not.exist(error);

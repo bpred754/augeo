@@ -32,6 +32,7 @@
   var Logger = require('../module/logger');
   var TwitterService = require('../service/twitter-service');
   var TwitterInterfaceService = require('../interface-service/twitter-interface-service');
+  var UserService = require('../service/user-service');
 
   // Constants
   var CHECK_QUEUE_OPEN_TIMEOUT = 500;
@@ -90,8 +91,8 @@
   TwitterStreamQueue.prototype.addAction = function(queueData, callback) {
     log.info('Adding action to streamQueue: ' + queueData.data.id_str + '. Action: ' + queueData.action);
     streamQueue.push(queueData, function(skill) {
-      TwitterService.updateTwitterRanks(function() {
-        TwitterService.updateSubSkillRanks(skill, function() {
+      UserService.updateRanks(function() {
+        UserService.updateSubSkillRanks(skill, function() {
           log.info('Finished updating ranks.');
           callback();
         });

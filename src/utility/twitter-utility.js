@@ -22,20 +22,12 @@
   /* Description: Twitter utility functions                                  */
   /***************************************************************************/
 
-  // Required local modules
-  var AugeoUtility = require('./augeo-utility');
-
   // Constants
-  var TWEET_EXPERIENCE = 30;
-  var MENTION_EXPERIENCE = 30;
-  var RETWEET_EXPERIENCE = 50;
-  var FAVORITE_EXPERIENCE = 50;
-
-  var SUB_SKILLS = [{name:"Books", glyphicon:"glyphicon-book"}, {name:"Business", glyphicon:"glyphicon-briefcase"}, {name:"Film", glyphicon:"glyphicon-film"},
-                    {name:"Food & Drink", glyphicon:"glyphicon-cutlery"}, {name:"General", glyphicon:"glyphicon-globe"}, {name:"Music", glyphicon:"glyphicon-headphones"},
-                    {name:"Photography", glyphicon:"glyphicon-camera"}, {name:"Sports", glyphicon:"glyphicon-bullhorn"}, {name:"Technology", glyphicon:"glyphicon-phone"}];
-
-  var HASH_TAGS = ["augeoBooks","augeoBusiness","augeoFilm","augeoFood&Drink","augeoGeneral","augeoMusic","augeoPhotography","augeoSports","augeoTechnology"];
+  exports.TWEET_EXPERIENCE = 30;
+  exports.MENTION_EXPERIENCE = 30;
+  exports.RETWEET_EXPERIENCE = 50;
+  exports.FAVORITE_EXPERIENCE = 50;
+  exports.HASH_TAGS = ["augeoBooks","augeoBusiness","augeoFilm","augeoFood&Drink","augeoGeneral","augeoMusic","augeoPhotography","augeoSports","augeoTechnology"];
 
   // Calculates the experience that will be awarded to a tweet
   exports.calculateTweetExperience = function(retweetCount, favoriteCount) {
@@ -46,36 +38,7 @@
     favoriteCount = typeof favoriteCount != 'number' ? 0 : favoriteCount;
     favoriteCount = favoriteCount < 0 ? 0 : favoriteCount;
 
-    return TWEET_EXPERIENCE + (retweetCount*RETWEET_EXPERIENCE) + (favoriteCount*FAVORITE_EXPERIENCE);
-  };
-
-  // Create user's sub skills given the sub skills experience
-  exports.createSubSkills = function(skillsExperience) {
-
-    var updatedSkillsArray = new Array();
-
-    skillsExperience = skillsExperience === undefined ? new Array() : skillsExperience;
-    skillsExperience = skillsExperience.constructor !== Array ? new Array() : skillsExperience;
-    for(var i = 0; i < SUB_SKILLS.length; i++) {
-      var skill = SUB_SKILLS[i];
-      var skillName = skill.name;
-      var experience = skillsExperience[skillName];
-
-      experience = typeof experience !== 'number' ? 0 : experience;
-      experience = experience < 0 ? 0 : experience;
-
-      var updatedSkill = {
-        name: skillName,
-        glyphicon: skill.glyphicon,
-        experience: experience,
-        level: AugeoUtility.calculateLevel(experience),
-        rank:0
-      }
-
-      updatedSkillsArray.push(updatedSkill);
-    }
-
-    return updatedSkillsArray;
+    return exports.TWEET_EXPERIENCE + (retweetCount*exports.RETWEET_EXPERIENCE) + (favoriteCount*exports.FAVORITE_EXPERIENCE);
   };
 
   // Determines if a tweet contains an augeo specific hashtag
@@ -83,9 +46,9 @@
 
     var contains = false;
     if(obj) {
-      var i = HASH_TAGS.length;
+      var i = exports.HASH_TAGS.length;
       while (i--) {
-        if (HASH_TAGS[i] === obj) {
+        if (exports.HASH_TAGS[i] === obj) {
           contains = true;
           break;
         }
@@ -100,75 +63,13 @@
     if(tweet && tweet.screenName && tweet.experience) {
       if(isRetweet) {
         if(isRetweet === true) {
-          experience = RETWEET_EXPERIENCE;
+          experience = exports.RETWEET_EXPERIENCE;
         }
       } else if(tweet.screenName === screenName) {
         experience = tweet.experience;
       } else {  // If the tweet screen name does not match the user's screen name, then the tweet is a mention
-        experience = MENTION_EXPERIENCE;
+        experience = exports.MENTION_EXPERIENCE;
       }
     }
     return experience;
-  };
-
-  // Return the glyphicon for the given skill
-  exports.getGlyphicon = function(name) {
-    var glyphicon = '';
-    for(var i = 0; i < SUB_SKILLS.length; i++) {
-      if(SUB_SKILLS[i].name === name) {
-        glyphicon = SUB_SKILLS[i].glyphicon;
-        break;
-      }
-    }
-    return glyphicon;
-  };
-
-  // Get the main skill display data
-  exports.getMainSkill = function(experience) {
-    return {
-      imageSrc: 'image/twitter/logo-blue-medium.png',
-      imageLink: 'https://www.twitter.com',
-      level: AugeoUtility.calculateLevel(experience),
-      experience: experience,
-      rank: 0
-    };
-  }
-
-  // Get the index of the skill given the skill name
-  exports.getSkillIndex = function(skill) {
-    var index = -1;
-    for(var i = 0; i < SUB_SKILLS.length; i++) {
-      if(SUB_SKILLS[i].name === skill) {
-        index = i;
-      }
-    }
-    return index;
-  };
-
-  /***************************************************************************/
-  /* Getter Funtions                                                         */
-  /***************************************************************************/
-
-  exports.getFavoriteExperience = function() {
-    return FAVORITE_EXPERIENCE;
-  };
-
-  exports.getHashTags = function() {
-    return HASH_TAGS;
-  };
-
-  exports.getMentionExperience = function() {
-    return MENTION_EXPERIENCE;
-  };
-
-  exports.getRetweetExperience = function() {
-    return RETWEET_EXPERIENCE;
-  };
-
-  exports.getSubSkills = function() {
-    return SUB_SKILLS;
-  };
-
-  exports.getTweetExperience = function() {
-    return TWEET_EXPERIENCE;
   };

@@ -26,28 +26,76 @@
   module.exports = function(AugeoClientService) {
 
     this.addUser = function(user, callback) {
-      AugeoClientService.postAugeoAPI('user-api/add', user, callback);
+      AugeoClientService.postAugeoApi('user-api/add', user, callback);
     };
 
-    this.removeUser = function(password, callback) {
-      var parameters = {password:password}
-      AugeoClientService.postAugeoAPI('user-api/remove', parameters, callback)
-    }
+    this.getActivityDisplayData = function(callback) {
+      var parameters = null;
+      AugeoClientService.getAugeoApi('user-api/getActivityDisplayData', parameters, function(data) {
+        callback(data);
+      });
+    };
+
+    this.getCompetitors = function(username, skill, callback) {
+      var parameters = {
+        username: username,
+        skill: skill
+      };
+
+      AugeoClientService.getAugeoApi('user-api/getCompetitors', parameters, function(data) {
+        callback(data);
+      });
+    };
+
+    this.getCompetitorsWithRank = function(startRank, endRank, skill, callback) {
+      var parameters = {
+        startRank: startRank,
+        endRank: endRank,
+        skill: skill
+      };
+
+      AugeoClientService.getAugeoApi('user-api/getCompetitors', parameters, function(data) {
+        callback(data);
+      });
+    };
 
     this.getCurrentUser = function(callback) {
       var parameters = null;
-      AugeoClientService.getAugeoAPI('user-api/getCurrentUser', parameters, function(user, status) {
+      AugeoClientService.getAugeoApi('user-api/getCurrentUser', parameters, function(user, status) {
         callback(user, status);
       });
     };
 
+    this.getLeaderboardDisplayData = function(callback) {
+      var parameters = null;
+      AugeoClientService.getAugeoApi('user-api/getLeaderboardDisplayData', parameters, function(data) {
+        callback(data);
+      });
+    };
+
     this.login = function(user, callback) {
-      AugeoClientService.postAugeoAPI('user-api/login', user, callback);
+      AugeoClientService.postAugeoApi('user-api/login', user, callback);
     };
 
     this.logout = function(callback) {
       var parameters = null;
-      AugeoClientService.postAugeoAPI('user-api/logout', parameters, callback);
+      AugeoClientService.postAugeoApi('user-api/logout', parameters, callback);
+    };
+
+    this.removeUser = function(password, callback) {
+      var parameters = {password:password}
+      AugeoClientService.postAugeoApi('user-api/remove', parameters, callback)
+    };
+
+    this.saveProfileData = function(user, callback) {
+      var parameters = {
+        username: user.username,
+        profession: user.profession,
+        location: user.location,
+        website: user.website,
+        description: user.description
+      };
+      AugeoClientService.postAugeoApi('user-api/saveProfileData', parameters, callback);
     };
 
   };

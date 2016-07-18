@@ -19,62 +19,69 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: css for profile.html                                       */
+  /* Description: css for dashboard.html                                     */
   /***************************************************************************/
 
-  #header-container {
+  #db-auth-container {
+    height:100%;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #db-avatar {
+    border-radius:6px;
+  }
+
+  #db-header-container {
     height:220px;
     display:-webkit-flex;
     display:flex;
   }
 
-  #header-jumbotron {
+  #db-header-jumbotron {
     padding-left: 0px;
     padding-right: 0px;
   }
 
-  #profile-avatar {
-    border-radius:6px;
-  }
-
-  #profile-pic {
+  #db-img {
     background-color:gray;
     height:100%;
     width:180px;
     cursor:pointer;
   }
 
-  #profile-pic-container {
+  #db-img-container {
     text-align:center;
     height:100%;
   }
 
-  #profile-transition {
-    width:100%;
-    align-self:center
+  #db-links {
+    margin-top:10px;
   }
 
-  #recent-activity-container {
+  #db-recent-activity-container {
     flex:1;
     margin-left:20px;
     margin-right:20px;
   }
 
-  #skill-icon-container {
+  #db-skill-icon-container {
     margin-bottom: 30px;
   }
 
-  #view-activity-link {
-    margin-top:10px;
-    cursor:pointer;
+  #db-transition {
+    width:100%;
+    align-self:center
   }
 
-  .max-size {
+  .db-max-size {
     max-height:100%;
     max-width:100%;
   }
 
-  .skill-row {
+  .db-skill-row {
     height:250px;
     margin-bottom: 30px;
   }
@@ -85,26 +92,26 @@
 
   @media(max-width:767px) {
 
-    #medium-screen {
-      display:none;
-    }
-
-    #profile-pic-container {
+    #db-img-container {
       width:50%;
       margin:0 auto;
       padding-left:0px;
       padding-right:0px;
     }
 
-    #recent-activity-container {
+    #db-medium-screen {
       display:none;
     }
 
-    #small-screen {
+    #db-recent-activity-container {
       display:none;
     }
 
-    #xsmall-screen {
+    #db-small-screen {
+      display:none;
+    }
+
+    #db-xsmall-screen {
       display:initial;
     }
   }
@@ -115,26 +122,26 @@
 
   @media(min-width:768px) {
 
-    #medium-screen {
-      display:none;
-    }
-
-    #profile-pic-container {
+    #db-img-container {
       width:50%;
       margin:0 auto;
       padding-left:0px;
       padding-right:0px;
     }
 
-    #recent-activity-container {
+    #db-medium-screen {
       display:none;
     }
 
-    #small-screen {
+    #db-recent-activity-container {
+      display:none;
+    }
+
+    #db-small-screen {
       display:initial;
     }
 
-    #xsmall-screen {
+    #db-xsmall-screen {
       display:none;
     }
   }
@@ -145,28 +152,28 @@
 
   @media(min-width:992px) {
 
-    #medium-screen {
-      display:initial;
-    }
-
-    #profile-pic-container {
+    #db-img-container {
       width:initial;
       margin:0;
       padding-left:60px;
       padding-right:0px;
     }
 
-    #recent-activity-container {
+    #db-medium-screen {
+      display:initial;
+    }
+
+    #db-recent-activity-container {
       height:100%;
       display:flex;
       justify-content:center;
     }
 
-    #small-screen {
+    #db-small-screen {
       display:none;
     }
 
-    #xsmall-screen {
+    #db-xsmall-screen {
       display:none;
     }
   }
@@ -177,22 +184,22 @@
 
   @media(min-width:1200px) {
 
-    #medium-screen {
-      display:initial;
-    }
-
-    #profile-pic-container {
+    #db-img-container {
       width:initial;
       margin:0;
       padding-left:60px;
       padding-right:0px;
     }
 
-    #small-screen {
+    #db-medium-screen {
+      display:initial;
+    }
+
+    #db-small-screen {
       display:none;
     }
 
-    #xsmall-screen {
+    #db-xsmall-screen {
       display:none;
     }
   }

@@ -23,11 +23,10 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $window, $state, UserClientService, TwitterClientService, ClientValidator) {
+  module.exports = function($scope, $state, UserClientService, TwitterClientService, ClientValidator) {
 
     // Constants
     var INVALID_LOGIN = 'Invalid email address or password'
-    var VALID_CHARACTER_REGEX = new RegExp('^(\\w|[!@#$%^&*(){}\\[\\]|?., ])+');
 
     $scope.submitLogin = function() {
 
@@ -43,8 +42,7 @@
         UserClientService.login(user, function(message, status) {
 
           if(status == 200) {
-            // Go to profile page
-            $state.go('profile');
+            $state.go('dashboard');
           } else {
             $scope.loginMessage = message; // Set error message
             $scope.$broadcast('removeText'); // Remove text from password input
@@ -73,17 +71,8 @@
               // Login user
               UserClientService.login($scope.user, function(loginMessage, loginStatus) {
 
-                if(loginStatus = 200) {
-                  // Authenticate user with twitter
-                  TwitterClientService.getAuthenticationData(function(authData, authStatus) {
-
-                    if(authStatus == 200) {
-                      // Go to Twitter Authentication page
-                      $window.location.href ='https://twitter.com/oauth/authenticate?oauth_token=' + authData.token;
-                    } else {
-                      $scope.signupMessage = authData.token;
-                    }
-                  }); // End authentication
+                if(loginStatus == 200) {
+                  $state.go('dashboard');
                 } else {
                   $scope.signupMessage = loginMessage;
                 }
@@ -108,6 +97,7 @@
         'firstName': $scope.signupFirstName,
         'lastName': $scope.signupLastName,
         'email': $scope.signupEmail,
+        'username': $scope.signupUsername,
         'password': $scope.signupPassword,
       };
 
@@ -115,18 +105,23 @@
       if(ClientValidator.isStringAlphabetic(user.firstName) && ClientValidator.isStringAlphabetic(user.lastName)) {
 
         if(ClientValidator.isEmailValid(user.email)) {
+          
+          if(ClientValidator.isUsernameValid(user.username)) {
 
-          if(ClientValidator.isPasswordValid(user.password)) {
+            if (ClientValidator.isPasswordValid(user.password)) {
 
-            if($scope.agreedToTerms === true) {
-              $('#confirmation-modal').modal();
-              $scope.user = user;
+              if ($scope.agreedToTerms === true) {
+                $('#confirmation-modal').modal();
+                $scope.user = user;
+              } else {
+                $scope.signupMessage = 'Must agree to Terms of Service';
+              }
             } else {
-              $scope.signupMessage = 'Must agree to Terms of Service';
+              $scope.signupMessage = 'Password requires a capital, lowercase, and number. Must have 6 to 20 characters'
             }
-         } else {
-           $scope.signupMessage = 'Password requires a capital, lowercase, and number. Must have 6 to 20 characters'
-         }
+          } else {
+            $scope.signupMessage = 'Username must be 1 to 15 characters - underscores included'
+          }
        } else {
          $scope.signupMessage = 'Invalid email address';
        }

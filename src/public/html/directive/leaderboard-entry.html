@@ -18,13 +18,13 @@
   <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
   <!-------------------------------------------------------------------------->
 
-  <div class="entry-container" ng-class="highlightEntry(user.screenName,searchName)">
+  <div class="entry-container" ng-class="highlightEntry(user.username,searchName)">
     <div class="col-md-1 hidden-xs hidden-sm"></div>
     <div class="number-container large-text col-sm-1 col-xs-2 leaderboard-entry-font">
       <div class="number" ng-bind="user.rank"></div>
     </div>
     <div class="height-100 large-text col-md-5 col-sm-6 col-xs-5 leaderboard-entry-font">
-      <div class="name" ng-bind="user.screenName" ui-sref="viewProfile({screenName:user.screenName})"></div>
+      <div class="name" ng-bind="user.username" ui-sref="viewDashboard({username:user.username})"></div>
     </div>
     <div class="level-container large-text col-xs-1 leaderboard-entry-font">
       <div class="number" ng-bind="user.level"></div>

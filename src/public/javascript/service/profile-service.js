@@ -19,35 +19,19 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: File used by browserify to bundle css                      */
+  /* Description: Service for profile popup                                  */
   /***************************************************************************/
 
-  @import url("../../../node_modules/bootstrap/dist/css/bootstrap.min.css");
+  // Reminder: Update service/index.js when service params are modified
+  module.exports = function() {
 
-  /* Fix Bootstrap font URLs */
-  @font-face {
-    font-family: 'Glyphicons Halflings';
-    src: url('../glyphicons-halflings-regular.eot');
-    src: url('../glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
-    url('../glyphicons-halflings-regular.woff2') format('woff2'),
-    url('../glyphicons-halflings-regular.woff') format('woff'),
-    url('../glyphicons-halflings-regular.ttf') format('truetype'),
-    url('../glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
-  }
+    var targetUser = '';
 
-  @import url('./common.css');
-  @import url('./layout.css');
+    this.setTargetUser = function(inTargetUser) {
+      targetUser = inTargetUser;
+    };
 
-  /* Screens */
-  @import url('./dashboard.css');
-  @import url('./leaderboard.css');
-  @import url('./login.css');
-  @import url('./twitter-history.css');
-  @import url('./view-activity.css');
-
-  /* Directives */
-  @import url('./directive/activity-card.css');
-  @import url('./directive/activity-transition.css');
-  @import url('./directive/leaderboard-entry.css');
-  @import url('./directive/paginate.css');
-  @import url('./directive/skill-view.css');
+    this.getTargetUser = function() {
+      return targetUser;
+    }
+  };

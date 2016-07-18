@@ -19,7 +19,8 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/twitter-api 'setMember' requests   */
+  /* Description: Unit test cases for api/user-api                           */
+  /*              'getLeaderboardDisplayData' requests                       */
   /***************************************************************************/
 
   // Required libraries
@@ -29,22 +30,18 @@
 
   // Required local modules
   var Common = require('../../common');
-  var TwitterService = require('../../../../src/service/twitter-service');
-  var AugeoDB = require('../../../../src/model/database');
-
-  // Global variables
-  var User = AugeoDB.model('User');
+  var AugeoUtility = require('../../../../src/utility/augeo-utility');
 
   module.exports = function(app) {
 
     var agent = Request.agent(app);
 
-    // Screen name does not exist in session
-    it('should return status 400 - invalid screen name in session', function(done) {
+    // Invalid username in session
+    it('should return status 401 - invalid username in session', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .post('/twitter-api/setMember')
+        .get('/user-api/getLeaderboardDisplayData')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -52,36 +49,37 @@
         });
     });
 
-    it('should return status 200 - valid', function(done) {
+    // Valid username in session
+    it('should return status 200 - valid username in session', function(done) {
       this.timeout(Common.TIMEOUT);
 
-      // Login
+      // Login in user
       agent
         .post('/user-api/login')
         .send(Common.LOGIN_USER)
         .expect(200)
-        .end(function(error, response) {
-          Should.not.exist(error);
+        .end(function(error0, response0) {
+          Should.not.exist(error0);
 
-          // Verify user is not a member
-          User.getUserWithEmail(Common.USER.email, function(user) {
-            TwitterService.isMember(user._id + '', function(isMemberBefore) {
-              Assert.strictEqual(isMemberBefore,  false);
+          agent
+            .get('/user-api/getLeaderboardDisplayData')
+            .expect(200)
+            .end(function(error1, response1) {
+              Should.not.exist(error1);
 
-              agent
-                .post('/twitter-api/setMember')
-                .expect(200)
-                .end(function(error, response) {
-                  Should.not.exist(error);
+              var skills = response1.body.skills;
+              var actualSkills = AugeoUtility.SUB_SKILLS;
 
-                  // Verify user is a member
-                  TwitterService.isMember(user._id + '', function(isMemberAfter) {
-                    Assert.strictEqual(isMemberAfter,  true);
-                      done();
-                  });
-                });
+              skills.length.should.be.above(0);
+
+              for(var i = 0; i < skills.length; i++) {
+                Assert.strictEqual(skills[i].name, actualSkills[i].name);
+                Assert.strictEqual(skills[i].glyphicon, actualSkills[i].glyphicon);
+              }
+
+              done();
             });
-          });
         });
     });
+
   };

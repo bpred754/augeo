@@ -22,6 +22,9 @@
   /* Description: Augeo validating functions                                 */
   /***************************************************************************/
 
+  // Required local modules
+  var AugeoUtility = require('../utility/augeo-utility');
+
   // Constants
   var VALID_CHARACTER_REGEX = new RegExp('^(\\w|[!@#$%^&*(){}\\[\\]|?., ])+');
 
@@ -61,7 +64,7 @@
   };
 
   exports.isPasswordValid = function(password) {
-    isValid = false;
+    var isValid = false;
 
     if(password) {
       var passwordRegex = new RegExp('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})');
@@ -72,12 +75,55 @@
     return isValid;
   };
 
+  exports.isSessionValid = function(request) {
+    var isValid = false;
+
+    if(request) {
+      if (request.session) {
+        var user = request.session.user;
+        if (user) {
+          if (user._id && user.firstName && user.lastName && user.username) {
+            isValid = true;
+          }
+        }
+      }
+    }
+    return isValid;
+  };
+
+  exports.isSkillValid = function(skill) {
+    var isValid = false;
+
+    if(skill) {
+      var subSkills = AugeoUtility.SUB_SKILLS;
+      for(var i = 0; i < subSkills.length; i++) {
+        if(skill === subSkills[i].name || skill === 'Augeo') {
+          isValid = true;
+        }
+      }
+    }
+
+    return isValid;
+  };
+
   exports.isStringAlphabetic = function(string) {
     var isValid = false;
 
     if(string) {
       var alphabeticRegex = new RegExp('^[a-zA-Z]+$');
       if(string.match(alphabeticRegex)) {
+        isValid = true;
+      }
+    }
+    return isValid;
+  };
+
+  exports.isUsernameValid = function(username) {
+    var isValid = false;
+
+    if(username) {
+      var usernameRegex = new RegExp('^[a-zA-Z0-9_]{1,15}$');
+      if(username.match(usernameRegex)) {
         isValid = true;
       }
     }

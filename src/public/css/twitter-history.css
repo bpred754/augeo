@@ -19,20 +19,22 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: css for twitter-history.html                                */
+  /* Description: css for twitter-history.html                               */
   /***************************************************************************/
 
-  #th-logo {
-    height:250px;
-    width:250px;
-    margin-left:auto;
-    margin-right:auto;
-    margin-top:25px;
+  #th-auth-container {
+    height:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:15px;
+    margin-bottom:15px;
   }
 
-  #th-logo-image {
-    max-height:100%;
-    max-width:100%
+  #th-auth-inner-container {
+    height:100%;
+    border-style:solid;
+    border-color: #333;
+    padding:15px;
   }
 
   .status-container {
@@ -62,7 +64,7 @@
 
   @media(max-width:599px) {
 
-    #head-container {
+    #th-head-container {
       height:250px;
       margin-left:0px;
     }
@@ -110,7 +112,7 @@
 
   @media(min-width:600px) {
 
-    #head-container {
+    #th-head-container {
       height:250px;
       margin-left:0px;
     }
@@ -202,7 +204,7 @@
 
   @media(min-width:1200px) {
 
-    #head-container {
+    #th-head-container {
       height:250px;
       margin-left:125px;
     }

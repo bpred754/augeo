@@ -25,6 +25,10 @@
   // Constants
   var LEVEL_MULTIPLIER = 30;
 
+  exports.SUB_SKILLS = [{name:"Books", glyphicon:"glyphicon-book"}, {name:"Business", glyphicon:"glyphicon-briefcase"}, {name:"Film", glyphicon:"glyphicon-film"},
+    {name:"Food & Drink", glyphicon:"glyphicon-cutlery"}, {name:"General", glyphicon:"glyphicon-globe"}, {name:"Music", glyphicon:"glyphicon-headphones"},
+    {name:"Photography", glyphicon:"glyphicon-camera"}, {name:"Sports", glyphicon:"glyphicon-bullhorn"}, {name:"Technology", glyphicon:"glyphicon-phone"}];
+
   // Calculate level depending on the amount of experience
   exports.calculateLevel = function(experience) {
 
@@ -60,19 +64,46 @@
     return levelProgress;
   };
 
-  // Return an array with all subskills set to 0
-  exports.initializeSubSkillsExperienceArray = function(subSkills) {
+  // Create user's sub skills given the sub skills experience
+  exports.createSubSkills = function(skillsExperience) {
 
-    var subSkillsExperience = new Array();
+    var updatedSkillsArray = new Array();
 
-    if(subSkills) {
-      subSkills = subSkills.constructor !== Array ? new Array() : subSkills;
-      for(var i = 0; i < subSkills.length; i++) {
-        subSkillsExperience[subSkills[i].name] = 0;
+    skillsExperience = skillsExperience === undefined ? new Array() : skillsExperience;
+    skillsExperience = skillsExperience.constructor !== Array ? new Array() : skillsExperience;
+    for(var i = 0; i < exports.SUB_SKILLS.length; i++) {
+      var skill = exports.SUB_SKILLS[i];
+      var skillName = skill.name;
+      var experience = skillsExperience[skillName];
+
+      experience = typeof experience !== 'number' ? 0 : experience;
+      experience = experience < 0 ? 0 : experience;
+
+      var updatedSkill = {
+        name: skillName,
+        glyphicon: skill.glyphicon,
+        experience: experience,
+        level: exports.calculateLevel(experience),
+        rank:0
+      };
+
+      updatedSkillsArray.push(updatedSkill);
+    }
+
+    return updatedSkillsArray;
+  };
+
+  // Return the glyphicon for the given skill
+  exports.getGlyphicon = function(name) {
+    var glyphicon = '';
+    for(var i = 0; i < exports.SUB_SKILLS.length; i++) {
+      if(exports.SUB_SKILLS[i].name === name) {
+        glyphicon = exports.SUB_SKILLS[i].glyphicon;
+        break;
       }
     }
-    return subSkillsExperience;
-  }
+    return glyphicon;
+  };
 
   // Get the end experience of the given level
   exports.getLevelEndExperience = function(level) {
@@ -92,6 +123,41 @@
     return startExperience;
   };
 
+  // Get the main skill display data
+  exports.getMainSkill = function(experience) {
+    return {
+      imageSrc: 'image/augeo-logo-medium.png',
+      level: exports.calculateLevel(experience),
+      experience: experience,
+      rank: 0
+    };
+  };
+
+  // Get the index of the skill given the skill name
+  exports.getSkillIndex = function(skill) {
+    var index = -1;
+    for(var i = 0; i < exports.SUB_SKILLS.length; i++) {
+      if(exports.SUB_SKILLS[i].name === skill) {
+        index = i;
+      }
+    }
+    return index;
+  };
+
+  // Return an array with all subSkills set to 0
+  exports.initializeSubSkillsExperienceArray = function(subSkills) {
+
+    var subSkillsExperience = {};
+
+    if(subSkills) {
+      subSkills = subSkills.constructor !== Array ? new Array() : subSkills;
+      for(var i = 0; i < subSkills.length; i++) {
+        subSkillsExperience[subSkills[i].name] = 0;
+      }
+    }
+    return subSkillsExperience;
+  };
+
   // Remove first element from array
   exports.trimArray = function(array) {
 
@@ -105,4 +171,4 @@
     }
 
     return trimmedArray;
-  }
+  };

@@ -38,29 +38,33 @@
 
     </head>
 
-    <!-- http://getbootstrap.com/examples/theme/ -->
-    <body ng-app="augeo" ng-controller="AppController" ng-cloak class="standard-text">
-      <div class="wrapper">
+    <body ng-app="augeo" ng-controller="AppController" class="standard-text" ng-cloak >
+      <div class="lyt-wrapper">
 
         <!-- Fixed Navbar -->
-        <div id="augeo-navbar-container" class="navbar-default background-primary navbar-fixed-top" role="navigation">
-          <div id="header-row" class="row">
-            <div class="col-xs-4 header-element">
-              <a id="header-project-name" class="header-text text-secondary large-text" ui-sref="profile">Augeo</a>
+        <div id="lyt-navbar-container" class="navbar-default background-primary navbar-fixed-top" role="navigation">
+          <div class="lyt-header-app-name">
+            <a id="lyt-header-project-name" class="lyt-header-text text-secondary large-text" ui-sref="dashboard">Augeo</a>
+          </div>
+          <div class="height-100" ng-style="{'visibility':layoutNavbar}">
+            <div class="lyt-header-settings-container">
+              <a class="lyt-header-image-container dropdown-toggle" data-toggle="dropdown">
+                <img src="{{User.profileIcon}}" class="lyt-header-img lyt-header-text header-tooltip" ng-class="{'lyt-header-icon-glow': layoutNavbar != 'hidden'}" data-toggle="profile-tooltip" data-placement="bottom" title="Profile & Settings"/>
+              </a>
+              <ul id="lyt-settings-dropdown" class="dropdown-menu" role="menu">
+                <li class="clickable small-text" ng-click="showProfile()"><a>Profile</a></li>
+                <li><a ui-sref="dashboard" class="small-text">Dashboard</a></li>
+                <li><a ui-sref="twitterHistory" class="small-text">My Twitter History</a></li>
+                <li class="clickable small-text" onclick="showDeleteModal()"><a>Delete Account</a></li>
+                <li class="divider"></li>
+                <li><a ui-sref="logout" class="small-text">Log Out</a></li>
+              </ul>
             </div>
-            <div class="col-xs-8 header-element" ng-style="{'visibility':layoutNavbar}">
-              <div class="row fixed-header">
-                <div class="col-xs-6 text-align-center">
-                  <a class="header-text text-secondary large-text" ui-sref="leaderboards">Leaderboards</a>
-                </div>
-                <div id="header-settings-container" class="col-xs-6">
-                  <a id="header-settings" class="dropdown-toggle header-text text-secondary large-text" data-toggle="dropdown">Settings<span class="caret"></span></a>
-                  <ul id="settings-dropdown" class="dropdown-menu" role="menu">
-                    <li><a ui-sref="twitterHistory" class="small-text">My Twitter History</a></li>
-                    <li class="clickable small-text" onclick="showDeleteModal()"><a>Delete Account</a></li>
-                    <li class="divider"></li>
-                    <li><a ui-sref="logout" class="small-text">Log Out</a></li>
-                  </ul>
+            <div class="lyt-header-options-area">
+              <div class="lyt-header-options-container">
+                <div class="lyt-header-leaderboards-option-container">
+                  <a ui-sref="leaderboards"><span class="glyphicon glyphicon-th-list lyt-header-leaderboards-glyphicon text-secondary lyt-header-text header-tooltip" data-toggle="leaderboards-tooltip" data-placement="bottom" title="Leaderboards"></span></a>
+                  <a class="lyt-header-text text-secondary standard-text lyt-header-leaderboards-text" ui-sref="leaderboards">Leaderboards</a>
                 </div>
               </div>
             </div>
@@ -68,15 +72,15 @@
         </div>
 
         <!-- Insert Views -->
-        <div class="main-content" ui-view="mainContent"></div>
-        <div class="push"></div>
+        <div class="lyt-main-content" ui-view="mainContent"></div>
+        <div class="lyt-push"></div>
 
       </div> <!-- End Wrapper -->
 
       <!-- Footer -->
-      <div class="footer container background-primary">
+      <div class="lyt-footer container background-primary">
         <div class="col-xs-8 col-lg-4 height-100 text-secondary">
-          <p class="small-text"><strong class="large-text">Augeo</strong> - an open source application that categorizes your online activity into different skills.
+          <p class="small-text"><strong class="large-text clickable" ng-click="showAboutModal()">Augeo</strong> - an open source application that categorizes your online activity into different skills.
             It gives you the power to view your interests in a quantitative way.
           </p>
           <br>
@@ -84,10 +88,75 @@
             Have any suggestions or want to contribute? Head over <a href="https://github.com/bpred754/augeo" target="_blank" class="text-secondary">here</a> to find out more.
           </p>
         </div>
-        <div class="footer-legal text-secondary small-text col-xs-4 col-lg-8">
+        <div class="lyt-footer-legal text-secondary small-text col-xs-4 col-lg-8">
           <p><a href="https://github.com/bpred754/augeo/blob/master/terms-of-service.md" target="_blank">Terms of Service</a></p>
           <p><a href="https://github.com/bpred754/augeo/blob/master/privacy-policy.md" target="_blank">Privacy Policy</a></p>
           <p>Copyright (c) 2016</p>
+        </div>
+      </div>
+
+      <!-- Profile Modal -->
+      <div class="modal fade" id="profile-modal" tabindex="-1" role="dialog" aria-labelledby="profile-modal-label" aria-hidden="true" ng-controller="ProfileController">
+        <div class="modal-dialog" id="profile-modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <div class="modal-title subheading-text text-primary" id="profile-modal-label">{{targetUser.name}}</div>
+              <div class="modal-title standard-text text-primary">{{targetUser.username}}</div>
+            </div>
+            <div id="profile-modal-body" class="modal-body row">
+              <div id="profile-img-container">
+                <img class="profile-img" src="{{targetUser.profileImg}}"/>
+              </div>
+              <div id="profile-body-container">
+                <!-- Bio - Edit Mode -->
+                <div ng-if="isEditMode && isGlobalUser">
+                  <div class="profile-label">
+                    <p class="standard-text text-primary">Public Bio</p>
+                  </div>
+                  <div class="horizontal-center profile-field-input-container">
+                      <input type="text" class="form-control small-text profile-field-input" placeholder="Profession" ng-model="targetUser.profession"/>
+                  </div>
+                  <div class="horizontal-center profile-field-input-container">
+                      <input type="text" class="form-control small-text profile-field-input" placeholder="Location" ng-model="targetUser.location"/>
+                  </div>
+                  <div class="horizontal-center profile-field-input-container">
+                      <input type="text" class="form-control small-text profile-field-input" placeholder="Website" ng-model="targetUser.website"/>
+                  </div>
+                  <div class="profile-label profile-label-description">
+                      <p class="standard-text text-primary">Description</p>
+                  </div>
+                  <div class="horizontal-center">
+                      <textarea id="profile-description-field" class="form-control small-text profile-field-input" placeholder="Tell us about yourself..." ng-model="targetUser.description" maxlength="180"></textarea>
+                  </div>
+                </div>
+                <!-- Authenticate with Twitter -->
+                <div id="profile-auth-container" ng-if="isEditMode && !targetUser.hasTwitterAuthentication && isGlobalUser">
+                  <div id="profile-auth-inner-container">
+                    <p class="standard-text text-primary text-align-center profile-auth-text">Authenticate with Twitter to start tracking your experience</p>
+                    <div class="horizontal-center">
+                      <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Bio - View Mode -->
+                <div ng-if="!isEditMode">
+                  <p id="profile-description" class="standard-text text-primary text-align-center">{{targetUser.description}}</p>
+                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.profession}}</p>
+                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.location}}</p>
+                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.website}}</p>
+                </div>
+                <!-- View As Link -->
+                <div class="profile-edit-view-link" ng-if="isEditMode && isGlobalUser">
+                  <p class="small-text augeo-link" ng-click="viewAsOther()">View as other Augeo user</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer" ng-if="isGlobalUser">
+              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="saveProfileData()" ng-if="isEditMode">Save</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="editProfile()" ng-if="!isEditMode">Edit Profile</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -99,16 +168,45 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <h4 class="modal-title" id="delete-modal-label">Are you sure you want to delete your account?</h4>
             </div>
-            <div id="delete-modal-body" class="modal-body">
-              <div class="col-xs-offset-1 col-xs-10"><p id="delete-error-message" class="text-error">{{removeErrorMessage}}</p></div>
+            <div id="lyt-delete-modal-body" class="modal-body">
+              <div class="col-xs-offset-1 col-xs-10"><p id="lyt-delete-error-message" class="text-error">{{removeErrorMessage}}</p></div>
               <div class="col-xs-offset-1 col-xs-10">
                 <div class="col-xs-8">
                     <input id="delete-password" class="form-control standard-text" type="password" ng-model="pass" placeholder="Password">
                 </div>
                 <div class="col-xs-4">
-                  <button type="button" class="btn btn-primary standard-text" ng-click="removeUser(pass)">Delete</button>
+                  <button type="button" class="btn btn-danger standard-text" ng-click="removeUser(pass)">Delete</button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Modal -->
+      <div class="modal fade" id="about-modal" tabindex="-1" role="dialog" aria-labelledby="about-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div id="about-modal-content" class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 id="about-modal-label" class="x-large-text">{{aboutModalHeading}}</h4>
+            </div>
+            <div class="modal-body standard-text">
+              Augeo is a tool that gives you the power to view your interests in a quantitative way. It's common sense...
+              the more you do something the better you become. In this case, we take your Twitter feed and categorize your
+              tweets/mentions into different skills. Experience is then awarded to each post depending on the amount of
+              activity the post generates. As your experience grows, you will gain levels and be ranked among other Augeo
+              users. Although the current application only takes Twitter activity into consideration, the
+              <a href="https://github.com/bpred754/augeo/wiki/Vision" target="_blank">vision</a> for Augeo is much larger.
+              Our intention is to expand to a vast set of interfaces, from other sites and blogs to health related apps
+              such as FitBit. The possibilities are endless. In a nutshell, Augeo is the gamification of life.
+            </div>
+            <div id="about-logo">
+              <img id="about-logo-image" src="image/augeo-logo-medium.png">
+            </div>
+            <div class="modal-footer" ng-if="aboutModalHeading != 'About'">
+              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="submitTwitterAuthentication()">Authenticate with Twitter</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Later</button>
             </div>
           </div>
         </div>
@@ -119,17 +217,49 @@
 
       <script>
 
+        var showAboutModal = function() {
+          $('#about-modal').modal();
+        };
+
         var showDeleteModal = function() {
           $('#delete-modal').modal();
-        }
+        };
+
+        var showProfileModal = function() {
+          $('#profile-modal').modal();
+        };
 
         $(document).ready(function() {
+
+          // Remove entered data in delete modal inputs
           $('#delete-modal').on('hidden.bs.modal', function () {
             $('#delete-password').val('');
             var scope = angular.element($("#delete-modal")).scope();
             scope.$apply(function() {
               scope.removeErrorMessage = '';
             });
+          });
+
+          // Enable profile-tooltip
+          $('[data-toggle="profile-tooltip"]').tooltip();
+
+          // Only enable leaderboards-tooltip if screen is less than 500px
+          if($(window).width() <= 500) {
+            $('[data-toggle="leaderboards-tooltip"]').tooltip();
+          }
+
+          // Disable and enable tooltips when screen size changes
+          $(window).resize(function() {
+            if($(window).width() <= 500) {
+              $('[data-toggle="leaderboards-tooltip"]').tooltip('enable');
+            } else {
+              $('[data-toggle="leaderboards-tooltip"]').tooltip('disable');
+            }
+          });
+
+          // Hide profile-tooltip when image is clicked
+          $('.lyt-header-image-container ').click(function() {
+            $('.header-tooltip').tooltip('hide');
           });
 
         });

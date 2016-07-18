@@ -48,17 +48,16 @@
 
     UserService.addUser(user, function(retrievedUser) {
 
-      var newUserSubSkills = TwitterUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills()));
+      var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS));
 
       var twitterData = {
         twitterId: user.twitter.twitterId,
         name: user.fullName,
         screenName: user.twitter.screenName,
         profileImageUrl: user.twitter.profileImageUrl,
-        isMember: false,
         accessToken: user.twitter.accessToken,
         secretAccessToken: user.twitter.secretAccessToken,
-        skill: TwitterUtility.getMainSkill(0),
+        skill: AugeoUtility.getMainSkill(0),
         subSkills: newUserSubSkills
       };
 
@@ -100,8 +99,8 @@
   };
 
   exports.cleanUsers = function(callback) {
-    User.remove('tester@gmail.com', function(user1) {
-      User.remove('actionee@gmail.com', function(user2) {
+    User.remove('tester', function(user1) {
+      User.remove('actionee', function(user2) {
         callback();
       });
     });

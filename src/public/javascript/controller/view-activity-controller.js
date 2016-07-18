@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($rootScope, $scope, $stateParams, $window, TwitterClientService) {
+  module.exports = function($rootScope, $scope, $stateParams, $window, TwitterClientService, UserClientService) {
 
     /***************************************************************************/
     /* Private functions                                                       */
@@ -63,20 +63,20 @@
       $scope.$digest();
     });
 
-    TwitterClientService.getActivityDisplayData(function(data) {
+    UserClientService.getActivityDisplayData(function(data) {
 
       if(data != 'Unauthorized') {
 
         $scope.isLoaded = true;
 
-        if ($stateParams.screenName) {
-          $scope.screenName = $stateParams.screenName;
+        if ($stateParams.username) {
+          $scope.username = $stateParams.username;
         } else {
-          $scope.screenName = data.screenName;
+          $scope.username = $scope.User.username;
         }
 
         $scope.twitterSkills = data.skills;
-        $scope.setSkillActivity('Twitter');
+        $scope.setSkillActivity('Augeo');
       }
     });
 
@@ -95,7 +95,7 @@
 
       if($scope.activityLoaded) {
         $scope.activityLoaded = false;
-        TwitterClientService.getSkillActivity($scope.screenName, $scope.currentSkill, maxId, function(data) {
+        TwitterClientService.getSkillActivity($scope.username, $scope.currentSkill, maxId, function(data) {
           if(data.activity.length > 0) {
             $scope.tweets = $scope.tweets.concat(data.activity);
             maxId =  data.activity[data.activity.length-1].tweetId;

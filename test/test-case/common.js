@@ -27,15 +27,18 @@
     lastName: 'Tester',
     fullName: 'Test Tester',
     email: 'tester@gmail.com',
+    username: 'tester',
     password: '!Test1',
+    profileImg: 'image/avatar-medium.png',
     twitter: {
       twitterId: '1000000000',
       accessToken: '000',
       secretAccessToken: '000',
       screenName: 'testScreenName',
-      profileImageUrl: '',
-      imageSrc: 'image/twitter/logo-blue-medium.png',
-      imageLink: 'https://www.twitter.com'
+      profileImageUrl: ''
+    },
+    skill: {
+      imageSrc: 'image/augeo-logo-medium.png'
     }
   };
 
@@ -44,15 +47,18 @@
     lastName: 'Actionee',
     fullName: 'Twitter Actionee',
     email: 'actionee@gmail.com',
+    username: 'actionee',
     password: '!Test1',
+    profileImg: 'image/avatar-medium.png',
     twitter: {
       twitterId: '2000000000',
       accessToken: '100',
       secretAccessToken: '100',
       screenName: 'twitterActionee',
-      profileImageUrl: 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg',
-      imageSrc: 'image/twitter/logo-blue-medium.png',
-      imageLink: 'https://www.twitter.com'
+      profileImageUrl: 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg'
+    },
+    skill: {
+      imageSrc: 'image/twitter/logo-blue-medium.png'
     }
   };
 

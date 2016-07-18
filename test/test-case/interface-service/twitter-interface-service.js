@@ -211,21 +211,19 @@
     };
 
     // Invalid Request
-    var invalidRequest = {};
-    TwitterInterfaceService.getOAuthAccessToken(invalidRequest, '000000000000', callbackFailure, function() {
+    var invalidQuery = {};
+    TwitterInterfaceService.getOAuthAccessToken(invalidQuery, '000000000000', callbackFailure, function() {
 
       // Invalid oauth secret token
-      var validRequest = {
-        query: {
-          oauth_token: '111111111',
-          oauth_verifier: '22222222'
-        }
-      };
+      var validQuery = {
+        oauth_token: '111111111',
+        oauth_verifier: '22222222'
+      }
       var invalidSecretToken;
-      TwitterInterfaceService.getOAuthAccessToken(validRequest, invalidSecretToken, callbackFailure, function() {
+      TwitterInterfaceService.getOAuthAccessToken(validQuery, invalidSecretToken, callbackFailure, function() {
 
         // Valid request and oauth secret token
-        TwitterInterfaceService.getOAuthAccessToken(validRequest, '000000000000', function(accessToken, secretAccessToken, screenName) {
+        TwitterInterfaceService.getOAuthAccessToken(validQuery, '000000000000', function(accessToken, secretAccessToken, screenName) {
 
           Assert.strictEqual(typeof accessToken, 'string');
           Assert.strictEqual(accessToken.length, 50);
@@ -293,10 +291,6 @@
         Assert.strictEqual(userData.name, Common.USER.fullName);
         Assert.strictEqual(userData.screenName, Common.USER.twitter.screenName);
         Assert.strictEqual(userData.profileImageUrl, 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg');
-        Assert.strictEqual(userData.isMember, false);
-        userData.skill.level.should.be.above(0);
-        Assert.strictEqual(userData.subSkills.length, 9);
-        Assert.strictEqual(userData.subSkills[0].name, 'Books');
 
         done();
       }, rollbackFailure);

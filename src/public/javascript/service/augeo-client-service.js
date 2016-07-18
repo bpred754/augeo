@@ -25,7 +25,7 @@
   // Reminder: Update service/index.js when service params are modified
   module.exports = function($http, $state) {
 
-    this.getAugeoAPI = function(url, parameters, callback) {
+    this.getAugeoApi = function(url, parameters, callback) {
       $http({ method: 'GET', url: url, params: parameters}).
       success(function(data, status, headers, config) {
         callback(data, status);
@@ -36,7 +36,7 @@
       });
     };
 
-    this.postAugeoAPI = function(url, parameters, callback) {
+    this.postAugeoApi = function(url, parameters, callback) {
       $http({ method: 'POST', url: url, data: parameters}).
       success(function(data, status, headers, config) {
         callback(data, status);

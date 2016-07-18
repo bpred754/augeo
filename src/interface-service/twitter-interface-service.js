@@ -148,7 +148,7 @@
       avatarImageSrc: data.user.profile_image_url_https,
       text: text,
       classification: classification,
-      classificationGlyphicon: TwitterUtility.getGlyphicon(classification),
+      classificationGlyphicon: AugeoUtility.getGlyphicon(classification),
       date: data.created_at,
       experience: tweetExperience,
       retweetCount: retweetCount,
@@ -205,11 +205,10 @@
   };
 
   // Get Oauth access token
-  exports.getOAuthAccessToken = function(request, oauthSecretToken, callback, rollback) {
+  exports.getOAuthAccessToken = function(query, oauthSecretToken, callback, rollback) {
 
-    if(TwitterValidator.isOAuthRequestValid(request)) {
-
-      TwitterInterface.getOAuthAccessToken(request.query, oauthSecretToken, function(oauth_access_token, oauth_access_token_secret, screenName) {
+    if(query) {
+      TwitterInterface.getOAuthAccessToken(query, oauthSecretToken, function(oauth_access_token, oauth_access_token_secret, screenName) {
         if(oauth_access_token && oauth_access_token_secret && screenName) {
           callback(oauth_access_token, oauth_access_token_secret, screenName);
         } else {
@@ -269,17 +268,12 @@
         // Remove _normal.png from profile_image_url_https to receive original image size
         var profileImageUrl = url.substring(0, urlLength-11) + url.substring(url.length-4);
 
-        // Create Twitter sub skills
-        var subSkills = TwitterUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(TwitterUtility.getSubSkills()));
-
         var userData = {
           twitterId: twitterData.id_str,
           name: twitterData.name,
           screenName: screenName,
           profileImageUrl: profileImageUrl,
-          isMember: false,
-          skill: TwitterUtility.getMainSkill(0),
-          subSkills: subSkills,
+          profileIcon: url
         }
         callback(userData);
       } else {

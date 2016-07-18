@@ -28,7 +28,8 @@
       restrict: 'E',
       scope: {
         'tweetData': '=',
-        'visible': '='
+        'visible': '=',
+        'screenName': '='
       },
       templateUrl: 'html/directive/activity-transition.html',
       controller: "ActivityController",

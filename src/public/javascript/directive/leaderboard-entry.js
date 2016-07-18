@@ -34,8 +34,6 @@
         templateUrl: 'html/directive/leaderboard-entry.html',
         link: function(scope, elem, attrs) {
 
-          var isInit = true;
-
           // Initialize twitter code for follow buttons
           window.twttr=(function(d,s,id){
             var js,
@@ -67,7 +65,7 @@
             return className;
           };
 
-          scope.$watch('user.screenName', function(newVal) {
+          scope.$watch('user.twitterScreenName', function(newVal) {
 
             var entryContainer = $(elem).children().eq(0)[0];
             var twitterFollowButton = $(entryContainer).find('.follow-container');

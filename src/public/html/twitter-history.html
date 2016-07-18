@@ -24,18 +24,29 @@
     <div class="container">
       <div class="row">
         <div class="jumbotron twitter-history-jumbotron">
-          <div id="head-container">
+          <div id="th-head-container">
             <div id="th-title" class="x-large-text">My Twitter History</div>
             <div id="header-description" class="standard-text">Due to Twitter’s data restrictions requests can only be made periodically.
-              When you sign up with Augeo, you are placed onto a queue that will gather your past Twitter activity.
+              When you authenticate with Twitter you are placed onto a queue that will gather your past Twitter activity.
               Below you can see the estimated wait times. It is also important to note that Twitter only records your
               last 3,200 tweets and 800 tweets that you were mentioned in. Therefore, it is possible that we may not
               retrieve all your Twitter activity if you have surpassed these limits.
             </div>
           </div>
+          </div>
         </div>
       </div> <!-- end header row -->
     </div> <!-- end header container -->
+
+    <!-- Authenticate with Twitter -->
+    <div id="th-auth-container" ng-if="!User.twitter.screenName">
+      <div id="th-auth-inner-container">
+        <p class="standard-text text-primary text-align-center">Authenticate with Twitter to gather past activity</p>
+        <div class="horizontal-center">
+          <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+        </div>
+      </div>
+    </div>
 
     <div class="row remove-margin">
       <div class="col-sm-2 col-xs-1 twitter-history-spacer"></div>
@@ -74,39 +85,3 @@
     </div>
 
   </div>
-
-  <!-- Welcome Modal -->
-  <div class="modal fade" id="welcome-modal" tabindex="-1" role="dialog" aria-labelledby="welcome-modal-label" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 id="welcome-modal-label" class="x-large-text">Welcome to Augeo!</h4>
-        </div>
-        <div class="modal-body standard-text">
-          Augeo is a tool that gives you the power to view your interests in a quantitative way. It's common sense...
-          the more you do something the better you become. In this case, we take your Twitter feed and categorize your
-          tweets/mentions into different skills. Experience is then awarded to each post depending on the amount of
-          activity the post generates. As your experience grows, you will gain levels and be ranked among other Augeo
-          users. Although the current application only takes Twitter activity into consideration, the
-          <a href="https://github.com/bpred754/augeo/wiki/Vision" target="_blank">vision</a> for Augeo is much larger.
-          Our intention is to expand to a vast set of interfaces, from other sites and blogs to health related apps
-          such as FitBit. The possibilities are endless. In a nutshell, Augeo is the gamification of life.
-        </div>
-        <div id="th-logo">
-          <img id="th-logo-image" src="image/augeo-logo-medium.png">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="setMember()">Continue</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-
-    var showModal = function() {
-      $('#welcome-modal').modal();
-    };
-
-  </script>

@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/twitter-api                        */
+  /* Description: Unit test cases for api/user-api                          */
   /*              'getActivityDisplayData' requests                          */
   /***************************************************************************/
 
@@ -34,12 +34,12 @@
 
     var agent = Request.agent(app);
 
-    // Session screen name invalid
-    it('should return status 400 - invalid session screen name', function(done) {
+    // Session username invalid
+    it('should return status 401 - invalid session username', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getActivityDisplayData')
+        .get('/user-api/getActivityDisplayData')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -47,7 +47,7 @@
         });
     });
 
-    it('should return status 200 -- valid session screen name', function(done) {
+    it('should return status 200 -- valid session username', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
@@ -60,7 +60,7 @@
 
           // Get activity display data with valid session
           agent
-            .get('/twitter-api/getActivityDisplayData')
+            .get('/user-api/getActivityDisplayData')
             .expect(200)
             .end(function(error, response) {
               Should.not.exist(error);

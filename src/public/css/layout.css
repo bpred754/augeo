@@ -39,106 +39,233 @@
     text-decoration:none;
   }
 
-  #augeo-navbar-container {
-    height:50px;
+  #about-logo {
+    height:250px;
+    width:250px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:25px;
   }
 
-  #delete-error-message {
+  #about-logo-image {
+    max-height:100%;
+    max-width:100%
+  }
+
+  #about-modal-content {
+    padding-left:15px;
+    padding-right:15px;
+  }
+
+  #lyt-delete-error-message {
     padding-left:20px;
     margin-bottom:5px;
   }
 
-  #delete-modal-body {
+  #lyt-delete-modal-body {
     height:100px;
   }
 
-  #header-project-name {
-    padding-left:20px;
+  #lyt-header-project-name {
+    padding-left:40px;
   }
 
-  #header-row {
-    height:100%;
-    margin-right:0px;
-    margin-left:0px;
+  #lyt-navbar-container {
+    height:50px;
   }
 
-  #header-settings {
-    padding-right:20px;
-  }
-
-  #header-settings-container {
-    text-align:right;
-  }
-
-  #settings-dropdown {
+  #lyt-settings-dropdown {
     right:0;
     left:initial;
-    margin-top:9px;
+    margin-top:-1px;
   }
 
-  .footer {
+  #profile-auth-container {
+    height:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:15px;
+  }
+
+  #profile-auth-inner-container {
+    height:100%;
+    width:80%;
+    border-style:solid;
+    border-color:#333;
+    padding-top:15px;
+    padding-bottom:15px;
+  }
+
+  #profile-body-container {
+    padding-top:15px;
+    padding-bottom:15px;
+    width:100%;
+  }
+
+  #profile-description {
+    margin-bottom:15px;
+  }
+
+  #profile-description-field {
+    resize:none;
+    height:90px;
+  }
+
+  #profile-img-container {
+    height:150px;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    width:100%;
+  }
+
+  #profile-modal-body {
+    padding-bottom:0px;
+  }
+
+  .lyt-footer {
     padding-top:15px;
     width:100%;
   }
 
-  .footer a {
+  .lyt-footer a {
     text-decoration:underline;
     color:#9d9d9d;
   }
 
-  .footer-legal {
+  .lyt-footer-legal {
     height:100%;
     text-align:right;
   }
 
-  .header-element {
+  .lyt-header-app-name {
     height:100%;
-    padding-left:0px;
-    padding-right:0px;
+    width:100px;
     display:flex;
-    justify-content:center;
-    align-content:center;
-    flex-direction:column;
+    align-items:center;
+    float:left;
   }
 
-  .header-text:hover {
+  .lyt-header-icon-glow {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+  }
+
+  .lyt-header-icon-glow:hover {
+    -webkit-box-shadow: 0px 0px 7px rgba(255,255,255,0.6);
+    -moz-box-shadow: 0px 0px 7px rgba(255,255,255,0.6);
+    box-shadow: 0px 0px 7px rgba(255,255,255,0.6);
+  }
+
+  .lyt-header-img {
+    height:32px;
+    width:32px;
+    border-radius:6px;
+
+  }
+
+  .lyt-header-image-container {
+    margin-left:auto;
+    margin-right:40px;
+  }
+
+  .lyt-header-leaderboards-option-container {
+    display:flex;
+    align-items: center;
+    height:100%;
+  }
+
+  .lyt-header-leaderboards-option-container:hover {
+    cursor:pointer;
+  }
+
+  .lyt-header-leaderboards-option-container:hover  .lyt-header-text{
     text-decoration: none;
     color:white;
     cursor:pointer;
   }
 
-  .main-content {
+  .lyt-header-options-area {
+    height:100%;
+    overflow:hidden;
+  }
+
+  .lyt-header-options-container {
+    height:100%;
+    float:right;
+    display:inline-block;
+  }
+
+  .lyt-header-settings-container {
+    height:100%;
+    width:100px;
+    float:right;
+    display:flex;
+    align-items: center;
+  }
+
+  .lyt-header-text:hover {
+    text-decoration: none;
+    color:white;
+    cursor:pointer;
+  }
+
+  .lyt-main-content {
     margin-bottom:100px;
   }
 
-  .navbar-nav {
-    float:right;
-  }
-
-  .push, .footer {
+  .lyt-push, .lyt-footer {
     height:150px;
   }
 
-  .theme-dropdown .dropdown-menu {
-    position: static;
-    display: block;
-    margin-bottom: 20px;
-  }
-
-  .theme-showcase > p > .btn {
-    margin: 5px 0;
-  }
-
-  .theme-showcase .navbar .container {
-    width: auto;
-  }
-
-  .wrapper {
+  .lyt-wrapper {
     min-height:100%;
     height:auto !important;
     height:100%;
     margin:0 auto -150px; /* This must be the negative value of .push, .footer height*/
   }
+
+  .profile-attr{
+    margin-bottom:0px;
+    font-weight:500;
+  }
+
+  .profile-auth-text {
+    padding-left:10px;
+    padding-right:10px;
+  }
+
+  .profile-edit-view-link {
+    margin-top:25px;
+    text-align:center;
+  }
+
+  .profile-field-input {
+    width:260px;
+    float:left;
+  }
+
+  .profile-field-input-container {
+    padding-bottom:5px;
+  }
+
+  .profile-img {
+    max-height:100%;
+    max-width:100%;
+    border-radius:10px
+  }
+
+  .profile-label {
+    padding-left:20px;
+  }
+
+  .profile-label-description {
+    margin-top:15px;
+  }
+
+  .tooltip-arrow,
+  .header-tooltip + .tooltip > .tooltip-inner {background-color: #333;}
 
   /***************************************************************************/
   /* Screen Size: less than custom small                                     */
@@ -146,20 +273,38 @@
 
   @media(max-width:600px) {
 
-    .footer p {
+    .lyt-footer p {
       font-size:.7em;
     }
 
-  }
+    .lyt-header-leaderboards-glyphicon {
+      float:left;
+      margin-bottom:3px;
+      font-size:1.7em;
+    }
 
-  /***************************************************************************/
-  /* Screen Size: small                                                      */
-  /***************************************************************************/
-
-  @media(min-width:768px) {
-
-    .fixed-header {
-      align-self:flex-end;
+    .lyt-header-leaderboards-text {
+      display:none;
     }
 
   }
+
+  /***************************************************************************/
+  /* Screen Size: greater than custom small                                     */
+  /***************************************************************************/
+
+  @media(min-width:501px) {
+
+    .lyt-header-leaderboards-glyphicon {
+      float:left;
+      margin-right:10px;
+      margin-bottom:3px;
+      font-size:1.7em;
+    }
+
+    .lyt-header-leaderboards-text {
+      float:left;
+    }
+
+  }
+

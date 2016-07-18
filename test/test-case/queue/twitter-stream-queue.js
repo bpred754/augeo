@@ -44,7 +44,7 @@
     // Get original experience for User and Actionee
     User.getUserWithEmail(Common.USER.email, function(initialUser) {
 
-      var initialUserExperience = initialUser.twitter.skill.experience;
+      var initialUserExperience = initialUser.skill.experience;
 
       var queueData = {};
       queueData.action = 'Add';
@@ -58,12 +58,12 @@
 
           // Verify experience gained
           User.getUserWithEmail(Common.USER.email, function(userAfter) {
-            var userAfterExperience = userAfter.twitter.skill.experience;
-            Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.getTweetExperience() + TwitterUtility.getRetweetExperience());
+            var userAfterExperience = userAfter.skill.experience;
+            Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
 
             // Verify ranks
-            User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank1) {
-              User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank1) {
+            User.getSkillRank(Common.USER.username, 'Augeo', function(userRank1) {
+              User.getSkillRank(Common.ACTIONEE.username, 'Augeo', function(actioneeRank1) {
                 userRank1.should.be.below(actioneeRank1);
                 done();
               });
@@ -82,8 +82,8 @@
     User.getUserWithEmail(Common.USER.email, function(initialUser) {
       User.getUserWithEmail(Common.ACTIONEE.email, function(initialActionee) {
 
-        var initialUserExperience = initialUser.twitter.skill.experience;
-        var initialActioneeExperience = initialActionee.twitter.skill.experience;
+        var initialUserExperience = initialUser.skill.experience;
+        var initialActioneeExperience = initialActionee.skill.experience;
 
         var queueData = {};
         queueData.action = 'Add';
@@ -103,16 +103,16 @@
               User.getUserWithEmail(Common.USER.email, function(userAfter) {
                 User.getUserWithEmail(Common.ACTIONEE.email, function(actioneeAfter) {
 
-                  var userAfterExperience = userAfter.twitter.skill.experience;
-                  var actioneeAfterExperience = actioneeAfter.twitter.skill.experience;
+                  var userAfterExperience = userAfter.skill.experience;
+                  var actioneeAfterExperience = actioneeAfter.skill.experience;
 
                   // Verify experience gained
-                  Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.getMentionExperience());
-                  Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.getTweetExperience());
+                  Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.MENTION_EXPERIENCE);
+                  Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.TWEET_EXPERIENCE);
 
                   // Verify ranks
-                  User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank1) {
-                    User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank1) {
+                  User.getSkillRank(Common.USER.username, 'Augeo', function(userRank1) {
+                    User.getSkillRank(Common.ACTIONEE.username, 'Augeo', function(actioneeRank1) {
                       userRank1.should.be.below(actioneeRank1);
                       done();
                     });
@@ -134,8 +134,8 @@
     User.getUserWithEmail(Common.USER.email, function(initialUser) {
       User.getUserWithEmail(Common.ACTIONEE.email, function(initialActionee) {
 
-        var initialUserExperience = initialUser.twitter.skill.experience;
-        var initialActioneeExperience = initialActionee.twitter.skill.experience;
+        var initialUserExperience = initialUser.skill.experience;
+        var initialActioneeExperience = initialActionee.skill.experience;
 
         var queueData0 = {};
         queueData0.action = 'Add';
@@ -144,7 +144,7 @@
         // Insert User's tweet to be retweeted
         streamQueue.addAction(queueData0, function() {
 
-          initialUserExperience += (Common.rawStandardTweet.retweet_count * TwitterUtility.getRetweetExperience()) + (Common.rawStandardTweet.favorite_count * TwitterUtility.getFavoriteExperience());
+          initialUserExperience += (Common.rawStandardTweet.retweet_count * TwitterUtility.RETWEET_EXPERIENCE) + (Common.rawStandardTweet.favorite_count * TwitterUtility.FAVORITE_EXPERIENCE);
 
           // Verify tweet is in database
           Tweet.findTweet(Common.rawStandardTweet.id_str, function(originalTweet) {
@@ -171,16 +171,16 @@
                   User.getUserWithEmail(Common.USER.email, function(userAfter) {
                     User.getUserWithEmail(Common.ACTIONEE.email, function(actioneeAfter) {
 
-                      var userAfterExperience = userAfter.twitter.skill.experience;
-                      var actioneeAfterExperience = actioneeAfter.twitter.skill.experience;
+                      var userAfterExperience = userAfter.skill.experience;
+                      var actioneeAfterExperience = actioneeAfter.skill.experience;
 
                       // Verify experience gained
-                      Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.getTweetExperience() + TwitterUtility.getRetweetExperience());
-                      Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.getTweetExperience());
+                      Assert.strictEqual(userAfterExperience, initialUserExperience + TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
+                      Assert.strictEqual(actioneeAfterExperience, initialActioneeExperience + TwitterUtility.TWEET_EXPERIENCE);
 
                       // Verify ranks
-                      User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank1) {
-                        User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank1) {
+                      User.getSkillRank(Common.USER.username, 'Augeo', function(userRank1) {
+                        User.getSkillRank(Common.ACTIONEE.username, 'Augeo', function(actioneeRank1) {
                           userRank1.should.be.below(actioneeRank1);
                           done();
                         });
@@ -215,14 +215,14 @@
       streamQueue.addAction(queueData1, function() {
 
         // Verify ranks
-        User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank0) {
-          User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank0) {
+        User.getSkillRank(Common.USER.username, 'Augeo', function(userRank0) {
+          User.getSkillRank(Common.ACTIONEE.username, 'Augeo', function(actioneeRank0) {
             userRank0.should.be.below(actioneeRank0);
 
             // Get original experience for User and Actionee
             User.getUserWithEmail(Common.USER.email, function(initialUser) {
 
-              var initialUserExperience = initialUser.twitter.skill.experience;
+              var initialUserExperience = initialUser.skill.experience;
 
               var queueData2 = {};
               queueData2.action = 'Remove';
@@ -240,12 +240,12 @@
 
                   // Verify experience removed
                   User.getUserWithEmail(Common.USER.email, function(userAfter) {
-                    var userAfterExperience = userAfter.twitter.skill.experience;
-                    Assert.strictEqual(userAfterExperience, initialUserExperience - TwitterUtility.getTweetExperience() - TwitterUtility.getRetweetExperience());
+                    var userAfterExperience = userAfter.skill.experience;
+                    Assert.strictEqual(userAfterExperience, initialUserExperience - TwitterUtility.TWEET_EXPERIENCE - TwitterUtility.RETWEET_EXPERIENCE);
 
                     // Verify ranks
-                    User.getSkillRank(Common.USER.twitter.screenName, 'Twitter', function(userRank1) {
-                      User.getSkillRank(Common.ACTIONEE.twitter.screenName, 'Twitter', function(actioneeRank1) {
+                    User.getSkillRank(Common.USER.username, 'Augeo', function(userRank1) {
+                      User.getSkillRank(Common.ACTIONEE.username, 'Augeo', function(actioneeRank1) {
                         userRank1.should.be.above(actioneeRank1);
                         done();
                       });
@@ -263,7 +263,7 @@
   it('should open a stream with Twitter on an interval -- openStream()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    // Get initital iteration amount
+    // Get initial iteration amount
     var initialIteration = TwitterInterface.getNumberConnections();
 
     var queueData = {
