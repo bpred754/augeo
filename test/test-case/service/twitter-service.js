@@ -32,10 +32,10 @@
   var AugeoDB = require('../../../src/model/database');
   var AugeoUtility = require('../../../src/utility/augeo-utility');
   var Common = require('../common');
-  var SessionValidator = require('../../../src/validator/session-validator');
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
   var TwitterService = require('../../../src/service/twitter-service');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
+  var UserService = require('../../../src/service/user-service');
 
   // Global variables
   var User = AugeoDB.model('User');
@@ -309,7 +309,9 @@
     this.timeout(Common.TIMEOUT);
 
     var invalidSession = {
-      user : Common.USER
+      session: {
+        user : Common.USER
+      }
     };
 
     // Generate sample secretToken
@@ -319,11 +321,13 @@
       TwitterService.addUserSecretToken(invalidSession, secretToken, function() {}, function() {
 
         var invalidID = {
-          user: {
-            _id: '',
-            firstName: Common.USER.firstName,
-            lastName: Common.USER.lastName,
-            username: Common.USER.username
+          session: {
+            user: {
+              _id: '',
+              firstName: Common.USER.firstName,
+              lastName: Common.USER.lastName,
+              username: Common.USER.username
+            }
           }
         };
 
@@ -334,7 +338,7 @@
           User.getUserWithUsername(Common.USER.username, function(user) {
 
             var validSession = invalidID;
-            validSession.user._id = user._id;
+            validSession.session.user._id = user._id;
 
             // Should add user's secret token to database successfully
             TwitterService.addUserSecretToken(validSession, secretToken, function() {
@@ -372,82 +376,6 @@
         });
       });
     }, function(){});
-  });
-
-  // getCompetitors
-  it('Should return competitors given a skill and a user -- getCompetitors()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    var invalidUsername = '%%';
-    TwitterService.getCompetitors(invalidUsername, 'Augeo', function(){}, function() {
-
-      var invalidSkill = 'invalidSkill';
-      TwitterService.getCompetitors(Common.USER.username, invalidSkill, function(){}, function() {
-
-        // Get competitors for user that doesn't exist
-        TwitterService.getCompetitors('invalid', 'Augeo', function(competitorsForInvalid) {
-
-          var maxRank0 = 0;
-          competitorsForInvalid.length.should.be.above(0);
-          for(var i = 0; i < competitorsForInvalid.length; i++) {
-            competitorsForInvalid[i].rank.should.be.above(maxRank0);
-            Assert.ok(competitorsForInvalid[i].username);
-            Assert.ok(competitorsForInvalid[i].rank);
-            Assert.ok(competitorsForInvalid[i].experience);
-            Assert.ok(competitorsForInvalid[i].level);
-            maxRank0 = competitorsForInvalid[i].rank;
-          }
-
-          TwitterService.getCompetitors(Common.USER.username, 'Augeo', function(competitorsForValid) {
-
-            var maxRank1 = 0;
-            competitorsForValid.length.should.be.above(0);
-            for(var i = 0; i < competitorsForValid.length; i++) {
-              competitorsForInvalid[i].rank.should.be.above(maxRank1);
-              Assert.ok(competitorsForValid[i].username);
-              Assert.ok(competitorsForValid[i].rank);
-              Assert.ok(competitorsForValid[i].experience);
-              Assert.ok(competitorsForValid[i].level);
-              maxRank1 = competitorsForInvalid[i].rank;
-            }
-            done();
-          }, function(){});
-        }, function(){});
-      });
-    });
-  });
-
-
-  // getCompetitorsWithRank
-  it('should return competitors within a start and end rank -- getCompetitorsWithRank()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Invalid start rank
-    TwitterService.getCompetitorsWithRank('!', '5', 'Augeo', function(){}, function() {
-
-      // Invalid end rank
-      TwitterService.getCompetitorsWithRank('1', '%', 'Augeo', function(){}, function() {
-
-        // Invalid skill
-        TwitterService.getCompetitorsWithRank('1', '5', 'invalid', function(){}, function() {
-
-          // Valid input
-          TwitterService.getCompetitorsWithRank('1', '5', 'Augeo', function(users) {
-
-            users.length.should.be.above(0);
-            users.length.should.be.below(6);
-            for(var i = 0; i < users.length; i++) {
-              Assert.ok(users[i].username);
-              Assert.ok(users[i].rank);
-              Assert.ok(users[i].experience);
-              Assert.ok(users[i].level);
-              Assert.strictEqual(users[i].rank, i+1);
-            }
-            done();
-          }, function(){});
-        });
-      });
-    });
   });
 
   // getDashboardDisplayData
@@ -494,17 +422,6 @@
         }, function(){});
       }, function(){});
     }, function(){});
-  });
-
-  // getNumberUsers
-  it('should return the number of users in the database', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    TwitterService.getNumberUsers(function(numberUsers) {
-      Assert.ok(numberUsers);
-      numberUsers.should.be.above(0);
-      done();
-    });
   });
 
   // getQueueData
@@ -611,74 +528,24 @@
   it('should return users secret token -- getUserSecretToken()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    var invalidSession = {
-      user: {
-        firstName: Common.USER.firstName,
-        lastName: Common.USER.lastName,
-        username: Common.USER.username
-      }
-    };
-
     // Invalid session - missing user._id
-    TwitterService.getUserSecretToken(invalidSession, function(){}, function() {
-
-      var notExistentID = {
-        user: {
-          _id: '0',
-          firstName: Common.USER.firstName,
-          lastName: Common.USER.lastName,
-          username: Common.USER.username
-        }
-      };
+    TwitterService.getUserSecretToken(null, function(){}, function() {
 
       // Valid session- user ID doesn't exists
-      TwitterService.getUserSecretToken(notExistentID, function(){}, function() {
+      TwitterService.getUserSecretToken('0', function(){}, function() {
 
         // Valid session
         User.getUserWithUsername(Common.USER.username, function(user) {
 
           var userID = user._id.toString();
-          var session = {
-            user: {
-              _id: userID,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              username: user.username
-            }
-          };
 
-          TwitterService.getUserSecretToken(session, function(secretToken) {
+          TwitterService.getUserSecretToken(userID, function(secretToken) {
             Assert.strictEqual(secretToken.length, 32);
             done();
           }, function(){});
         });
       });
     });
-  });
-
-  // isUserDefined
-  it('should return a boolean signifying if the session user is defined -- isUserDefined()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    var nullRequest;
-    Assert.strictEqual(SessionValidator.isUserDefined(nullRequest), false);
-
-    var nullSession = {};
-    Assert.strictEqual(SessionValidator.isUserDefined(nullSession), false);
-
-    var nullUser = {
-      session: {}
-    };
-    Assert.strictEqual(SessionValidator.isUserDefined(nullUser), false);
-
-    var valid = {
-      session: {
-        user: Common.USER
-      }
-    };
-    Assert.strictEqual(SessionValidator.isUserDefined(valid), true);
-
-    done();
   });
 
   // removeInvalidUser
@@ -693,8 +560,10 @@
       password: 'blahblah'
     }
 
-    var session = {
-      user: invalidUser
+    var request = {
+      session: {
+        user: invalidUser
+      }
     };
 
     // Verify user to be added is not in DB
@@ -709,7 +578,7 @@
           Assert.strictEqual(user1.firstName, invalidUser.firstName);
 
           // Remove invalid users
-          TwitterService.removeInvalidUser(session, function(user2) {
+          UserService.removeUser(request.session.user.username, function(user2) {
             Assert.strictEqual(user2.firstName, invalidUser.firstName)
 
             // Verify user is no longer in db
@@ -753,117 +622,6 @@
               Assert.strictEqual(user1.skill.experience, experience);
               done();
             });
-          });
-        });
-      });
-    });
-  });
-
-  // updateTwitterRanks & updateSubSkillRanks
-  it('should update the skill and sub skill ranks for all users -- updateSubSkillRanks() & updateTwitterRanks()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Retrieve baseline skill for Common user
-    User.getUserWithUsername(Common.USER.username, function(user0) {
-
-      var baseSkillRank = user0.skill.rank;
-
-      var baseIndex = 4;
-      var general = user0.subSkills[baseIndex];
-      var baseExperience = general.experience;
-      var baseSubSkillRank = general.rank;
-
-      baseSkillRank.should.be.above(0);
-      baseExperience.should.be.above(0);
-      baseSubSkillRank.should.be.above(0);
-
-      Assert.ok(baseSkillRank);
-      Assert.ok(baseIndex);
-      Assert.ok(baseExperience);
-      Assert.ok(baseSubSkillRank);
-
-      User.getNumberUsers(function(numUsers) {
-        numUsers++;
-
-        var newUserSkill = AugeoUtility.getMainSkill(0);
-        newUserSkill.rank = numUsers;
-
-        var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS));
-        for(var i = 0; i < newUserSubSkills.length; i++) {
-          newUserSubSkills[i].rank = numUsers;
-        }
-
-        var newUser = {
-          firstName: Common.ACTIONEE.firstName,
-          lastName: Common.ACTIONEE.lastName,
-          username: Common.ACTIONEE.username,
-          password: Common.ACTIONEE.password,
-          skill: newUserSkill,
-          subSkills: newUserSubSkills
-        };
-
-        // Verify new user is not in database
-        User.getUserWithUsername(newUser.username, function(user1) {
-          Should.not.exist(user1);
-
-          // Add new user to database
-          User.add(newUser, function(user2) {
-
-            var twitterData = {
-              twitterId: Common.ACTIONEE.twitter.twitterId,
-              name: Common.ACTIONEE.fullName,
-              screenName: Common.ACTIONEE.twitter.screenName,
-              profileImageUrl: Common.ACTIONEE.twitter.profileImageUrl,
-              accessToken: Common.ACTIONEE.twitter.accessToken,
-              secretAccessToken: Common.ACTIONEE.twitter.secretAccessToken,
-            };
-
-            // Update new user's twitter information
-            TwitterService.updateTwitterInfo(user2._id.toString(), twitterData, function() {
-
-              // Verify new user's skill and subSkill rank is higher than Common.USER
-              User.getUserWithUsername(Common.ACTIONEE.username, function(user3) {
-
-                var newUserSkillRank = user3.skill.rank;
-                var newUserSubSkillRank = user3.subSkills[baseIndex].rank;
-
-                newUserSkillRank.should.be.above(baseSkillRank);
-                newUserSubSkillRank.should.be.above(baseSubSkillRank);
-
-                var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
-                updateSubSkillExperiences[AugeoUtility.SUB_SKILLS[baseIndex].name] = baseExperience*100;
-                var updateExperience = {
-                  mainSkillExperience: baseExperience*100,
-                  subSkillsExperience: updateSubSkillExperiences
-                }
-
-                // Update new user's subSkill experience to be more than Common.USER - use User.updateTwitterSkillData
-                User.updateTwitterSkillData(user3._id, updateExperience, function() {
-
-                  // Update Twitter ranks
-                  TwitterService.updateTwitterRanks(function() {
-
-                    // Update sub skill ranks
-                    TwitterService.updateSubSkillRanks(general.name, function() {
-
-                      User.getUserWithUsername(Common.USER.username, function(user4) {
-
-                        // Update baseline variables
-                        baseSkillRank = user4.skill.rank;
-                        baseSubSkillRank = user4.subSkills[baseIndex].rank;
-
-                        // Verify new user's subSkill rank is lower than Common.USER
-                        User.getUserWithUsername(Common.ACTIONEE.username, function(user5) {
-                          user5.skill.rank.should.be.below(baseSkillRank);
-                          user5.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
-                          done();
-                        });
-                      });
-                    });
-                  });
-                });
-              });
-            }, function(){});
           });
         });
       });

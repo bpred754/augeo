@@ -19,29 +19,27 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/twitter-api                        */
-  /*              'getLeaderboardDisplayData' requests                       */
+  /* Description: Unit test cases for api/user-api                          */
+  /*              'getActivityDisplayData' requests                          */
   /***************************************************************************/
 
   // Required libraries
-  var Assert = require('assert');
   var Request = require('supertest');
   var Should = require('should');
 
   // Required local modules
   var Common = require('../../common');
-  var AugeoUtility = require('../../../../src/utility/augeo-utility');
 
   module.exports = function(app) {
 
     var agent = Request.agent(app);
 
-    // Invalid username in session
-    it('should return status 401 - invalid username in session', function(done) {
+    // Session username invalid
+    it('should return status 401 - invalid session username', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getLeaderboardDisplayData')
+        .get('/user-api/getActivityDisplayData')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -49,37 +47,25 @@
         });
     });
 
-    // Valid username in session
-    it('should return status 200 - valid username in session', function(done) {
+    it('should return status 200 -- valid session username', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
       agent
         .post('/user-api/login')
-        .send(Common.LOGIN_USER)
+        .send(Common.USER)
         .expect(200)
-        .end(function(error0, response0) {
-          Should.not.exist(error0);
+        .end(function(error, response) {
+          Should.not.exist(error);
 
+          // Get activity display data with valid session
           agent
-            .get('/twitter-api/getLeaderboardDisplayData')
+            .get('/user-api/getActivityDisplayData')
             .expect(200)
-            .end(function(error1, response1) {
-              Should.not.exist(error1);
-
-              var skills = response1.body.skills;
-              var actualSkills = AugeoUtility.SUB_SKILLS;
-
-              skills.length.should.be.above(0);
-
-              for(var i = 0; i < skills.length; i++) {
-                Assert.strictEqual(skills[i].name, actualSkills[i].name);
-                Assert.strictEqual(skills[i].glyphicon, actualSkills[i].glyphicon);
-              }
-
+            .end(function(error, response) {
+              Should.not.exist(error);
               done();
             });
         });
     });
-
   };

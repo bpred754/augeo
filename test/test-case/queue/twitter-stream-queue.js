@@ -263,7 +263,7 @@
   it('should open a stream with Twitter on an interval -- openStream()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    // Get initital iteration amount
+    // Get initial iteration amount
     var initialIteration = TwitterInterface.getNumberConnections();
 
     var queueData = {

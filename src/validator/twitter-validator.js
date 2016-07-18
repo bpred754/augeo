@@ -22,9 +22,6 @@
   /* Description: Twitter validating functions                               */
   /***************************************************************************/
 
-  // Required local modules
-  var AugeoUtility = require('../utility/augeo-utility');
-
   exports.containsUserTwitterData = function(data) {
     var containsData = false;
 
@@ -35,18 +32,6 @@
     return containsData;
   };
 
-  exports.isOAuthRequestValid = function(request) {
-    var isValid = false;
-
-    if(request) {
-      if(request.query) {
-        isValid = true;
-      }
-    }
-
-    return isValid;
-  };
-
   exports.isScreenNameValid = function(screenName) {
     var isValid = false;
 
@@ -54,35 +39,6 @@
       var screenNameRegex = new RegExp("^[A-Za-z0-9_]{1,15}$");
       if(screenName.match(screenNameRegex)) {
         isValid = true;
-      }
-    }
-
-    return isValid;
-  };
-
-  exports.isSessionValid = function(session) {
-    var isValid = false;
-
-    if(session) {
-      var user = session.user;
-      if(user) {
-        if(user._id && user.firstName && user.lastName && user.username) {
-          isValid = true;
-        }
-      }
-    }
-    return isValid;
-  };
-
-  exports.isSkillValid = function(skill) {
-    var isValid = false;
-
-    if(skill) {
-      var subSkills = AugeoUtility.SUB_SKILLS;
-      for(var i = 0; i < subSkills.length; i++) {
-        if(skill === subSkills[i].name || skill === 'Augeo') {
-          isValid = true;
-        }
       }
     }
 

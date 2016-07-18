@@ -42,7 +42,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?skill=Twitter&tweetID=9999999999999999999999999999999')
+        .get('/twitter-api/getSkillActivity?skill=Augeo&tweetID=9999999999999999999999999999999')
         .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -68,7 +68,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Twitter')
+        .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo')
         .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -81,7 +81,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?username=invalid&skill=Twitter&tweetId=9999999999999999999999999999999')
+        .get('/twitter-api/getSkillActivity?username=invalid&skill=Augeo&tweetId=9999999999999999999999999999999')
         .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);

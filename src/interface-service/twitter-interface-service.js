@@ -205,11 +205,10 @@
   };
 
   // Get Oauth access token
-  exports.getOAuthAccessToken = function(request, oauthSecretToken, callback, rollback) {
+  exports.getOAuthAccessToken = function(query, oauthSecretToken, callback, rollback) {
 
-    if(TwitterValidator.isOAuthRequestValid(request)) {
-
-      TwitterInterface.getOAuthAccessToken(request.query, oauthSecretToken, function(oauth_access_token, oauth_access_token_secret, screenName) {
+    if(query) {
+      TwitterInterface.getOAuthAccessToken(query, oauthSecretToken, function(oauth_access_token, oauth_access_token_secret, screenName) {
         if(oauth_access_token && oauth_access_token_secret && screenName) {
           callback(oauth_access_token, oauth_access_token_secret, screenName);
         } else {

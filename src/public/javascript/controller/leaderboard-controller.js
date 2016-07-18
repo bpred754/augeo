@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, TwitterClientService) {
+  module.exports = function($scope, UserClientService) {
 
     // Constants
     var USERS_PER_PAGE = 25;
@@ -32,7 +32,7 @@
 
       $scope.currentTwitterSkill = 'Augeo';
 
-      TwitterClientService.getLeaderboardDisplayData (function(data) {
+      UserClientService.getLeaderboardDisplayData (function(data) {
 
         if(data != 'Unauthorized') {
 
@@ -40,7 +40,7 @@
           $scope.twitterSkills = data.skills;
           $scope.lastPage = Math.ceil(data.numberUsers / USERS_PER_PAGE);
 
-          TwitterClientService.getCompetitors($scope.searchName, $scope.currentTwitterSkill, function (inUsers) {
+          UserClientService.getCompetitors($scope.searchName, $scope.currentTwitterSkill, function (inUsers) {
             $scope.isLoaded = true;
             $scope.currentPage = Math.ceil(inUsers[0].rank / USERS_PER_PAGE);
             $scope.users = inUsers;
@@ -53,7 +53,7 @@
     $scope.getCompetitors= function() {
 
       if($scope.searchName.length > 0) {
-        TwitterClientService.getCompetitors($scope.searchName, $scope.currentTwitterSkill, function (inUsers) {
+        UserClientService.getCompetitors($scope.searchName, $scope.currentTwitterSkill, function (inUsers) {
           setUsers(inUsers);
 
           // Get rank of first user in page
@@ -69,7 +69,7 @@
         var startRank = 0;
         var endRank = USERS_PER_PAGE - 1;
 
-        TwitterClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
+        UserClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
           setUsers(inUsers);
           $scope.currentPage = 1;
         });
@@ -96,7 +96,7 @@
         var startRank = $scope.users[index].rank+1;
         var endRank = startRank + USERS_PER_PAGE-1;
 
-        TwitterClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
+        UserClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
           setUsers(inUsers);
         });
       }
@@ -110,7 +110,7 @@
         var startRank = (pageNumber-1) * USERS_PER_PAGE + 1;
         var endRank = startRank + USERS_PER_PAGE - 1;
 
-        TwitterClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
+        UserClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
           setUsers(inUsers);
           $scope.currentPage = pageNumber;
         });
@@ -129,7 +129,7 @@
 
         var startRank = endRank - USERS_PER_PAGE + 1;
 
-        TwitterClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
+        UserClientService.getCompetitorsWithRank(startRank, endRank, $scope.currentTwitterSkill, function(inUsers) {
           setUsers(inUsers);
         });
       }

@@ -26,9 +26,10 @@
   var UserRouter = require('express').Router();
 
   // Required local modules
+  var AugeoUtility = require('../utility/augeo-utility');
+  var AugeoValidator = require('../validator/augeo-validator');
   var EmailProvider = require('../module/email-provider');
   var Logger = require('../module/logger');
-  var SessionValidator = require('../validator/session-validator');
   var UserService = require('../service/user-service');
 
   // Global variables
@@ -37,6 +38,43 @@
   /***************************************************************************/
   /* GET Requests                                                            */
   /***************************************************************************/
+
+  UserRouter.get('/getActivityDisplayData', function(request, response) {
+    var isValid = false;
+
+    var jsonResponse = {};
+    if(AugeoValidator.isSessionValid(request)) {
+      isValid = true;
+      jsonResponse.skills = AugeoUtility.SUB_SKILLS;
+    }
+
+    if(isValid == false) {
+      response.sendStatus(401);
+    } else {
+      response.status(200).send(jsonResponse);
+    }
+  });
+
+  UserRouter.get('/getCompetitors', function(request, response) {
+    var username = request.query.username;
+    var startRank = request.query.startRank;
+    var endRank = request.query.endRank;
+    var skill = request.query.skill;
+
+    var rollback = function() {
+      response.sendStatus(404);
+    };
+
+    if(username) {
+      UserService.getCompetitors(username, skill, function(users) {
+        response.status(200).json(users);
+      }, rollback);
+    } else {
+      UserService.getCompetitorsWithRank(startRank, endRank, skill, function(users) {
+        response.status(200).json(users);
+      }, rollback)
+    }
+  });
 
   UserRouter.get('/getCurrentUser', function(request, response) {
     log.info('Getting current user from session: ' + request.session.user);
@@ -49,6 +87,27 @@
       });
     } else {
       response.sendStatus(200);
+    }
+  });
+
+  UserRouter.get('/getLeaderboardDisplayData', function(request, response) {
+    var isValid = false;
+
+    // If user exists in session get leaderboard display data
+    var jsonResponse = {};
+    if(AugeoValidator.isSessionValid(request)) {
+      isValid = true;
+
+      UserService.getNumberUsers(function(numUsers) {
+
+        jsonResponse.skills = AugeoUtility.SUB_SKILLS;
+        jsonResponse.numberUsers = numUsers;
+        response.status(200).json(jsonResponse);
+      });
+    }
+
+    if(!isValid) {
+      response.sendStatus(401);
     }
   });
 
@@ -69,7 +128,7 @@
     };
 
     // Make sure user is not logged in
-    if(!SessionValidator.isUserDefined(request)) {
+    if(!AugeoValidator.isSessionValid(request)) {
 
       // Check if email exists
       UserService.doesEmailExist(user.email, function (emailExists) {
@@ -150,7 +209,7 @@
     var rollback = function() {response.status(400).send('Failed to delete user');};
 
     if(request.session.user) {
-      UserService.removeUser(request.session.user.username, request.body.password, function(error, user) {
+      UserService.removeUserWithPassword(request.session.user.username, request.body.password, function(error, user) {
         if(error) {
           response.status(401).send('Incorrect password');
         } else if(user) {

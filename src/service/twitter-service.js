@@ -39,7 +39,6 @@
   require('../model/schema/MENTION');
 
   // Constants
-  var USERS_PER_PAGE = 25;
   var ACTIVITY_PER_PAGE = 20;
 
   // Global variables
@@ -63,7 +62,7 @@
             // Update twitter skill data
             if(actioner) {
               var actionerExperience = getTwitterExperience(tweet, action.actionerScreenName);
-              User.updateTwitterSkillData(actioner._id, actionerExperience, function() {
+              User.updateSkillData(actioner._id, actionerExperience, function() {
                 if(actionee) {
                   updateActionee(actionee, action, tweet, mention, callback);
                 } else {
@@ -97,10 +96,10 @@
     var isMention = true;
     var twitterExperience = calculateTwitterExperience(userMentionTweets, screenName, isMention);
 
-    // Update user's Twitter experience
-    User.updateTwitterSkillData(userId, twitterExperience, function() {
+    // Update user's experience
+    User.updateSkillData(userId, twitterExperience, function() {
       callback();
-    }); // End updateTwitterSkillData
+    }); // End updateSkillData
   };
 
   // Add tweets to the given user
@@ -112,16 +111,16 @@
     // Determine experience from tweets
     var twitterExperience = calculateTwitterExperience(userTweets, screenName);
 
-    // Update user's Twitter experience
-    User.updateTwitterSkillData(userId, twitterExperience, function() {
+    // Update user's experience
+    User.updateSkillData(userId, twitterExperience, function() {
       callback();
-    }); // End updateTwitterSkillData
+    }); // End updateSkillData
   };
 
-  exports.addUserSecretToken = function(session, secretToken, callback, rollback) {
+  exports.addUserSecretToken = function(request, secretToken, callback, rollback) {
 
-    if(TwitterValidator.isSessionValid(session)) {
-      User.addSecretToken(session.user._id, secretToken, function(success) {
+    if(AugeoValidator.isSessionValid(request)) {
+      User.addTwitterSecretToken(request.session.user._id, secretToken, function(success) {
         if(success) {
           callback();
         } else {
@@ -166,7 +165,7 @@
   };
 
   exports.checkExistingAccessToken = function(accessToken, callback, rollback) {
-    User.checkExistingAccessToken(accessToken, function(existingAccessToken) {
+    User.checkExistingTwitterAccessToken(accessToken, function(existingAccessToken) {
 
       if(existingAccessToken != undefined) {
         callback(existingAccessToken);
@@ -186,95 +185,6 @@
 
   exports.getLatestTweetId = function(screenName, callback) {
     Tweet.getLatestTweetId(screenName, callback);
-  };
-
-  exports.getCompetitors = function(username, skill, callback, rollback) {
-
-    if(TwitterValidator.isSkillValid(skill) && AugeoValidator.isUsernameValid(username)) {
-
-      User.doesUsernameExist(username, function(userExists) {
-
-        if(!userExists) {
-          getCompetitorsWithRankPrivate(1, USERS_PER_PAGE, skill, callback);
-        } else {
-
-          // Get users skill rank
-          User.getSkillRank(username, skill, function(rank) {
-
-            // Divisor = Users rank divided by USERS_PER_PAGE.
-            var divisor;
-            if(rank % USERS_PER_PAGE == 0) {
-              divisor = rank/USERS_PER_PAGE -1;
-            } else {
-              divisor = Math.floor(rank/USERS_PER_PAGE);
-            }
-
-            var startRank = divisor * USERS_PER_PAGE + 1;
-            var endRank = (divisor + 1) * USERS_PER_PAGE;
-
-            // Get users with skill rank greater than or equal to 25*Divisor and less than 25*(Divisor+1)
-            getCompetitorsInPage(skill, startRank, endRank, callback);
-          });
-        }
-
-      });
-    } else {
-      rollback();
-    }
-  };
-
-  exports.getCompetitorsWithRank = function(startRank, endRank, skill, callback, rollback) {
-
-    if(AugeoValidator.isNumberValid(startRank) && AugeoValidator.isNumberValid(endRank) && TwitterValidator.isSkillValid(skill)) {
-      getCompetitorsWithRankPrivate(startRank, endRank, skill, callback);
-    } else {
-      rollback();
-    }
-  };
-
-  // Format necessary data to display on users dashboard
-  exports.getDashboardDisplayData = function(username, targetUsername, callback, rollback) {
-
-    var errorImageUrl = 'image/logo.png';
-
-    if(targetUsername && AugeoValidator.isUsernameValid(targetUsername)) {
-      User.doesUsernameExist(targetUsername, function(targetUsernameExists) {
-
-        if(targetUsernameExists) {
-          getDashboardDisplayDataPrivate(targetUsername, callback);
-        } else {
-
-          var errorData = {
-            errorImageUrl: errorImageUrl
-          };
-
-          callback(errorData);
-        }
-      });
-    } else {
-      if(AugeoValidator.isUsernameValid(username)) {
-
-        User.doesUsernameExist(username, function(usernameExists) {
-
-          if(usernameExists) {
-            getDashboardDisplayDataPrivate(username, callback);
-          } else {
-
-            var errorData = {
-              errorImageUrl: errorImageUrl
-            }
-
-            callback(errorData);
-          }
-        });
-      } else {
-        rollback();
-      }
-    }
-  };
-
-  exports.getNumberUsers = function(callback) {
-    User.getNumberUsers(callback);
   };
 
   exports.getQueueData = function(userId, screenName, callback, rollback) {
@@ -322,6 +232,47 @@
     }
   };
 
+  // Format necessary data to display on users dashboard
+  exports.getDashboardDisplayData = function(username, targetUsername, callback, rollback) {
+
+    var errorImageUrl = 'image/logo.png';
+
+    if(targetUsername && AugeoValidator.isUsernameValid(targetUsername)) {
+      User.doesUsernameExist(targetUsername, function(targetUsernameExists) {
+
+        if(targetUsernameExists) {
+          getDashboardDisplayDataPrivate(targetUsername, callback);
+        } else {
+
+          var errorData = {
+            errorImageUrl: errorImageUrl
+          };
+
+          callback(errorData);
+        }
+      });
+    } else {
+      if(AugeoValidator.isUsernameValid(username)) {
+
+        User.doesUsernameExist(username, function(usernameExists) {
+
+          if(usernameExists) {
+            getDashboardDisplayDataPrivate(username, callback);
+          } else {
+
+            var errorData = {
+              errorImageUrl: errorImageUrl
+            }
+
+            callback(errorData);
+          }
+        });
+      } else {
+        rollback();
+      }
+    }
+  };
+
   exports.getSkillActivity = function(username, skill, tweetId, callback, rollback) {
 
     if(AugeoValidator.isUsernameValid(username)) {
@@ -332,7 +283,7 @@
           var screenName = user.twitter.screenName;
           Mention.getMentions(screenName, function (mentionTweetIds) {
 
-            if (TwitterValidator.isSkillValid(skill) && AugeoValidator.isNumberValid(tweetId)) {
+            if (AugeoValidator.isSkillValid(skill) && AugeoValidator.isNumberValid(tweetId)) {
 
               Tweet.getSkillActivity(screenName, mentionTweetIds, skill, ACTIVITY_PER_PAGE, tweetId, function (tweets) {
 
@@ -357,28 +308,17 @@
 
   // Call DB to get all users Twitter Id's
   exports.getUsers = function(callback) {
-    User.getUsers(callback);
+    User.getTwitterUsers(callback);
   };
 
-  exports.getUserSecretToken = function(session, callback, rollback) {
-    if(TwitterValidator.isSessionValid(session)) {
-      User.getTwitterTokens(session.user._id, function(tokens) {
-        if(tokens && tokens.secretToken) {
-          callback(tokens.secretToken);
-        } else {
-          rollback();
-        }
-      });
-    } else {
-      rollback();
-    }
-  }
-
-  // Call DB to remove all users with an undefined Twitter Id
-  exports.removeInvalidUser = function(session, callback) {
-    if(TwitterValidator.isSessionValid(session)) {
-      User.remove(session.user.username, callback);
-    }
+  exports.getUserSecretToken = function(userId, callback, rollback) {
+    User.getTwitterTokens(userId, function(tokens) {
+      if(tokens && tokens.secretToken) {
+        callback(tokens.secretToken);
+      } else {
+        rollback();
+      }
+    });
   };
 
   // TODO: Complete this
@@ -411,33 +351,9 @@
         User.getUserWithTwitterId(tweetData.user_id_str, function(user) {
 
           // Update users experience
-          User.updateTwitterSkillData(user._id, experience, function() {
+          User.updateSkillData(user._id, experience, function() {
             callback(classification);
           });
-        });
-      });
-    });
-  };
-
-  // Call DB to set user's member flag to true
-  exports.setMember = function(userId, callback) {
-    User.setMember(userId, callback);
-  };
-
-  exports.updateSubSkillRanks = function(subSkill, callback) {
-
-    // Get the number of users
-    User.getNumberUsers(function(numUsers) {
-      var rank = 0;
-      User.getSubSkillRanks(subSkill, function(docs) {
-        docs.forEach(function(p){
-          rank +=1;
-          p.subSkills[0].rank = rank;
-          if (numUsers == rank) {
-            User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill), callback);
-          } else {
-            User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill));
-          }
         });
       });
     });
@@ -453,26 +369,6 @@
       rollback();
     }
   };
-
-  exports.updateTwitterRanks = function(callback) {
-
-    // Get the number of users to know when saves are complete
-    User.getNumberUsers(function(numUsers) {
-      var rank = 0;
-      User.getTwitterRanks(function(docs) {
-        docs.forEach(function(p){
-          rank +=1;
-          p.skill.rank = rank;
-
-          if(rank == numUsers) {
-            User.saveDocument(p,callback);
-          } else {
-            User.saveDocument(p);
-          }
-        });
-      });
-    });
-  }
 
   /***************************************************************************/
   /* Private Functions                                                       */
@@ -507,57 +403,6 @@
     }
 
     return experience;
-  };
-
-  var getCompetitorsInPage = function(skill, startRank, endRank, callback) {
-
-    User.getCompetitorsInPage(skill, startRank, endRank, function(competitors) {
-      var users = new Array();
-      for(var i = 0; i < competitors.length; i++) {
-
-        var competitor;
-        if(skill === 'Augeo') {
-          competitor = competitors[i].skill;
-        } else {
-          competitor = competitors[i].subSkills[0];
-        }
-
-        var user = {
-          username: competitors[i].username,
-          twitterScreenName: competitors[i].twitter ? competitors[i].twitter.screenName : null,
-          rank: competitor.rank,
-          level: competitor.level,
-          experience: competitor.experience
-        };
-
-        users.push(user);
-      }
-
-      callback(users);
-    });
-  };
-
-  var getCompetitorsWithRankPrivate = function(startRank, endRank, skill, callback) {
-    startRank = parseInt(startRank);
-    var endRank = parseInt(endRank);
-
-    // Get max rank
-    User.getMaxRank(skill, function(maxRank) {
-
-      if(startRank > maxRank) {
-        endRank = startRank-1;
-
-        var divisor = Math.floor(endRank/USERS_PER_PAGE)
-        startRank = divisor*USERS_PER_PAGE+1;
-      }
-
-      if(endRank > maxRank) {
-        endRank = maxRank;
-      }
-
-      getCompetitorsInPage(skill, startRank, endRank, callback);
-
-    });
   };
 
   var getDashboardDisplayDataPrivate = function(username, callback) {
@@ -663,7 +508,7 @@
     // Update actionee's Tweet experience
     Tweet.updateExperience(tweetId, actioneeExperience, function(){});
 
-    User.updateTwitterSkillData(actionee._id, actioneeExperience, function() {
+    User.updateSkillData(actionee._id, actioneeExperience, function() {
       callback(tweet.classification);
     });
   };

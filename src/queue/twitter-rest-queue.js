@@ -34,6 +34,7 @@
   var Logger = require('../module/logger');
   var TwitterInterfaceService = require('../interface-service/twitter-interface-service');
   var TwitterService = require('../service/twitter-service');
+  var UserService = require('../service/user-service');
 
   // Constants
   var CHECK_QUEUE_OPEN_TIMEOUT = 500;
@@ -393,7 +394,7 @@
           self.userMentionTweets = null;
           self.userMentions = null;
 
-          updateRanks(callback);
+          UserService.updateAllRanks(callback);
         });
       }
     }, tweetId); // End getTweets
@@ -476,7 +477,7 @@
           self.tweetMessenger = null;
           self.userTweets = null;
 
-          updateRanks(callback);
+          UserService.updateAllRanks(callback);
         });
       }
     }, tweetId); // End getTweets
@@ -510,27 +511,6 @@
     setTimeout(function() {
       self.tweetRequestOpen = true;
     }, TWEET_TIMEOUT);
-  };
-
-  var updateRanks = function(callback) {
-
-    TwitterService.updateTwitterRanks(function() {
-
-      var subSkills = AugeoUtility.SUB_SKILLS;
-
-      // Recursively set sub skill ranks
-      (function updateRanksClojure(i) {
-        TwitterService.updateSubSkillRanks(subSkills[i].name,function() {
-          i++;
-          if(i < subSkills.length) {
-            updateRanksClojure(i);
-          } else {
-            log.info('Updated Ranks');
-            callback();
-          }
-        });
-      })(0); // End clojure
-    }); // End updateTwitterRanks
   };
 
   module.exports = TwitterRestQueue;

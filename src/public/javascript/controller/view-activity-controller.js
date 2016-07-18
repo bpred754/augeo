@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($rootScope, $scope, $stateParams, $window, TwitterClientService) {
+  module.exports = function($rootScope, $scope, $stateParams, $window, TwitterClientService, UserClientService) {
 
     /***************************************************************************/
     /* Private functions                                                       */
@@ -63,7 +63,7 @@
       $scope.$digest();
     });
 
-    TwitterClientService.getActivityDisplayData(function(data) {
+    UserClientService.getActivityDisplayData(function(data) {
 
       if(data != 'Unauthorized') {
 

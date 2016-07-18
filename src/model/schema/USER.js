@@ -24,7 +24,6 @@
 
   // Required libraries
   var Mongoose = require('mongoose');
-  var Schema = Mongoose.Schema;
 
   // Required local modules
   var AugeoDB = require('../database');
@@ -119,8 +118,8 @@
     });
   };
 
-  USER.statics.addSecretToken = function(id, secretToken, callback) {
-    return this.findOne({_id:id}, function(error, doc) {
+  USER.statics.addTwitterSecretToken = function(id, secretToken, callback) {
+    this.findOne({_id:id}, function(error, doc) {
       var success = false;
 
       if(error) {
@@ -144,8 +143,8 @@
     })
   };
 
-  USER.statics.checkExistingAccessToken = function(accessToken, callback) {
-    return this.count({'twitter.accessToken':accessToken}, function(error, count) {
+  USER.statics.checkExistingTwitterAccessToken = function(accessToken, callback) {
+    this.count({'twitter.accessToken':accessToken}, function(error, count) {
       if(error) {
         log.warn('Failed to find count for access token:' + accessToken + ' from USER collection: ' + error);
         callback();
@@ -179,7 +178,7 @@
 
   USER.statics.doesEmailExist = function(email, callback) {
     var emailExists = false;
-    return this.count({email:{'$regex': email, $options: 'i'}}, function(error, count) {
+    this.count({email:{'$regex': email, $options: 'i'}}, function(error, count) {
       if(error) {
         log.warn('Failed to find count for ' + email + ' from USER collection: ' + error);
       } else {
@@ -208,7 +207,7 @@
   };
 
   USER.statics.getAllUsersTwitterQueueData = function(callback) {
-    return this.find({}, '_id twitter.screenName twitter.accessToken twitter.secretAccessToken', function(error, users) {
+    this.find({}, '_id twitter.screenName twitter.accessToken twitter.secretAccessToken', function(error, users) {
       if(error) {
         log.warn('Failed to retrieve users queue data');
       } else {
@@ -415,7 +414,7 @@
   };
 
   USER.statics.getTwitterTokens = function(id, callback) {
-    return this.findOne({_id:id}, {'twitter.accessToken':1, 'twitter.secretAccessToken':1, 'twitter.secretToken':1}, function(error, data) {
+    this.findOne({_id:id}, {'twitter.accessToken':1, 'twitter.secretAccessToken':1, 'twitter.secretToken':1}, function(error, data) {
       if(error) {
         log.warn('Failed to retrieve users access tokens with id:' + id + '. ' + error);
         callback();
@@ -436,19 +435,19 @@
     });
   };
 
-  USER.statics.getTwitterRanks = function(callback) {
-    return this.find({}, '', {sort: {'skill.experience':-1}}, function(error, docs) {
+  USER.statics.getRanks = function(callback) {
+    this.find({}, '', {sort: {'skill.experience':-1}}, function(error, docs) {
       if(error) {
-        log.warn('Failed to update Twitter Ranks. Error:' + error);
+        log.warn('Failed to get ranks. Error:' + error);
       } else {
-        log.info('Successfully updated Twitter Ranks');
+        log.info('Successfully retrieved ranks');
         callback(docs);
       }
     });
   }
-
-  USER.statics.getUsers = function(callback) {
-    return this.find({}, 'twitter.twitterId', function(error, users) {
+  
+  USER.statics.getTwitterUsers = function(callback) {
+    this.find({}, 'twitter.twitterId', function(error, users) {
       if(error) {
         log.warn('Failed to retrieve users.');
       } else {
@@ -459,7 +458,7 @@
   };
 
   USER.statics.getUserWithEmail = function(email, callback) {
-    return this.findOne({email:{'$regex': email, $options: 'i'}}, clientSafeProjection, function(error, user) {
+    this.findOne({email:{'$regex': email, $options: 'i'}}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + email + ' from USER collection: ' + error);
       } else {
@@ -470,7 +469,7 @@
   };
 
   USER.statics.getUserWithId = function(id, callback) {
-    return this.findOne({_id:id}, clientSafeProjection, function(error, user) {
+    this.findOne({_id:id}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + id + ' from USER collection: ' + error);
       } else {
@@ -481,7 +480,7 @@
   };
 
   USER.statics.getUserWithScreenName = function(screenName, callback) {
-    return this.findOne({'twitter.screenName':screenName}, clientSafeProjection, function(error, user) {
+    this.findOne({'twitter.screenName':screenName}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + screenName + ' from USER collection: ' + error);
       } else {
@@ -492,7 +491,7 @@
   };
 
   USER.statics.getUserWithTwitterId = function(twitterId, callback) {
-    return this.findOne({'twitter.twitterId':twitterId}, clientSafeProjection, function(error, user) {
+    this.findOne({'twitter.twitterId':twitterId}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + twitterId + ' from USER collection: ' + error);
       } else {
@@ -503,7 +502,7 @@
   };
 
   USER.statics.getUserWithUsername = function(username, callback) {
-    return this.findOne({'username':{'$regex': username, $options: 'i'}}, clientSafeProjection, function(error, user) {
+    this.findOne({'username':{'$regex': username, $options: 'i'}}, clientSafeProjection, function(error, user) {
       if(error) {
         log.warn('Failed to retrieve ' + username + ' from USER collection: ' + error);
       } else {
@@ -551,7 +550,7 @@
 
     var options = {multi:false};
 
-    return this.update(query, update, options, function(error, n) {
+    this.update(query, update, options, function(error, n) {
       if(error) {
         log.warn('Failed to update profile data: ' + error);
         callback(false);
@@ -601,7 +600,7 @@
 
     var options = {multi:false};
 
-    return this.update(query, update, options, function(error, n) {
+    this.update(query, update, options, function(error, n) {
       if(error) {
         log.warn('Failed to update Twitter data in USER collection: ' + error);
       } else {
@@ -611,14 +610,14 @@
     });
   };
 
-  USER.statics.updateTwitterSkillData = function(id, experience, callback) {
+  USER.statics.updateSkillData = function(id, experience, callback) {
     var collection = this;
-    return this.findOne({_id:id}, function(error, doc) {
+    this.findOne({_id:id}, function(error, doc) {
 
       if(error) {
-        log.warn('Failed to find user in USER collection to update Twitter experience: ' + error);
+        log.warn('Failed to find user in USER collection to update experience: ' + error);
       } else {
-        log.info('Successfully found user with id:' + id + ' to update Twitter experience .');
+        log.info('Successfully found user with id:' + id + ' to update experience .');
 
         doc.skill.experience += experience.mainSkillExperience;
         doc.skill.level = AugeoUtility.calculateLevel(doc.skill.experience);
@@ -628,9 +627,9 @@
         });
         doc.save(function(error) {
           if(error) {
-            log.warn('Failed to save Twitter experience in USER collection: ' + error);
+            log.warn('Failed to save experience in USER collection: ' + error);
           } else {
-            log.info('Sucessfully saved Twitter experience in USER collection');
+            log.info('Successfully saved experience in USER collection');
             callback();
           }
         });

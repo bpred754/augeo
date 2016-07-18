@@ -48,47 +48,17 @@
     /* Service starts                                                          */
     /***************************************************************************/
 
-    this.getActivityDisplayData = function(callback) {
-      var parameters = null;
-      AugeoClientService.getAugeoAPI('twitter-api/getActivityDisplayData', parameters, function(data) {
-          callback(data);
-      });
-    };
-
     this.getAuthenticationData = function(callback) {
       var parameters = null;
-      AugeoClientService.getAugeoAPI('twitter-api/getAuthenticationData', parameters, function(data, status) {
+      AugeoClientService.getAugeoApi('twitter-api/getAuthenticationData', parameters, function(data, status) {
         callback(data, status);
-      });
-    };
-
-    this.getCompetitors = function(username, skill, callback) {
-      var parameters = {
-        username: username,
-        skill: skill
-      };
-
-      AugeoClientService.getAugeoAPI('twitter-api/getCompetitors', parameters, function(data) {
-        callback(data);
-      });
-    };
-
-    this.getCompetitorsWithRank = function(startRank, endRank, skill, callback) {
-      var parameters = {
-        startRank: startRank,
-        endRank: endRank,
-        skill: skill
-      };
-
-      AugeoClientService.getAugeoAPI('twitter-api/getCompetitors', parameters, function(data) {
-        callback(data);
       });
     };
 
     this.getDashboardDisplayData = function(username, callback) {
       var parameters = {username:username};
-      AugeoClientService.getAugeoAPI('twitter-api/getDashboardDisplayData', parameters, function(data) {
-          callback(data);
+      AugeoClientService.getAugeoApi('twitter-api/getDashboardDisplayData', parameters, function(data) {
+        callback(data);
       });
     };
 
@@ -98,14 +68,14 @@
         skill:skill,
         tweetId: id
       };
-      AugeoClientService.getAugeoAPI('twitter-api/getSkillActivity', parameters, function(data) {
+      AugeoClientService.getAugeoApi('twitter-api/getSkillActivity', parameters, function(data) {
         callback(data);
       });
     };
 
     this.getTwitterHistoryPageData = function(callback) {
       var parameters = null;
-      AugeoClientService.getAugeoAPI('twitter-api/getTwitterHistoryPageData', parameters, function(data) {
+      AugeoClientService.getAugeoApi('twitter-api/getTwitterHistoryPageData', parameters, function(data) {
 
         if(data.tweetWaitTime != -1) {
           data.tweetWaitTime = formatTime(data.tweetWaitTime);
@@ -115,13 +85,6 @@
           data.mentionWaitTime = formatTime(data.mentionWaitTime);
         }
 
-        callback(data);
-      });
-    };
-
-    this.getLeaderboardDisplayData = function(callback) {
-      var parameters = null;
-      AugeoClientService.getAugeoAPI('twitter-api/getLeaderboardDisplayData', parameters, function(data) {
         callback(data);
       });
     };

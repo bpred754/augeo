@@ -26,13 +26,13 @@
   var TwitterRouter = require('express').Router();
 
   // Required local modules
-  var AugeoUtility = require('../utility/augeo-utility');
   var Logger = require('../module/logger');
-  var SessionValidator = require('../validator/session-validator');
+  var AugeoValidator = require('../validator/augeo-validator');
   var TwitterInterfaceService = require('../interface-service/twitter-interface-service');
   var TwitterRestQueue = require('../queue/twitter-rest-queue');
   var TwitterService = require('../service/twitter-service');
   var TwitterStreamQueue = require('../queue/twitter-stream-queue');
+  var UserService = require('../service/user-service');
 
   // Global variables
   var log = new Logger();
@@ -46,40 +46,39 @@
   TwitterRouter.get('/callback', function(request, response) {
     log.info('Creating Augeo user with Twitter data');
 
-    var session = request.session;
-
     var rollback = function() {
       response.redirect(301, process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
     };
 
-    // Get user's oauth secret token
-    TwitterService.getUserSecretToken(session, function(oauthSecretToken) {
+    if(AugeoValidator.isSessionValid(request)) {
+      var userId = request.session.user._id;
 
-      TwitterInterfaceService.getOAuthAccessToken(request, oauthSecretToken, function(oauth_access_token, oauth_access_token_secret, screenName) {
+      // Get user's oauth secret token
+      TwitterService.getUserSecretToken(userId, function (oauthSecretToken) {
 
-        // Check if access token exists
-        TwitterService.checkExistingAccessToken(oauth_access_token, function(accessTokenExists) {
+        TwitterInterfaceService.getOAuthAccessToken(request.query, oauthSecretToken, function (oauth_access_token, oauth_access_token_secret, screenName) {
 
-          if(accessTokenExists === false) {
+          // Check if access token exists
+          TwitterService.checkExistingAccessToken(oauth_access_token, function (accessTokenExists) {
 
-            // Initialize twitterMessenger
-            var twitterMessenger = TwitterInterfaceService.createTwitterMessenger(oauth_access_token, oauth_access_token_secret);
+            if (accessTokenExists === false) {
 
-            // Get user's Twitter information
-            TwitterInterfaceService.getTwitterUser(twitterMessenger, screenName, function(userData) {
+              // Initialize twitterMessenger
+              var twitterMessenger = TwitterInterfaceService.createTwitterMessenger(oauth_access_token, oauth_access_token_secret);
 
-              userData.accessToken = oauth_access_token;
-              userData.secretAccessToken = oauth_access_token_secret;
+              // Get user's Twitter information
+              TwitterInterfaceService.getTwitterUser(twitterMessenger, screenName, function (userData) {
 
-              if(SessionValidator.isUserDefined(request)) {
+                userData.accessToken = oauth_access_token;
+                userData.secretAccessToken = oauth_access_token_secret;
 
                 // Update user's Twitter information
-                TwitterService.updateTwitterInfo(request.session.user._id, userData, function() {
+                TwitterService.updateTwitterInfo(userId, userData, function () {
 
                   // Get queue data from user information
-                  TwitterService.getQueueData(request.session.user._id, screenName, function(queueData) {
+                  TwitterService.getQueueData(userId, screenName, function (queueData) {
 
-                    if(process.env.TEST != 'true') {
+                    if (process.env.TEST != 'true') {
 
                       // Place user on tweet queue
                       restQueue.addUserToTweetQueue(queueData.tweetQueueData);
@@ -87,10 +86,10 @@
                       // Place user on mention queue
                       restQueue.addUserToMentionQueue(queueData.mentionQueueData);
 
-                      if(process.env.ENV != 'local') {
+                      if (process.env.ENV != 'local') {
 
                         // Connect to Twitter
-                        TwitterService.connectToTwitter(restQueue, streamQueue, function() {});
+                        TwitterService.connectToTwitter(restQueue, streamQueue, function () {});
                       }
                     }
 
@@ -102,70 +101,34 @@
                     response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
                   }, rollback);
                 }, rollback); // End updateTwitterInfo
-              } else {
-                rollback();
-              }
-            }, rollback); // End getTwitterUser
-          } else { // end accessTokenExists
-            rollback();
-          }
-        }, rollback); // End checkExistingAccessToken
+
+              }, rollback); // End getTwitterUser
+            } else { // end accessTokenExists
+              rollback();
+            }
+          }, rollback); // End checkExistingAccessToken
+        }, rollback);
       }, rollback);
-    }, rollback);
-  });
-
-  TwitterRouter.get('/getActivityDisplayData', function(request, response) {
-    var isValid = false;
-
-    var jsonResponse = {};
-    if(SessionValidator.isUsernameDefined(request)) {
-      isValid = true;
-      jsonResponse.skills = AugeoUtility.SUB_SKILLS;
-    }
-
-    if(isValid == false) {
-      response.sendStatus(401);
     } else {
-      response.status(200).send(jsonResponse);
+      rollback();
     }
   });
 
   TwitterRouter.get('/getAuthenticationData', function(request, response) {
 
-    var session = request.session;
-
     var rollback = function() {
-      TwitterService.removeInvalidUser(session, function(){}); // Remove user from DB
-      request.session.destroy(); // Destroy the session
+      if(AugeoValidator.isSessionValid(request)) {
+        UserService.removeUser(request.session.user.username, function(){}); // Remove user from DB
+        request.session.destroy(); // Destroy the session
+      }
       response.status(401).send('Signup Failed. Please try again.');
     };
 
     TwitterInterfaceService.getOAuthRequestToken(function(oauthToken, oauthTokenSecret) {
-      TwitterService.addUserSecretToken(request.session, oauthTokenSecret, function() {
+      TwitterService.addUserSecretToken(request, oauthTokenSecret, function() {
         response.status(200).send({token:oauthToken});
       }, rollback);
     }, rollback);
-  });
-
-  TwitterRouter.get('/getCompetitors', function(request, response) {
-    var username = request.query.username;
-    var startRank = request.query.startRank;
-    var endRank = request.query.endRank;
-    var skill = request.query.skill;
-
-    var rollback = function() {
-      response.sendStatus(404);
-    };
-
-    if(username) {
-      TwitterService.getCompetitors(username, skill, function(users) {
-        response.status(200).json(users);
-      }, rollback);
-    } else {
-      TwitterService.getCompetitorsWithRank(startRank, endRank, skill, function(users) {
-        response.status(200).json(users);
-      }, rollback)
-    }
   });
 
   TwitterRouter.get('/getDashboardDisplayData', function(request, response) {
@@ -180,7 +143,7 @@
     if(inUsername) {
       targetUsername = inUsername
     }
-    if (SessionValidator.isUsernameDefined(request)) { // If user exists in session get dashboard data
+    if (AugeoValidator.isSessionValid(request)) { // If user exists in session get dashboard data
       username = request.session.user.username;
 
       TwitterService.getDashboardDisplayData(username, targetUsername, function(displayData) {
@@ -193,27 +156,6 @@
       }, rollback);
     } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
       rollback();
-    }
-  });
-
-  TwitterRouter.get('/getLeaderboardDisplayData', function(request, response) {
-    var isValid = false;
-
-    // If user exists in session get leaderboard display data
-    var jsonResponse = {};
-    if(SessionValidator.isUsernameDefined(request)) {
-      isValid = true;
-
-      TwitterService.getNumberUsers(function(numUsers) {
-
-        jsonResponse.skills = AugeoUtility.SUB_SKILLS;
-        jsonResponse.numberUsers = numUsers;
-        response.status(200).json(jsonResponse);
-      });
-    }
-
-    if(!isValid) {
-      response.sendStatus(401);
     }
   });
 
@@ -238,7 +180,7 @@
     };
 
     // If user exists in session get profile data
-    if(SessionValidator.isUserDefined(request)) {
+    if(AugeoValidator.isSessionValid(request)) {
       var userId = request.session.user._id;
 
       var pageData = {

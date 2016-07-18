@@ -20,7 +20,7 @@
 
   /***************************************************************************/
   /* Description: Unit test cases for api/twitter-api                        */
-  /*              'getDashboardDisplayData' requests                           */
+  /*              'getDashboardDisplayData' requests                         */
   /***************************************************************************/
 
   // Required libraries

@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Binds data to dashboard.html                                 */
+  /* Description: Binds data to dashboard.html                               */
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified

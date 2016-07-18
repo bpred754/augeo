@@ -63,7 +63,7 @@
     });
   });
 
-  describe('Queues', function() {
+  describe('Queue', function() {
 
     // Add Twitter users to database
     beforeEach(function(done) {
@@ -87,6 +87,9 @@
 
   describe('User API', function() {
     importTests('Add User', './test-case/api/user-api/add-user');
+    importTests('getActivityDisplayData', './test-case/api/user-api/get-activity-display-data', App);
+    importTests('getCompetitors', './test-case/api/user-api/get-competitors', App);
+    importTests('getLeaderboardDisplayData', './test-case/api/user-api/get-leaderboard-display-data', App);
     importTests('Login', './test-case/api/user-api/login');
     importTests('Session', './test-case/api/user-api/session');
     importTests('Remove User', './test-case/api/user-api/remove-user', App);
@@ -96,10 +99,7 @@
   describe('Twitter API', function() {
     importTests('getAuthenticationData', './test-case/api/twitter-api/get-authentication-data', App);
     importTests('callback', './test-case/api/twitter-api/callback', App);
-    importTests('getActivityDisplayData', './test-case/api/twitter-api/get-activity-display-data', App);
-    importTests('getCompetitors', './test-case/api/twitter-api/get-competitors', App);
     importTests('getDashboardDisplayData', './test-case/api/twitter-api/get-dashboard-display-data', App);
-    importTests('getLeaderboardDisplayData', './test-case/api/twitter-api/get-leaderboard-display-data', App);
     importTests('getSkillActivity', './test-case/api/twitter-api/get-skill-activity', App);
     importTests('getTwitterHistoryPageData', './test-case/api/twitter-api/get-twitter-history-page-data', App);
   });

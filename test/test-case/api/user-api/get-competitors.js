@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/twitter-api 'getCompetitors'       */
+  /* Description: Unit test cases for api/user-api 'getCompetitors'          */
   /*              requests                                                   */
   /***************************************************************************/
 
@@ -39,7 +39,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getCompetitors?username=invalidUsername&skill=Augeo')
+        .get('/user-api/getCompetitors?username=invalidUsername&skill=Augeo')
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -52,7 +52,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getCompetitors?username=' + Common.USER.username + '&skill=invalidSkill')
+        .get('/user-api/getCompetitors?username=' + Common.USER.username + '&skill=invalidSkill')
         .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -65,7 +65,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getCompetitors?username=' + Common.USER.username + '&skill=Augeo&startRank=1&endRank=10')
+        .get('/user-api/getCompetitors?username=' + Common.USER.username + '&skill=Augeo&startRank=1&endRank=10')
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -84,7 +84,7 @@
     it('should return status 404 - missing start rank parameter', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
-        .get('/twitter-api/getCompetitors?endRank=2&skill=Augeo')
+        .get('/user-api/getCompetitors?endRank=2&skill=Augeo')
         .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -95,7 +95,7 @@
     it('should return status 404 - missing start rank parameter', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
-        .get('/twitter-api/getCompetitors?startRank=1&skill=Augeo')
+        .get('/user-api/getCompetitors?startRank=1&skill=Augeo')
         .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -106,7 +106,7 @@
     it('should return status 404 - missing skill parameter', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
-        .get('/twitter-api/getCompetitors?startRank=1&endRank=2')
+        .get('/user-api/getCompetitors?startRank=1&endRank=2')
         .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -117,7 +117,7 @@
     it('should return status 200 - valid request with start/end ranks and skill parameters', function(done) {
       this.timeout(Common.TIMEOUT);
       agent
-        .get('/twitter-api/getCompetitors?startRank=1&endRank=1&skill=Augeo')
+        .get('/user-api/getCompetitors?startRank=1&endRank=1&skill=Augeo')
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
