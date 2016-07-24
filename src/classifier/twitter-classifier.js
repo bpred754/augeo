@@ -28,10 +28,15 @@
   /***************************************************************************/
 
   // Required libraries
+  var Logger = require('../module/logger');
   var Natural = require('natural');
+
+  // Constants
+  var CLASSIFIER = 'twitter-classifier';
 
   // Global variables
   var classifier = null;
+  var log = new Logger();
 
   // Constructor
   function TwitterClassifier() {
@@ -45,15 +50,19 @@
     return TwitterClassifier.classifier;
   };
 
-  TwitterClassifier.prototype.classify = function(text) {
+  TwitterClassifier.prototype.classify = function(text, logData) {
+    log.functionCall(CLASSIFIER, 'classify', logData.parentProcess, logData.username, {'text':text});
     return classifier.classify(text);
   };
 
-  TwitterClassifier.prototype.getClassifications = function(text) {
+  TwitterClassifier.prototype.getClassifications = function(text, logData) {
+    log.functionCall(CLASSIFIER, 'getClassifications', logData.parentProcess, logData.username, {'text':text});
     return classifier.getClassifications(text);
   };
 
   TwitterClassifier.prototype.init = function init() {
+    log.functionCall(CLASSIFIER, 'init');
+
     classifier = new Natural.BayesClassifier();
 
     // Add documents to the classifier

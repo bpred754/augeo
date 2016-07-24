@@ -22,15 +22,23 @@
   /* Description: Augeo utility functions                                    */
   /***************************************************************************/
 
+  // Required local modules
+  var Logger = require('../module/logger');
+
   // Constants
   var LEVEL_MULTIPLIER = 30;
+  var UTILITY = 'augeo-utility';
+
+  // Global variables
+  var log = new Logger();
 
   exports.SUB_SKILLS = [{name:"Books", glyphicon:"glyphicon-book"}, {name:"Business", glyphicon:"glyphicon-briefcase"}, {name:"Film", glyphicon:"glyphicon-film"},
     {name:"Food & Drink", glyphicon:"glyphicon-cutlery"}, {name:"General", glyphicon:"glyphicon-globe"}, {name:"Music", glyphicon:"glyphicon-headphones"},
     {name:"Photography", glyphicon:"glyphicon-camera"}, {name:"Sports", glyphicon:"glyphicon-bullhorn"}, {name:"Technology", glyphicon:"glyphicon-phone"}];
 
   // Calculate level depending on the amount of experience
-  exports.calculateLevel = function(experience) {
+  exports.calculateLevel = function(experience, logData) {
+    log.functionCall(UTILITY, 'calculateLevel', logData.parentProcess, logData.username, {'experience':experience});
 
     var level = 1;
     if(typeof experience === 'number' && experience > 0) {
@@ -47,16 +55,17 @@
   }
 
   // Calculate the progress of a level
-  exports.calculateLevelProgress = function(level, experience) {
+  exports.calculateLevelProgress = function(level, experience, logData) {
+    log.functionCall(UTILITY, 'calculateLevelProgress', logData.parentProcess, logData.username, {'level':level,'experience':experience});
 
     level = typeof level !== 'number' ? 1 : level;
     level = level < 1 ? 1 : level;
 
     var levelProgress = 0;
     if(typeof experience == 'number' && experience > 0) {
-      var startExperience = exports.getLevelStartExperience(level);
+      var startExperience = exports.getLevelStartExperience(level, logData);
       var relativeExperience = experience - startExperience;
-      var endExperience = exports.getLevelEndExperience(level);
+      var endExperience = exports.getLevelEndExperience(level, logData);
       var difference = endExperience - startExperience;
       levelProgress = Math.floor((relativeExperience/difference)*100)/100;
     }
@@ -65,7 +74,8 @@
   };
 
   // Create user's sub skills given the sub skills experience
-  exports.createSubSkills = function(skillsExperience) {
+  exports.createSubSkills = function(skillsExperience, logData) {
+    log.functionCall(UTILITY, 'createSubSkills', logData.parentProcess, logData.username, {'skillsExperience':(skillsExperience)?'defined':'invalid'});
 
     var updatedSkillsArray = new Array();
 
@@ -83,7 +93,7 @@
         name: skillName,
         glyphicon: skill.glyphicon,
         experience: experience,
-        level: exports.calculateLevel(experience),
+        level: exports.calculateLevel(experience, logData),
         rank:0
       };
 
@@ -93,8 +103,16 @@
     return updatedSkillsArray;
   };
 
+  exports.formatLogData = function(parentProcess, username) {
+    return {
+      'parentProcess': parentProcess,
+      'username': username
+    };
+  };
+
   // Return the glyphicon for the given skill
-  exports.getGlyphicon = function(name) {
+  exports.getGlyphicon = function(name, logData) {
+    log.functionCall(UTILITY, 'getGlyphicon', logData.parentProcess, logData.username, {'name':name});
     var glyphicon = '';
     for(var i = 0; i < exports.SUB_SKILLS.length; i++) {
       if(exports.SUB_SKILLS[i].name === name) {
@@ -106,7 +124,8 @@
   };
 
   // Get the end experience of the given level
-  exports.getLevelEndExperience = function(level) {
+  exports.getLevelEndExperience = function(level, logData) {
+    log.functionCall(UTILITY, 'getLevelEndExperience', logData.parentProcess, logData.username, {'level':level});
     var endExperience = 0;
     if(typeof level === 'number' && level > 0) {
       endExperience = (LEVEL_MULTIPLIER*(level))*((level)+1);
@@ -115,7 +134,8 @@
   };
 
   // Get the start experience of the given level
-  exports.getLevelStartExperience = function(level) {
+  exports.getLevelStartExperience = function(level, logData) {
+    log.functionCall(UTILITY, 'getLevelStartExperience', logData.parentProcess, logData.username, {'level':level});
     var startExperience = 0;
     if(typeof level === 'number' && level > 0) {
       startExperience = (LEVEL_MULTIPLIER*(level-1))*((level-1)+1);
@@ -124,17 +144,19 @@
   };
 
   // Get the main skill display data
-  exports.getMainSkill = function(experience) {
+  exports.getMainSkill = function(experience, logData) {
+    log.functionCall(UTILITY, 'getMainSkill', logData.parentProcess, logData.username, {'experience':experience});
     return {
       imageSrc: 'image/augeo-logo-medium.png',
-      level: exports.calculateLevel(experience),
+      level: exports.calculateLevel(experience, logData),
       experience: experience,
       rank: 0
     };
   };
 
   // Get the index of the skill given the skill name
-  exports.getSkillIndex = function(skill) {
+  exports.getSkillIndex = function(skill, logData) {
+    log.functionCall(UTILITY, 'getSkillIndex', logData.parentProcess, logData.username, {'skill':skill});
     var index = -1;
     for(var i = 0; i < exports.SUB_SKILLS.length; i++) {
       if(exports.SUB_SKILLS[i].name === skill) {
@@ -145,7 +167,8 @@
   };
 
   // Return an array with all subSkills set to 0
-  exports.initializeSubSkillsExperienceArray = function(subSkills) {
+  exports.initializeSubSkillsExperienceArray = function(subSkills, logData) {
+    log.functionCall(UTILITY, 'initializeSubSkillsExperienceArray', logData.parentProcess, logData.username, {'subSkills':(subSkills)?'defined':'invalid'});
 
     var subSkillsExperience = {};
 
@@ -159,7 +182,8 @@
   };
 
   // Remove first element from array
-  exports.trimArray = function(array) {
+  exports.trimArray = function(array, logData) {
+    log.functionCall(UTILITY, 'trimArray', logData.parentProcess, logData.username, {'array':(array)?'defined':'invalid'});
 
     var trimmedArray = new Array();
 

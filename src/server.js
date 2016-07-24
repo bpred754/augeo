@@ -38,6 +38,7 @@
 
   // Required local modules
   var AugeoApi = require('./api/augeo-api');
+  var AugeoUtility = require('./utility/augeo-utility');
   var TwitterRestQueue = require('./queue/twitter-rest-queue');
   var TwitterService = require('./service/twitter-service');
   var TwitterStreamQueue = require('./queue/twitter-stream-queue');
@@ -88,7 +89,8 @@
 
   // Connect to Twitter if not in local environment
   if(process.env.ENV != 'local') {
-    TwitterService.connectToTwitter(twitterRestQueue, streamQueue, function(){});
+    var logData = AugeoUtility.formatLogData('System');
+    TwitterService.connectToTwitter(twitterRestQueue, streamQueue, logData, function(){});
   }
 
   module.exports = app;

@@ -30,6 +30,9 @@
   var AugeoDB = require('../database');
   var Logger = require('../../module/logger');
 
+  // Constants
+  var COLLECTION = 'mention-collection';
+
   // Global variables
   var log = new Logger();
 
@@ -43,40 +46,44 @@
   /* Static Methods: Accessible at Model level                               */
   /***************************************************************************/
 
-  MENTION.statics.addMention = function(mention, callback) {
+  MENTION.statics.addMention = function(mention, logData, callback) {
 
-    // Add mention if it doesn's exist and update if it does
-    upsertMention(this, mention, callback);
+    // Add mention if it doesn't exist and update if it does
+    upsertMention(this, mention, logData, callback);
   };
 
-  MENTION.statics.addMentions = function(mentions, callback) {
+  MENTION.statics.addMentions = function(mentions, logData, callback) {
 
     // Add mentions if they don't exist and update when they do exist
-    upsertMentions(this, mentions, callback);
+    upsertMentions(this, mentions, logData, callback);
   };
 
-  MENTION.statics.findMention = function(mentioneeScreenName, tweetId, callback) {
+  MENTION.statics.findMention = function(mentioneeScreenName, tweetId, logData, callback) {
     this.find({ $and : [{mentioneeScreenName:mentioneeScreenName}, {tweetId:tweetId}]}, function(error, mention) {
       if(error) {
-        log.warn('Failed to find mention for mentioneeScreenName: ' + mentioneeScreenName + ' and tweetId: ' + tweetId + '. ' + error);
+        log.functionError(COLLECTION, 'findMention', logData.parentProcess, logData.username,
+          'Failed to find mention for mentioneeScreenName: ' + mentioneeScreenName + ' and tweetId: ' + tweetId + '. Error: ' + error);
       } else {
-        log.info('Successfully found mention for mentioneeScreenName: ' + mentioneeScreenName + ' and tweetId: ' + tweetId);
+        log.functionCall(COLLECTION, 'findMention', logData.parentProcess, logData.username, {'mentioneeScreenName':mentioneeScreenName,
+          'tweetId':tweetId});
         callback(mention);
       }
     });
   }
 
-  MENTION.statics.getLatestMentionTweetId = function(screenName, callback) {
+  MENTION.statics.getLatestMentionTweetId = function(screenName, logData, callback) {
     this.find({mentioneeScreenName:screenName},{},{sort:{'tweetId':-1},limit:1}).lean().exec(function(error, data) {
 
       if(error) {
-        log.warn('Failed to find tweet with max mention tweetId for user:' + screenName + '. error: ' + error);
+        log.functionError(COLLECTION, 'getLatestMentionTweetId', logData.parentProcess, logData.username,
+          'Failed to find tweet with max mention tweetId for user:' + screenName + '. Error: ' + error);
       } else {
-        log.info('Successfully found tweet with max mention tweetId for user: ' + screenName);
+        log.functionCall(COLLECTION, 'getLatestMentionTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
 
         var latestTweetId;
         if(data[0]) {
-          log.info('Latest Mention TweetId: ' + data[0].tweetId);
+          log.functionCall(COLLECTION, 'getLatestMentionTweetId', logData.parentProcess, logData.username, {'screenName':screenName},
+            'Latest Mention TweetId: ' + data[0].tweetId);
           latestTweetId = data[0].tweetId;
         }
         callback(latestTweetId);
@@ -84,34 +91,37 @@
     });
   };
 
-  MENTION.statics.getMention = function(tweetId, callback) {
-    return this.find({tweetId:tweetId},{},{}, function(error, mention) {
+  MENTION.statics.getMention = function(tweetId, logData, callback) {
+    this.find({tweetId:tweetId},{},{}, function(error, mention) {
       if(error) {
-        log.warn('Failed to find mention in MENTION collection with tweetID: ' + tweetId);
+        log.functionError(COLLECTION, 'getMention', logData.parentProcess, logData.username,
+          'Failed to find mention with tweetID: ' + tweetId + '. Error: ' + error);
       } else {
-        log.info('Successfully found mention in MENTION collecion with tweetID: ' + tweetId);
+        log.functionCall(COLLECTION, 'getMention', logData.parentProcess, logData.username, {'tweetId':tweetId});
+
         callback(mention);
       }
     });
   };
 
-  MENTION.statics.getMentionCount = function(callback) {
+  MENTION.statics.getMentionCount = function(logData, callback) {
     this.count({}, function(error, count) {
       if(error) {
-        log.warn('Failed to retrieve MENTION count. ' + error);
+        log.functionError(COLLECTION, 'getMentionCount', logData.parentProcess, logData.username, 'Failed to retrieve MENTION count. ' + error);
       } else {
-        log.info('Successfully found MENTION count: ' + count);
+        log.functionCall(COLLECTION, 'getMentionCount', logData.parentProcess, logData.username);
+
         callback(count);
       }
     })
   };
 
   // Get all the tweetId's for a twitterId
-  MENTION.statics.getMentions = function(screenName, callback) {
+  MENTION.statics.getMentions = function(screenName, logData, callback) {
 
-    return this.find({mentioneeScreenName:screenName}, 'tweetId',function(error, mentions) {
+    this.find({mentioneeScreenName:screenName}, 'tweetId',function(error, mentions) {
       if(error) {
-        log.warn('Failed to retrieve mentions from MENTION collection for screenName:' + screenName + '; ' + error);
+        log.functionError(COLLECTION, 'getMentions', logData.parentProcess, logData.username, 'Failed to retrieve mentions for screenName:' + screenName + '. Error: ' + error);
       } else {
 
         var mentionsArray = new Array(mentions.length);
@@ -119,14 +129,19 @@
           mentionsArray[i] = mentions[i].tweetId;
         }
 
-        log.info('Successfully retrieved mentions from MENTION collection for screenName:' + screenName);
+        log.functionCall(COLLECTION, 'getMentions', logData.parentProcess, logData.username, {'screenName':screenName});
         callback(mentionsArray);
       }
     });
   };
 
-  MENTION.statics.removeMentions = function(mentioneeScreenName, callback) {
-    this.remove({mentioneeScreenName:mentioneeScreenName}, function() {
+  MENTION.statics.removeMentions = function(mentioneeScreenName, logData, callback) {
+    this.remove({mentioneeScreenName:mentioneeScreenName}, function(error) {
+      if(error) {
+        log.functionError(COLLECTION, 'removeMentions', logData.parentProcess, logData.username, 'Failed to remove mentions for screenName:' + mentioneeScreenName + '. Error: ' + error);
+      } else {
+        log.functionCall(COLLECTION, 'removeMentions', logData.parentProcess, logData.username, {'mentioneeScreenName':mentioneeScreenName});
+      }
       callback();
     });
   };
@@ -135,18 +150,20 @@
   /* Private Methods                                                         */
   /***************************************************************************/
 
-  var upsertMention = function(model, mention, callback) {
+  var upsertMention = function(model, mention, logData, callback) {
     model.update({mentioneeScreenName:mention.mentioneeScreenName, tweetId:mention.tweetId}, mention, {upsert:true}, function(error, numAffected) {
       if (error) {
-        log.warn('Failed to upsert documents into MENTION collection: ' + error);
+        log.functionError(COLLECTION, 'upsertMention (private)', logData.parentProcess, logData.username,'Failed to upsert mentions. Error: ' + error);
       } else {
-        log.info('Successfully upserted mention with tweetID: ' + mention.tweetId + ' to the MENTION collection');
+        log.functionCall(COLLECTION, 'upsertMention (private)', logData.parentProcess, logData.username,
+          {'mention.tweetId':(mention)?mention.tweetId:'invalid'});
+
         callback(numAffected);
       }
     });
   };
 
-  var upsertMentions = function (model, mentions, callback) {
+  var upsertMentions = function (model, mentions, logData, callback) {
     var inserted = 0;
     var upsertCallback = function(){};
     for(var i = 0; i < mentions.length; i++) {
@@ -154,7 +171,7 @@
       if (++inserted == mentions.length) {
         upsertCallback = callback;
       }
-      upsertMention(model, mentions[i], upsertCallback);
+      upsertMention(model, mentions[i], logData, upsertCallback);
     }
   };
 

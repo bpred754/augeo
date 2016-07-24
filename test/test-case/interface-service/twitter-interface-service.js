@@ -34,7 +34,7 @@
 
   it('should extract and return relevant action information from a raw tweet -- extractAction()', function(done) {
 
-    var tweetAction = TwitterInterfaceService.extractAction(Common.standardRawTweetCondensed);
+    var tweetAction = TwitterInterfaceService.extractAction(Common.standardRawTweetCondensed, Common.logData);
     Assert.strictEqual(tweetAction.tweetId, Common.standardRawTweetCondensed.id_str);
     Assert.strictEqual(tweetAction.actionerScreenName, Common.USER.twitter.screenName);
     Assert.strictEqual(tweetAction.actioneeScreenName, '');
@@ -42,7 +42,7 @@
     Assert.strictEqual(tweetAction.retweetId, '');
     Assert.strictEqual(tweetAction.replyId, '');
 
-    var replyToUserAction = TwitterInterfaceService.extractAction(Common.rawTweetWithMentionCondensed);
+    var replyToUserAction = TwitterInterfaceService.extractAction(Common.rawTweetWithMentionCondensed, Common.logData);
     Assert.strictEqual(replyToUserAction.tweetId, Common.rawTweetWithMentionCondensed.id_str);
     Assert.strictEqual(replyToUserAction.actionerScreenName, Common.USER.twitter.screenName);
     Assert.strictEqual(replyToUserAction.actioneeScreenName, Common.ACTIONEE.twitter.screenName);
@@ -50,7 +50,7 @@
     Assert.strictEqual(replyToUserAction.retweetId, '');
     Assert.strictEqual(replyToUserAction.replyId, '');
 
-    var replyToPostAction = TwitterInterfaceService.extractAction(Common.rawReplyToPostCondensed);
+    var replyToPostAction = TwitterInterfaceService.extractAction(Common.rawReplyToPostCondensed, Common.logData);
     Assert.strictEqual(replyToPostAction.tweetId, Common.rawReplyToPostCondensed.id_str);
     Assert.strictEqual(replyToPostAction.actionerScreenName, Common.USER.twitter.screenName);
     Assert.strictEqual(replyToPostAction.actioneeScreenName, Common.ACTIONEE.twitter.screenName);
@@ -58,7 +58,7 @@
     Assert.strictEqual(replyToPostAction.retweetId, '');
     Assert.strictEqual(replyToPostAction.replyId, Common.rawReplyToPostCondensed.in_reply_to_status_id_str);
 
-    var retweetAction = TwitterInterfaceService.extractAction(Common.rawRetweetCondensed);
+    var retweetAction = TwitterInterfaceService.extractAction(Common.rawRetweetCondensed, Common.logData);
     Assert.strictEqual(retweetAction.tweetId, Common.rawRetweetCondensed.id_str);
     Assert.strictEqual(retweetAction.actionerScreenName, Common.USER.twitter.screenName);
     Assert.strictEqual(retweetAction.actioneeScreenName, Common.ACTIONEE.twitter.screenName);
@@ -71,11 +71,11 @@
 
   it('should extract and return relevant mention information from a raw tweet -- extractReply()', function(done) {
 
-    var mention0 = TwitterInterfaceService.extractReply(Common.rawTweetWithMentionCondensed);
+    var mention0 = TwitterInterfaceService.extractReply(Common.rawTweetWithMentionCondensed, Common.logData);
     Assert.strictEqual(mention0.mentioneeScreenName, Common.ACTIONEE.twitter.screenName);
     Assert.strictEqual(mention0.tweetId, Common.rawTweetWithMentionCondensed.id_str);
 
-    var mention1 = TwitterInterfaceService.extractReply(Common.standardRawTweetCondensed);
+    var mention1 = TwitterInterfaceService.extractReply(Common.standardRawTweetCondensed, Common.logData);
     Assert.strictEqual(mention1.mentioneeScreenName, '');
     Assert.strictEqual(mention1.tweetId, Common.standardRawTweetCondensed.id_str);
 
@@ -84,7 +84,7 @@
 
   it('should extract and return relevant tweet information from a raw tweet -- extractTweet()', function(done) {
 
-    var extractedtweet = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, true);
+    var extractedtweet = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, true, Common.logData);
     Assert.strictEqual(extractedtweet.twitterId, Common.USER.twitter.twitterId);
     Assert.strictEqual(extractedtweet.tweetId, Common.rawStandardTweet.id_str);
     Assert.strictEqual(extractedtweet.name, Common.USER.fullName);
@@ -104,7 +104,7 @@
     Assert.strictEqual(extractedtweet.media.height,0);
     Assert.strictEqual(extractedtweet.media.width,0);
 
-    var extractedTweetWithMention = TwitterInterfaceService.extractTweet(Common.rawTweetWithMention, true);
+    var extractedTweetWithMention = TwitterInterfaceService.extractTweet(Common.rawTweetWithMention, true, Common.logData);
     Assert.strictEqual(extractedTweetWithMention.twitterId, Common.USER.twitter.twitterId);
     Assert.strictEqual(extractedTweetWithMention.tweetId, Common.rawTweetWithMention.id_str);
     Assert.strictEqual(extractedTweetWithMention.name, Common.USER.fullName);
@@ -125,7 +125,7 @@
     Assert.strictEqual(extractedTweetWithMention.media.height,0);
     Assert.strictEqual(extractedTweetWithMention.media.width,0);
 
-    var extractedTweetWithHashtag = TwitterInterfaceService.extractTweet(Common.rawTweetWithHashtag, true);
+    var extractedTweetWithHashtag = TwitterInterfaceService.extractTweet(Common.rawTweetWithHashtag, true, Common.logData);
     Assert.strictEqual(extractedTweetWithHashtag.twitterId, Common.USER.twitter.twitterId);
     Assert.strictEqual(extractedTweetWithHashtag.tweetId, Common.rawTweetWithHashtag.id_str);
     Assert.strictEqual(extractedTweetWithHashtag.name, Common.USER.fullName);
@@ -146,7 +146,7 @@
     Assert.strictEqual(extractedTweetWithHashtag.media.height,0);
     Assert.strictEqual(extractedTweetWithHashtag.media.width,0);
 
-    var extractedRetweet = TwitterInterfaceService.extractTweet(Common.rawRetweet, true);
+    var extractedRetweet = TwitterInterfaceService.extractTweet(Common.rawRetweet, true, Common.logData);
     Assert.strictEqual(extractedRetweet.twitterId, Common.USER.twitter.twitterId);
     Assert.strictEqual(extractedRetweet.tweetId, Common.rawRetweet.id_str);
     Assert.strictEqual(extractedRetweet.name, Common.USER.fullName);
@@ -174,7 +174,7 @@
   it('should return list of extracted mentions from the test database -- getMentions()', function(done) {
 
     var twitterMessenger = {};
-    TwitterInterfaceService.getMentions(twitterMessenger, Common.USER.twitter.screenName, function(error, mentionTweets, mentions) {
+    TwitterInterfaceService.getMentions(twitterMessenger, Common.USER.twitter.screenName, Common.logData, function(error, mentionTweets, mentions) {
       Assert.strictEqual(error, false);
 
       Assert.strictEqual(mentionTweets.length, Data.RETRIEVE_LIMIT);
@@ -212,7 +212,7 @@
 
     // Invalid Request
     var invalidQuery = {};
-    TwitterInterfaceService.getOAuthAccessToken(invalidQuery, '000000000000', callbackFailure, function() {
+    TwitterInterfaceService.getOAuthAccessToken(invalidQuery, '000000000000', Common.logData, callbackFailure, function() {
 
       // Invalid oauth secret token
       var validQuery = {
@@ -220,10 +220,10 @@
         oauth_verifier: '22222222'
       }
       var invalidSecretToken;
-      TwitterInterfaceService.getOAuthAccessToken(validQuery, invalidSecretToken, callbackFailure, function() {
+      TwitterInterfaceService.getOAuthAccessToken(validQuery, invalidSecretToken, Common.logData, callbackFailure, function() {
 
         // Valid request and oauth secret token
-        TwitterInterfaceService.getOAuthAccessToken(validQuery, '000000000000', function(accessToken, secretAccessToken, screenName) {
+        TwitterInterfaceService.getOAuthAccessToken(validQuery, '000000000000', Common.logData, function(accessToken, secretAccessToken, screenName) {
 
           Assert.strictEqual(typeof accessToken, 'string');
           Assert.strictEqual(accessToken.length, 50);
@@ -241,7 +241,7 @@
 
   it('should return valid OAuth request tokens -- getOAuthRequestToken()', function(done) {
 
-    TwitterInterfaceService.getOAuthRequestToken(function(requestToken, secretRequestToken) {
+    TwitterInterfaceService.getOAuthRequestToken(Common.logData, function(requestToken, secretRequestToken) {
 
       Assert.strictEqual(typeof requestToken, 'string');
       Assert.strictEqual(requestToken.length, 32);
@@ -258,7 +258,7 @@
 
   it('should return list of extracted tweets from the test database -- getTweets()', function(done) {
     var twitterMessenger = {};
-    TwitterInterfaceService.getTweets(twitterMessenger, function(error, tweets) {
+    TwitterInterfaceService.getTweets(twitterMessenger, Common.logData, function(error, tweets) {
       Assert.strictEqual(error, false);
 
       Assert.strictEqual(tweets.length, Data.RETRIEVE_LIMIT);
@@ -282,10 +282,10 @@
     var twitterMessenger = {};
 
     // Invalid screen name
-    TwitterInterfaceService.getTwitterUser(twitterMessenger, 'invalidScreenName', callbackFailure, function() {
+    TwitterInterfaceService.getTwitterUser(twitterMessenger, 'invalidScreenName', Common.logData, callbackFailure, function() {
 
       // Valid screen name
-      TwitterInterfaceService.getTwitterUser(twitterMessenger, Common.USER.twitter.screenName, function(userData) {
+      TwitterInterfaceService.getTwitterUser(twitterMessenger, Common.USER.twitter.screenName, Common.logData, function(userData) {
 
         Assert.strictEqual(userData.twitterId, Common.USER.twitter.twitterId);
         Assert.strictEqual(userData.name, Common.USER.fullName);
@@ -306,7 +306,7 @@
       }
     });
 
-    TwitterInterfaceService.openStream(userIds, function(data) {
+    TwitterInterfaceService.openStream(userIds, Common.logData, function(data) {
 
       // TweetId
       Assert.strictEqual(typeof data.id_str, 'string');

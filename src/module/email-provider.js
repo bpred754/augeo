@@ -25,13 +25,16 @@
   var SendGrid = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
   var Request = require('request');
 
+  // Constants
+  var MODULE = 'email-module';
+
   // Required local modules
   var Logger = require('./logger');
 
   // Global Variables
   var log = new Logger();
 
-  exports.addRecipient = function(user, callback) {
+  exports.addRecipient = function(user, logData, callback) {
 
     var recipient = {
       'email': user.email,
@@ -45,31 +48,33 @@
      body : [recipient]
      }, function(error, response, body) {
           if(error) {
-            log.warn('Failed to add '  + recipient.first_name + ' ' + recipient.last_name + ' as a SendGrid recipient.  Error: ' + error);
+            log.functionError(MODULE, 'addRecipient', logData.parentProcess, logData.username,
+              'Failed to add '  + recipient.email + ' as a SendGrid recipient.  Error: ' + error);
             callback();
           } else {
-            log.info('Successfully added ' + recipient.first_name + ' ' + recipient.last_name + ' as a SendGrid recipient');
+            log.functionCall(MODULE, 'addRecipient', logData.parentProcess, logData.username, {'user.email':(user)?user.email:'invalid'});
             callback(body.persisted_recipients[0]);
           }
      }).auth(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
   };
 
-  exports.getRecipients = function(callback) {
+  exports.getRecipients = function(logData, callback) {
+
     Request.get({
      url:'https://api.sendgrid.com/v3/contactdb/recipients'
      }, function(error, response, body) {
          if(error) {
-            log.warn('Failed to retrieve list of recipients')
+           log.functionError(MODULE, 'getRecipients', logData.parentProcess, logData.username, 'Failed to retrieve list of recipients');
            callback();
          } else {
-           log.info('Successfully retrieved list of recipients from SendGrid');
+           log.functionCall(MODULE, 'getRecipients', logData.parentProcess, logData.username);
            callback(JSON.parse(body));
          }
 
      }).auth(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
   };
   
-  exports.removeRecipient = function(recipientId) {
+  exports.removeRecipient = function(recipientId, logData) {
     Request.delete({
       url:'https://api.sendgrid.com/v3/contactdb/recipients',
       json:true,
@@ -77,11 +82,11 @@
         recipientId
       ]
     }, function(){
-      log.info('Successfully removed ' + recipientId + ' from SendGrid\'s contact list');
+      log.functionCall(MODULE, 'removeRecipient', logData.parentProcess, logData.username, {'recipientId':recipientId});
     }).auth(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
   };
 
-  exports.sendWelcomeEmail = function (user) {
+  exports.sendWelcomeEmail = function (user, logData) {
 
     var email = new SendGrid.Email();
     email.to = user.email;
@@ -94,9 +99,10 @@
 
     SendGrid.send(email, function(error) {
       if(error) {
-        log.warn('Failed to send welcome email to ' + user.email + '. Error: ' + error);
+        log.functionError(MODULE, 'sendWelcomeEmail', logData.parentProcess, logDAta.username,
+          'Failed to send welcome email to ' + user.email + '. Error: ' + error);
       } else {
-        log.info('Successfully sent welcome email to ' + user.email);
+        log.functionCall(MODULE, 'sendWelcomeEmail', logData.parentProcess,  logData.username, {'user':(user)?user.email:'invalid'});
       }
     });
   };

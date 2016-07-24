@@ -30,12 +30,16 @@
   var Logger = require('../../module/logger');
   var AugeoUtility = require('../../utility/augeo-utility');
 
+  // Constants
+  var COLLECTION = 'user-collection';
+
   // Global variables
   var log = new Logger();
   var clientSafeProjection = {
     'firstName': 1,
     'lastName': 1,
     'username': 1,
+    'admin':1,
     'profileImg': 1,
     'profileIcon': 1,
     'profession': 1,
@@ -57,6 +61,7 @@
     email: String,
     username: String,
     password: String,
+    admin: Boolean,
     sendGridId: String,
     profileImg: String,
     profileIcon: String,
@@ -92,13 +97,14 @@
   /* Static Methods: Accessible at Model level                               */
   /***************************************************************************/
 
-  USER.statics.add = function(user, callback) {
+  USER.statics.add = function(user, logData, callback) {
     this.create({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       username: user.username,
       password: user.password,
+      admin: false,
       sendGridId: user.sendGridId,
       profileImg: user.profileImg,
       profileIcon: user.profileIcon,
@@ -110,31 +116,34 @@
       skill: user.skill
     }, function(error, pUser) {
       if(error) {
-        log.warn('Failed to add ' + user.email + ' to USER collection: ' + error);
+        log.functionError(COLLECTION, 'add', logData.parentProcess, logData.username,
+          'Failed to add ' + (user)?user.username:'invalid' + '. Error: ' + error);
       } else {
-        log.info('Successfully added ' + user.email + ' to USER collection');
+        log.functionCall(COLLECTION, 'add', logData.parentProcess, logData.username, {'user.username':(user)?user.username:'invalid'});
         callback(pUser);
       }
     });
   };
 
-  USER.statics.addTwitterSecretToken = function(id, secretToken, callback) {
+  USER.statics.addTwitterSecretToken = function(id, secretToken, logData, callback) {
     this.findOne({_id:id}, function(error, doc) {
       var success = false;
 
       if(error) {
-        log.warn('Failed to find user with id:' + id + ' to add secret token. ' + error);
+        log.functionError(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username,
+          'Failed to find user with ID: ' + id + '. Error: ' + error);
         callback(success);
       } else {
-        log.info('Successfully found user with id:' + id + ' to add secret token');
+        log.functionCall(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username, {'id':id}, 'Found user');
 
         doc.twitter.secretToken = secretToken;
         doc.save(function(error) {
           if(error) {
-            log.warn('Failed to set secret token for user with id:' + id + '. ' + error);
+            log.functionError(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username,
+              'Failed to set secret token for user with id:' + id + '. Error: ' + error);
             callback(success)
           } else {
-            log.info('Successfully set secret token for user with id:' + id);
+            log.functionCall(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username, {'id':id}, 'Saved');
             success = true;
             callback(success);
           }
@@ -143,10 +152,11 @@
     })
   };
 
-  USER.statics.checkExistingTwitterAccessToken = function(accessToken, callback) {
+  USER.statics.checkExistingTwitterAccessToken = function(accessToken, logData, callback) {
     this.count({'twitter.accessToken':accessToken}, function(error, count) {
       if(error) {
-        log.warn('Failed to find count for access token:' + accessToken + ' from USER collection: ' + error);
+        log.functionError(COLLECTION, 'checkExistingTwitterAccessToken', logData.parentProcess, logData.username,
+          'Failed to find count for access token:' + accessToken + '. Error: ' + error);
         callback();
       } else {
 
@@ -155,18 +165,19 @@
           accessTokenExists = true;
         }
 
-        log.info('Successfully checked if accessToken:' + accessToken + ' exists in USER collection');
+        log.functionCall(COLLECTION, 'checkExistingTwitterAccessToken', logData.parentProcess, logData.username, {'accessToken':accessToken});
         callback(accessTokenExists);
       }
     });
   };
 
-  USER.statics.checkExistingTwitterUser = function(screenName, callback) {
+  USER.statics.checkExistingTwitterUser = function(screenName, logData, callback) {
     this.count({'twitter.screenName':screenName}, function(error, count) {
       if(error) {
-        log.warn('Failed to check if Twitter screen name exists ' + screenName + '. Error: ' + error);
+        log.functionError(COLLECTION, 'checkExistingTwitterUser', logData.parentProcess, logData.username,
+          'Failed to check if Twitter screen name exists ' + screenName + '. Error: ' + error);
       } else {
-        log.info('Successfully checked if ' + screenName + ' exists in USER collection.');
+        log.functionCall(COLLECTION, 'checkExistingTwitterUser', logData.parentProcess, logData.username, {'screenName':screenName});
         var userExists = false;
         if(count > 0) {
           userExists = true;
@@ -176,13 +187,14 @@
     });
   };
 
-  USER.statics.doesEmailExist = function(email, callback) {
+  USER.statics.doesEmailExist = function(email, logData, callback) {
     var emailExists = false;
     this.count({email:{'$regex': email, $options: 'i'}}, function(error, count) {
       if(error) {
-        log.warn('Failed to find count for ' + email + ' from USER collection: ' + error);
+        log.functionError(COLLECTION, 'doesEmailExist', logData.parentProcess, logData.username,
+          'Failed to find count for ' + email + '. Error: ' + error);
       } else {
-        log.info('Successfully checked if ' + email + ' exists in USER collection');
+        log.functionCall(COLLECTION, 'doesEmailExist', logData.parentProcess, logData.username, {'email':email});
         if(count > 0) {
           emailExists = true;
         }
@@ -191,13 +203,14 @@
     });
   };
 
-  USER.statics.doesUsernameExist = function(username, callback) {
+  USER.statics.doesUsernameExist = function(username, logData, callback) {
     var usernameExists = false;
     this.count({'username':{'$regex': username, $options: 'i'}}, function(error, count) {
       if(error) {
-        log.warn('Failed to check if username: ' + username + ' exists. Error: ' + error);
+        log.functionError(COLLECTION, 'doesUsernameExist', logData.parentProcess, logData.username,
+          'Failed to check if username: ' + username + ' exists. Error: ' + error);
       } else {
-        log.info('Successfully checked if username: ' + username + ' exists');
+        log.functionCall(COLLECTION, 'doesUsernameExist', logData.parentProcess, logData.username, {'username':username});
         if(count > 0) {
           usernameExists = true;
         }
@@ -206,18 +219,18 @@
     });
   };
 
-  USER.statics.getAllUsersTwitterQueueData = function(callback) {
+  USER.statics.getAllUsersTwitterQueueData = function(logData, callback) {
     this.find({}, '_id twitter.screenName twitter.accessToken twitter.secretAccessToken', function(error, users) {
       if(error) {
-        log.warn('Failed to retrieve users queue data');
+        log.functionError(COLLECTION, 'getAllUsersTwitterQueueData', logData.parentProcess, logData.username, 'Failed to retrieve users queue data');
       } else {
-        log.info('Successfully retrieved users queue data');
+        log.functionCall(COLLECTION, 'getAllUsersTwitterQueueData', logData.parentProcess, logData.username);
         callback(users);
       }
     });
   };
 
-  USER.statics.getCompetitorsInPage = function(skill, startRank, endRank, callback) {
+  USER.statics.getCompetitorsInPage = function(skill, startRank, endRank, logData, callback) {
 
     if(skill === 'Augeo') {
 
@@ -239,9 +252,11 @@
         },
         function(error, competitors) {
           if(error) {
-            log.warn('Failed to get competitors in page for skill: ' + skill + '. Error: ' + error);
+            log.functionError(COLLECTION, 'getCompetitorsInPage', logData.parentProcess, logData.username,
+              'Failed to get competitors in page for skill: ' + skill + '. Error: ' + error);
           } else {
-            log.info('Successfully retrieved competitors in page for skill: ' + skill);
+              log.functionCall(COLLECTION, 'getCompetitorsInPage', logData.parentProcess, logData.username, {'skill':skill,
+                'startRank':startRank,'endRank':endRank});
             callback(competitors);
           }
         });
@@ -269,25 +284,29 @@
       ],
       function(error, users) {
         if(error) {
-          log.warn('Failed to find leaders for skill: ' + skill + '. Error: ' + error);
+          log.functionError(COLLECTION, 'getCompetitorsInPage', logData.parentProcess, logData.username,
+            'Failed to find leaders for skill: ' + skill + '. Error: ' + error);
+        } else {
+          log.functionCall(COLLECTION, 'getCompetitorsInPage', logData.parentProcess, logData.username, {
+            'skill': skill, 'startRank': startRank, 'endRank': endRank});
         }
-        log.info('Successfully found leaders for skill: ' + skill);
 
         callback(users);
       });
     }
   };
 
-  USER.statics.getMaxRank = function(skill, callback) {
+  USER.statics.getMaxRank = function(skill, logData, callback) {
 
     if(skill === 'Augeo') {
       // Find max rank
       this.find({},{'skill.rank':1}, {sort:{'skill.rank':-1}, limit:1}, function(error, data) {
         if(error) {
-          log.warn('Failed to find max rank for skill ' + skill + '. Error: ' + error);
+          log.functionError(COLLECTION, 'getMaxRank', logData.parentProcess, logData.username,
+            'Failed to find max rank for skill ' + skill + '. Error: ' + error);
         } else {
           var maxRank = data[0].skill.rank;
-          log.info('Successfully found max rank for skill ' + skill + '. MaxRank: ' + maxRank);
+          log.functionCall(COLLECTION, 'getMaxRank', logData.parentProcess, logData.username, {'skill':skill});
           callback(maxRank);
         }
       });
@@ -305,50 +324,37 @@
       ],
       function(error, data) {
         if(error) {
-          log.warn('Failed to find max rank for skill: ' + skill + '. Error: ' + error);
+          log.functionError(COLLECTION, 'getMaxRank', logData.parentProcess, logData.username,
+            'Failed to find max rank for skill: ' + skill + '. Error: ' + error);
         }
         var maxRank = data[0].subSkills[0].rank;
-        log.info('Successfully found max rank for skill ' + skill + '. MaxRank: ' + maxRank);
+        log.functionCall(COLLECTION, 'getMaxRank', logData.parentProcess, logData.username, {'skill':skill});
 
         callback(maxRank);
       });
     }
   };
 
-  USER.statics.getNumberUsers = function(callback) {
+  USER.statics.getNumberUsers = function(logData, callback) {
     this.count({},function(error, count) {
       if(error) {
-        log.warn('Failed to get the number of users. Error: + ' + error);
+        log.functionError(COLLECTION, 'getNumberUsers', logData.parentProcess, logData.username,
+          'Failed to get the number of users. Error: + ' + error);
       } else {
-        log.info('Successfully received the number of users. Number of users: ' + count);
+        log.functionCall(COLLECTION, 'getNumberUsers', logData.parentProcess, logData.username);
         callback(count);
       }
     });
   };
 
-  USER.statics.getPasswordWithEmail = function(email, callback) {
+  USER.statics.getPasswordWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': email, $options: 'i'}}, {password:1}, function(error, data) {
       if(error) {
-        log.warn('Failed to find password for email: ' + email + '. Error:' + error);
+        log.functionError(COLLECTION, 'getPasswordWithEmail', logData.parentProcess, logData.username,
+          'Failed to find password for email: ' + email + '. Error:' + error);
         callback();
       } else {
-        log.info('Successfully retrieved password for email: ' + email);
-        if(data && data.password) {
-          callback(data.password)
-        } else {
-          callback();
-        }
-      }
-    });
-  };
-  
-  USER.statics.getPasswordWithUsername = function(username, callback) {
-    this.findOne({username:{'$regex': username, $options: 'i'}}, {password:1}, function(error, data) {
-      if(error) {
-        log.warn('Failed to find password for username: ' + username + '. Error:' + error);
-        callback();
-      } else {
-        log.info('Successfully retrieved password for username: ' + username);
+        log.functionCall(COLLECTION, 'getPasswordWithEmail', logData.parentProcess, logData.username, {'email':email});
         if(data && data.password) {
           callback(data.password)
         } else {
@@ -358,16 +364,34 @@
     });
   };
 
-  USER.statics.getSkillRank = function(username, skill, callback) {
+  USER.statics.getPasswordWithUsername = function(username, logData, callback) {
+    this.findOne({username:{'$regex': username, $options: 'i'}}, {password:1}, function(error, data) {
+      if(error) {
+        log.functionError(COLLECTION, 'getPasswordWithUsername', logData.parentProcess, logData.username,
+          'Failed to find password for username: ' + username + '. Error:' + error);
+        callback();
+      } else {
+        log.functionCall(COLLECTION, 'getPasswordWithUsername', logData.parentProcess, logData.username, {'username':username});
+        if(data && data.password) {
+          callback(data.password)
+        } else {
+          callback();
+        }
+      }
+    });
+  };
+
+  USER.statics.getSkillRank = function(username, skill, logData, callback) {
 
     if(skill === 'Augeo') {
 
       this.findOne({'username':{'$regex': username, $options: 'i'}}, {'skill.rank':1}, function(error, data) {
 
         if(error) {
-          log.warn('Failed to find ' + username + ' rank for ' + skill + '. Error: ' + error);
+          log.functionError(COLLECTION, 'getSkillRank', logData.parentProcess, logData.username,
+            'Failed to find ' + username + ' rank for ' + skill + '. Error: ' + error);
         } else {
-          log.info('Successfully found ' + username + ' rank for ' + skill + '. Rank: ' + data);
+          log.functionCall(COLLECTION, 'getSkillRank', logData.parentProcess, logData.username, {'username':username,'skill':skill});
           var rank = data.skill.rank;
 
           callback(rank);
@@ -387,15 +411,16 @@
       ],
       function(error, data) {
         if(error) {
-          log.warn('Failed to find ' + username + 'rank for skill: ' + skill + '. Error: ' + error);
+          log.functionError(COLLECTION, 'getSkillRank', logData.parentProcess, logData.username,
+            'Failed to find ' + username + 'rank for skill: ' + skill + '. Error: ' + error);
         }
-        log.info('Successfully found ' + username + ' rank for skill ' + skill + '. Rank: ' + data[0].subSkills[0].rank);
+        log.functionCall(COLLECTION, 'getSkillRank', logData.parentProcess, logData.username, {'username':username,'skill':skill});
         callback(data[0].subSkills[0].rank);
       });
     }
   };
 
-  USER.statics.getSubSkillRanks = function(skill, callback) {
+  USER.statics.getSubSkillRanks = function(skill, logData, callback) {
     this.aggregate([
         getSubSkillQuery(skill),
         {
@@ -404,22 +429,24 @@
       ],
       function(error,docs) {
         if(error) {
-          log.warn('Failed to get subSkill ranks. Error: ' + error);
+          log.functionError(COLLECTION, 'getSubSkillRanks', logData.parentProcess, logData.username,
+            'Failed to get subSkill ranks for skill: ' + skill + '. Error: ' + error);
         } else {
-          log.info('Successfully retrieved ' + skill + ' ranks');
+          log.functionCall(COLLECTION, 'getSkillRank', logData.parentProcess, logData.username, {'skill':skill});
           callback(docs)
         }
       }
     );
   };
 
-  USER.statics.getTwitterTokens = function(id, callback) {
+  USER.statics.getTwitterTokens = function(id, logData, callback) {
     this.findOne({_id:id}, {'twitter.accessToken':1, 'twitter.secretAccessToken':1, 'twitter.secretToken':1}, function(error, data) {
       if(error) {
-        log.warn('Failed to retrieve users access tokens with id:' + id + '. ' + error);
+        log.functionError(COLLECTION, 'getTwitterTokens', logData.parentProcess, logData.username,
+          'Failed to retrieve users access tokens with id:' + id + '. Error: ' + error);
         callback();
       } else {
-        log.info('Successfully retrieved users access tokens with id:'+ id);
+        log.functionCall(COLLECTION, 'getTwitterTokens', logData.parentProcess, logData.username, {'id':id});
 
         if(data) {
           var tokens = {
@@ -435,100 +462,94 @@
     });
   };
 
-  USER.statics.getRanks = function(callback) {
+  USER.statics.getRanks = function(logData, callback) {
     this.find({}, '', {sort: {'skill.experience':-1}}, function(error, docs) {
       if(error) {
-        log.warn('Failed to get ranks. Error:' + error);
+        log.functionError(COLLECTION, 'getRanks', logData.parentProcess, logData.username, 'Failed to get ranks. Error:' + error);
       } else {
-        log.info('Successfully retrieved ranks');
+        log.functionCall(COLLECTION, 'getRanks', logData.parentProcess, logData.username);
         callback(docs);
       }
     });
   }
-  
-  USER.statics.getTwitterUsers = function(callback) {
+
+  USER.statics.getTwitterUsers = function(logData, callback) {
     this.find({}, 'twitter.twitterId', function(error, users) {
       if(error) {
-        log.warn('Failed to retrieve users.');
+        log.functionError(COLLECTION, 'getTwitterUsers', logData.parentProcess, logData.username, 'Failed to retrieve users. Error: ' + error);
       } else {
-        log.info('Successfully retrieved users.');
+        log.functionCall(COLLECTION, 'getTwitterUsers', logData.parentProcess, logData.username);
         callback(users);
       }
     });
   };
 
-  USER.statics.getUserWithEmail = function(email, callback) {
+  USER.statics.getUserWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': email, $options: 'i'}}, clientSafeProjection, function(error, user) {
       if(error) {
-        log.warn('Failed to retrieve ' + email + ' from USER collection: ' + error);
+        log.functionError(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username,
+          'Failed to retrieve ' + email + '. Error: ' + error);
       } else {
-        log.info('Successfully retrieved ' + email + ' from USER collection');
+        log.functionCall(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username, {'email':email});
         callback(user);
       }
     });
   };
 
-  USER.statics.getUserWithId = function(id, callback) {
-    this.findOne({_id:id}, clientSafeProjection, function(error, user) {
-      if(error) {
-        log.warn('Failed to retrieve ' + id + ' from USER collection: ' + error);
-      } else {
-        log.info('Successfully retrieved ' + id + ' from USER collection');
-        callback(user);
-      }
-    });
-  };
-
-  USER.statics.getUserWithScreenName = function(screenName, callback) {
+  USER.statics.getUserWithScreenName = function(screenName, logData, callback) {
     this.findOne({'twitter.screenName':screenName}, clientSafeProjection, function(error, user) {
       if(error) {
-        log.warn('Failed to retrieve ' + screenName + ' from USER collection: ' + error);
+        log.functionError(COLLECTION, 'getUserWithScreenName', logData.parentProcess, logData.username,
+          'Failed to retrieve ' + screenName + '. Error: ' + error);
       } else {
-        log.info('Successfully retrieved ' + screenName + ' from USER collection');
+        log.functionCall(COLLECTION, 'getUserWithScreenName', logData.parentProcess, logData.username, {'screenName':screenName});
         callback(user);
       }
     });
   };
 
-  USER.statics.getUserWithTwitterId = function(twitterId, callback) {
+  USER.statics.getUserWithTwitterId = function(twitterId, logData, callback) {
     this.findOne({'twitter.twitterId':twitterId}, clientSafeProjection, function(error, user) {
       if(error) {
-        log.warn('Failed to retrieve ' + twitterId + ' from USER collection: ' + error);
+        log.functionError(COLLECTION, 'getUserWithTwitterId', logData.parentProcess, logData.username,
+          'Failed to retrieve ' + twitterId + '. Error: ' + error);
       } else {
-        log.info('Successfully retrieved ' + twitterId + ' from USER collection');
+        log.functionCall(COLLECTION, 'getUserWithTwitterId', logData.parentProcess, logData.username, {'twitterId':twitterId});
         callback(user);
       }
     });
   };
 
-  USER.statics.getUserWithUsername = function(username, callback) {
+  USER.statics.getUserWithUsername = function(username, logData, callback) {
     this.findOne({'username':{'$regex': username, $options: 'i'}}, clientSafeProjection, function(error, user) {
       if(error) {
-        log.warn('Failed to retrieve ' + username + ' from USER collection: ' + error);
+        log.functionError(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username,
+          'Failed to retrieve ' + username + '. Error: ' + error);
+        callback();
       } else {
-        log.info('Successfully retrieved ' + username + ' from USER collection');
+        log.functionCall(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username, {'username':username});
         callback(user);
       }
     });
   };
 
-  USER.statics.remove = function(username, callback) {
+  USER.statics.remove = function(username, logData, callback) {
     this.findOneAndRemove({'username':{'$regex': username, $options: 'i'}}, function(error, user) {
       if(error) {
-        log.warn('Failed to remove ' + username + ' from USERS. Error: ' + error);
+        log.functionError(COLLECTION, 'remove', logData.parentProcess, logData.username, 'Failed to remove ' + username + '. Error: ' + error);
       } else {
-        log.info('Successfully removed user ' + username + ' from the database.');
+        log.functionCall(COLLECTION, 'remove', logData.parentProcess, logData.username, {'username':username});
         callback(user);
       }
     });
   };
 
-  USER.statics.saveDocument = function(doc, callback) {
+  USER.statics.saveDocument = function(doc, logData, callback) {
     doc.save(function(error) {
       if(error) {
-        log.warn('Failed to save USER document. ' + error);
+        log.functionError(COLLECTION, 'saveDocument', logData.parentProcess, logData.username, 'Failed to save USER document. ' + error);
       } else {
-        log.info('Sucessfully saved USER document.');
+        log.functionCall(COLLECTION, 'saveDocument', logData.parentProcess, logData.username, {'doc.username':(doc)?doc.username:'invalid'});
         if(callback) {
           callback();
         }
@@ -536,7 +557,7 @@
     });
   };
 
-  USER.statics.saveProfileData = function(profileData, callback) {
+  USER.statics.saveProfileData = function(profileData, logData, callback) {
 
     var query = {username: profileData.username};
     var update = {
@@ -552,25 +573,34 @@
 
     this.update(query, update, options, function(error, n) {
       if(error) {
-        log.warn('Failed to update profile data: ' + error);
+        log.functionError(COLLECTION, 'saveProfileData', logData.parentProcess, logData.username,
+          'Failed to update profile data for: ' + (profileData)?profileData.username:'invalid' + '. Error: ' + error);
         callback(false);
       } else {
-        log.info('Successfully updated profile data');
+        log.functionCall(COLLECTION, 'saveProfileData', logData.parentProcess, logData.username,
+          {'profileData.username':(profileData)?profileData.username:'invalid'});
         callback(true);
       }
     });
   };
 
-  USER.statics.updateSubSkillRank = function(doc, rank, index, callback) {
+  USER.statics.updateSubSkillRank = function(doc, rank, index, logData, callback) {
 
     var setModifier = { $set: {} };
     setModifier.$set['subSkills.' + index + '.rank'] = Math.round(rank);
 
     this.update({_id: doc._id}, setModifier, function(error, n) {
+
+      var skillName = 'invalid';
+      if(doc && doc.subSkills[0] && doc.subSkills[0].name) {
+        skillName = doc.subSkills[0].name;
+      }
+
       if(error) {
-        log.info('Failed to update ' + doc.subSkills[0].name + ' rank. Error: ' + error);
+        log.functionError(COLLECTION, 'updateSubSkillRank', logData.parentProcess, logData.username,
+          'Failed to update ' + skillName + ' rank. Error: ' + error);
       } else {
-        log.info('Successfully updated ' + doc.subSkills[0].name + ' rank');
+        log.functionCall(COLLECTION, 'updateSubSkillRank', logData.parentProcess, logData.username, {'skill':skillName,'rank':rank});
         if(callback) {
           callback(n);
         }
@@ -578,7 +608,7 @@
     });
   };
 
-  USER.statics.updateTwitterInfo = function(id, data, callback) {
+  USER.statics.updateTwitterInfo = function(id, data, logData, callback) {
 
     if(data.subSkills == null) {
       data.subSkills = new Array();
@@ -602,34 +632,39 @@
 
     this.update(query, update, options, function(error, n) {
       if(error) {
-        log.warn('Failed to update Twitter data in USER collection: ' + error);
+        log.functionError(COLLECTION, 'updateTwitterInfo', logData.parentProcess, logData.username,
+          'Failed to update Twitter data for screenName: ' + (data)?data.screenName:'invalid' + '. Error: ' + error);
       } else {
-        log.info('Successfully updated ' + n + ' documents in USER collection.');
+        log.functionCall(COLLECTION, 'updateTwitterInfo', logData.parentProcess, logData.username, {'id':id,
+          'data.screenName':(data)?data.screenName:'invalid'});
         callback();
       }
     });
   };
 
-  USER.statics.updateSkillData = function(id, experience, callback) {
-    var collection = this;
+  USER.statics.updateSkillData = function(id, experience, logData, callback) {
     this.findOne({_id:id}, function(error, doc) {
 
       if(error) {
-        log.warn('Failed to find user in USER collection to update experience: ' + error);
+        log.functionError(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
+          'Failed to find user with ID: ' + id + '. Error: ' + error);
       } else {
-        log.info('Successfully found user with id:' + id + ' to update experience .');
+        log.functionCall(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username, {'id':id});
 
         doc.skill.experience += experience.mainSkillExperience;
-        doc.skill.level = AugeoUtility.calculateLevel(doc.skill.experience);
+        doc.skill.level = AugeoUtility.calculateLevel(doc.skill.experience, logData);
         doc.subSkills.forEach(function(subSkill){
           subSkill.experience += experience.subSkillsExperience[subSkill.name];
-          subSkill.level = AugeoUtility.calculateLevel(subSkill.experience);
+          subSkill.level = AugeoUtility.calculateLevel(subSkill.experience, logData);
         });
         doc.save(function(error) {
           if(error) {
-            log.warn('Failed to save experience in USER collection: ' + error);
+            log.functionError(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
+              'Failed to save experience. Error: ' + error);
           } else {
-            log.info('Successfully saved experience in USER collection');
+            log.functionCall(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
+              {'mainSkillExperience':(experience)?experience.mainSkillExperience:'invalid',
+               'subSkillExperience':(experience && experience.subSkillsExperience)?'defined':'invalid'});
             callback();
           }
         });

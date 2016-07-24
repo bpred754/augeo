@@ -22,9 +22,19 @@
   /* Description: Twitter validating functions                               */
   /***************************************************************************/
 
-  exports.containsUserTwitterData = function(data) {
-    var containsData = false;
+  // Required local modules
+  var Logger = require('../module/logger');
 
+  // Constants
+  var VALIDATOR = 'twitter-validator';
+
+  // Global variables
+  var log = new Logger();
+
+  exports.containsUserTwitterData = function(data, logData) {
+    log.functionCall(VALIDATOR, 'containsUserTwitterData', logData.parentProcess, logData.username, {'data.id_str':(data)?data.id_str:'invalid'});
+
+    var containsData = false;
     if(data && data.profile_image_url_https && data.id_str && data.name) {
       containsData = true;
     }
@@ -32,9 +42,10 @@
     return containsData;
   };
 
-  exports.isScreenNameValid = function(screenName) {
-    var isValid = false;
+  exports.isScreenNameValid = function(screenName, logData) {
+    log.functionCall(VALIDATOR, 'isScreenNameValid', logData.parentProcess, logData.username, {'screenName':screenName});
 
+    var isValid = false;
     if(screenName) {
       var screenNameRegex = new RegExp("^[A-Za-z0-9_]{1,15}$");
       if(screenName.match(screenNameRegex)) {

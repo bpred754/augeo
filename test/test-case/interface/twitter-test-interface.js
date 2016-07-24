@@ -35,7 +35,7 @@
   var messenger = {};
 
   it('should return 3 raw mentions from test database -- getMentions()', function(done) {
-    TwitterTestInterface.getMentions(messenger, function(error, data, response) {
+    TwitterTestInterface.getMentions(messenger, Common.logData, function(error, data, response) {
       Assert.strictEqual(data.length, Data.RETRIEVE_LIMIT);
 
       // Verify all required attributes are in raw data
@@ -55,7 +55,7 @@
 
     var maxId = mentions[1].id_str;
 
-    TwitterTestInterface.getMentions(messenger, function(error, data, response) {
+    TwitterTestInterface.getMentions(messenger, Common.logData, function(error, data, response) {
       Assert.strictEqual(data.length, Data.RETRIEVE_LIMIT);
 
       for(var i = 0; i < data.length; i++) {
@@ -80,7 +80,7 @@
 
     var oauthSecretToken = 'valid';
 
-    TwitterTestInterface.getOAuthAccessToken(data, oauthSecretToken, function(accessToken, secretAccessToken, screenName) {
+    TwitterTestInterface.getOAuthAccessToken(data, oauthSecretToken, Common.logData, function(accessToken, secretAccessToken, screenName) {
       Assert.strictEqual(accessToken.length, 50);
       Assert.strictEqual(secretAccessToken.length, 50);
       Assert.strictEqual(screenName, Common.USER.twitter.screenName);
@@ -94,14 +94,14 @@
       oauth_verifier: undefined
     };
     var oauthSecretToken;
-    TwitterTestInterface.getOAuthAccessToken(data, oauthSecretToken, function(accessToken, secretAccessToken, screenName) {
+    TwitterTestInterface.getOAuthAccessToken(data, oauthSecretToken, Common.logData, function(accessToken, secretAccessToken, screenName) {
       Assert.notStrictEqual(accessToken.message, undefined);
       done()
     });
   });
 
   it('should return valid request tokens -- getOAuthRequestToken()', function(done) {
-    TwitterTestInterface.getOAuthRequestToken(function(requestToken, secretRequestToken) {
+    TwitterTestInterface.getOAuthRequestToken(Common.logData, function(requestToken, secretRequestToken) {
       Assert.strictEqual(requestToken.length, 32);
       Assert.strictEqual(secretRequestToken.length, 32);
       done()
@@ -109,7 +109,7 @@
   });
 
   it('should return 3 raw tweets from test database -- getTweets()', function(done) {
-    TwitterTestInterface.getTweets(messenger, function(error, data, response) {
+    TwitterTestInterface.getTweets(messenger, Common.logData, function(error, data, response) {
       Assert.strictEqual(data.length, Data.RETRIEVE_LIMIT);
 
       // Verify all required attributes are in raw data
@@ -128,7 +128,7 @@
     Assert.strictEqual(tweets.length, Data.RETRIEVE_LIMIT);
     var maxId = tweets[1].id_str;
 
-    TwitterTestInterface.getTweets(messenger, function(error, data, response) {
+    TwitterTestInterface.getTweets(messenger, Common.logData, function(error, data, response) {
       Assert.strictEqual(data.length, Data.RETRIEVE_LIMIT);
 
       for(var i = 0; i < data.length; i++) {
@@ -145,7 +145,7 @@
   });
 
   it('should return user Twitter data -- getTwitterData()', function(done) {
-    TwitterTestInterface.getTwitterData(messenger, Common.USER.twitter.screenName, function(error, data, response) {
+    TwitterTestInterface.getTwitterData(messenger, Common.USER.twitter.screenName, Common.logData, function(error, data, response) {
       Assert.strictEqual(data.id_str, Common.USER.twitter.twitterId);
       Assert.strictEqual(data.name, Common.USER.firstName + ' ' + Common.USER.lastName);
       Assert.strictEqual(data.screen_name, Common.USER.twitter.screenName);
@@ -157,7 +157,7 @@
   it('should return earliest tweet from the RawTweet collection in the test database -- openStream()', function(done) {
 
     var twitterIDs = '123456'
-    TwitterTestInterface.openStream(twitterIDs, function(tweet) {
+    TwitterTestInterface.openStream(twitterIDs, Common.logData, function(tweet) {
       validateTweet(tweet);
 
       // Verify tweetId is less than all tweet Ids in raw Tweet table
@@ -177,7 +177,7 @@
   it('should return earliest mention from the RawTweet collection in the test database -- openStream()', function(done) {
 
     var twitterIDs = '123456'
-    TwitterTestInterface.openStream(twitterIDs, function(tweet) {
+    TwitterTestInterface.openStream(twitterIDs, Common.logData, function(tweet) {
       validateTweet(tweet);
 
       // Verify tweetId is less than all tweet Ids in raw Mention table

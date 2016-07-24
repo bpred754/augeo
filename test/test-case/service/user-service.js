@@ -56,7 +56,7 @@
       password: Common.USER.password
     };
 
-    UserService.addUser(invalidFirstName, callbackFailure, function() {
+    UserService.addUser(invalidFirstName, Common.logData, callbackFailure, function() {
 
       var invalidLastName = {
         firstName: Common.USER.firstName,
@@ -66,7 +66,7 @@
         password: Common.USER.password
       };
 
-      UserService.addUser(invalidLastName, callbackFailure, function() {
+      UserService.addUser(invalidLastName, Common.logData, callbackFailure, function() {
 
         var invalidEmail = {
           firstName: Common.USER.firstName,
@@ -76,7 +76,7 @@
           password: Common.USER.password
         };
 
-        UserService.addUser(invalidEmail, callbackFailure, function() {
+        UserService.addUser(invalidEmail, Common.logData, callbackFailure, function() {
 
 
           var invalidUsername = {
@@ -87,7 +87,7 @@
             password: Common.USER.password
           }
 
-          UserService.addUser(invalidUsername, callbackFailure, function() {
+          UserService.addUser(invalidUsername, Common.logData, callbackFailure, function() {
 
             var invalidPassword = {
               firstName: Common.USER.firstName,
@@ -97,16 +97,16 @@
               password: '<'
             };
 
-            UserService.addUser(invalidPassword, callbackFailure, function() {
+            UserService.addUser(invalidPassword, Common.logData, callbackFailure, function() {
 
-              UserService.addUser(Common.USER, function(user) {
+              UserService.addUser(Common.USER, Common.logData, function(user) {
 
                 Assert.strictEqual(user.firstName, Common.USER.firstName);
                 Assert.strictEqual(user.lastName, Common.USER.lastName);
                 Assert.strictEqual(user.email, Common.USER.email);
                 Assert.strictEqual(user.username, Common.USER.username);
 
-                User.getNumberUsers(function(numUsers) {
+                User.getNumberUsers(Common.logData, function(numUsers) {
 
                   Assert.strictEqual(user.skill.rank, numUsers);
                   Assert.strictEqual(user.subSkills[0].rank, numUsers);
@@ -125,11 +125,11 @@
   it('should find Augeo email in AugeoDB -- doesEmailExist()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    UserService.doesEmailExist('email', function(userExists0) {
+    UserService.doesEmailExist('email', Common.logData, function(userExists0) {
 
       Assert.strictEqual(userExists0, false);
 
-      UserService.doesEmailExist(Common.USER.email, function(userExists1) {
+      UserService.doesEmailExist(Common.USER.email, Common.logData, function(userExists1) {
 
         Assert.strictEqual(userExists1, true);
         done();
@@ -141,10 +141,10 @@
   it('should find Augeo username in AugeoDB -- doesUsernameExist()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    UserService.doesUsernameExist('username', function(userExists0) {
+    UserService.doesUsernameExist('username', Common.logData, function(userExists0) {
       Assert.strictEqual(userExists0, false);
 
-      UserService.doesUsernameExist(Common.USER.username, function(userExists1) {
+      UserService.doesUsernameExist(Common.USER.username, Common.logData, function(userExists1) {
         Assert.strictEqual(userExists1, true);
         done();
       });
@@ -156,13 +156,13 @@
     this.timeout(Common.TIMEOUT);
 
     var invalidUsername = '%%';
-    UserService.getCompetitors(invalidUsername, 'Augeo', function(){}, function() {
+    UserService.getCompetitors(invalidUsername, 'Augeo', Common.logData, function(){}, function() {
 
       var invalidSkill = 'invalidSkill';
-      UserService.getCompetitors(Common.USER.username, invalidSkill, function(){}, function() {
+      UserService.getCompetitors(Common.USER.username, invalidSkill, Common.logData, function(){}, function() {
 
         // Get competitors for user that doesn't exist
-        UserService.getCompetitors('invalid', 'Augeo', function(competitorsForInvalid) {
+        UserService.getCompetitors('invalid', 'Augeo', Common.logData, function(competitorsForInvalid) {
 
           var maxRank0 = 0;
           competitorsForInvalid.length.should.be.above(0);
@@ -175,7 +175,7 @@
             maxRank0 = competitorsForInvalid[i].rank;
           }
 
-          UserService.getCompetitors(Common.USER.username, 'Augeo', function(competitorsForValid) {
+          UserService.getCompetitors(Common.USER.username, 'Augeo', Common.logData, function(competitorsForValid) {
 
             var maxRank1 = 0;
             competitorsForValid.length.should.be.above(0);
@@ -199,16 +199,16 @@
     this.timeout(Common.TIMEOUT);
 
     // Invalid start rank
-    UserService.getCompetitorsWithRank('!', '5', 'Augeo', function(){}, function() {
+    UserService.getCompetitorsWithRank('!', '5', 'Augeo', Common.logData, function(){}, function() {
 
       // Invalid end rank
-      UserService.getCompetitorsWithRank('1', '%', 'Augeo', function(){}, function() {
+      UserService.getCompetitorsWithRank('1', '%', 'Augeo', Common.logData, function(){}, function() {
 
         // Invalid skill
-        UserService.getCompetitorsWithRank('1', '5', 'invalid', function(){}, function() {
+        UserService.getCompetitorsWithRank('1', '5', 'invalid', Common.logData, function(){}, function() {
 
           // Valid input
-          UserService.getCompetitorsWithRank('1', '5', 'Augeo', function(users) {
+          UserService.getCompetitorsWithRank('1', '5', 'Augeo', Common.logData, function(users) {
 
             users.length.should.be.above(0);
             users.length.should.be.below(6);
@@ -230,7 +230,7 @@
   it('should return the number of users in the database', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    UserService.getNumberUsers(function(numberUsers) {
+    UserService.getNumberUsers(Common.logData, function(numberUsers) {
       Assert.ok(numberUsers);
       numberUsers.should.be.above(0);
       done();
@@ -241,10 +241,10 @@
   it('should retrieve user information from database for current session -- getSessionUser', function(done) {
 
     // Invalid username
-    UserService.getSessionUser('###', function(){}, function() {
+    UserService.getSessionUser('###', Common.logData, function(){}, function() {
 
       // Valid
-      UserService.getSessionUser(Common.USER.username, function(user) {
+      UserService.getSessionUser(Common.USER.username, Common.logData, function(user) {
         Assert.strictEqual(user.firstName, Common.USER.firstName);
         Assert.strictEqual(user.lastName, Common.USER.lastName);
 
@@ -266,12 +266,12 @@
     };
 
     // Invalid email
-    UserService.login('email', Common.USER.password, callbackFailure, function() {
+    UserService.login('email', Common.USER.password, Common.logData, callbackFailure, function() {
 
       // Invalid password
-      UserService.login(Common.USER.email, 'password', callbackFailure, function() {
+      UserService.login(Common.USER.email, 'password', Common.logData, callbackFailure, function() {
 
-        UserService.login(Common.USER.email, Common.USER.password, function(user) {
+        UserService.login(Common.USER.email, Common.USER.password, Common.logData, function(user) {
 
           Assert.strictEqual(user.firstName, Common.USER.firstName);
           Assert.strictEqual(user.lastName, Common.USER.lastName);
@@ -286,6 +286,7 @@
   // removeUserWithPassword
   it('should remove user from USER table - removeUserWithPassword()', function(done) {
     this.timeout(Common.TIMEOUT);
+    var logData = {};
 
     var callbackFailure = function() {
       console.log('** UserService.removeUserWithPassword -- in callback, test failed **');
@@ -296,33 +297,33 @@
     };
 
     // Add Twitter Actionee entry to USER table so it can be removed
-    UserService.addUser(Common.ACTIONEE, function() {
+    UserService.addUser(Common.ACTIONEE, Common.logData, function() {
 
       // Invalid email - execute rollback
-      UserService.removeUserWithPassword('!!!', Common.ACTIONEE.password, callbackFailure, function() {
+      UserService.removeUserWithPassword('!!!', Common.ACTIONEE.password, Common.logData, callbackFailure, function() {
 
         // Invalid password - execute callback with error
-        UserService.removeUserWithPassword(Common.ACTIONEE.username, null, function(error0, user0) {
+        UserService.removeUserWithPassword(Common.ACTIONEE.username, null, Common.logData, function(error0, user0) {
           Assert.strictEqual(error0, true);
           Should.not.exist(user0);
 
           // User does not exist for given username - execute rollback
-          UserService.removeUserWithPassword('blah', Common.ACTIONEE.password, callbackFailure, function() {
+          UserService.removeUserWithPassword('blah', Common.ACTIONEE.password, Common.logData, callbackFailure, function() {
 
             // Password does not match password in database - execute callback with error
-            UserService.removeUserWithPassword(Common.ACTIONEE.username, 'password', function(error1, user1) {
+            UserService.removeUserWithPassword(Common.ACTIONEE.username, 'password', Common.logData, function(error1, user1) {
               Assert.strictEqual(error1, true);
               Should.not.exist(user1);
 
               // Success
-              UserService.removeUserWithPassword(Common.ACTIONEE.username, Common.ACTIONEE.password, function(error2, user2) {
+              UserService.removeUserWithPassword(Common.ACTIONEE.username, Common.ACTIONEE.password, Common.logData, function(error2, user2) {
                 Assert.strictEqual(error2, false);
 
                 // Validate that returned user does not have password
                 Should.not.exist(user2.password);
 
                 // Validate that returned user is not in USER table
-                User.getUserWithUsername(Common.ACTIONEE.username, function(user3) {
+                User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
                   Should.not.exist(user3);
                   done();
                 });
@@ -338,7 +339,7 @@
   it('should save profile data to database with given profile data -- saveProfileData()', function(done) {
 
     // Verify USER is in database
-    User.getUserWithUsername(Common.USER.username, function(user) {
+    User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
       Assert.strictEqual(user.firstName, Common.USER.firstName);
       Assert.strictEqual(user.profession, '');
       Assert.strictEqual(user.location, '');
@@ -353,7 +354,7 @@
         description: 'Test user for Augeo application'
       };
 
-      UserService.saveProfileData(profileData, function(userAfter) {
+      UserService.saveProfileData(profileData, Common.logData, function(userAfter) {
         Assert.strictEqual(userAfter.username, profileData.username);
         Assert.strictEqual(userAfter.profession, profileData.profession);
         Assert.strictEqual(userAfter.location, profileData.location);
@@ -369,7 +370,7 @@
     this.timeout(Common.TIMEOUT);
 
     // Retrieve baseline skill for Common user
-    User.getUserWithUsername(Common.USER.username, function(user0) {
+    User.getUserWithUsername(Common.USER.username, Common.logData, function(user0) {
 
       var baseSkillRank = user0.skill.rank;
 
@@ -387,13 +388,13 @@
       //Assert.ok(baseExperience);
       Assert.ok(baseSubSkillRank);
 
-      User.getNumberUsers(function(numUsers) {
+      User.getNumberUsers(Common.logData, function(numUsers) {
         numUsers++;
 
-        var newUserSkill = AugeoUtility.getMainSkill(0);
+        var newUserSkill = AugeoUtility.getMainSkill(0, Common.logData);
         newUserSkill.rank = numUsers;
 
-        var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS));
+        var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData), Common.logData);
         for(var i = 0; i < newUserSubSkills.length; i++) {
           newUserSubSkills[i].rank = numUsers;
         }
@@ -408,11 +409,11 @@
         };
 
         // Verify new user is not in database
-        User.getUserWithUsername(newUser.username, function(user1) {
+        User.getUserWithUsername(newUser.username, Common.logData, function(user1) {
           Should.not.exist(user1);
 
           // Add new user to database
-          User.add(newUser, function(user2) {
+          User.add(newUser, Common.logData, function(user2) {
 
             var twitterData = {
               twitterId: Common.ACTIONEE.twitter.twitterId,
@@ -424,10 +425,10 @@
             };
 
             // Update new user's twitter information
-            TwitterService.updateTwitterInfo(user2._id.toString(), twitterData, function() {
+            TwitterService.updateTwitterInfo(user2._id.toString(), twitterData, Common.logData, function() {
 
               // Verify new user's skill and subSkill rank is higher than Common.USER
-              User.getUserWithUsername(Common.ACTIONEE.username, function(user3) {
+              User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
 
                 var newUserSkillRank = user3.skill.rank;
                 var newUserSubSkillRank = user3.subSkills[baseIndex].rank;
@@ -435,7 +436,7 @@
                 newUserSkillRank.should.be.above(baseSkillRank);
                 newUserSubSkillRank.should.be.above(baseSubSkillRank);
 
-                var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
+                var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData);
                 updateSubSkillExperiences[AugeoUtility.SUB_SKILLS[baseIndex].name] = (baseExperience+1)*100;
                 var updateExperience = {
                   mainSkillExperience: (baseExperience+1)*100,
@@ -443,22 +444,22 @@
                 }
 
                 // Update new user's subSkill experience to be more than Common.USER - use User.updateSkillData
-                User.updateSkillData(user3._id, updateExperience, function() {
+                User.updateSkillData(user3._id, updateExperience, Common.logData, function() {
 
                   // Update ranks
-                  UserService.updateRanks(function() {
+                  UserService.updateRanks(Common.logData, function() {
 
                     // Update sub skill ranks
-                    UserService.updateSubSkillRanks(general.name, function() {
+                    UserService.updateSubSkillRanks(general.name, Common.logData, function() {
 
-                      User.getUserWithUsername(Common.USER.username, function(user4) {
+                      User.getUserWithUsername(Common.USER.username, Common.logData, function(user4) {
 
                         // Update baseline variables
                         baseSkillRank = user4.skill.rank;
                         baseSubSkillRank = user4.subSkills[baseIndex].rank;
 
                         // Verify new user's subSkill rank is lower than Common.USER
-                        User.getUserWithUsername(Common.ACTIONEE.username, function(user5) {
+                        User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user5) {
                           user5.skill.rank.should.be.below(baseSkillRank);
                           user5.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
                           done();

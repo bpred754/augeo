@@ -19,52 +19,28 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Routes all requests to the appropriate Augeo API           */
+  /* Description: Custom object mechanism                                    */
   /***************************************************************************/
 
-  // Required local modules
-  var Logger = require('../module/logger');
+  var surrogateConstructor = function() {};
 
-  // Constants
-  var API = 'augeo-api';
+  // Logic to extend classes
+  exports.extend = function(base, sub, methods) {
+    surrogateConstructor.prototype = base.prototype;
+    sub.prototype = new surrogateConstructor();
+    sub.prototype.constructor = sub;
 
-  // Global variables
-  var log = new Logger();
+    // Add a reference to the parent's prototype
+    sub.base = base.prototype;
 
-  exports.mapRequests = function(app) {
-    log.functionCall(API, 'mapRequests', 'INIT', 'System', {}, 'Initializing Request Mapping');
-
-    // Route middleware that will happen on every request
-    app.use(function(req, res, next) {
-
-      // Redirect all non-secure requests as secured requests
-      if(req.headers['x-forwarded-proto'] !== 'https' && process.env.ENV == 'prod') {
-        return res.redirect(['https://', req.get('Host'), req.url].join(''));
-      }
-
-      // Log each request
-      log.trace(req.method + ' ' + req.originalUrl);
-
-      // Continue to the route handler
-      next();
-    });
-
-    // Route all admin requests to admin-api.js
-    app.use('/admin-api', require('./admin-api'));
-
-    // Route all twitter-api requests to twitter-api.js
-    app.use('/twitter-api', require('./twitter-api'));
-
-    // Route all user-api requests to user-api.js
-    app.use('/user-api', require('./user-api'));
-
-    // For local environment request only, route test-api requests to the test twitter-api.js file
-    if(process.env.ENV == 'local') {
-      app.use('/test-api', require('../../test/api/twitter-api'));
+    // Copy the methods passed in to the prototype
+    for (var name in methods) {
+      sub.prototype[name] = methods[name];
     }
 
-    // Single Page Application - serve layout.html for all requests
-    app.get('*', function(req, res) {
-      res.sendfile('./src/public/html/layout.html');
-    });
-  };
+    // So we can define the constructor inline
+    return sub;
+  }
+
+  // Generic object class
+  exports.GenericObject = function(){};

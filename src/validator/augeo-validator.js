@@ -24,13 +24,19 @@
 
   // Required local modules
   var AugeoUtility = require('../utility/augeo-utility');
+  var Logger = require('../module/logger');
 
   // Constants
+  var VALIDATOR = 'augeo-validator';
   var VALID_CHARACTER_REGEX = new RegExp('^(\\w|[!@#$%^&*(){}\\[\\]|?., ])+');
 
-  exports.isEmailValid = function(email) {
-    var isValid = false;
+  // Global variables
+  var log = new Logger();
 
+  exports.isEmailValid = function(email, logData) {
+    log.functionCall(VALIDATOR, 'isEmailValid', logData.parentProcess, logData.username, {'email':email});
+
+    var isValid = false;
     if(email) {
       if(email.indexOf('@') != -1 && email.match(VALID_CHARACTER_REGEX)) {
         isValid = true;
@@ -39,9 +45,10 @@
     return isValid;
   };
 
-  exports.isMongooseObjectIdValid = function(objectId) {
-    var isValid = false;
+  exports.isMongooseObjectIdValid = function(objectId, logData) {
+    log.functionCall(VALIDATOR, 'isMongooseObjectIdValid', logData.parentProcess, logData.username, {'objectId':objectId});
 
+    var isValid = false;
     if(objectId) {
       var objectIdRegex = new RegExp("^[0-9a-fA-F]{24}$");
       if(objectId.match(objectIdRegex)) {
@@ -51,9 +58,10 @@
     return isValid;
   };
 
-  exports.isNumberValid = function(number) {
-    var isValid = false;
+  exports.isNumberValid = function(number, logData) {
+    log.functionCall(VALIDATOR, 'isNumberValid', logData.parentProcess, logData.username, {'number':number});
 
+    var isValid = false;
     if(number) {
       var numberRegex = new RegExp('^[0-9]+$');
       if(number.match(numberRegex)) {
@@ -63,9 +71,10 @@
     return isValid;
   };
 
-  exports.isPasswordValid = function(password) {
-    var isValid = false;
+  exports.isPasswordValid = function(password, logData) {
+    log.functionCall(VALIDATOR, 'isPasswordValid', logData.parentProcess, logData.username);
 
+    var isValid = false;
     if(password) {
       var passwordRegex = new RegExp('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})');
       if(password.match(VALID_CHARACTER_REGEX) && password.match(passwordRegex)) {
@@ -76,8 +85,9 @@
   };
 
   exports.isSessionValid = function(request) {
-    var isValid = false;
+    log.functionCall(VALIDATOR, 'isSessionValid');
 
+    var isValid = false;
     if(request) {
       if (request.session) {
         var user = request.session.user;
@@ -91,9 +101,10 @@
     return isValid;
   };
 
-  exports.isSkillValid = function(skill) {
-    var isValid = false;
+  exports.isSkillValid = function(skill, logData) {
+    log.functionCall(VALIDATOR, 'isSkillValid', logData.parentProcess, logData.username, {'skill':skill});
 
+    var isValid = false;
     if(skill) {
       var subSkills = AugeoUtility.SUB_SKILLS;
       for(var i = 0; i < subSkills.length; i++) {
@@ -106,9 +117,10 @@
     return isValid;
   };
 
-  exports.isStringAlphabetic = function(string) {
-    var isValid = false;
+  exports.isStringAlphabetic = function(string, logData) {
+    log.functionCall(VALIDATOR, 'isStringAlphabetic', logData.parentProcess, logData.username, {'string':string});
 
+    var isValid = false;
     if(string) {
       var alphabeticRegex = new RegExp('^[a-zA-Z]+$');
       if(string.match(alphabeticRegex)) {
@@ -118,9 +130,10 @@
     return isValid;
   };
 
-  exports.isUsernameValid = function(username) {
-    var isValid = false;
+  exports.isUsernameValid = function(username, logData) {
+    log.functionCall(VALIDATOR, 'isUsernameValid', logData.parentProcess, logData.username, {'username':username});
 
+    var isValid = false;
     if(username) {
       var usernameRegex = new RegExp('^[a-zA-Z0-9_]{1,15}$');
       if(username.match(usernameRegex)) {

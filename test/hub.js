@@ -38,6 +38,10 @@
     });
   };
 
+  describe('Module', function() {
+    importTests('logger', './test-case/module/logger');
+  });
+
   describe('Utility', function() {
     importTests('augeoUtility', './test-case/utility/augeo-utility');
     importTests('twitterUtility', './test-case/utility/twitter-utility');
@@ -94,6 +98,10 @@
     importTests('Session', './test-case/api/user-api/session');
     importTests('Remove User', './test-case/api/user-api/remove-user', App);
     importTests('Save Profile Data', './test-case/api/user-api/save-profile-data', App)
+  });
+
+  describe('Admin API', function() {
+    importTests('Set Log Level', './test-case/api/admin-api/set-log-level', App);
   });
 
   describe('Twitter API', function() {

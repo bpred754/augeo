@@ -28,7 +28,6 @@
   var AugeoUtility = require('../../src/utility/augeo-utility');
   var Common = require('../test-case/common');
   var TwitterService = require('../../src/service/twitter-service');
-  var TwitterUtility = require('../../src/utility/twitter-utility');
   var UserService = require('../../src/service/user-service');
 
   // Global variables
@@ -46,9 +45,9 @@
 
   exports.addUser = function(user, callback) {
 
-    UserService.addUser(user, function(retrievedUser) {
+    UserService.addUser(user, {}, function(retrievedUser) {
 
-      var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS));
+      var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData), Common.logData);
 
       var twitterData = {
         twitterId: user.twitter.twitterId,
@@ -57,20 +56,20 @@
         profileImageUrl: user.twitter.profileImageUrl,
         accessToken: user.twitter.accessToken,
         secretAccessToken: user.twitter.secretAccessToken,
-        skill: AugeoUtility.getMainSkill(0),
+        skill: AugeoUtility.getMainSkill(0, Common.logData),
         subSkills: newUserSubSkills
       };
 
       // Update twitter information
-      TwitterService.updateTwitterInfo(retrievedUser._id.toString(), twitterData, function() {
+      TwitterService.updateTwitterInfo(retrievedUser._id.toString(), twitterData, Common.logData, function() {
         callback();
       });
     }, function(){console.log('Twitter Helper -- Failed to add user')});
   };
 
   exports.cleanMentions = function(callback) {
-    Mention.removeMentions('testScreenName', function() {
-      Mention.removeMentions('twitterActionee', function() {
+    Mention.removeMentions('testScreenName', Common.logData, function() {
+      Mention.removeMentions('twitterActionee', Common.logData, function() {
         callback();
       });
     });
@@ -87,10 +86,10 @@
   };
 
   exports.cleanTweets = function(callback) {
-    Tweet.removeTweets('testScreenName', function() {
-      Tweet.removeTweets('twitterActionee', function() {
-        Tweet.removeTweetsWithMentionee("testScreenName", function() {
-          Tweet.removeTweetsWithMentionee("twitterActionee", function() {
+    Tweet.removeTweets('testScreenName', Common.logData, function() {
+      Tweet.removeTweets('twitterActionee', Common.logData, function() {
+        Tweet.removeTweetsWithMentionee("testScreenName", Common.logData, function() {
+          Tweet.removeTweetsWithMentionee("twitterActionee", Common.logData, function() {
             callback();
           });
         });
@@ -99,8 +98,8 @@
   };
 
   exports.cleanUsers = function(callback) {
-    User.remove('tester', function(user1) {
-      User.remove('actionee', function(user2) {
+    User.remove('tester', Common.logData, function(user1) {
+      User.remove('actionee', Common.logData, function(user2) {
         callback();
       });
     });

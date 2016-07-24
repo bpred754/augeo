@@ -53,18 +53,18 @@
     };
 
     // Get mention count before adding mentions
-    Mention.getMentionCount(function(initialMentionCount) {
+    Mention.getMentionCount(Common.logData, function(initialMentionCount) {
 
       // Get Test Tester's user id from database
-      User.getUserWithEmail(Common.USER.email, function(initialUser) {
+      User.getUserWithEmail(Common.USER.email, Common.logData, function(initialUser) {
 
-        User.getUserWithEmail(Common.ACTIONEE.email, function(initialUser2) {
+        User.getUserWithEmail(Common.ACTIONEE.email, Common.logData, function(initialUser2) {
 
           var userId = initialUser._id + '';
-          TwitterService.getQueueData(userId, Common.USER.twitter.screenName, function(queueData) {
+          TwitterService.getQueueData(userId, Common.USER.twitter.screenName, Common.logData, function(queueData) {
 
             var userId2 = initialUser2._id + '';
-            TwitterService.getQueueData(userId2, Common.ACTIONEE.twitter.screenName, function(queueData2) {
+            TwitterService.getQueueData(userId2, Common.ACTIONEE.twitter.screenName, Common.logData, function(queueData2) {
 
               var iteration = 0;
               var mentionsAdded = 0;
@@ -98,11 +98,11 @@
                 Assert.strictEqual(iteration, expectedIterations);
 
                 // Verify correct number of mentions were inserted to the Mention table
-                Mention.getMentionCount(function(mentionCount) {
+                Mention.getMentionCount(Common.logData, function(mentionCount) {
                   Assert.strictEqual(mentionCount, initialMentionCount + mentionsAdded);
 
                   // Verify user experience is updated
-                  User.getUserWithEmail(Common.USER.email, function(user) {
+                  User.getUserWithEmail(Common.USER.email, Common.logData, function(user) {
                     var expectedExperience = initialUser.skill.experience + TwitterUtility.MENTION_EXPERIENCE * mentionsAdded;
                     Assert.strictEqual(user.skill.experience, expectedExperience);
                     callDone();
@@ -114,18 +114,18 @@
                 callDone();
               };
 
-              twitterRestQueue.addUserToMentionQueue(queueData.mentionQueueData);
+              twitterRestQueue.addUserToMentionQueue(queueData.mentionQueueData, Common.logData);
 
               // Verify wait times for when queue is only executing the current user
-              Assert.strictEqual(twitterRestQueue.getMentionsWaitTime(), 1);
-              Assert.strictEqual(twitterRestQueue.getUsersMentionWaitTime(userId), 1);
+              Assert.strictEqual(twitterRestQueue.getMentionsWaitTime(Common.logData), 1);
+              Assert.strictEqual(twitterRestQueue.getUsersMentionWaitTime(userId, Common.logData), 1);
 
               // Add dummy user to test wait time
-              twitterRestQueue.addUserToMentionQueue(queueData2.mentionQueueData);
+              twitterRestQueue.addUserToMentionQueue(queueData2.mentionQueueData, Common.logData);
 
               // Verify wait times for user in queue
-              Assert.strictEqual(twitterRestQueue.getMentionsWaitTime(), 2);
-              Assert.strictEqual(twitterRestQueue.getUsersMentionWaitTime(userId2), 2);
+              Assert.strictEqual(twitterRestQueue.getMentionsWaitTime(Common.logData), 2);
+              Assert.strictEqual(twitterRestQueue.getUsersMentionWaitTime(userId2, Common.logData), 2);
             });
           });
         });
@@ -146,18 +146,18 @@
     };
 
     // Get tweet count before adding tweets
-    Tweet.getTweetCount(function(initialTweetCount) {
+    Tweet.getTweetCount(Common.logData, function(initialTweetCount) {
 
       // Get Test Tester's user id from database
-      User.getUserWithEmail(Common.USER.email, function(initialUser) {
+      User.getUserWithEmail(Common.USER.email, Common.logData, function(initialUser) {
 
-        User.getUserWithEmail(Common.ACTIONEE.email, function(initialUser2) {
+        User.getUserWithEmail(Common.ACTIONEE.email, Common.logData, function(initialUser2) {
 
           var userId = initialUser._id + '';
-          TwitterService.getQueueData(userId, Common.USER.twitter.screenName, function(queueData) {
+          TwitterService.getQueueData(userId, Common.USER.twitter.screenName, Common.logData, function(queueData) {
 
             var userId2 = initialUser2._id + '';
-            TwitterService.getQueueData(userId2, Common.ACTIONEE.twitter.screenName, function(queueData2) {
+            TwitterService.getQueueData(userId2, Common.ACTIONEE.twitter.screenName, Common.logData, function(queueData2) {
 
               var iteration = 0;
               var tweetsAdded = 0;
@@ -189,11 +189,11 @@
                 Assert.strictEqual(iteration, expectedIterations);
 
                 // Verify correct number of tweets were inserted to the Tweet table
-                Tweet.getTweetCount(function(tweetCount) {
+                Tweet.getTweetCount(Common.logData, function(tweetCount) {
                   Assert.strictEqual(tweetCount, initialTweetCount + tweetsAdded);
 
                   // Verify user experience is updated
-                  User.getUserWithEmail(Common.USER.email, function(user) {
+                  User.getUserWithEmail(Common.USER.email, Common.logData, function(user) {
                     user.skill.experience.should.be.aboveOrEqual(initialUser.skill.experience + tweetsAdded*TwitterUtility.TWEET_EXPERIENCE);
                     callDone();
                   });
@@ -204,18 +204,18 @@
                 callDone();
               };
 
-              twitterRestQueue.addUserToTweetQueue(queueData.tweetQueueData);
+              twitterRestQueue.addUserToTweetQueue(queueData.tweetQueueData, Common.logData);
 
               // Verify wait times for when queue is only executing the current user
-              Assert.strictEqual(twitterRestQueue.getTweetsWaitTime(), 4);
-              Assert.strictEqual(twitterRestQueue.getUsersTweetWaitTime(userId), 4);
+              Assert.strictEqual(twitterRestQueue.getTweetsWaitTime(Common.logData), 4);
+              Assert.strictEqual(twitterRestQueue.getUsersTweetWaitTime(userId, Common.logData), 4);
 
               // Add dummy user to test wait time
-              twitterRestQueue.addUserToTweetQueue(queueData2.tweetQueueData);
+              twitterRestQueue.addUserToTweetQueue(queueData2.tweetQueueData, Common.logData);
 
               // Verify wait times for user in queue
-              Assert.strictEqual(twitterRestQueue.getTweetsWaitTime(), 8);
-              Assert.strictEqual(twitterRestQueue.getUsersTweetWaitTime(userId2), 8);
+              Assert.strictEqual(twitterRestQueue.getTweetsWaitTime(Common.logData), 8);
+              Assert.strictEqual(twitterRestQueue.getUsersTweetWaitTime(userId2, Common.logData), 8);
             });
           });
         });
@@ -227,53 +227,53 @@
     this.timeout(Common.TIMEOUT);
 
     // Remove actionee to simplify test
-    User.remove(Common.ACTIONEE.email, function() {
+    User.remove(Common.ACTIONEE.email, Common.logData, function() {
 
       // Add second to last tweet to user's tweets
       var data0 = Data.getSecondMostRecentTweet();
-      var tweet = TwitterInterfaceService.extractTweet(data0, false);
+      var tweet = TwitterInterfaceService.extractTweet(data0, false, Common.logData);
       var tweets = new Array();
       tweets.push(tweet);
-      User.getUserWithEmail(Common.USER.email, function(user) {
-        TwitterService.addTweets(user._id, user.twitter.screenName, tweets, function() {
+      User.getUserWithEmail(Common.USER.email, Common.logData, function(user) {
+        TwitterService.addTweets(user._id, user.twitter.screenName, tweets, Common.logData, function() {
 
           // Verify tweet is in database
-          Tweet.findTweet(tweet.tweetId, function(returnedTweet0) {
+          Tweet.findTweet(tweet.tweetId, Common.logData, function(returnedTweet0) {
             Assert.strictEqual(tweet.tweetId, returnedTweet0[0].tweetId);
 
             // Add second to last mention to user's mentions
             var data1 = Data.getSecondMostRecentMention();
             var datas = Array();
             datas.push(data1);
-            var mentions = TwitterInterfaceService.extractMentionData(datas, user.twitter.screenName);
-            var mentionTweet = TwitterInterfaceService.extractTweet(data1, false);
+            var mentions = TwitterInterfaceService.extractMentionData(datas, user.twitter.screenName, Common.logData);
+            var mentionTweet = TwitterInterfaceService.extractTweet(data1, false, Common.logData);
             var mentionTweets = new Array();
             mentionTweets.push(mentionTweet)
-            TwitterService.addMentions(user._id, user.twitter.screenName, mentionTweets, mentions, function() {
+            TwitterService.addMentions(user._id, user.twitter.screenName, mentionTweets, mentions, Common.logData, function() {
 
               // Verify mention is in database
-              Mention.findMention(user.twitter.screenName, mentionTweet.tweetId, function(returnedMention0) {
+              Mention.findMention(user.twitter.screenName, mentionTweet.tweetId, Common.logData, function(returnedMention0) {
                 Assert.strictEqual(mentionTweet.tweetId, returnedMention0[0].tweetId);
 
                 // Verify that the last raw tweet is not in the TWEET table
                 var latestTweet = Data.getOldestTweet();
-                Tweet.findTweet(latestTweet.id_str, function(returnedTweet1) {
+                Tweet.findTweet(latestTweet.id_str, Common.logData, function(returnedTweet1) {
                   Assert.strictEqual(0, returnedTweet1.length);
 
                   // Verify that the last raw mention is not in the MENTION table
                   var latestMention = Data.getOldestMention();
-                  Mention.findMention(user.twitter.screenName, latestMention.id_str, function(returnedMention1) {
+                  Mention.findMention(user.twitter.screenName, latestMention.id_str, Common.logData, function(returnedMention1) {
                     Assert.strictEqual(0, returnedMention1.length);
 
-                    twitterRestQueue.addAllUsersToQueues('TWEET',function() {
+                    twitterRestQueue.addAllUsersToQueues('TWEET', Common.logData, function() {
 
                       // Verify the last raw tweet is in the Tweet table
-                      Tweet.findTweet(latestTweet.id_str, function(returnedTweet2) {
+                      Tweet.findTweet(latestTweet.id_str, Common.logData, function(returnedTweet2) {
                         Assert.strictEqual(latestTweet.id_str, returnedTweet2[0].tweetId);
 
-                        twitterRestQueue.addAllUsersToQueues('MENTION', function() {
+                        twitterRestQueue.addAllUsersToQueues('MENTION', Common.logData, function() {
                           // Verify the last raw mention is in the Mention table
-                          Mention.findMention(user.twitter.screenName, latestMention.id_str, function(returnedMention2) {
+                          Mention.findMention(user.twitter.screenName, latestMention.id_str, Common.logData, function(returnedMention2) {
                             Assert.strictEqual(latestMention.id_str, returnedMention2[0].tweetId);
                             done();
                           });

@@ -67,6 +67,7 @@
     password: exports.USER.password
   };
 
+  exports.logData = {};
   exports.TIMEOUT = 60000;
 
   /***************************************************************************/

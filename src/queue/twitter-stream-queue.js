@@ -36,6 +36,7 @@
 
   // Constants
   var CHECK_QUEUE_OPEN_TIMEOUT = 500;
+  var QUEUE = 'twitter-stream-queue';
   var STREAM_REQUESTS_PER_WINDOW = process.env.TEST === 'true' ? 120 : 1;
   var STREAM_WINDOW = 2;
   var STREAM_TIMEOUT = ((STREAM_WINDOW*60)/STREAM_REQUESTS_PER_WINDOW)*1000;
@@ -62,25 +63,27 @@
     self.streamRequestOpen = true;
 
     streamQueue = Async.queue(function(queueData, callback) {
-      log.info('Executing streamQueue task for tweetID: ' + queueData.data.id_str);
+      var logData = queueData.logData;
+      log.functionCall(QUEUE, 'Async.queue', logData.parentProcess, logData.username, {'queueData.action':(queueData)?queueData.action:'invalid'},
+        'Executing mention queue task');
 
       var action = queueData.action;
       var data = queueData.data;
 
       if(action == 'Add') {
         var checkClassification = true;
-        var tweet = TwitterInterfaceService.extractTweet(data, checkClassification);
-        var mention = TwitterInterfaceService.extractReply(data);
-        var action = TwitterInterfaceService.extractAction(data);
+        var tweet = TwitterInterfaceService.extractTweet(data, checkClassification, logData);
+        var mention = TwitterInterfaceService.extractReply(data, logData);
+        var action = TwitterInterfaceService.extractAction(data, logData);
 
-        TwitterService.addAction(action, tweet, mention, callback);
+        TwitterService.addAction(action, tweet, mention, logData, callback);
       } else if(action == 'Remove') { // Remove logic
-        TwitterService.removeTweet(data.status, callback);
+        TwitterService.removeTweet(data.status, logData, callback);
       } else if(action == 'Open') {
 
-        onStreamRequestOpen(function() {
-          startStreamTimer();
-          TwitterInterfaceService.openStream(data, queueData.callback, queueData.removeCallback, queueData.connectedCallback);
+        onStreamRequestOpen(logData, function() {
+          startStreamTimer(logData);
+          TwitterInterfaceService.openStream(data, logData, queueData.callback, queueData.removeCallback, queueData.connectedCallback);
           callback();
         });
       }
@@ -88,12 +91,14 @@
     }, 1); // Only allow 1 request at a time
   };
 
-  TwitterStreamQueue.prototype.addAction = function(queueData, callback) {
-    log.info('Adding action to streamQueue: ' + queueData.data.id_str + '. Action: ' + queueData.action);
+  TwitterStreamQueue.prototype.addAction = function(queueData, logData, callback) {
+    log.functionCall(QUEUE, 'addAction', logData.parentProcess, logData.username, {'queueData.action':(queueData)?queueData.action:'invalid'});
+
+    queueData.logData = logData;
     streamQueue.push(queueData, function(skill) {
-      UserService.updateRanks(function() {
-        UserService.updateSubSkillRanks(skill, function() {
-          log.info('Finished updating ranks.');
+      UserService.updateRanks(logData, function() {
+        UserService.updateSubSkillRanks(skill, logData, function() {
+          log.functionCall(QUEUE, 'addAction', logData.parentProcess, logData.username, {}, 'Finished updating ranks');
           callback();
         });
       });
@@ -101,7 +106,8 @@
   };
 
   TwitterStreamQueue.prototype.openStream = function(queueData, callback) {
-    log.info('Opening stream connection with Twitter');
+    var logData = queueData.logData;
+    log.functionCall(QUEUE, 'openStream', logData.parentProcess, logData.username, {'queueData.action':(queueData)?queueData.action:'invalid'});
     streamQueue.push(queueData, function() {
       callback();
     });
@@ -111,15 +117,17 @@
   /* Private functions                                                       */
   /***************************************************************************/
 
-  var onStreamRequestOpen = function(callback) {
+  var onStreamRequestOpen = function(logData, callback) {
+    log.functionCall(QUEUE, 'onStreamRequestOpen', logData.parentProcess, logData.username, {'streamRequestOpen':self.streamRequestOpen});
     if(self.streamRequestOpen == true) {
       callback();
     } else {
-      setTimeout(function() {onStreamRequestOpen(callback)}, CHECK_QUEUE_OPEN_TIMEOUT);
+      setTimeout(function() {onStreamRequestOpen(logData, callback)}, CHECK_QUEUE_OPEN_TIMEOUT);
     }
   };
 
-  var startStreamTimer = function() {
+  var startStreamTimer = function(logData) {
+    log.functionCall(QUEUE, 'startStreamTimer', logData.parentProcess, logData.username);
     self.streamRequestOpen = false;
     setTimeout(function() {
       self.streamRequestOpen = true;

@@ -38,12 +38,21 @@
     it('should return status 200 - invalid username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
+      // Login in user
       agent
-        .get('/user-api/getCompetitors?username=invalidUsername&skill=Augeo')
+        .post('/user-api/login')
+        .send(Common.LOGIN_USER)
         .expect(200)
-        .end(function(error, response) {
-          Should.not.exist(error);
-          done();
+        .end(function(error0, response0) {
+          Should.not.exist(error0);
+
+        agent
+          .get('/user-api/getCompetitors?username=invalidUsername&skill=Augeo')
+          .expect(200)
+          .end(function(error1, response1) {
+            Should.not.exist(error1);
+            done();
+          });
         });
     });
 

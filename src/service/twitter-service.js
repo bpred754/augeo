@@ -30,6 +30,7 @@
   // Required local modules
   var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
+  var Logger = require('../module/logger');
   var TwitterUtility = require('../utility/twitter-utility');
   var TwitterValidator = require('../validator/twitter-validator');
 
@@ -40,42 +41,46 @@
 
   // Constants
   var ACTIVITY_PER_PAGE = 20;
+  var SERVICE = 'twitter-service';
 
   // Global variables
   var User = AugeoDB.model('User');
   var Tweet = AugeoDB.model('Tweet');
+  var log = new Logger();
   var Mention = AugeoDB.model('Mention');
 
-  exports.addAction = function(action, tweet, mention, callback) {
+  exports.addAction = function(action, tweet, mention, logData, callback) {
+    log.functionCall(SERVICE, 'addAction', logData.parentProcess, logData.username, {'action.actionerScreenName': (action)?action.actionerScreenName:'invalid',
+      'tweet.tweetId':(tweet)?tweet.tweetId:'invalid', 'mention.mentioneeScreenName':(mention)?mention.mentioneeScreenName:'invalid'});
 
-    Tweet.findTweet(action.tweetId, function(returnedTweet) {
+    Tweet.findTweet(action.tweetId, logData, function(returnedTweet) {
 
       // Make sure tweet is unique
       if(returnedTweet.length === 0) {
 
         // Find twitterId for actioner
-        User.getUserWithScreenName(action.actionerScreenName, function(actioner) {
+        User.getUserWithScreenName(action.actionerScreenName, logData, function(actioner) {
 
           // Find twitterId for actionee
-          User.getUserWithScreenName(action.actioneeScreenName, function(actionee) {
+          User.getUserWithScreenName(action.actioneeScreenName, logData, function(actionee) {
 
             // Update twitter skill data
             if(actioner) {
-              var actionerExperience = getTwitterExperience(tweet, action.actionerScreenName);
-              User.updateSkillData(actioner._id, actionerExperience, function() {
+              var actionerExperience = getTwitterExperience(tweet, action.actionerScreenName, null, logData);
+              User.updateSkillData(actioner._id, actionerExperience, logData, function() {
                 if(actionee) {
-                  updateActionee(actionee, action, tweet, mention, callback);
+                  updateActionee(actionee, action, tweet, mention, logData, callback);
                 } else {
                   callback(tweet.classification);
                 }
               });
             } else if(actionee) {
-              updateActionee(actionee, action, tweet, mention, callback);
+              updateActionee(actionee, action, tweet, mention, logData, callback);
             }
 
             if(actioner || actionee) {
               // Insert tweets into tweet table
-              Tweet.addTweet(tweet, function() {});
+              Tweet.addTweet(tweet, logData, function() {});
             }
           }); // End getUserWithScreenName for actionee
         }); // End getUserWithScreenName for actioner
@@ -84,79 +89,84 @@
   };
 
   // Add mentions and their respective tweets to the given user
-  exports.addMentions = function(userId, screenName, userMentionTweets, userMentions, callback) {
+  exports.addMentions = function(userId, screenName, userMentionTweets, userMentions, logData, callback) {
+    log.functionCall(SERVICE, 'addMentions', logData.parentProcess, logData.username, {'userId':userId,'screenName':screenName,
+      'userMentionTweets':(userMentionTweets)?userMentionTweets.length:'invalid', 'userMentions':(userMentions)?userMentions.length:'invalid'});
 
     // Add the user's mentionTweets to the TWEET table
-    Tweet.addTweets(userMentionTweets, function() {}); // End addTweets
+    Tweet.addTweets(userMentionTweets, logData, function() {}); // End addTweets
 
     // Add the user's mentions to the Mention table
-    Mention.addMentions(userMentions, function() {}); // End addMentions
+    Mention.addMentions(userMentions, logData, function() {}); // End addMentions
 
     // Calculate experience from the user's mentionTweets
     var isMention = true;
-    var twitterExperience = calculateTwitterExperience(userMentionTweets, screenName, isMention);
+    var twitterExperience = calculateTwitterExperience(userMentionTweets, screenName, isMention, logData);
 
     // Update user's experience
-    User.updateSkillData(userId, twitterExperience, function() {
+    User.updateSkillData(userId, twitterExperience, logData, function() {
       callback();
     }); // End updateSkillData
   };
 
   // Add tweets to the given user
-  exports.addTweets = function(userId, screenName, userTweets, callback) {
+  exports.addTweets = function(userId, screenName, userTweets, logData, callback) {
+    log.functionCall(SERVICE, 'addTweets', logData.parentProcess, logData.username, {'userId':userId, 'screenName':screenName,
+      'userTweets':(userTweets)?userTweets.length:'invalid'});
 
     // Add the user's tweets to the TWEET table
-    Tweet.addTweets(userTweets, function() {}); // End addTweets
+    Tweet.addTweets(userTweets, logData, function() {}); // End addTweets
 
     // Determine experience from tweets
-    var twitterExperience = calculateTwitterExperience(userTweets, screenName);
+    var twitterExperience = calculateTwitterExperience(userTweets, screenName, null, logData);
 
     // Update user's experience
-    User.updateSkillData(userId, twitterExperience, function() {
+    User.updateSkillData(userId, twitterExperience, logData, function() {
       callback();
     }); // End updateSkillData
   };
 
-  exports.addUserSecretToken = function(request, secretToken, callback, rollback) {
+  exports.addUserSecretToken = function(userId, secretToken, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'addUserSecretToken', logData.parentProcess, logData.username, {'userId':userId, 'secretToken':secretToken});
 
-    if(AugeoValidator.isSessionValid(request)) {
-      User.addTwitterSecretToken(request.session.user._id, secretToken, function(success) {
-        if(success) {
-          callback();
-        } else {
-          rollback();
-        }
-      });
-    } else {
-      rollback();
-    }
-  }
+    User.addTwitterSecretToken(userId, secretToken, logData, function(success) {
+      if(success) {
+        callback();
+      } else {
+        rollback('Failed to add Twitter secret access token');
+      }
+    });
+  };
 
-  exports.connectToTwitter = function(restQueue, streamQueue, callback) {
+  exports.connectToTwitter = function(restQueue, streamQueue, logData, callback) {
+    log.functionCall(SERVICE, 'connectToTwitter', logData.parentProcess, logData.username, {'restQueue':(restQueue)?'valid':'invalid',
+      'streamQueue':(streamQueue)?'valid':'invalid'});
+
     // Get all users twitterId's
-    exports.getUsers(function(users) {
+    exports.getUsers(logData, function(users) {
 
       if(users.length > 0) {
 
         var streamQueueData = {
-          action: "Open",
+          action: 'Open',
           data: users,
+          logData: logData,
           callback: function(tweetData) {
             var queueData = {};
             queueData.action = 'Add';
             queueData.data = tweetData;
-            streamQueue.addAction(queueData, function(){});
+            streamQueue.addAction(queueData, logData, function(){});
           },
           removeCallback: function(tweetData) {
             var queueData = {};
             queueData.action = 'Remove';
             queueData.data = tweetData;
-            streamQueue.addAction(queueData, function() {});
+            streamQueue.addAction(queueData, logData, function() {});
           },
           connectedCallback: function() {
-            restQueue.addAllUsersToQueues('ALL', function(){});
+            restQueue.addAllUsersToQueues('ALL', logData, function(){});
           }
-        }
+        };
 
         streamQueue.openStream(streamQueueData, function(){}); // End openStream
       }
@@ -164,38 +174,47 @@
     });
   };
 
-  exports.checkExistingAccessToken = function(accessToken, callback, rollback) {
-    User.checkExistingTwitterAccessToken(accessToken, function(existingAccessToken) {
+  exports.checkExistingAccessToken = function(accessToken, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'checkExistingAccessToken', logData.parentProcess, logData.username, {'accessToken':accessToken});
+
+    User.checkExistingTwitterAccessToken(accessToken, logData, function(existingAccessToken) {
 
       if(existingAccessToken != undefined) {
         callback(existingAccessToken);
       } else {
-        rollback();
+        rollback('The retrieved existingAccessToken is undefined');
       }
     });
   };
 
-  exports.getAllUsersQueueData = function(callback) {
-    User.getAllUsersTwitterQueueData(callback);
+  exports.getAllUsersQueueData = function(logData, callback) {
+    log.functionCall(SERVICE, 'getAllUsersQueueData', logData.parentProcess, logData.username);
+
+    User.getAllUsersTwitterQueueData(logData, callback);
   };
 
-  exports.getLatestMentionTweetId = function(screenName, callback) {
-    Mention.getLatestMentionTweetId(screenName, callback);
+  exports.getLatestMentionTweetId = function(screenName, logData, callback) {
+    log.functionCall(SERVICE, 'getLatestMentionTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
+
+    Mention.getLatestMentionTweetId(screenName, logData, callback);
   };
 
-  exports.getLatestTweetId = function(screenName, callback) {
-    Tweet.getLatestTweetId(screenName, callback);
+  exports.getLatestTweetId = function(screenName, logData, callback) {
+    log.functionCall(SERVICE, 'getLatestTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
+
+    Tweet.getLatestTweetId(screenName, logData, callback);
   };
 
-  exports.getQueueData = function(userId, screenName, callback, rollback) {
+  exports.getQueueData = function(userId, screenName, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getQueueData', logData.parentProcess, logData.username, {'userId':userId, 'screenName':screenName});
 
-    if (AugeoValidator.isMongooseObjectIdValid(userId) && TwitterValidator.isScreenNameValid(screenName)) {
+    if (AugeoValidator.isMongooseObjectIdValid(userId, logData) && TwitterValidator.isScreenNameValid(screenName, logData)) {
 
       // Get user's access tokens
-      User.getTwitterTokens(userId, function(tokens) {
+      User.getTwitterTokens(userId, logData, function(tokens) {
 
         if(tokens) {
-          User.checkExistingTwitterUser(screenName, function(userExists) {
+          User.checkExistingTwitterUser(screenName, logData, function(userExists) {
 
             if(userExists) {
               var accessToken = tokens.accessToken;
@@ -220,28 +239,30 @@
               }
               callback(queueData);
             } else {
-              rollback();
+              rollback('User does not exist');
             }
           });
         } else {
-          rollback();
+          rollback('User tokens do not exist');
         }
       });
     } else {
-      rollback();
+      rollback('Invalid input');
     }
   };
 
   // Format necessary data to display on users dashboard
-  exports.getDashboardDisplayData = function(username, targetUsername, callback, rollback) {
+  exports.getDashboardDisplayData = function(username, targetUsername, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getDashboardDisplayData', logData.parentProcess, logData.username, {'username':username,
+        'targetUsername':targetUsername});
 
     var errorImageUrl = 'image/logo.png';
 
-    if(targetUsername && AugeoValidator.isUsernameValid(targetUsername)) {
-      User.doesUsernameExist(targetUsername, function(targetUsernameExists) {
+    if(targetUsername && AugeoValidator.isUsernameValid(targetUsername, logData)) {
+      User.doesUsernameExist(targetUsername, logData, function(targetUsernameExists) {
 
         if(targetUsernameExists) {
-          getDashboardDisplayDataPrivate(targetUsername, callback);
+          getDashboardDisplayDataPrivate(targetUsername, logData, callback);
         } else {
 
           var errorData = {
@@ -252,12 +273,12 @@
         }
       });
     } else {
-      if(AugeoValidator.isUsernameValid(username)) {
+      if(AugeoValidator.isUsernameValid(username, logData)) {
 
-        User.doesUsernameExist(username, function(usernameExists) {
+        User.doesUsernameExist(username, logData, function(usernameExists) {
 
           if(usernameExists) {
-            getDashboardDisplayDataPrivate(username, callback);
+            getDashboardDisplayDataPrivate(username, logData, callback);
           } else {
 
             var errorData = {
@@ -268,24 +289,26 @@
           }
         });
       } else {
-        rollback();
+        rollback('Invalid username');
       }
     }
   };
 
-  exports.getSkillActivity = function(username, skill, tweetId, callback, rollback) {
+  exports.getSkillActivity = function(username, skill, tweetId, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getSkillActivity', logData.parentProcess, logData.username, {'username':username, 'skill':skill,
+      'tweetId':tweetId});
 
-    if(AugeoValidator.isUsernameValid(username)) {
+    if(AugeoValidator.isUsernameValid(username, logData)) {
 
-      User.getUserWithUsername(username, function(user) {
+      User.getUserWithUsername(username, logData, function(user) {
 
         if(user) {
           var screenName = user.twitter.screenName;
-          Mention.getMentions(screenName, function (mentionTweetIds) {
+          Mention.getMentions(screenName, logData, function (mentionTweetIds) {
 
-            if (AugeoValidator.isSkillValid(skill) && AugeoValidator.isNumberValid(tweetId)) {
+            if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isNumberValid(tweetId, logData)) {
 
-              Tweet.getSkillActivity(screenName, mentionTweetIds, skill, ACTIVITY_PER_PAGE, tweetId, function (tweets) {
+              Tweet.getSkillActivity(screenName, mentionTweetIds, skill, ACTIVITY_PER_PAGE, tweetId, logData, function (tweets) {
 
                 var data = {
                   activity: tweets
@@ -294,29 +317,33 @@
                 callback(data);
               });
             } else {
-              rollback();
+              rollback(404, 'Invalid skill or tweetId');
             }
           });
         } else {
-          rollback();
+          rollback(404, 'Failed to retrieve user');
         }
       });
     } else {
-      rollback();
+      rollback(404, 'Invalid username');
     }
   };
 
   // Call DB to get all users Twitter Id's
-  exports.getUsers = function(callback) {
-    User.getTwitterUsers(callback);
+  exports.getUsers = function(logData, callback) {
+    log.functionCall(SERVICE, 'getUsers', logData.parentProcess, logData.username);
+
+    User.getTwitterUsers(logData, callback);
   };
 
-  exports.getUserSecretToken = function(userId, callback, rollback) {
-    User.getTwitterTokens(userId, function(tokens) {
+  exports.getUserSecretToken = function(userId, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getUserSecretToken', logData.parentProcess, logData.username, {'userId':userId});
+
+    User.getTwitterTokens(userId, logData, function(tokens) {
       if(tokens && tokens.secretToken) {
         callback(tokens.secretToken);
       } else {
-        rollback();
+        rollback('Secret token retrieved is undefined');
       }
     });
   };
@@ -327,19 +354,20 @@
   // Since stream logic can only detect replies, need to only update experience for deleted entries for replies or any
   // mention before the date of signing up with Augeo.
   // Need to update tests for TwitterTestInterface
-  exports.removeTweet = function(tweetData, callback) {
+  exports.removeTweet = function(tweetData, logData, callback) {
+    log.functionCall(SERVICE, 'removeTweet', logData.parentProcess, logData.username, {'tweetData.id_str':(tweetData)?tweetData.id_str:'invalid'});
 
     // Get tweet to be removed from database
-    Tweet.findTweet(tweetData.id_str, function(tweet) {
+    Tweet.findTweet(tweetData.id_str, logData, function(tweet) {
 
       var tweetExperience = tweet[0].experience * -1;
       var classification = tweet[0].classification;
 
       // Remove tweet
-      Tweet.removeTweet(tweetData.id_str, function() {
+      Tweet.removeTweet(tweetData.id_str, logData, function() {
 
         // Set subskills experience
-        var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
+        var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData);
         subSkillsExperience[classification] += tweetExperience;
 
         var experience = {
@@ -348,10 +376,10 @@
         };
 
         // Get User's ID
-        User.getUserWithTwitterId(tweetData.user_id_str, function(user) {
+        User.getUserWithTwitterId(tweetData.user_id_str, logData, function(user) {
 
           // Update users experience
-          User.updateSkillData(user._id, experience, function() {
+          User.updateSkillData(user._id, experience, logData, function() {
             callback(classification);
           });
         });
@@ -360,11 +388,12 @@
   };
 
   // Call DB to update user's twitter information
-  exports.updateTwitterInfo = function(userId, userData, callback, rollback) {
-
+  exports.updateTwitterInfo = function(userId, userData, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'updateTwitterInfo', logData.parentProcess, logData.username, {'userId':userId, 'userData.screenName':(userData)?userData.screenName:'invalid'});
+    
     // Validate userId
-    if(AugeoValidator.isMongooseObjectIdValid(userId)) {
-      User.updateTwitterInfo(userId, userData, callback);
+    if(AugeoValidator.isMongooseObjectIdValid(userId, logData)) {
+      User.updateTwitterInfo(userId, userData, logData, callback);
     } else {
       rollback();
     }
@@ -375,10 +404,12 @@
   /***************************************************************************/
 
   // Calculate Twitter skill experience based on tweets and mentions
-  var calculateTwitterExperience = function(tweets, screenName, isMention) {
+  var calculateTwitterExperience = function(tweets, screenName, isMention, logData) {
+    log.functionCall(SERVICE, 'calculateTwitterExperience (private)', logData.parentProcess, logData.username, {'tweets':(tweets)?tweets.length:'invalid',
+      'screenName':screenName,'isMention':isMention});
 
     var mainSkillExperience = 0;
-    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
+    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData);
     for(var i = 0; i < tweets.length; i++) {
       var tweet = tweets[i];
 
@@ -405,9 +436,10 @@
     return experience;
   };
 
-  var getDashboardDisplayDataPrivate = function(username, callback) {
+  var getDashboardDisplayDataPrivate = function(username, logData, callback) {
+    log.functionCall(SERVICE, 'getDashboardDisplayDataPrivate (private)', logData.parentProcess, logData.username, {'username':username});
 
-    User.getUserWithUsername(username, function(user) {
+    User.getUserWithUsername(username, logData, function(user) {
 
       var profileData = {
         username: username,
@@ -425,11 +457,11 @@
       var mainSkillDisplay = {
         name: 'Augeo',
         experience: mainSkill.experience,
-        level: AugeoUtility.calculateLevel(mainSkill.experience),
+        level: AugeoUtility.calculateLevel(mainSkill.experience, logData),
         imageSrc: mainSkill.imageSrc,
-        startExperience: AugeoUtility.getLevelStartExperience(mainSkill.level),
-        endExperience: AugeoUtility.getLevelEndExperience(mainSkill.level),
-        levelProgress: AugeoUtility.calculateLevelProgress(mainSkill.level, mainSkill.experience)
+        startExperience: AugeoUtility.getLevelStartExperience(mainSkill.level, logData),
+        endExperience: AugeoUtility.getLevelEndExperience(mainSkill.level, logData),
+        levelProgress: AugeoUtility.calculateLevelProgress(mainSkill.level, mainSkill.experience, logData)
       }
 
       var subSkills = user.subSkills;
@@ -444,15 +476,15 @@
           level: subSkill.level,
           _id: subSkill._id ,
           id: subSkill.name.toLowerCase(),
-          startExperience: AugeoUtility.getLevelStartExperience(subSkill.level),
-          levelProgress: AugeoUtility.calculateLevelProgress(subSkill.level, subSkill.experience),
-          endExperience: AugeoUtility.getLevelEndExperience(subSkill.level)
+          startExperience: AugeoUtility.getLevelStartExperience(subSkill.level, logData),
+          levelProgress: AugeoUtility.calculateLevelProgress(subSkill.level, subSkill.experience, logData),
+          endExperience: AugeoUtility.getLevelEndExperience(subSkill.level, logData)
         }
         displaySkills.push(subSkillDisplay);
       }
 
-      Mention.getMentions(user.twitter.screenName, function(mentionTweetIds) {
-        Tweet.getSkillActivity(user.twitter.screenName, mentionTweetIds, null, 10, null, function(tweets) {
+      Mention.getMentions(user.twitter.screenName, logData, function(mentionTweetIds) {
+        Tweet.getSkillActivity(user.twitter.screenName, mentionTweetIds, null, 10, null, logData, function(tweets) {
 
           var displayData = {
             dashboardData: {
@@ -470,12 +502,14 @@
   };
 
   // Calculate experience from tweet
-  var getTwitterExperience = function(tweet, userName, isRetweet) {
+  var getTwitterExperience = function(tweet, username, isRetweet, logData) {
+    log.functionCall(SERVICE, 'getTwitterExperience (private)', logData.parentProcess, logData.username, {'tweet.experience':(tweet)?tweet.experience:'invalid',
+      'username':username,'isRetweet':isRetweet});
 
-    var tweetExperience = TwitterUtility.getExperience(tweet, userName, isRetweet);
+    var tweetExperience = TwitterUtility.getExperience(tweet, username, isRetweet, logData);
 
     // Set subskills experience
-    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS);
+    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData);
     subSkillsExperience[tweet.classification] += tweetExperience;
 
     return {
@@ -485,15 +519,18 @@
   };
 
   // Update actionee's information based off of tweet and mention
-  var updateActionee = function(actionee, action, tweet, mention, callback) {
+  var updateActionee = function(actionee, action, tweet, mention, logData, callback) {
+    log.functionCall(SERVICE, 'updateActionee', logData.parentProcess, logData.username, {'actionee.username':(actionee)?actionee.username:'invalid',
+      'action.tweetId':(action)?action.tweetId:'invalid', 'tweet.tweetId':(tweet)?tweet.tweetId:'invalid','mention.mentioneeScreenName':(mention)?mention.mentioneeScreenName:'invalid'});
+
     // Get tweet experience
-    var actioneeExperience = getTwitterExperience(tweet, action.actionerScreenName, action.isRetweet);
+    var actioneeExperience = getTwitterExperience(tweet, action.actionerScreenName, action.isRetweet, logData);
 
     var tweetId;
     if(action.isRetweet) {
 
       // Increment retweet count
-      Tweet.incrementRetweetCount(action.retweetId, function() {});
+      Tweet.incrementRetweetCount(action.retweetId, logData, function() {});
 
       // Get tweetId to update tweet's experience
       tweetId = action.retweetId;
@@ -502,13 +539,13 @@
       // Get tweetId to update tweets's experience
       tweetId = action.replyId;
 
-      Mention.addMention(mention, function() {});
+      Mention.addMention(mention, logData, function() {});
     } // End reply to else
 
     // Update actionee's Tweet experience
-    Tweet.updateExperience(tweetId, actioneeExperience, function(){});
+    Tweet.updateExperience(tweetId, actioneeExperience, logData, function(){});
 
-    User.updateSkillData(actionee._id, actioneeExperience, function() {
+    User.updateSkillData(actionee._id, actioneeExperience, logData, function() {
       callback(tweet.classification);
     });
   };

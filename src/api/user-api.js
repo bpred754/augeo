@@ -32,6 +32,19 @@
   var Logger = require('../module/logger');
   var UserService = require('../service/user-service');
 
+  // Constants
+  var ADD = '/add';
+  var API = 'user-api';
+  var GET_ACTIVITY_DISPLAY_DATA = '/getActivityDisplayData';
+  var GET_COMPETITORS = '/getCompetitors';
+  var GET_CURRENT_USER = '/getCurrentUser';
+  var GET_LEADERBOARD_DISPLAY_DATA = '/getLeaderboardDisplayData';
+  var INVALID_SESSION = 'Invalid session';
+  var LOGIN = '/login';
+  var LOGOUT = '/logout';
+  var REMOVE = '/remove';
+  var SAVE_PROFILE_DATA = '/saveProfileData';
+
   // Global variables
   var log = new Logger();
 
@@ -39,50 +52,63 @@
   /* GET Requests                                                            */
   /***************************************************************************/
 
-  UserRouter.get('/getActivityDisplayData', function(request, response) {
-    var isValid = false;
+  UserRouter.get(GET_ACTIVITY_DISPLAY_DATA, function(request, response) {
 
-    var jsonResponse = {};
     if(AugeoValidator.isSessionValid(request)) {
-      isValid = true;
-      jsonResponse.skills = AugeoUtility.SUB_SKILLS;
+      log.functionCall(API, GET_ACTIVITY_DISPLAY_DATA, null, request.session.user.username);
+
+      var jsonResponse = {
+        skills: AugeoUtility.SUB_SKILLS
+      };
+      response.status(200).send(jsonResponse);
+    } else {
+      log.functionError(API, GET_ACTIVITY_DISPLAY_DATA, null, INVALID_SESSION);
+      response.sendStatus(401);
     }
 
-    if(isValid == false) {
-      response.sendStatus(401);
-    } else {
-      response.status(200).send(jsonResponse);
-    }
   });
 
-  UserRouter.get('/getCompetitors', function(request, response) {
-    var username = request.query.username;
-    var startRank = request.query.startRank;
-    var endRank = request.query.endRank;
-    var skill = request.query.skill;
+  UserRouter.get(GET_COMPETITORS, function(request, response) {
+    var sessionUsername = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+    var logData = AugeoUtility.formatLogData(API+GET_COMPETITORS, sessionUsername);
 
-    var rollback = function() {
-      response.sendStatus(404);
+    var rollback = function(code, message) {
+      log.functionError(API, GET_COMPETITORS, sessionUsername, message);
+      response.sendStatus(code);
     };
 
-    if(username) {
-      UserService.getCompetitors(username, skill, function(users) {
-        response.status(200).json(users);
-      }, rollback);
+    if(sessionUsername) {
+      var username = request.query.username;
+      var startRank = request.query.startRank;
+      var endRank = request.query.endRank;
+      var skill = request.query.skill;
+
+      log.functionCall(API, GET_COMPETITORS, null, sessionUsername, {'username':username,'startRank':startRank,'endRank':endRank,'skill':skill});
+      if (username) {
+        UserService.getCompetitors(username, skill, logData, function (users) {
+          response.status(200).json(users);
+        }, rollback);
+      } else {
+        UserService.getCompetitorsWithRank(startRank, endRank, skill, logData, function (users) {
+          response.status(200).json(users);
+        }, rollback)
+      }
     } else {
-      UserService.getCompetitorsWithRank(startRank, endRank, skill, function(users) {
-        response.status(200).json(users);
-      }, rollback)
+      rollback(401, INVALID_SESSION);
     }
   });
 
-  UserRouter.get('/getCurrentUser', function(request, response) {
-    log.info('Getting current user from session: ' + request.session.user);
+  UserRouter.get(GET_CURRENT_USER, function(request, response) {
+    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
 
-    if(request.session.user) {
-      UserService.getSessionUser(request.session.user.username, function(user) {
+    if(username) {
+      var logData = AugeoUtility.formatLogData(API+GET_CURRENT_USER, username);
+      log.functionCall(API, GET_CURRENT_USER, null, username);
+
+      UserService.getSessionUser(username, logData, function(user) {
         response.status(200).send(user);
       }, function() {
+        log.functionError(API, GET_CURRENT_USER, username, 'Failed to find session user');
         response.sendStatus(401);
       });
     } else {
@@ -90,63 +116,70 @@
     }
   });
 
-  UserRouter.get('/getLeaderboardDisplayData', function(request, response) {
-    var isValid = false;
+  UserRouter.get(GET_LEADERBOARD_DISPLAY_DATA, function(request, response) {
 
-    // If user exists in session get leaderboard display data
-    var jsonResponse = {};
     if(AugeoValidator.isSessionValid(request)) {
-      isValid = true;
+      var username = request.session.user.username;
+      log.functionCall(API, GET_LEADERBOARD_DISPLAY_DATA, null, username);
+      var logData = AugeoUtility.formatLogData(API+GET_LEADERBOARD_DISPLAY_DATA, username);
 
-      UserService.getNumberUsers(function(numUsers) {
+      UserService.getNumberUsers(logData, function(numUsers) {
 
-        jsonResponse.skills = AugeoUtility.SUB_SKILLS;
-        jsonResponse.numberUsers = numUsers;
+        var jsonResponse = {
+          skills: AugeoUtility.SUB_SKILLS,
+          numberUsers: numUsers
+        }
         response.status(200).json(jsonResponse);
       });
-    }
-
-    if(!isValid) {
+    } else {
+      log.functionError(API, GET_LEADERBOARD_DISPLAY_DATA, null, INVALID_SESSION);
       response.sendStatus(401);
     }
+
   });
 
   /***************************************************************************/
   /* POST Requests                                                           */
   /***************************************************************************/
 
-  UserRouter.post('/add', function(request, response) {
-
-    var user = {
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      email: request.body.email,
-      username: request.body.username,
-      password: request.body.password,
-      profileImg: 'image/avatar-medium.png',
-      profileIcon: 'image/avatar-small.png'
-    };
+  UserRouter.post(ADD, function(request, response) {
 
     // Make sure user is not logged in
     if(!AugeoValidator.isSessionValid(request)) {
 
+      var user = {
+        firstName: request.body.firstName,
+        lastName: request.body.lastName,
+        email: request.body.email,
+        username: request.body.username,
+        password: request.body.password,
+        profileImg: 'image/avatar-medium.png',
+        profileIcon: 'image/avatar-small.png'
+      };
+
+      log.functionCall(API, ADD, null, user.username, {'firstName':user.firstName,'lastName':user.lastName,'email':user.email,'username':user.username});
+      var logData = AugeoUtility.formatLogData(API+ADD, user.username);
+
       // Check if email exists
-      UserService.doesEmailExist(user.email, function (emailExists) {
+      UserService.doesEmailExist(user.email, logData, function (emailExists) {
 
         if (emailExists) {
+          log.functionError(API, ADD, user.email, 'Email exists');
           response.status(400).send('This email already exists. Please try another.');
         } else {
 
-          UserService.doesUsernameExist(user.username, function (usernameExists) {
+          UserService.doesUsernameExist(user.username, logData, function (usernameExists) {
 
             if (usernameExists) {
+              log.functionError(API, ADD, user.username, 'Username exists');
               response.status(400).send('This username already exists. Please try another.');
             } else {
 
               var addUser = function (_user) {
-                UserService.addUser(_user, function () {
+                UserService.addUser(_user, logData, function () {
                   response.sendStatus(200);
                 }, function () {
+                  log.functionError(API, ADD, user.username, 'Invalid input');
                   response.status(400).send('Invalid input. Please try again.');
                 });
               };
@@ -154,8 +187,8 @@
               if (process.env.ENV == 'prod') {
 
                 // Add user to SendGrid contacts
-                EmailProvider.addRecipient(user, function (recipientId) {
-                  EmailProvider.sendWelcomeEmail(user);
+                EmailProvider.addRecipient(user, logData, function (recipientId) {
+                  EmailProvider.sendWelcomeEmail(user, logData);
 
                   user.sendGridId = recipientId ? recipientId : '';
                   addUser(user);
@@ -169,69 +202,94 @@
         ;
       });
     } else {
+      log.functionError(API, ADD, null, 'Session exists');
       response.status(400).send('Cannot signup when logged in');
     }
   });
 
-  UserRouter.post('/login', function(request, response) {
+  UserRouter.post(LOGIN, function(request, response) {
 
-    var rollback = function() {
-      response.status(400).send('Incorrect email address or password');
+    var rollback = function(message) {
+      log.functionError(API, LOGIN, request.body.email, message);
+      response.status(400).send(message);
     };
 
-    UserService.login(request.body.email, request.body.password, function(pUser) {
+    if(!AugeoValidator.isSessionValid(request)) {
+      log.functionCall(API, LOGIN, null, request.body.email);
+      var logData = AugeoUtility.formatLogData(API+LOGIN);
 
-      // Set session user
-      if(pUser != null) {
-        request.session.user = pUser;
-        response.sendStatus(200);
-      } else {
-        rollback();
-      }
+      UserService.login(request.body.email, request.body.password, logData, function(pUser) {
 
-    }, rollback);
-  });
+        // Set session user
+        if(pUser != null) {
+          request.session.user = pUser;
+          response.sendStatus(200);
+        } else {
+          rollback(UserService.INCORRECT_LOGIN);
+        }
 
-  UserRouter.post('/logout', function(request, response) {
-
-    // Destroy the session
-    if(request.session.user) {
-      request.session.destroy();
-      response.status(200).send('You have successfully logged out.');
+      }, rollback);
     } else {
-      response.sendStatus(400);
+      rollback('Already logged in');
     }
 
   });
 
-  UserRouter.post('/remove', function(request, response) {
+  UserRouter.post(LOGOUT, function(request, response) {
 
-    var rollback = function() {response.status(400).send('Failed to delete user');};
+    // Destroy the session
+    if(AugeoValidator.isSessionValid(request)) {
+      log.functionCall(API, LOGOUT, null, request.session.user.username);
+      request.session.destroy();
+      response.status(200).send('You have successfully logged out.');
+    } else {
+      log.functionCall(API, LOGOUT);
+      response.sendStatus(200);
+    }
 
-    if(request.session.user) {
-      UserService.removeUserWithPassword(request.session.user.username, request.body.password, function(error, user) {
+  });
+
+  UserRouter.post(REMOVE, function(request, response) {
+    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+
+    var rollback = function(code, message) {
+      log.functionError(API, REMOVE, username, message);
+      response.status(code).send(message);
+    };
+
+    if(username) {
+      log.functionCall(API, REMOVE, null, username);
+      var logData = AugeoUtility.formatLogData(API+REMOVE, username);
+
+      UserService.removeUserWithPassword(username, request.body.password, logData, function(error, user) {
         if(error) {
-          response.status(401).send('Incorrect password');
+          rollback(401, 'Incorrect password');
         } else if(user) {
 
           if(process.env.ENV == 'prod') {
             // Remove user from SendGrid contacts
-            EmailProvider.removeRecipient(user.sendGridId);
+            EmailProvider.removeRecipient(user.sendGridId, logData);
           }
 
           // Destroy the session
           request.session.destroy();
           response.sendStatus(200);
         } else {
-          rollback();
+          rollback(400, UserService.REMOVE_USER_FAILURE);
         }
       }, rollback);
     } else {
-      rollback();
+      rollback(400, UserService.REMOVE_USER_FAILURE);
     }
   });
 
-  UserRouter.post('/saveProfileData', function(request, response) {
+  UserRouter.post(SAVE_PROFILE_DATA, function(request, response) {
+    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+
+    var rollback = function(code, message) {
+      log.functionError(API, SAVE_PROFILE_DATA, username, message);
+      response.status(code).send(message);
+    };
 
     var profileData = {
       username: request.body.username,
@@ -241,18 +299,22 @@
       description: request.body.description
     };
 
-    if(request.session.user && request.session.user.username == profileData.username) {
-      UserService.saveProfileData(profileData, function(user) {
+    if(username && username == profileData.username) {
+      var logData = AugeoUtility.formatLogData(API+SAVE_PROFILE_DATA, username);
+      log.functionCall(API, SAVE_PROFILE_DATA, null, username, {'username':profileData.username,'profession':profileData.profession,
+        'location':profileData.location,'website':profileData.website,'description':profileData.description});
+
+      UserService.saveProfileData(profileData, logData, function(user) {
 
         if(user) {
           response.status(200).send(user);
         } else {
-          response.status(400).send('Failed to save profile data')
+          rollback(400, 'Failed to save profile data');
         }
 
       });
     } else {
-      response.sendStatus(401);
+      rollback(401, INVALID_SESSION);
     }
   });
 

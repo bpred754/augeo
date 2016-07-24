@@ -22,15 +22,25 @@
   /* Description: Twitter utility functions                                  */
   /***************************************************************************/
 
-  // Constants
+  // Required local modules
+  var Logger = require('../module/logger');
+
+  // Private Constants
+  var UTILITY = 'twitter-utility';
+
+  // Public Constants
   exports.TWEET_EXPERIENCE = 30;
   exports.MENTION_EXPERIENCE = 30;
   exports.RETWEET_EXPERIENCE = 50;
   exports.FAVORITE_EXPERIENCE = 50;
   exports.HASH_TAGS = ["augeoBooks","augeoBusiness","augeoFilm","augeoFood&Drink","augeoGeneral","augeoMusic","augeoPhotography","augeoSports","augeoTechnology"];
 
+  // Global variables
+  var log = new Logger();
+
   // Calculates the experience that will be awarded to a tweet
-  exports.calculateTweetExperience = function(retweetCount, favoriteCount) {
+  exports.calculateTweetExperience = function(retweetCount, favoriteCount, logData) {
+    log.functionCall(UTILITY, 'calculateTweetExperience', logData.parentProcess, logData.username, {'retweetCount':retweetCount,'favoriteCount':favoriteCount});
 
     retweetCount = typeof retweetCount != 'number' ? 0 : retweetCount;
     retweetCount = retweetCount < 0 ? 0 : retweetCount;
@@ -42,7 +52,8 @@
   };
 
   // Determines if a tweet contains an augeo specific hashtag
-  exports.containsAugeoHashtag = function(obj) {
+  exports.containsAugeoHashtag = function(obj, logData) {
+    log.functionCall(UTILITY, 'containsAugeoHashtag', logData.parentProcess, logData.username, {'obj':obj});
 
     var contains = false;
     if(obj) {
@@ -58,7 +69,10 @@
   };
 
   // Returns the amount of experience to be awarded to the given tweet
-  exports.getExperience = function(tweet, screenName, isRetweet) {
+  exports.getExperience = function(tweet, screenName, isRetweet, logData) {
+    log.functionCall(UTILITY, 'getExperience', logData.parentProcess, logData.username, {'tweet.experience':(tweet)?tweet.experience:'invalid',
+      'screenName':screenName,'isRetweet':isRetweet});
+
     var experience = 0;
     if(tweet && tweet.screenName && tweet.experience) {
       if(isRetweet) {

@@ -44,7 +44,7 @@
   /***************************************************************************/
 
   // Call to test database to get user's mentions
-  exports.getMentions = function(messenger, callback, maxId) {
+  exports.getMentions = function(messenger, logData, callback, maxId) {
       callback(false, Data.getRawMentions(maxId), {});
   };
 
@@ -53,7 +53,7 @@
   };
 
   // Generate test Oauth access token
-  exports.getOAuthAccessToken = function(data, oauthSecretToken, callback) {
+  exports.getOAuthAccessToken = function(data, oauthSecretToken, logData, callback) {
 
     if(data.oauth_token && oauthSecretToken && data.oauth_verifier) {
       var accessToken = generateAccessToken();
@@ -69,22 +69,22 @@
   };
 
   // Generate test Oauth request token
-  exports.getOAuthRequestToken = function(callback) {
+  exports.getOAuthRequestToken = function(logData, callback) {
     callback(generateRequestToken(), generateRequestToken());
   };
 
   // Call to test database to get user's Tweets
-  exports.getTweets = function(messenger, callback, maxId) {
+  exports.getTweets = function(messenger, logData, callback, maxId) {
     callback(false, Data.getRawTweets(maxId), {});
   };
 
   // Call to test database to get user's Twitter information
-  exports.getTwitterData = function(messenger, screenName, callback) {
+  exports.getTwitterData = function(messenger, screenName, logData, callback) {
     callback(false, Data.getRawUser(screenName), {});
   };
 
   // Listens for events from test-api
-  exports.openStream = function(twitterIds, callback, removeCallback) {
+  exports.openStream = function(twitterIds, logData, callback, removeCallback) {
 
     connectIterations++;
 

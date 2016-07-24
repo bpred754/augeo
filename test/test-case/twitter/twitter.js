@@ -34,18 +34,18 @@
   var TwitterValidator = require('../../../src/validator/twitter-validator');
 
   // Global variables
-  var messenger = TwitterInterface.createTwitterMessenger(process.env.TWITTER_ACCESS_TOKEN, process.env.TWITTER_ACCESS_TOKEN_SECRET);
+  var messenger = TwitterInterface.createTwitterMessenger(process.env.TWITTER_ACCESS_TOKEN, process.env.TWITTER_ACCESS_TOKEN_SECRET, Common.logData);
 
   it('should receive all necessary tweet data from Twitter', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    TwitterInterface.getTweets(messenger, function(error, data, response) {
+    TwitterInterface.getTweets(messenger, Common.logData, function(error, data, response) {
 
       data.length.should.be.above(0);
 
       for(var i = 0; i < data.length; i++) {
 
-        var extract = TwitterInterfaceService.extractTweet(data[i]);
+        var extract = TwitterInterfaceService.extractTweet(data[i], false, Common.logData);
 
         extract.twitterId.length.should.be.above(0);
         extract.tweetId.length.should.be.above(0);
@@ -72,11 +72,11 @@
   it('should receive all necessary mention data from Twitter', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    TwitterInterface.getMentions(messenger, function(error, data, response) {
+    TwitterInterface.getMentions(messenger, Common.logData, function(error, data, response) {
 
       data.length.should.be.above(0);
 
-      var mentions = TwitterInterfaceService.extractMentionData(data, process.env.TWITTER_SCREEN_NAME);
+      var mentions = TwitterInterfaceService.extractMentionData(data, process.env.TWITTER_SCREEN_NAME, Common.logData);
 
       Assert.strictEqual(data.length, mentions.length);
 
@@ -92,9 +92,9 @@
   it('should receive twitter information for authenticated user', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    TwitterInterface.getTwitterData(messenger, process.env.TWITTER_SCREEN_NAME, function(error, userData, response) {
+    TwitterInterface.getTwitterData(messenger, process.env.TWITTER_SCREEN_NAME, Common.logData, function(error, userData, response) {
       Assert.strictEqual(process.env.TWITTER_FULL_NAME, userData.name);
-      Assert.strictEqual(true, TwitterValidator.containsUserTwitterData(userData));
+      Assert.strictEqual(true, TwitterValidator.containsUserTwitterData(userData, Common.logData));
       done();
     });
   });

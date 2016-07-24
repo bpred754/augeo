@@ -30,10 +30,13 @@
   var AugeoDB = require('../database');
   var Logger = require('../../module/logger');
 
+  // Constants
+  var COLLECTION = 'tweet-collection';
+
   // Global variables
   var log = new Logger();
 
-  // Schema decleration
+  // Schema declaration
   var TWEET = Mongoose.Schema({
     twitterId: String,
     tweetId: String,
@@ -75,40 +78,41 @@
   /* Static Methods: Accessible at Model level                               */
   /***************************************************************************/
 
-  TWEET.statics.addTweet = function(tweet, callback) {
+  TWEET.statics.addTweet = function(tweet, logData, callback) {
 
     // Add tweet if it doesn't exist and update when it does exist
-    upsertTweet(this, tweet, callback);
+    upsertTweet(this, tweet, logData, callback);
   };
 
-  TWEET.statics.addTweets = function(tweets, callback) {
+  TWEET.statics.addTweets = function(tweets, logData, callback) {
 
     // Add tweets if they don't exist and update when they do exist
-    upsertTweets(this, tweets, callback);
+    upsertTweets(this, tweets, logData, callback);
   };
 
-  TWEET.statics.findTweet = function(tweetId, callback) {
-    return this.find({tweetId:tweetId},{},{}, function(error, tweet) {
+  TWEET.statics.findTweet = function(tweetId, logData, callback) {
+    this.find({tweetId:tweetId},{},{}, function(error, tweet) {
       if(error) {
-        log.warn('Failed to find tweet in TWEET collection with tweetID: ' + tweetId);
+        log.functionError(COLLECTION, 'findTweet', logData.parentProcess, logData.username, 'Failed to find tweet with tweetID: ' + tweetId);
       } else {
-        log.info('Successfully found tweet in TWEET collecion with tweetID: ' + tweetId);
+        log.functionCall(COLLECTION, 'findTweet', logData.parentProcess, logData.username, {'tweetId':tweetId});
         callback(tweet);
       }
     });
   };
 
-  TWEET.statics.getLatestTweetId = function(screenName, callback) {
+  TWEET.statics.getLatestTweetId = function(screenName, logData, callback) {
     this.find({screenName:screenName},{},{sort:{'tweetId':-1},limit:1}).lean().exec(function(error, data) {
 
       if(error) {
-        log.warn('Failed to find tweet with max tweetId for user:' + screenName + '. error: ' + error);
+        log.functionError(COLLECTION, 'getLatestTweetId', logData.parentProcess, logData.username, 'Failed to find tweet with max tweetId for user:' + screenName + '. Error: ' + error);
       } else {
-        log.info('Successfully found tweet with max tweetId for user: ' + screenName);
+        log.functionCall(COLLECTION, 'getLatestTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
 
         var latestTweetId;
         if(data[0]) {
-          log.info('Latest TweetId: ' + data[0].tweetId);
+          log.functionCall(COLLECTION, 'getLatestTweetId', logData.parentProcess, logData.username, {'screenName':screenName},
+            'Latest TweetId: ' + data[0].tweetId);
           latestTweetId = data[0].tweetId;
         }
         callback(latestTweetId);
@@ -116,7 +120,7 @@
     });
   };
 
-  TWEET.statics.getSkillActivity = function(screenName, tweetIds, skill, limit, maxTweetId, callback) {
+  TWEET.statics.getSkillActivity = function(screenName, tweetIds, skill, limit, maxTweetId, logData, callback) {
 
     if(!maxTweetId) {
       maxTweetId = '9999999999999999999999999999999';
@@ -162,67 +166,83 @@
       options.limit = limit
     }
 
-    return this.find(query,{}, options, function(error, tweets) {
+    this.find(query,{}, options, function(error, tweets) {
        if(error) {
-         log.warn('Failed to retrieve ' + screenName + ' tweets from TWEET collection for skill:' + skill + '; ' + error);
+         log.functionError(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
+           'Failed to retrieve ' + screenName + ' tweets for skill:' + skill + '. Error: ' + error);
        } else {
-         log.info('Successfully retrieved ' + screenName + ' tweets from TWEET collection for screenName:' + screenName);
+         log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username, {'screenName':screenName,
+           'tweetIds':(tweetIds)?'defined':'invalid','skill':skill,'maxTweetId':maxTweetId});
          callback(tweets);
        }
      });
   };
 
-  TWEET.statics.getTweetCount = function(callback) {
+  TWEET.statics.getTweetCount = function(logData, callback) {
     this.count({}, function(error, count) {
         if(error) {
-          log.warn('Failed to retrieve tweet count from TWEET. ' + error);
+          log.functionError(COLLECTION, 'getTweetCount', logData.parentProcess, logData.username, 'Failed to retrieve tweet count. Error: ' + error);
         } else {
-          log.info('Successfully retrieved tweet count from TWEET.');
+          log.functionCall(COLLECTION, 'getTweetCount', logData.parentProcess, logData.username);
           callback(count)
         }
     });
   };
 
-  TWEET.statics.incrementRetweetCount = function(tweetId, callback) {
+  TWEET.statics.incrementRetweetCount = function(tweetId, logData, callback) {
     this.findOneAndUpdate({tweetId:tweetId}, {$inc: {retweetCount:1}}, function(error) {
       if(error) {
-        log.warn('Failed to increment retweet count for tweet with ID: ' + tweetId);
+        log.functionError(COLLECTION, 'incrementRetweetCount', logData.parentProcess, logData.username, 'Failed to increment retweet count for tweet with ID: ' + tweetId);
       } else {
-        log.info('Successfully incremented retweet count for tweet with ID: ' + tweetId);
+        log.functionCall(COLLECTION, 'incrementRetweetCount', logData.parentProcess, logData.username, {'tweetId':tweetId});
         callback();
       }
     });
   };
 
-  TWEET.statics.removeTweet = function(tweetId, callback) {
+  TWEET.statics.removeTweet = function(tweetId, logData, callback) {
     this.remove({tweetId:tweetId}, function(error) {
       if(error) {
-        log.warn('Failed to remove tweet with id: ' + tweetId + '. Error:' + error);
+        log.functionError(COLLECTION, 'removeTweet', logData.parentProcess, logData.username, 'Failed to remove tweet with id: ' + tweetId + '. Error:' + error);
       } else {
-        log.info('Successfully removed tweet with id: ' + tweetId);
+        log.functionCall(COLLECTION, 'removeTweet', logData.parentProcess, logData.username, {'tweetId':tweetId});
         callback();
       }
     });
   };
 
-  TWEET.statics.removeTweets = function(screenName, callback) {
-    this.remove({screenName:screenName}, function() {
+  TWEET.statics.removeTweets = function(screenName, logData, callback) {
+    this.remove({screenName:screenName}, function(error) {
+      if(error) {
+        log.functionError(COLLECTION, 'removeTweets', logData.parentProcess, logData.username,
+          'Failed to remove tweets for screenName: ' + screenName + '. Error: ' + error);
+      } else {
+        log.functionCall(COLLECTION, 'removeTweets', logData.parentProcess, logData.username, {'screenName':screenName});
+      }
       callback();
     });
   };
 
-  TWEET.statics.removeTweetsWithMentionee = function(mentioneeScreenName, callback) {
-    this.remove({mentions: {$elemMatch: {screen_name:mentioneeScreenName}}}, function() {
+  TWEET.statics.removeTweetsWithMentionee = function(mentioneeScreenName, logData, callback) {
+    this.remove({mentions: {$elemMatch: {screen_name:mentioneeScreenName}}}, function(error) {
+      if(error) {
+        log.functionError(COLLECTION, 'removeTweetsWithMentionee', logData.parentProcess, logData.username,
+          'Failed to remove tweets for screenName: ' + screenName + '. Error: ' + error);
+      } else {
+        log.functionCall(COLLECTION, 'removeTweetsWithMentionee', logData.parentProcess, logData.username, {'mentioneeScreenName':mentioneeScreenName});
+      }
       callback();
     });
   };
 
-  TWEET.statics.updateExperience = function(tweetId, experience, callback) {
+  TWEET.statics.updateExperience = function(tweetId, experience, logData, callback) {
     this.findOneAndUpdate({tweetId:tweetId}, {$inc: {experience: experience.mainSkillExperience}}, function(error) {
       if(error) {
-        log.warn('Failed to update experience for tweet with ID ' + tweetId + ': ' + error);
+        log.functionError(COLLECTION, 'updateExperience', logData.parentProcess, logData.username,
+          'Failed to update experience for tweet with ID ' + tweetId + '. Error: ' + error);
       } else {
-        log.info('Successfully updated experience for tweet with ID: ' + tweetId);
+        log.functionCall(COLLECTION, 'updateExperience', logData.parentProcess, logData.username, {'tweetId':tweetId,
+          'experience':experience});
         callback();
       }
     });
@@ -232,19 +252,21 @@
   /* Private Methods                                                         */
   /***************************************************************************/
 
-  var upsertTweet = function(tweetDocument, tweet, callback) {
+  var upsertTweet = function(tweetDocument, tweet,logData, callback) {
     tweetDocument.update({tweetId:tweet.tweetId}, tweet, {upsert:true}, function(error, numAffected) {
       if (error) {
-        log.warn('Failed to upsert documents into TWEET collection: ' + error);
+        log.functionError(COLLECTION, 'upsertTweet (private)', logData.parentProcess, logData.username,
+          'Failed to upsert tweet with ID: ' + (tweet)?tweet.tweetId:'invalid' + '. Error: ' + error);
       } else {
-        log.info('Successfully upserted tweet with tweetID: ' + tweet.tweetId + ' to the TWEET collection.');
+        log.functionCall(COLLECTION, 'upsertTweet (private)', logData.parentProcess, logData.username, {'tweetDocument':(tweetDocument)?'defined':'invalid',
+          'tweet':(tweet)?tweet.tweetId:'invalid'});
         callback();
       }
     });
 
   };
 
-  var upsertTweets = function(tweetDocument, tweets, callback) {
+  var upsertTweets = function(tweetDocument, tweets, logData, callback) {
     var inserted = 0;
     var upsertCallback = function(){};
     for(var i = 0; i < tweets.length; i++) {
@@ -253,7 +275,7 @@
         upsertCallback = callback;
       }
 
-      upsertTweet(tweetDocument, tweets[i], upsertCallback);
+      upsertTweet(tweetDocument, tweets[i], logData, upsertCallback);
     }
 
   };

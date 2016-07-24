@@ -30,20 +30,25 @@
   var TwitterInterface = require(twitterInterfaceUrl);
   var TwitterUtility = require('../utility/twitter-utility');
   var TwitterValidator = require('../validator/twitter-validator');
+  
+  // Constants
+  var SERVICE = 'twitter-interface_service';
 
   // Global variables
   var classifier = new TwitterClassifier();
   var log = new Logger();
 
   // Create object to communicate with Twitter
-  exports.createTwitterMessenger = function(accessToken, secretAccessToken) {
-    return TwitterInterface.createTwitterMessenger(accessToken, secretAccessToken);
+  exports.createTwitterMessenger = function(accessToken, secretAccessToken, logData) {
+    log.functionCall(SERVICE,'createTwitterMessenger',logData.parentProcess, logData.username, {'accessToken':accessToken});
+    
+    return TwitterInterface.createTwitterMessenger(accessToken, secretAccessToken, logData);
   };
 
   // Extract action data from a Twitter stream action
-  exports.extractAction = function(tweetData) {
+  exports.extractAction = function(tweetData, logData) {
+    log.functionCall(SERVICE,'extractAction',logData.parentProcess, logData.username, {'tweetData.id_str':(tweetData)?tweetData.id_str:'invalid'});
 
-    var actionerScreenName = '';
     var actioneeScreenName = '';
 
     // User of tweet that is in reply to
@@ -73,14 +78,15 @@
   };
 
   // Extract desired information from mentions
-  exports.extractMentionData = function(data, screenName) {
+  exports.extractMentionData = function(data, screenName, logData) {
+    log.functionCall(SERVICE,'extractMentionData',logData.parentProcess, logData.username, {'data.length':(data)?data.length:'invalid',
+      'screenName':screenName});
 
     var mentioneesArray = new Array();
 
     for(var i = 0; i < data.length; i++) {
       var mentionees = data[i].entities.user_mentions;
 
-      var mentioneeIds = new Array();
       for(var j = 0; j < mentionees.length; j++) {
 
         if(screenName == mentionees[j].screen_name) {
@@ -95,10 +101,12 @@
     }
 
     return mentioneesArray;
-  }
+  };
 
   // Extract reply data from tweet
-  exports.extractReply = function(tweet) {
+  exports.extractReply = function(tweet, logData) {
+    log.functionCall(SERVICE,'extractReply',logData.parentProcess, logData.username, {'tweet.id_str':(tweet)?tweet.id_str:'invalid'});
+
     return {
       mentioneeScreenName: tweet.in_reply_to_screen_name ? tweet.in_reply_to_screen_name : '',
       tweetId: tweet.id_str
@@ -106,7 +114,9 @@
   };
 
   // Extract desired information from tweet
-  exports.extractTweet = function(data, checkClassification) {
+  exports.extractTweet = function(data, checkClassification, logData) {
+    log.functionCall(SERVICE,'extractTweet',logData.parentProcess, logData.username, {'data.id_str':(data)?data.id_str:'invalid',
+      'checkClassification':checkClassification});
 
     var text;
 
@@ -121,15 +131,15 @@
       text = 'RT @' + data.retweeted_status.user.screen_name + ': ' + data.retweeted_status.text
     }
 
-    var tweetExperience = TwitterUtility.calculateTweetExperience(retweetCount, favoriteCount);
-    var classification = classifier.classify(text);
+    var tweetExperience = TwitterUtility.calculateTweetExperience(retweetCount, favoriteCount, logData);
+    var classification = classifier.classify(text, logData);
 
     // Check for an Augeo hashtag and classify text if it is accurate
     if(checkClassification) {
       var tweetHashtags = data.entities.hashtags;
-      var classifications = classifier.getClassifications(text);
+      var classifications = classifier.getClassifications(text, logData);
       for(var j = 0; j < tweetHashtags.length; j++) {
-        if(TwitterUtility.containsAugeoHashtag(tweetHashtags[j].text)) {
+        if(TwitterUtility.containsAugeoHashtag(tweetHashtags[j].text, logData)) {
           for(k = 0; k < 3; k++) { // Only compare first 3 classifications
             if(tweetHashtags[j].text.substring('augeo'.length) === classifications[k].label) {
               classification = classifications[k].label;
@@ -148,7 +158,7 @@
       avatarImageSrc: data.user.profile_image_url_https,
       text: text,
       classification: classification,
-      classificationGlyphicon: AugeoUtility.getGlyphicon(classification),
+      classificationGlyphicon: AugeoUtility.getGlyphicon(classification, logData),
       date: data.created_at,
       experience: tweetExperience,
       retweetCount: retweetCount,
@@ -181,12 +191,14 @@
   };
 
   // Get twitter mentions from Twitter for user
-  exports.getMentions = function(twitterMessenger, screenName, callback, tweetId) {
+  exports.getMentions = function(twitterMessenger, screenName, logData, callback, tweetId) {
+    log.functionCall(SERVICE,'getMentions', logData.parentProcess, logData.username, {'twitterMessenger':(twitterMessenger)?'defined':'invalid',
+      'screenName':screenName});
 
     // Get Mentions
-    TwitterInterface.getMentions(twitterMessenger, function(error, mentionData, response) {
+    TwitterInterface.getMentions(twitterMessenger, logData, function(error, mentionData, response) {
 
-      // Extract relavent data from Twitter's tweet results
+      // Extract relevant data from Twitter's tweet results
       var hasError = false
       var mentionTweets = null;
       var mentions = null;
@@ -195,8 +207,8 @@
         mentionTweets = mentionData // set tweets to error message from twit library
         hasError = true;
       } else {
-        mentionTweets = extractTweets(mentionData);
-        mentions = exports.extractMentionData(mentionData, screenName);
+        mentionTweets = extractTweets(mentionData, false, logData);
+        mentions = exports.extractMentionData(mentionData, screenName, logData);
       }
 
       callback(hasError, mentionTweets, mentions);
@@ -205,40 +217,44 @@
   };
 
   // Get Oauth access token
-  exports.getOAuthAccessToken = function(query, oauthSecretToken, callback, rollback) {
+  exports.getOAuthAccessToken = function(query, oauthSecretToken, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getOauthAccessToken', logData.parentProcess, logData.username, {'query.oauth_token':(query)?query.oauth_token:'invalid',
+      'query.oauth_verifier':(query)?query.oauth_verifier:'invalid'});
 
     if(query) {
-      TwitterInterface.getOAuthAccessToken(query, oauthSecretToken, function(oauth_access_token, oauth_access_token_secret, screenName) {
+      TwitterInterface.getOAuthAccessToken(query, oauthSecretToken, logData, function(oauth_access_token, oauth_access_token_secret, screenName) {
         if(oauth_access_token && oauth_access_token_secret && screenName) {
           callback(oauth_access_token, oauth_access_token_secret, screenName);
         } else {
-          rollback();
+          rollback('Data returned from Twitter is invalid');
         }
       });
     } else {
-      rollback();
+      rollback('Query undefined');
     }
   };
 
   // Get Oauth request token
-  exports.getOAuthRequestToken = function(callback, rollback) {
+  exports.getOAuthRequestToken = function(logData, callback, rollback) {
+    log.functionCall(SERVICE,'getOauthRequestToken',logData.parentProcess, logData.username);
 
-    TwitterInterface.getOAuthRequestToken(function(oauth_token, oauth_token_secret) {
+    TwitterInterface.getOAuthRequestToken(logData, function(oauth_token, oauth_token_secret) {
       if(oauth_token && oauth_token_secret) {
         callback(oauth_token, oauth_token_secret);
       } else {
-        rollback();
+        rollback('Tokens from Twitter are invalid');
       }
     });
   };
 
   // Get tweets for user from Twitter
-  exports.getTweets = function(twitterMessenger, callback, tweetId) {
+  exports.getTweets = function(twitterMessenger, logData, callback, tweetId) {
+    log.functionCall(SERVICE, 'getTweets',logData.parentProcess, logData.username, {'twitterMessenger':(twitterMessenger)?'defined':'invalid'});
 
     // Get tweets
-    TwitterInterface.getTweets(twitterMessenger, function(error, tweetData, response) {
+    TwitterInterface.getTweets(twitterMessenger, logData, function(error, tweetData, response) {
 
-      // Extract relavent data from Twitter's tweet results
+      // Extract relevant data from Twitter's tweet results
       var hasError = false;
       var tweets = null;
 
@@ -246,7 +262,7 @@
         tweets = tweetData; // set tweets to error message from twit library
         hasError = true;
       } else {
-        tweets = extractTweets(tweetData);
+        tweets = extractTweets(tweetData, false, logData);
       }
 
       callback(hasError, tweets);
@@ -255,12 +271,13 @@
   };
 
   // Retrieve user's information from Twitter
-  exports.getTwitterUser = function(twitterMessenger, screenName, callback, rollback) {
+  exports.getTwitterUser = function(twitterMessenger, screenName, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getTwitterUser',logData.parentProcess, logData.username, {'twitterMessenger':(twitterMessenger)?'defined':'invalid'});
 
     // Get user's Twitter information
-    TwitterInterface.getTwitterData(twitterMessenger, screenName, function(error, twitterData, response) {
+    TwitterInterface.getTwitterData(twitterMessenger, screenName, logData, function(error, twitterData, response) {
 
-      if(TwitterValidator.containsUserTwitterData(twitterData)) {
+      if(TwitterValidator.containsUserTwitterData(twitterData, logData)) {
 
         var url = twitterData.profile_image_url_https;
         var urlLength = url.length;
@@ -277,13 +294,14 @@
         }
         callback(userData);
       } else {
-        rollback();
+        rollback('Response from Twitter does not contain user data');
       }
     });
   };
 
   // Open stream with Twitter to catch any updates from specified users
-  exports.openStream = function(users, callback, removeCallback, connectedCallback) {
+  exports.openStream = function(users, logData, callback, removeCallback, connectedCallback) {
+    log.functionCall(SERVICE, 'openStream', logData.parentProcess, logData.username, {'users':(users)?users.length:'invalid'});
 
     // create a comma separated list of twitter id's
     var twitterIds = "";
@@ -295,7 +313,7 @@
       }
     }
 
-    TwitterInterface.openStream(twitterIds, callback, removeCallback, connectedCallback);
+    TwitterInterface.openStream(twitterIds, logData, callback, removeCallback, connectedCallback);
   };
 
   /***************************************************************************/
@@ -303,12 +321,14 @@
   /***************************************************************************/
 
   // Loop through data and extract tweets
-  var extractTweets = function(data, checkClassification) {
+  var extractTweets = function(data, checkClassification, logData) {
+    log.functionCall(SERVICE,'extractTweets (private)',logData.parentProcess, logData.username, {'tweets':(data)?data.length:'invalid'});
+    
     var tweets = new Array(data.length);
 
     //Loop through each data set and create array of tweets
     for(var i = 0; i < data.length; i++) {
-      tweets[i] = exports.extractTweet(data[i], checkClassification);
+      tweets[i] = exports.extractTweet(data[i], checkClassification, logData);
     }
 
     return tweets;

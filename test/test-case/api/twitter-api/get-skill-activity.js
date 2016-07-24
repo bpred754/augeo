@@ -37,13 +37,13 @@
 
     var agent = Request.agent(app);
 
-    // Missing username parameter
+    // Missing username parameter - invalid session
     it('should return status 404 - missing username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
         .get('/twitter-api/getSkillActivity?skill=Augeo&tweetID=9999999999999999999999999999999')
-        .expect(404)
+        .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
@@ -54,12 +54,21 @@
     it('should return status 404 - missing skill parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
+      // Login in user
       agent
-        .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&tweetID=9999999999999999999999999999999')
-        .expect(404)
-        .end(function(error, response) {
-          Should.not.exist(error);
-          done();
+        .post('/user-api/login')
+        .send(Common.LOGIN_USER)
+        .expect(200)
+        .end(function(error0, response0) {
+          Should.not.exist(error0);
+
+        agent
+          .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&tweetID=9999999999999999999999999999999')
+          .expect(404)
+          .end(function(error1, response1) {
+            Should.not.exist(error1);
+            done();
+          });
         });
     });
 
@@ -94,11 +103,11 @@
       this.timeout(Common.TIMEOUT);
 
       // Add activity to be retrieved
-      var action0 = TwitterInterfaceService.extractAction(Common.rawStandardTweet);
-      var tweet0 = TwitterInterfaceService.extractTweet(Common.rawStandardTweet);
-      var mention0 = TwitterInterfaceService.extractReply(Common.rawStandardTweet);
+      var action0 = TwitterInterfaceService.extractAction(Common.rawStandardTweet, Common.logData);
+      var tweet0 = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, false, Common.logData);
+      var mention0 = TwitterInterfaceService.extractReply(Common.rawStandardTweet, Common.logData);
 
-      TwitterService.addAction(action0, tweet0, mention0, function(classification0) {
+      TwitterService.addAction(action0, tweet0, mention0, Common.logData, function(classification0) {
 
         agent
           .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo&tweetId=9999999999999999999999999999999')

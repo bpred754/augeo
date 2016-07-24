@@ -17,54 +17,50 @@
   /* You should have received a copy of the GNU General Public License       */
   /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
   /***************************************************************************/
+  
+  /***************************************************************************/
+  /* Description: Unit test cases for module/logger                          */
+  /***************************************************************************/
 
-  /***************************************************************************/
-  /* Description: Routes all requests to the appropriate Augeo API           */
-  /***************************************************************************/
+  // Required libraries
+  var Assert = require('assert');
 
   // Required local modules
-  var Logger = require('../module/logger');
+  var Logger = require('../../../src/module/logger');
 
-  // Constants
-  var API = 'augeo-api';
+  it('should build log string depending on input -- buildLogString()', function(done) {
 
-  // Global variables
-  var log = new Logger();
+    var log = new Logger();
+    var testParam = 'testParam';
 
-  exports.mapRequests = function(app) {
-    log.functionCall(API, 'mapRequests', 'INIT', 'System', {}, 'Initializing Request Mapping');
+    var logString = log.buildLogString('log-module', 'buildLogString', 'parentProcess', null, {'param':testParam}, 'test message');
+    Assert.strictEqual(logString, 'log-module | buildLogString | parentProcess | param:testParam,  | test message');
 
-    // Route middleware that will happen on every request
-    app.use(function(req, res, next) {
+    done();
+  });
 
-      // Redirect all non-secure requests as secured requests
-      if(req.headers['x-forwarded-proto'] !== 'https' && process.env.ENV == 'prod') {
-        return res.redirect(['https://', req.get('Host'), req.url].join(''));
-      }
+  it('should return true for log statement to be written -- doWriteLog()', function() {
 
-      // Log each request
-      log.trace(req.method + ' ' + req.originalUrl);
+    var log = new Logger();
 
-      // Continue to the route handler
-      next();
-    });
+    var doWriteLog = log.doWriteLog('user-service');
+    Assert.strictEqual(doWriteLog, true);
+  });
 
-    // Route all admin requests to admin-api.js
-    app.use('/admin-api', require('./admin-api'));
+  it('should return false for log statement to be written', function() {
 
-    // Route all twitter-api requests to twitter-api.js
-    app.use('/twitter-api', require('./twitter-api'));
+    var log = new Logger();
+    log.setLogService(false);
+    var testSingleton = new Logger();
 
-    // Route all user-api requests to user-api.js
-    app.use('/user-api', require('./user-api'));
+    var doWriteLog = testSingleton.doWriteLog('user-service');
+    Assert.strictEqual(doWriteLog, false);
+  });
 
-    // For local environment request only, route test-api requests to the test twitter-api.js file
-    if(process.env.ENV == 'local') {
-      app.use('/test-api', require('../../test/api/twitter-api'));
-    }
+  it('should extract log type from filename -- extractLogType()', function() {
 
-    // Single Page Application - serve layout.html for all requests
-    app.get('*', function(req, res) {
-      res.sendfile('./src/public/html/layout.html');
-    });
-  };
+    var log = new Logger();
+
+    var type = log.extractLogType('logger-module');
+    Assert.strictEqual(type, 'module');
+  });

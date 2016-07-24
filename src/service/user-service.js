@@ -23,25 +23,35 @@
   /***************************************************************************/
 
   // Required libraries
+  var Bcrypt = require('bcrypt');
+
+  // Required local modules
   var AugeoDB = require('../model/database');
   var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
-  var Bcrypt = require('bcrypt');
+  var Logger = require('../module/logger');
 
-  // Constants
+  // Private Constants
   var USERS_PER_PAGE = 25;
+  var SERVICE = 'user-service';
+
+  // Public Constants
+  exports.INCORRECT_LOGIN = 'Incorrect email address or password';
+  exports.REMOVE_USER_FAILURE = 'Failed to delete user';
 
   // Global variables
+  var log = new Logger();
   var User = AugeoDB.model('User');
 
-  exports.addUser = function(user, callback, rollback) {
+  exports.addUser = function(user, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'addUser', logData.parentProcess, logData.username);
 
     if(user) {
-      if(AugeoValidator.isStringAlphabetic(user.firstName) &&
-         AugeoValidator.isStringAlphabetic(user.lastName) &&
-         AugeoValidator.isEmailValid(user.email) &&
-         AugeoValidator.isUsernameValid(user.username) &&
-         AugeoValidator.isPasswordValid(user.password)) {
+      if(AugeoValidator.isStringAlphabetic(user.firstName, logData) &&
+         AugeoValidator.isStringAlphabetic(user.lastName, logData) &&
+         AugeoValidator.isEmailValid(user.email, logData) &&
+         AugeoValidator.isUsernameValid(user.username, logData) &&
+         AugeoValidator.isPasswordValid(user.password, logData)) {
 
            // Make sure email is lowercase
            user.email = user.email.toLowerCase();
@@ -61,11 +71,11 @@
                    newUser.password = hash;
 
                    // Initialize skill data
-                   newUser.subSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS));
-                   newUser.skill = AugeoUtility.getMainSkill(0);
+                   newUser.subSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData), logData);
+                   newUser.skill = AugeoUtility.getMainSkill(0, logData);
 
                    // Set user's ranks to be number of users
-                   User.getNumberUsers(function(numUsers) {
+                   User.getNumberUsers(logData, function(numUsers) {
                      numUsers++; // Add one for this user
 
                      // Set Augeo skill to number of users
@@ -76,7 +86,7 @@
                        newUser.subSkills[i].rank = numUsers;
                      }
 
-                     User.add(newUser, callback);
+                     User.add(newUser, logData, callback);
                    });
                  }
                });
@@ -91,35 +101,40 @@
 
   };
 
-  exports.doesEmailExist = function(email, callback) {
-    if(AugeoValidator.isEmailValid(email)) {
+  exports.doesEmailExist = function(email, logData, callback) {
+    log.functionCall(SERVICE, 'doesEmailExist', logData.parentProcess, logData.username, {'email':email});
+
+    if(AugeoValidator.isEmailValid(email, logData)) {
       email = email.toLowerCase();
-      User.doesEmailExist(email, callback);
+      User.doesEmailExist(email, logData, callback);
     } else {
       callback(false);
     }
   };
   
-  exports.doesUsernameExist = function(username, callback) {
-    if(AugeoValidator.isUsernameValid(username)) {
-      User.doesUsernameExist(username, callback);
+  exports.doesUsernameExist = function(username, logData, callback) {
+    log.functionCall(SERVICE, 'doesUsernameExist', logData.parentProcess, logData.username);
+
+    if(AugeoValidator.isUsernameValid(username, logData)) {
+      User.doesUsernameExist(username, logData, callback);
     } else {
       callback(false);
     }
   };
   
-  exports.getCompetitors = function(username, skill, callback, rollback) {
+  exports.getCompetitors = function(username, skill, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getCompetitors', logData.parentProcess, logData.username, {'username':username,'skill':skill});
 
-    if(AugeoValidator.isSkillValid(skill) && AugeoValidator.isUsernameValid(username)) {
+    if(AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isUsernameValid(username, logData)) {
 
-      User.doesUsernameExist(username, function(userExists) {
+      User.doesUsernameExist(username, logData, function(userExists) {
 
         if(!userExists) {
-          getCompetitorsWithRankPrivate(1, USERS_PER_PAGE, skill, callback);
+          getCompetitorsWithRankPrivate(1, USERS_PER_PAGE, skill, logData, callback);
         } else {
 
           // Get users skill rank
-          User.getSkillRank(username, skill, function(rank) {
+          User.getSkillRank(username, skill, logData, function(rank) {
 
             // Divisor = Users rank divided by USERS_PER_PAGE.
             var divisor;
@@ -133,32 +148,36 @@
             var endRank = (divisor + 1) * USERS_PER_PAGE;
 
             // Get users with skill rank greater than or equal to 25*Divisor and less than 25*(Divisor+1)
-            getCompetitorsInPage(skill, startRank, endRank, callback);
+            getCompetitorsInPage(skill, startRank, endRank, logData, callback);
           });
         }
 
       });
     } else {
-      rollback();
+      rollback(404, 'Invalid skill or username');
     }
   };
 
-  exports.getCompetitorsWithRank = function(startRank, endRank, skill, callback, rollback) {
+  exports.getCompetitorsWithRank = function(startRank, endRank, skill, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getCompetitorsWithRank', logData.parentProcess, logData.username, {'startRank':startRank,'endRank':endRank,'skill':skill})
 
-    if(AugeoValidator.isNumberValid(startRank) && AugeoValidator.isNumberValid(endRank) && AugeoValidator.isSkillValid(skill)) {
-      getCompetitorsWithRankPrivate(startRank, endRank, skill, callback);
+    if(AugeoValidator.isNumberValid(startRank, logData) && AugeoValidator.isNumberValid(endRank, logData) && AugeoValidator.isSkillValid(skill, logData)) {
+      getCompetitorsWithRankPrivate(startRank, endRank, skill, logData, callback);
     } else {
-      rollback();
+      rollback(404, 'Invalid input');
     }
   };
 
-  exports.getNumberUsers = function(callback) {
-    User.getNumberUsers(callback);
+  exports.getNumberUsers = function(logData, callback) {
+    log.functionCall(SERVICE, 'getNumberUsers', logData.parentProcess, logData.username);
+    User.getNumberUsers(logData, callback);
   };
 
-  exports.getSessionUser = function(username, callback, rollback) {
-    if(AugeoValidator.isUsernameValid(username)) {
-      User.getUserWithUsername(username, function(user) {
+  exports.getSessionUser = function(username, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getSessionUser', logData.parentProcess, logData.username, {'username':username});
+
+    if(AugeoValidator.isUsernameValid(username, logData)) {
+      User.getUserWithUsername(username, logData, function(user) {
         callback(user);
       });
     } else {
@@ -166,50 +185,68 @@
     }
   };
 
-  exports.login = function(email, password, callback, rollback) {
+  exports.isAdmin = function(username, logData, callback) {
+    log.functionCall(SERVICE, 'isAdmin', logData.parentProcess, logData.username, {'username':username});
 
-    if(AugeoValidator.isEmailValid(email) && AugeoValidator.isPasswordValid(password)) {
+    User.getUserWithUsername(username, logData, function(user) {
+      var isAdmin = false;
+      if(user) {
+        if(user.admin === true) {
+          isAdmin = true;
+        }
+      }
+      callback(isAdmin);
+    });
+  };
 
-      User.getPasswordWithEmail(email, function(dbPassword){
+  exports.login = function(email, password, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'login', logData.parentProcess, logData.username, {'email':email});
+
+    if(AugeoValidator.isEmailValid(email, logData) && AugeoValidator.isPasswordValid(password, logData)) {
+
+      User.getPasswordWithEmail(email, logData, function(dbPassword){
 
         if(dbPassword) {
           // Load hash from your password DB.
           Bcrypt.compare(password, dbPassword, function(err, isMatch) {
             if(isMatch) {
-              User.getUserWithEmail(email, function(user) {
+              User.getUserWithEmail(email, logData, function(user) {
                 callback(user);
               });
             } else {
-              rollback();
+              rollback(exports.INCORRECT_LOGIN);
             }
           });
         } else {
-          rollback();
+          rollback(exports.INCORRECT_LOGIN);
         }
       });
     } else  {
-      rollback();
+      rollback(exports.INCORRECT_LOGIN);
     }
   };
 
-  exports.removeUser = function(username, callback) {
-    if(AugeoValidator.isUsernameValid(username)) {
-      User.remove(username, callback);
+  exports.removeUser = function(username, logData, callback) {
+    log.functionCall(SERVICE, 'removeUser', logData.parentProcess, logData.username, {'username':username});
+
+    if(AugeoValidator.isUsernameValid(username, logData)) {
+      User.remove(username, logData, callback);
     }
   };
 
-  exports.removeUserWithPassword = function(username, password, callback, rollback) {
+  exports.removeUserWithPassword = function(username, password, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'removeUserWithPassword', logData.parentProcess, logData.username, {'username':username});
 
-    if(AugeoValidator.isUsernameValid(username)) {
-      if(AugeoValidator.isPasswordValid(password)) {
-        User.getPasswordWithUsername(username, function(hash) {
+    if(AugeoValidator.isUsernameValid(username, logData)) {
+      if(AugeoValidator.isPasswordValid(password, logData)) {
+        User.getPasswordWithUsername(username, logData, function(hash) {
           if(hash) {
             Bcrypt.compare(password, hash, function(err, isMatch) {
               if(isMatch) {
                 // Remove user
-                exports.removeUser(username, function(removedUser) {
+                exports.removeUser(username, logData, function(removedUser) {
                   // Update ranks
-                  exports.updateAllRanks(function() {
+                  exports.updateAllRanks(logData, function() {
                     // Remove password attribute from object
                     removedUser = removedUser.toObject();
                     delete removedUser.password;
@@ -221,22 +258,26 @@
               }
             });
           } else {
-            rollback();
+            rollback(400, exports.REMOVE_USER_FAILURE);
           }
         });
       } else {
         callback(true);
       }
     } else {
-      rollback();
+      rollback(400, exports.REMOVE_USER_FAILURE);
     }
   };
 
-  exports.saveProfileData = function(profileData, callback) {
-    User.saveProfileData(profileData, function(saveSuccessful) {
+  exports.saveProfileData = function(profileData, logData, callback) {
+    log.functionCall(SERVICE, 'saveProfileData', logData.parentProcess, logData.username, {'profileData.username':(profileData)?profileData.username:'invalid',
+      'profileData.profession':(profileData)?profileData.profession:'invalid', 'profileData.location':(profileData)?profileData.location:'invalid',
+      'profileData.website':(profileData)?profileData.website:'invalid', 'profileData.description': (profileData)?profileData.description:'invalid'});
+
+    User.saveProfileData(profileData, logData, function(saveSuccessful) {
 
       if(saveSuccessful) {
-        User.getUserWithUsername(profileData.username, function(user) {
+        User.getUserWithUsername(profileData.username, logData, function(user) {
           callback(user);
         });
       } else {
@@ -245,15 +286,16 @@
     });
   };
 
-  exports.updateAllRanks = function(callback) {
+  exports.updateAllRanks = function(logData, callback) {
+    log.functionCall(SERVICE, 'updateAllRanks', logData.parentProcess, logData.username);
 
-    exports.updateRanks(function() {
+    exports.updateRanks(logData, function() {
 
       var subSkills = AugeoUtility.SUB_SKILLS;
 
       // Recursively set sub skill ranks
       (function updateRanksClojure(i) {
-        exports.updateSubSkillRanks(subSkills[i].name,function() {
+        exports.updateSubSkillRanks(subSkills[i].name, logData, function() {
           i++;
           if(i < subSkills.length) {
             updateRanksClojure(i);
@@ -265,20 +307,21 @@
     }); // End updateRanks
   };
 
-  exports.updateSubSkillRanks = function(subSkill, callback) {
+  exports.updateSubSkillRanks = function(subSkill, logData, callback) {
+    log.functionCall(SERVICE, 'updateSubSkillRanks', logData.parentProcess, logData.username, {'subSkill':subSkill});
 
     // Get the number of users
-    User.getNumberUsers(function(numUsers) {
+    User.getNumberUsers(logData, function(numUsers) {
       if(numUsers > 0) {
         var rank = 0;
-        User.getSubSkillRanks(subSkill, function (docs) {
+        User.getSubSkillRanks(subSkill, logData, function (docs) {
           docs.forEach(function (p) {
             rank += 1;
             p.subSkills[0].rank = rank;
             if (numUsers == rank) {
-              User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill), callback);
+              User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill, logData), logData, callback);
             } else {
-              User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill));
+              User.updateSubSkillRank(p, rank, AugeoUtility.getSkillIndex(subSkill, logData), logData);
             }
           });
         });
@@ -288,21 +331,22 @@
     });
   };
 
-  exports.updateRanks = function(callback) {
+  exports.updateRanks = function(logData, callback) {
+    log.functionCall(SERVICE, 'updateRanks', logData.parentProcess, logData.username);
 
     // Get the number of users to know when saves are complete
-    User.getNumberUsers(function(numUsers) {
+    User.getNumberUsers(logData, function(numUsers) {
       if(numUsers > 0) {
         var rank = 0;
-        User.getRanks(function (docs) {
+        User.getRanks(logData, function (docs) {
           docs.forEach(function (p) {
             rank += 1;
             p.skill.rank = rank;
 
             if (rank == numUsers) {
-              User.saveDocument(p, callback);
+              User.saveDocument(p, logData, callback);
             } else {
-              User.saveDocument(p);
+              User.saveDocument(p, logData);
             }
           });
         });
@@ -316,9 +360,11 @@
   /* Private Functions                                                       */
   /***************************************************************************/
 
-  var getCompetitorsInPage = function(skill, startRank, endRank, callback) {
+  var getCompetitorsInPage = function(skill, startRank, endRank, logData, callback) {
+    log.functionCall(SERVICE, 'getCompetitorsInPage (private)', logData.parentProcess, logData.username, {'skill':skill,'startRank':startRank,
+      'endRank':endRank});
 
-    User.getCompetitorsInPage(skill, startRank, endRank, function(competitors) {
+    User.getCompetitorsInPage(skill, startRank, endRank, logData, function(competitors) {
       var users = new Array();
       for(var i = 0; i < competitors.length; i++) {
 
@@ -344,12 +390,15 @@
     });
   };
   
-  var getCompetitorsWithRankPrivate = function(startRank, endRank, skill, callback) {
+  var getCompetitorsWithRankPrivate = function(startRank, endRank, skill, logData, callback) {
+    log.functionCall(SERVICE, 'getCompetitorsWithRankPrivate (private)', logData.parentProcess, logData.username, {'startRank':startRank,
+      'endRank': endRank, 'skill':skill});
+
     startRank = parseInt(startRank);
-    var endRank = parseInt(endRank);
+    endRank = parseInt(endRank);
 
     // Get max rank
-    User.getMaxRank(skill, function(maxRank) {
+    User.getMaxRank(skill, logData, function(maxRank) {
 
       if(startRank > maxRank) {
         endRank = startRank-1;
@@ -362,7 +411,7 @@
         endRank = maxRank;
       }
 
-      getCompetitorsInPage(skill, startRank, endRank, callback);
+      getCompetitorsInPage(skill, startRank, endRank, logData, callback);
 
     });
   };

@@ -100,66 +100,57 @@
     });
     
     it('should return status 200 - valid', function(done) {
-
-      // Login in user
+      
+      // Verify profile data is not present
       agent
-        .post('/user-api/login')
-        .send(Common.LOGIN_USER)
+        .get('/user-api/getCurrentUser')
         .expect(200)
-        .end(function(error0, response0) {
-          Should.not.exist(error0);
+        .end(function(error1, response1){
 
-          // Verify profile data is not present
+          var body1 = response1.body;
+          Assert.strictEqual(body1.username, Common.USER.username);
+          Assert.strictEqual(body1.profession, '');
+          Assert.strictEqual(body1.location, '');
+          Assert.strictEqual(body1.website, '');
+          Assert.strictEqual(body1.description, '');
+
+          var validProfileData = {
+            firstName: Common.USER.firstName,
+            lastName: Common.USER.lastName,
+            username: Common.USER.username,
+            profession: 'Tester',
+            location: 'Arizona',
+            website: 'augeo.io',
+            description: 'Tester for Augeo application'
+          };
+
+          // Save the profile data
           agent
-            .get('/user-api/getCurrentUser')
+            .post('/user-api/saveProfileData')
+            .send(validProfileData)
             .expect(200)
-            .end(function(error1, response1){
+            .end(function(error2, response2) {
+              var body2 = response2.body;
+              Assert.strictEqual(body2.username, Common.USER.username);
+              Assert.strictEqual(body2.profession, validProfileData.profession);
+              Assert.strictEqual(body2.location, validProfileData.location);
+              Assert.strictEqual(body2.website, validProfileData.website);
+              Assert.strictEqual(body2.description, validProfileData.description);
 
-              var body1 = response1.body;
-              Assert.strictEqual(body1.username, Common.USER.username);
-              Assert.strictEqual(body1.profession, '');
-              Assert.strictEqual(body1.location, '');
-              Assert.strictEqual(body1.website, '');
-              Assert.strictEqual(body1.description, '');
-
-              var validProfileData = {
-                firstName: Common.USER.firstName,
-                lastName: Common.USER.lastName,
-                username: Common.USER.username,
-                profession: 'Tester',
-                location: 'Arizona',
-                website: 'augeo.io',
-                description: 'Tester for Augeo application'
-              };
-
-              // Save the profile data
+              // Verify profile data is in session
               agent
-                .post('/user-api/saveProfileData')
-                .send(validProfileData)
+                .get('/user-api/getCurrentUser')
                 .expect(200)
-                .end(function(error2, response2) {
-                  var body2 = response2.body;
-                  Assert.strictEqual(body2.username, Common.USER.username);
-                  Assert.strictEqual(body2.profession, validProfileData.profession);
-                  Assert.strictEqual(body2.location, validProfileData.location);
-                  Assert.strictEqual(body2.website, validProfileData.website);
-                  Assert.strictEqual(body2.description, validProfileData.description);
+                .end(function(error3, response3) {
 
-                  // Verify profile data is in session
-                  agent
-                    .get('/user-api/getCurrentUser')
-                    .expect(200)
-                    .end(function(error3, response3) {
+                  var body3 = response3.body;
+                  Assert.strictEqual(body3.username, Common.USER.username);
+                  Assert.strictEqual(body3.profession, validProfileData.profession);
+                  Assert.strictEqual(body3.location, validProfileData.location);
+                  Assert.strictEqual(body3.website, validProfileData.website);
+                  Assert.strictEqual(body3.description, validProfileData.description);
 
-                      var body3 = response3.body;
-                      Assert.strictEqual(body3.username, Common.USER.username);
-                      Assert.strictEqual(body3.profession, validProfileData.profession);
-                      Assert.strictEqual(body3.location, validProfileData.location);
-                      Assert.strictEqual(body3.website, validProfileData.website);
-                      Assert.strictEqual(body3.description, validProfileData.description);
-
-                      done();
-                    });
+                  done();
                 });
             });
         });

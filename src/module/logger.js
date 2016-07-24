@@ -20,79 +20,252 @@
 
   /***************************************************************************/
   /* Description: Object used for logging                                    */
-  /*  - Source: http://stackoverflow.com/questions/13766066/common-logging-  */
-  /*    for-node-express-application-best-practice                           */
   /***************************************************************************/
 
   // Required libraries
   var Bunyan = require('bunyan');
 
+  // Required local modules
+  var AbstractObject = require('./abstract-object');
+
   // Global variables
   var log = null;
+  var logApi = (process.env.LOG_API == 'true');
+  var logClassifier = (process.env.LOG_CLASSIFIER == 'true');
+  var logCollection = (process.env.LOG_COLLECTION == 'true');
+  var logInterface = (process.env.LOG_INTERFACE == 'true');
+  var logInterfaceService = (process.env.LOG_INTERFACE_SERVICE == 'true');
+  var logModule = (process.env.LOG_MODULE == 'true');
+  var logQueue = (process.env.LOG_QUEUE == 'true');
+  var logService = (process.env.LOG_SERVICE == 'true');
+  var logUtility = (process.env.LOG_UTILITY == 'true');
+  var logValidator = (process.env.LOG_VALIDATOR == 'true');
 
-  // Constructor
-  function Logger(options) {
+  var $this = function(options) {
 
-    if(process.env.TEST != 'true') {
-      // Logger is a singleton
-      if (!Logger.log) {
-          this.init(options);
-          Logger.log = this;
-      }
-
-      return Logger.log;
+    // Logger is a singleton
+    if (!log) {
+      $this.base.constructor.call(this);
+      this.init(options);
     }
   };
 
-  Logger.prototype.debug = function debug(e) {
-    if(process.env.TEST != 'true') {
-      log.debug(e);
-    }
-  };
+  if(!log) {
+    AbstractObject.extend(AbstractObject.GenericObject, $this, {
 
-  Logger.prototype.error = function error(e) {
-    if(process.env.TEST != 'true') {
-      log.error(e);
-    }
-  };
+      buildLogString: function (file, functionName, parentProcess, identifier, params, message) {
+        var logString = '';
 
-  // Initialize logger
-  Logger.prototype.init = function init(options) {
-    if(process.env.TEST != 'true') {
-      log = new Bunyan({
-          name: options.name,
-          src:true,
-          streams : [
+        if (file) {
+          logString += file + ' | ';
+        }
+
+        if (functionName) {
+          logString += functionName + ' | ';
+        }
+
+        if (parentProcess) {
+          logString += parentProcess + ' | ';
+        }
+
+        if (identifier) {
+          logString += identifier + ' | ';
+        }
+
+        if (params) {
+          var paramString = '';
+          for (var key in params) {
+            if (params.hasOwnProperty(key)) {
+              paramString += key + ':' + params[key] + ', ';
+            }
+          }
+
+          if (paramString.length > 0) {
+            logString += paramString + ' | ';
+          }
+        }
+
+        if (message) {
+          logString += message;
+        }
+
+        return logString;
+      },
+
+      debug: function (e) {
+        if (process.env.TEST != 'true') {
+          log.debug(e);
+        }
+      },
+
+      doWriteLog: function (file) {
+        var writeLog = false;
+        switch (this.extractLogType(file)) {
+          case 'api':
+            if (logApi) {
+              writeLog = true;
+            }
+            break;
+          case 'classifier':
+            if (logClassifier) {
+              writeLog = true
+            }
+            break;
+          case 'collection':
+            if (logCollection) {
+              writeLog = true
+            }
+            break;
+          case 'interface':
+            if (logInterface) {
+              writeLog = true
+            }
+            break;
+          case 'interface_service':
+            if (logInterfaceService) {
+              writeLog = true
+            }
+            break;
+          case 'module':
+            if (logModule) {
+              writeLog = true
+            }
+            break;
+          case 'queue':
+            if (logQueue) {
+              writeLog = true
+            }
+            break;
+          case 'service':
+            if (logService) {
+              writeLog = true
+            }
+            break;
+          case 'utility':
+            if (logUtility) {
+              writeLog = true
+            }
+            break;
+          case 'validator':
+            if (logValidator) {
+              writeLog = true
+            }
+            break;
+          default:
+            writeLog = true;
+        }
+        ;
+        return writeLog;
+      },
+
+      error: function (e) {
+        if (process.env.TEST != 'true') {
+          log.error(e);
+        }
+      },
+
+      extractLogType: function (typeString) {
+
+        var type;
+        var dashIndex = typeString.lastIndexOf('-');
+
+        if (dashIndex > 0) {
+          type = typeString.substring(dashIndex + 1);
+        }
+        return type;
+      },
+
+      functionCall: function (file, functionName, parentProcess, identifier, params, message) {
+        if (process.env.TEST != 'true' && this.doWriteLog(file)) {
+          log.info(this.buildLogString(file, functionName, parentProcess, identifier, params, message));
+        }
+      },
+
+      functionError: function (file, functionName, parentProcess, identifier, message) {
+        if (process.env.TEST != 'true') {
+          log.warn(this.buildLogString(file, functionName, null, identifier, null, message));
+        }
+      },
+
+      init: function (options) {
+        if (process.env.TEST != 'true') {
+          log = new Bunyan({
+            name: options.name,
+            src: true,
+            streams: [
               {
-                stream  : process.stdout,
-                level : options.stdoutLevel
+                stream: process.stdout,
+                level: options.stdoutLevel
               },
               {
-                path : options.logfile,
-                level : options.logfileLevel
+                path: options.logfile,
+                level: options.logfileLevel
               }
-          ],
-          serializers : Bunyan.stdSerializers
-      });
-    }
-  };
+            ],
+            serializers: Bunyan.stdSerializers
+          });
+        }
+      },
 
-  Logger.prototype.info = function info(e) {
-    if(process.env.TEST != 'true') {
-      log.info(e);
-    }
-  };
+      info: function (e) {
+        if (process.env.TEST != 'true') {
+          log.info(e);
+        }
+      },
 
-  Logger.prototype.trace = function trace(e) {
-    if(process.env.TEST != 'true') {
-      log.trace(e);
-    }
-  };
+      setLogApi: function(setLogApi) {
+        logApi = (setLogApi === 'true');
+      },
 
-  Logger.prototype.warn = function warn(e) {
-    if(process.env.TEST != 'true') {
-      log.warn(e);
-    }
-  };
+      setLogClassifier: function(setLogClassifier) {
+        logClassifier = (setLogClassifier === 'true');
+      },
 
-  module.exports = Logger;
+      setLogCollection: function(setLogCollection) {
+        logCollection = (setLogCollection === 'true');
+      },
+
+      setLogInterface: function(setLogInterface) {
+        logInterface = (setLogInterface === 'true');
+      },
+
+      setLogInterfaceService: function(setLogInterfaceService) {
+        logInterfaceService = (setLogInterfaceService === 'true');
+      },
+
+      setLogModule: function(setLogModule) {
+        logModule = (setLogModule === 'true');
+      },
+
+      setLogQueue: function(setLogQueue) {
+        logQueue = (setLogQueue === 'true');
+      },
+
+      setLogService: function (setLogService) {
+        logService = (setLogService === 'true');
+      },
+
+      setLogUtility: function(setLogUtility) {
+        logUtility = (setLogUtility === 'true');
+      },
+
+      setLogValidator: function(setLogValidator) {
+        logValidator = (setLogValidator === 'true');
+      },
+
+      trace: function (e) {
+        if (process.env.TEST != 'true') {
+          log.trace(e);
+        }
+      },
+
+      warn: function (e) {
+        if (process.env.TEST != 'true') {
+          log.warn(e);
+        }
+      }
+
+    });
+  }
+
+  module.exports = $this;

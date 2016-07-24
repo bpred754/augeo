@@ -37,13 +37,15 @@
   var UserService = require('../service/user-service');
 
   // Constants
-  var CHECK_QUEUE_OPEN_TIMEOUT = 500;
+  var CHECK_MENTION_QUEUE_OPEN_TIMEOUT = process.env.TEST === 'true' ? 100 : 10000;
+  var CHECK_TWEET_QUEUE_OPEN_TIMEOUT = process.env.TEST === 'true' ? 100 : 1000;
   var MAX_MENTION_REQUEST = 4;
   var MAX_TWEET_REQUEST = 16;
   var MENTION_WINDOW = 15;
   var TWEET_WINDOW = 15;
   var MENTION_REQUESTS_PER_WINDOW = process.env.TEST === 'true' ? 3600 : 15;
   var MENTION_TIMEOUT = ((MENTION_WINDOW*60)/MENTION_REQUESTS_PER_WINDOW)*1000;
+  var QUEUE = 'twitter-rest-queue';
   var TWEET_REQUESTS_PER_WINDOW = process.env.TEST === 'true' ? 3600 : 300;
   var TWEET_TIMEOUT = ((TWEET_WINDOW*60)/TWEET_REQUESTS_PER_WINDOW)*1000;
 
@@ -80,14 +82,16 @@
 
     // Queue to maintain Twitter's mention_timeline request rate limit
     self.mentionQueue = Async.queue(function(queueData, callback) {
-      log.info('Executing mention queue task for: ' + queueData.screenName + ' with tweetId: ' + queueData.tweetId);
+      var logData = (queueData)?queueData.logData:{};
+      log.functionCall(QUEUE, 'Async.queue (mention)', logData.parentProcess, logData.username, {'queueData.screenName':(queueData)?queueData.screenName:'invalid',
+        'queueData.tweetId':(queueData)?queueData.tweetId:'invalid'}, 'Executing mention queue task');
 
       // Set current mention userId
       self.currentMentionUserId = queueData.userId;
 
       // Every queue task will retrieve a user's mentions
-      onMentionRequestOpen(function() {
-        startMentionTimer();
+      onMentionRequestOpen(logData, function() {
+        startMentionTimer(logData);
         getUserMentions(queueData, function() {
           if(!self.currentMentionUserId) {
             if(queueData.onFinish) {
@@ -105,14 +109,16 @@
 
     // Queue to maintain Twitter's user_timeline request rate limit
     self.tweetQueue = Async.queue(function(queueData, callback) {
-      log.info('Executing tweet queue task for: ' + queueData.screenName + ' with tweetId: ' + queueData.tweetId);
+      var logData = (queueData)?queueData.logData:{};
+      log.functionCall(QUEUE, 'Async.queue (tweet)', logData.parentProcess, logData.username, {'queueData.screenName':(queueData)?queueData.screenName:'invalid',
+        'queueData.tweetId':(queueData)?queueData.tweetId:'invalid'}, 'Executing tweet queue task');
 
       // Set current Tweet userId
       self.currentTweetUserId = queueData.userId;
 
       // Every queue task will retrieve a user's tweets
-      onTweetRequestOpen(function() {
-        startTweetTimer();
+      onTweetRequestOpen(logData, function() {
+        startTweetTimer(logData);
         getUserTweets(queueData, function() {
           if(!self.currentTweetUserId) {
             if(queueData.onFinish) {
@@ -129,20 +135,21 @@
     }, 1); // Only allow 1 request at a time
   };
 
-  TwitterRestQueue.prototype.addAllUsersToQueues = function(queue, callback) {
+  TwitterRestQueue.prototype.addAllUsersToQueues = function(queue, logData, callback) {
+    log.functionCall(QUEUE, 'addAllUsersToQueues', logData.parentProcess, logData.username, {'queue':(queue)?'defined':'invalid'});
 
-    TwitterService.getAllUsersQueueData(function(users) {
+    TwitterService.getAllUsersQueueData(logData, function(users) {
 
       if(users.length > 0) {
 
-        // Asyncronous method calls in loop - Using Recursion
+        // Asynchronous method calls in loop - Using Recursion
         (function myClojure(i) {
 
           var user = users[i];
 
-            TwitterService.getLatestTweetId(user.twitter.screenName, function(tweetId) {
+            TwitterService.getLatestTweetId(user.twitter.screenName, logData, function(tweetId) {
 
-              TwitterService.getLatestMentionTweetId(user.twitter.screenName, function(mentionTweetId) {
+              TwitterService.getLatestMentionTweetId(user.twitter.screenName, logData, function(mentionTweetId) {
 
                 // Create queue data for each user
                 var queueData = {
@@ -167,7 +174,7 @@
                     }
 
                     // Add user to Tweet Queue
-                    self.addUserToTweetQueue(queueData)
+                    self.addUserToTweetQueue(queueData, logData);
                   }
 
                   if(queue == 'ALL' || queue == 'MENTION') {
@@ -176,7 +183,7 @@
                     }
 
                     // Add user to Mention Queue
-                    self.addUserToMentionQueue(queueData);
+                    self.addUserToMentionQueue(queueData, logData);
                   }
                 }
 
@@ -194,8 +201,9 @@
   };
 
   // Function to add user to mention queue
-  TwitterRestQueue.prototype.addUserToMentionQueue = function(userQueueData) {
-    log.info('Attempting to add user to mentionQueue: ' + userQueueData.screenName);
+  TwitterRestQueue.prototype.addUserToMentionQueue = function(userQueueData, logData) {
+    log.functionCall(QUEUE, 'addUserToMentionQueue', logData.parentProcess, logData.username,
+      {'userQueueData.screenName':(userQueueData)?userQueueData.screenName:'invalid'});
 
     var isAddRequestValid = true;
     var queueUserId = userQueueData.userId + '';
@@ -214,16 +222,19 @@
     }
 
     if(isAddRequestValid == true) {
-      log.info('Added user to mention queue: ' + userQueueData.userId);
+      log.functionCall(QUEUE, 'addUserToMentionQueue', logData.parentProcess, logData.username,
+        {'userQueueData.screenName':(userQueueData)?userQueueData.screenName:'invalid'}, 'Adding user to mention queue');
+      userQueueData.logData = logData;
       self.mentionQueue.push(userQueueData, function(){});
     } else {
-      log.info('User is already in mention queue: ' + userQueueData.userId);
+      log.functionError(QUEUE, 'addUserToMentionQueue', logData.parentProcess, logData.username, 'User is already in mention queue')
     }
   };
 
   // Function to add user to tweet queue
-  TwitterRestQueue.prototype.addUserToTweetQueue = function(userQueueData) {
-    log.info('Attempting to add user to tweetQueue: ' + userQueueData.screenName);
+  TwitterRestQueue.prototype.addUserToTweetQueue = function(userQueueData, logData) {
+    log.functionCall(QUEUE, 'addUserToTweetQueue', logData.parentProcess, logData.username,
+      {'userQueueData.screenName':(userQueueData)?userQueueData.screenName:'invalid'});
 
     var isAddRequestValid = true;
 
@@ -243,15 +254,19 @@
     }
 
     if(isAddRequestValid == true) {
-      log.info('Added user to tweet queue: ' + userQueueData.userId);
+      log.functionCall(QUEUE, 'addUserToTweetQueue', logData.parentProcess, logData.username,
+        {'userQueueData.screenName':(userQueueData)?userQueueData.screenName:'invalid'}, 'Adding user to tweet queue');
+      userQueueData.logData = logData;
       self.tweetQueue.push(userQueueData, function() {});
     } else {
-      log.info('User is already in tweet queue: ' + userQueueData.userId);
+      log.functionError(QUEUE, 'addUserToTweetQueue', logData.parentProcess, logData.username, 'User is already in tweet queue')
     }
   };
 
   // Function to get estimated time for mentions in seconds
-  TwitterRestQueue.prototype.getMentionsWaitTime = function() {
+  TwitterRestQueue.prototype.getMentionsWaitTime = function(logData) {
+    log.functionCall(QUEUE, 'getMentionsWaitTime', logData.parentProcess, logData.username);
+
     var multiplier = (MENTION_WINDOW/MENTION_REQUESTS_PER_WINDOW) * MAX_MENTION_REQUEST * 60;
 
     var queueNumber = self.mentionQueue.length();
@@ -263,7 +278,8 @@
   };
 
   // Function to get estimated time for tweets in seconds
-  TwitterRestQueue.prototype.getTweetsWaitTime = function() {
+  TwitterRestQueue.prototype.getTweetsWaitTime = function(logData) {
+    log.functionCall(QUEUE, 'getTweetsWaitTime', logData.parentProcess, logData.username);
     var multiplier = (TWEET_WINDOW/TWEET_REQUESTS_PER_WINDOW) * MAX_TWEET_REQUEST * 60;
 
     var queueNumber = self.tweetQueue.length();
@@ -276,7 +292,8 @@
 
   // Function to get the estimated wait time for a specific user's mentions in seconds
   // Returns -1 if user doesnt exist
-  TwitterRestQueue.prototype.getUsersMentionWaitTime = function(userId) {
+  TwitterRestQueue.prototype.getUsersMentionWaitTime = function(userId, logData) {
+    log.functionCall(QUEUE, 'getUsersMentionWaitTime', logData.parentProcess, logData.username, {'userId':userId});
 
     var waitTime = -1;
     var multiplier = (MENTION_WINDOW/MENTION_REQUESTS_PER_WINDOW) * MAX_MENTION_REQUEST * 60;
@@ -294,7 +311,8 @@
 
   // Function to get the estimated wait time for a specific user's tweets in seconds.
   // Returns -1 if user doesnt exist in queue
-  TwitterRestQueue.prototype.getUsersTweetWaitTime = function(userId) {
+  TwitterRestQueue.prototype.getUsersTweetWaitTime = function(userId, logData) {
+    log.functionCall(QUEUE, 'getUsersTweetWaitTime', logData.parentProcess, logData.username, {'userId':userId});
 
     var waitTime = -1;
     var multiplier = (TWEET_WINDOW/TWEET_REQUESTS_PER_WINDOW) * MAX_TWEET_REQUEST * 60;
@@ -316,6 +334,10 @@
 
   // Private function to retrieve mentions given a user's information
   var getUserMentions = function(queueData, callback) {
+    var logData = queueData.logData;
+    log.functionCall(QUEUE, 'getUserMentions (private)', logData.parentProcess, logData.username,
+      {'queueData.screenName':(queueData)?queueData.screenName:'invalid'});
+
     // User information
     var userId = queueData.userId;
     var screenName = queueData.screenName;
@@ -324,13 +346,16 @@
 
     // Check for new user
     if(isNewUser === true) {
-      self.mentionMessenger = TwitterInterfaceService.createTwitterMessenger(queueData.accessToken, queueData.secretAccessToken);
+      self.mentionMessenger = TwitterInterfaceService.createTwitterMessenger(queueData.accessToken, queueData.secretAccessToken, logData);
       self.userMentionTweets = new Array();
       self.userMentions = new Array();
     }
 
     // Get Mentions
-    TwitterInterfaceService.getMentions(self.mentionMessenger, screenName, function(error, mentionTweets, mentions) {
+    TwitterInterfaceService.getMentions(self.mentionMessenger, screenName, logData, function(error, mentionTweets, mentions) {
+      log.functionCall(QUEUE, 'getUserMentions (private)', logData.parentProcess, logData.username,
+        {'error':error,'mentionTweets.length':(mentionTweets)?mentionTweets.length:'invalid', 'mentions.length':(mentions)?mentions.length:'invalid'},
+        'Received tweets from Twitter');
 
       if(mentions.length == 0) {
 
@@ -347,7 +372,8 @@
       }
 
       if(error) {
-        log.warn('Failed to retrieve mentions from Twitter: ' + mentionTweets);
+        log.functionError(QUEUE, 'getUserMentions (private)', logData.parentProcess, logData.username,
+          'Failed to retrieve mentions from Twitter');
         return;
       }
 
@@ -356,8 +382,8 @@
 
       // Remove first element from mentionTweets if a tweet id was passed in
       if(tweetId) {
-        mentionTweets = AugeoUtility.trimArray(mentionTweets);
-        mentions = AugeoUtility.trimArray(mentions);
+        mentionTweets = AugeoUtility.trimArray(mentionTweets, logData);
+        mentions = AugeoUtility.trimArray(mentions, logData);
       }
 
       // Push mentionTweets and mentions into mentionTweets and mentions respectively
@@ -382,19 +408,20 @@
         callback();
 
       } else { // If all mentions have been retrieved..
-        log.info('Retrieved all mention tweets for: ' + screenName);
+        log.functionCall(QUEUE, 'getUserMentions (private)', logData.parentProcess, logData.username, {'screenName':screenName},
+          'Retrieved all mention tweets');
 
         // Set current mentions userId to null
         self.currentMentionUserId = null;
 
-        TwitterService.addMentions(userId, screenName, self.userMentionTweets, self.userMentions, function() {
+        TwitterService.addMentions(userId, screenName, self.userMentionTweets, self.userMentions, logData, function() {
 
           // Reset global variables
           self.mentionMessenger = null;
           self.userMentionTweets = null;
           self.userMentions = null;
 
-          UserService.updateAllRanks(callback);
+          UserService.updateAllRanks(logData, callback);
         });
       }
     }, tweetId); // End getTweets
@@ -402,6 +429,9 @@
 
   // Private function to retrieve tweets given a user's information
   var getUserTweets = function(queueData, callback) {
+    var logData = queueData.logData;
+    log.functionCall(QUEUE, 'getUserTweets (private)', logData.parentProcess, logData.username,
+      {'queueData.screenName':(queueData)?queueData.screenName:'invalid'});
 
     // User information
     var userId = queueData.userId;
@@ -411,12 +441,14 @@
 
     // Check for new user
     if(isNewUser === true) {
-      self.tweetMessenger = TwitterInterfaceService.createTwitterMessenger(queueData.accessToken, queueData.secretAccessToken);
+      self.tweetMessenger = TwitterInterfaceService.createTwitterMessenger(queueData.accessToken, queueData.secretAccessToken, logData);
       self.userTweets = new Array();
     }
 
     // Get tweets
-    TwitterInterfaceService.getTweets(self.tweetMessenger, function(error, tweets) {
+    TwitterInterfaceService.getTweets(self.tweetMessenger, logData, function(error, tweets) {
+      log.functionCall(QUEUE, 'getUserTweets (private)', logData.parentProcess, logData.username,
+        {'error':error,'tweets.length':(tweets)?tweets.length:'invalid'}, 'Received tweets from Twitter');
 
       if(tweets.length == 0) {
 
@@ -433,7 +465,8 @@
 
       // Check for error from getting tweets
       if(error) {
-        log.warn('Failed to retrieve tweets from Twitter: ' + tweets);
+        log.functionError(QUEUE, 'getUserTweets (private)', logData.parentProcess, logData.username,
+          'Failed to retrieve tweets from Twitter');
         return;
       }
 
@@ -442,7 +475,7 @@
 
       // Remove first element from tweets if a tweet id was passed in
       if(tweetId) {
-        tweets = AugeoUtility.trimArray(tweets);
+        tweets = AugeoUtility.trimArray(tweets, logData);
       }
 
       // Push tweets into userTweets
@@ -466,47 +499,52 @@
         callback();
 
       } else { // If all tweets have been retrieved..
-        log.info('Retrieved all tweets for: ' + screenName);
+        log.functionCall(QUEUE, 'getUserTweets (private)', logData.parentProcess, logData.username, {'screenName':screenName},
+          'Retrieved all tweets');
 
         // Set current tweet userId to null
         self.currentTweetUserId = null;
 
-        TwitterService.addTweets(userId, screenName, self.userTweets, function() {
+        TwitterService.addTweets(userId, screenName, self.userTweets, logData, function() {
 
           // Reset global variables
           self.tweetMessenger = null;
           self.userTweets = null;
 
-          UserService.updateAllRanks(callback);
+          UserService.updateAllRanks(logData, callback);
         });
       }
     }, tweetId); // End getTweets
   };
 
-  var onMentionRequestOpen = function(callback) {
+  var onMentionRequestOpen = function(logData, callback) {
+    log.functionCall(QUEUE, 'onMentionRequestOpen (private)', logData.parentProcess, logData.username, {'mentionRequestOpen':self.mentionRequestOpen});
     if(self.mentionRequestOpen == true) {
       callback();
     } else {
-      setTimeout(function() {onMentionRequestOpen(callback)}, CHECK_QUEUE_OPEN_TIMEOUT);
+      setTimeout(function() {onMentionRequestOpen(logData, callback)}, CHECK_MENTION_QUEUE_OPEN_TIMEOUT);
     }
   };
 
-  var onTweetRequestOpen = function(callback) {
+  var onTweetRequestOpen = function(logData, callback) {
+    log.functionCall(QUEUE, 'onTweetRequestOpen (private)', logData.parentProcess, logData.username, {'tweetRequestOpen':self.tweetRequestOpen});
     if(self.tweetRequestOpen == true) {
       callback();
     } else {
-      setTimeout(function() {onTweetRequestOpen(callback)}, CHECK_QUEUE_OPEN_TIMEOUT);
+      setTimeout(function() {onTweetRequestOpen(logData, callback)}, CHECK_TWEET_QUEUE_OPEN_TIMEOUT);
     }
   };
 
-  var startMentionTimer = function() {
+  var startMentionTimer = function(logData) {
+    log.functionCall(QUEUE, 'startMentionTimer (private)', logData.parentProcess, logData.username);
     self.mentionRequestOpen = false;
     setTimeout(function() {
       self.mentionRequestOpen = true;
     }, MENTION_TIMEOUT);
   };
 
-  var startTweetTimer = function() {
+  var startTweetTimer = function(logData) {
+    log.functionCall(QUEUE, 'startTweetTimer (private)', logData.parentProcess, logData.username);
     self.tweetRequestOpen = false;
     setTimeout(function() {
       self.tweetRequestOpen = true;

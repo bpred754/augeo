@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/twitter-api 'callback' requests    */
+  /* Description: Unit test cases for api/admin-api 'set-log-level' requests */
   /***************************************************************************/
 
   // Required libraries
@@ -34,74 +34,49 @@
 
     var agent = Request.agent(app);
 
-    // Fails on twitterService.getUserSecretToken
-    it('should return status 301 - invalid user in session', function(done) {
+    // Invalid Session
+    it('should return status 401 - invalid session', function (done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/callback')
-        .expect(301)
-        .end(function(error, response) {
+        .get('/admin-api/setLogLevel')
+        .expect(401)
+        .end(function (error, response) {
           Should.not.exist(error);
-          Assert.strictEqual(response.headers.location, process.env.AUGEO_HOME + '/signup/error');
+          Assert.strictEqual(response.res.text, 'Invalid session');
           done();
         });
     });
 
-    // Fails on twitterInterfaceService.getOAuthAccessToken
-    it('should return status 301 - request does not contain query', function(done) {
+    // Not an admin user
+    it('should return status 400 - user is not admin', function (done) {
       this.timeout(Common.TIMEOUT);
 
-      // Login in user
+      // Add user with no admin rights
       agent
-        .post('/user-api/login')
-        .send(Common.LOGIN_USER)
+        .post('/user-api/add')
+        .send(Common.ACTIONEE)
         .expect(200)
-        .end(function(error0, response0) {
-          Should.not.exist(error0);
+        .end(function(error, response) {
+          Should.not.exist(error);
 
-          // Set oauth request token
+          // Login in user
           agent
-            .get('/twitter-api/getAuthenticationData')
+            .post('/user-api/login')
+            .send(Common.ACTIONEE)
             .expect(200)
-            .end(function(error1, response1) {
-              Should.not.exist(error1);
-              response1.body.should.have.property('token');
+            .end(function(error, response) {
+              Should.not.exist(error);
 
-              // Hit callback with no query params
               agent
-                .get('/twitter-api/callback')
-                .expect(301)
-                .end(function(error2, response2) {
-                  Should.not.exist(error2);
-                  Assert.strictEqual(response2.headers.location, process.env.AUGEO_HOME + '/signup/error');
+                .get('/admin-api/setLogLevel')
+                .expect(400)
+                .end(function (error, response) {
+                  Should.not.exist(error);
+                  Assert.strictEqual(response.res.text, 'Not an admin user');
                   done();
                 });
             });
         });
     });
-
-    // Success
-    it('should return status 302 - updates user info with twitter, adds user to rest and stream queues', function(done) {
-      this.timeout(Common.TIMEOUT);
-
-      // Set oauth request token
-      agent
-        .get('/twitter-api/getAuthenticationData')
-        .expect(200)
-        .end(function(error1, response1) {
-          Should.not.exist(error1);
-          response1.body.should.have.property('token');
-
-          // Hit callback with query params
-          agent
-            .get('/twitter-api/callback?oauth_token=999&oauth_verifier=999')
-            .expect(302)
-            .end(function(error2, response2) {
-              Should.not.exist(error2);
-              Assert.strictEqual(response2.headers.location, process.env.AUGEO_HOME + '/twitterHistory');
-              done();
-            });
-        });
-      });
-    };
+  };
