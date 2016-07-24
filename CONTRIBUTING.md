@@ -34,6 +34,13 @@ Creating a standards document is essential to the maintainability of a software 
 * All folders will be named in the singular tense (e.g., 'module' instead of 'modules')
 * GPL V3 License at the top of every source file
 * All functions in a file should be in alphabetic order, except for the constructor
+* All functions are required to have a log statement at the beginning with the following information:
+  * File name
+  * Function name
+  * Parent process (initiating API request)
+  * Identifier (username who initiated the request)
+  * Params
+  * Message 
 * Test cases are required for all server side code
 * Test case names should reflect their source counter part (e.g., src/utility/augeo-utility & test/test-case/utility/augeo-utility)
 
