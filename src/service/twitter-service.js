@@ -304,22 +304,22 @@
 
         if(user) {
           var screenName = user.twitter.screenName;
-          Mention.getMentions(screenName, logData, function (mentionTweetIds) {
+          if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isNumberValid(tweetId, logData)) {
 
-            if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isNumberValid(tweetId, logData)) {
-
+            Mention.getMentions(screenName, logData, function (mentionTweetIds) {
               Tweet.getSkillActivity(screenName, mentionTweetIds, skill, ACTIVITY_PER_PAGE, tweetId, logData, function (tweets) {
 
+                // Set callback data
                 var data = {
-                  activity: tweets
-                }
+                  activity: TwitterUtility.transformUserDisplayExperience(tweets, mentionTweetIds, logData)
+                };
 
                 callback(data);
               });
-            } else {
-              rollback(404, 'Invalid skill or tweetId');
-            }
-          });
+            });
+          } else {
+           rollback(404, 'Invalid skill or tweetId');
+          }
         } else {
           rollback(404, 'Failed to retrieve user');
         }
@@ -390,7 +390,7 @@
   // Call DB to update user's twitter information
   exports.updateTwitterInfo = function(userId, userData, logData, callback, rollback) {
     log.functionCall(SERVICE, 'updateTwitterInfo', logData.parentProcess, logData.username, {'userId':userId, 'userData.screenName':(userData)?userData.screenName:'invalid'});
-    
+
     // Validate userId
     if(AugeoValidator.isMongooseObjectIdValid(userId, logData)) {
       User.updateTwitterInfo(userId, userData, logData, callback);
@@ -492,7 +492,7 @@
               'skill': mainSkillDisplay,
               'subSkills': displaySkills
             },
-            recentActions: tweets
+            recentActions: TwitterUtility.transformUserDisplayExperience(tweets, mentionTweetIds, logData)
           };
 
           callback(displayData);
