@@ -62,10 +62,10 @@
 
           agent
             .get('/twitter-api/getDashboardDisplayData?username=invalid')
-            .expect(401)
+            .expect(200)
             .end(function(error1, response1) {
               Should.not.exist(error1);
-              Assert.strictEqual(response1.body.errorImageUrl, 'image/logo.png');
+              Assert.strictEqual(response1.body.errorImageUrl, 'image/avatar-medium.png');
               done();
             });
         });

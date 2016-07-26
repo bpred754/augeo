@@ -91,7 +91,7 @@
 
       agent
         .get('/twitter-api/getSkillActivity?username=invalid&skill=Augeo&tweetId=9999999999999999999999999999999')
-        .expect(404)
+        .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
@@ -114,7 +114,7 @@
           .expect(200)
           .end(function(error, response) {
             Should.not.exist(error);
-            Should.exist(response.body.activity)
+            Should.exist(response.body.activity);
             Assert.strictEqual(response.body.activity.length, 1);
             Assert.strictEqual(response.body.activity[0].tweetId, Common.rawStandardTweet.id_str);
             done();

@@ -96,12 +96,17 @@
       if($scope.activityLoaded) {
         $scope.activityLoaded = false;
         TwitterClientService.getSkillActivity($scope.username, $scope.currentSkill, maxId, function(data) {
-          if(data.activity.length > 0) {
-            $scope.tweets = $scope.tweets.concat(data.activity);
-            maxId =  data.activity[data.activity.length-1].tweetId;
-            $scope.activityLoaded = true;
+
+          if(data.activity) {
+            if (data.activity.length > 0) {
+              $scope.tweets = $scope.tweets.concat(data.activity);
+              maxId = data.activity[data.activity.length - 1].tweetId;
+              $scope.activityLoaded = true;
+            } else {
+              $scope.finishedLoading = true;
+            }
           } else {
-            $scope.finishedLoading = true;
+            $scope.invalidUser = true;
           }
         });
       }

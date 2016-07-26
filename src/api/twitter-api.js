@@ -174,12 +174,7 @@
       log.functionCall(API, GET_DASHBOARD_DISPLAY_DATA, null, username, {'targetUsername':targetUsername});
       var logData = AugeoUtility.formatLogData(API+GET_DASHBOARD_DISPLAY_DATA, username);
       TwitterService.getDashboardDisplayData(username, targetUsername, logData, function(displayData) {
-
-        if(displayData.errorImageUrl) {
-          response.status(401).json(displayData);
-        } else {
-          response.status(200).json(displayData)
-        }
+        response.status(200).json(displayData);
       }, rollback);
     } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
       rollback(INVALID_SESSION);

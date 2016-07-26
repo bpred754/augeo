@@ -24,8 +24,6 @@
 
   // Required libraries
   var Assert = require('assert');
-  var Mongoose = require('mongoose');
-  var Request = require('supertest');
   var Should = require('should');
 
   // Required local modules
@@ -361,7 +359,7 @@
     // Valid targetUsername && targetUsername doesn't exists
     var targetUsername = 'target';
     TwitterService.getDashboardDisplayData(Common.USER.username, targetUsername, Common.logData, function(data0) {
-      Assert.strictEqual(data0.errorImageUrl, 'image/logo.png');
+      Assert.strictEqual(data0.errorImageUrl, 'image/avatar-medium.png');
 
       // Valid targetUsername && targetUsername exists
       TwitterService.getDashboardDisplayData(Common.USER.username, Common.USER.username, Common.logData, function(data1) {
@@ -377,7 +375,7 @@
         // Invalid target && valid userUsername && username doesn't exists
         TwitterService.getDashboardDisplayData('username', '', Common.logData, function(data2){
 
-          Assert.strictEqual(data2.errorImageUrl, 'image/logo.png');
+          Assert.strictEqual(data2.errorImageUrl, 'image/avatar-medium.png');
 
           // Invalid target && valid username && username exists
           TwitterService.getDashboardDisplayData(Common.USER.username, '', Common.logData, function(data3) {

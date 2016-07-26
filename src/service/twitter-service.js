@@ -256,7 +256,7 @@
     log.functionCall(SERVICE, 'getDashboardDisplayData', logData.parentProcess, logData.username, {'username':username,
         'targetUsername':targetUsername});
 
-    var errorImageUrl = 'image/logo.png';
+    var errorImageUrl = 'image/avatar-medium.png';
 
     if(targetUsername && AugeoValidator.isUsernameValid(targetUsername, logData)) {
       User.doesUsernameExist(targetUsername, logData, function(targetUsernameExists) {
@@ -321,7 +321,7 @@
            rollback(404, 'Invalid skill or tweetId');
           }
         } else {
-          rollback(404, 'Failed to retrieve user');
+          callback();
         }
       });
     } else {

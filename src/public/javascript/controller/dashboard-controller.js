@@ -69,8 +69,7 @@
           }
 
           // Set recent activity
-          if (data.recentActions.length > 0) {
-
+          if (data.recentActions && data.recentActions.length > 0) {
             var currentIndex = 0;
             var formatTweets = true;
 
@@ -102,7 +101,9 @@
 
           if (data.errorImageUrl) {
             $scope.invalidUser = true;
-            $scope.profileData.profileImg = data.errorImageUrl
+            $scope.profileData = {
+              profileImg: data.errorImageUrl
+            };
           }
         }
       });
