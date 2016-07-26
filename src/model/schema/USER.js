@@ -61,6 +61,7 @@
     email: String,
     username: String,
     password: String,
+    signupDate: { type: Date, default: Date.now },
     admin: Boolean,
     sendGridId: String,
     profileImg: String,
