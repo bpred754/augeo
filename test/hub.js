@@ -42,6 +42,11 @@
     importTests('logger', './test-case/module/logger');
   });
 
+  describe('Validator', function() {
+    importTests('Augeo Validator', './test-case/validator/augeo-validator');
+    importTests('Twitter Validator', './test-case/validator/twitter-validator');
+  });
+
   describe('Utility', function() {
     importTests('augeoUtility', './test-case/utility/augeo-utility');
     importTests('twitterUtility', './test-case/utility/twitter-utility');
