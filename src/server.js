@@ -83,7 +83,6 @@
   log.info('Environment variable - ENV: ' + process.env.ENV);
   log.info('Environment variable - TEST: ' + process.env.TEST);
   log.info('Environment variable - AUGEO_HOME: ' + process.env.AUGEO_HOME);
-  log.info('Environment variable - DB_URL: ' + process.env.DB_URL);
   log.info('Environment variable - PORT: ' + process.env.PORT);
   log.info('Running Augeo on port ' + port);
 
