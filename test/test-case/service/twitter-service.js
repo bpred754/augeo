@@ -60,7 +60,7 @@
         userData.accessToken = Common.USER.twitter.accessToken;
         userData.secretAccessToken = Common.USER.twitter.secretAccessToken;
 
-        TwitterService.updateTwitterInfo(userId, userData, Common.logData, function() {
+        TwitterService.updateTwitterInfo(userId, Common.USER, userData, Common.logData, function() {
 
           // Retrieve Test Tester again from database to verify information was updated
           User.getUserWithUsername(Common.USER.username, Common.logData, function(userAfterUpdate) {
@@ -356,44 +356,20 @@
   it('should return dashboard display data -- getDashboardDisplayData()', function(done) {
     this.timeout(Common.TIMEOUT);
 
-    // Valid targetUsername && targetUsername doesn't exists
-    var targetUsername = 'target';
-    TwitterService.getDashboardDisplayData(Common.USER.username, targetUsername, Common.logData, function(data0) {
-      Assert.strictEqual(data0.errorImageUrl, 'image/avatar-medium.png');
+    // Valid targetUsername
+    TwitterService.getDashboardDisplayData(Common.USER.username, Common.logData, function(data0) {
 
-      // Valid targetUsername && targetUsername exists
-      TwitterService.getDashboardDisplayData(Common.USER.username, Common.USER.username, Common.logData, function(data1) {
+      Assert.ok(data0.user);
+      Assert.ok(data0.user.profileImg);
+      Assert.ok(data0.user.skill);
+      Assert.ok(data0.user.subSkills);
+      Assert.ok(data0.recentActions);
+      data0.recentActions.length.should.be.above(0);
 
-        Assert.ok(data1.dashboardData);
-        Assert.ok(data1.dashboardData.user);
-        Assert.ok(data1.dashboardData.user.profileImg);
-        Assert.ok(data1.dashboardData.skill);
-        Assert.ok(data1.dashboardData.subSkills);
-        Assert.ok(data1.recentActions);
-        data1.recentActions.length.should.be.above(0);
-
-        // Invalid target && valid userUsername && username doesn't exists
-        TwitterService.getDashboardDisplayData('username', '', Common.logData, function(data2){
-
-          Assert.strictEqual(data2.errorImageUrl, 'image/avatar-medium.png');
-
-          // Invalid target && valid username && username exists
-          TwitterService.getDashboardDisplayData(Common.USER.username, '', Common.logData, function(data3) {
-
-            Assert.ok(data3.dashboardData);
-            Assert.ok(data1.dashboardData.user);
-            Assert.ok(data3.dashboardData.user.profileImg);
-            Assert.ok(data3.dashboardData.skill);
-            Assert.ok(data3.dashboardData.subSkills);
-            Assert.ok(data3.recentActions);
-            data3.recentActions.length.should.be.above(0);
-
-            // Invalid target and invalid username
-            TwitterService.getDashboardDisplayData('', '', Common.logData, function(){}, function() {
-              done();
-            });
-          }, function(){});
-        }, function(){});
+      // Invalid target
+      TwitterService.getDashboardDisplayData('username', Common.logData, function(data1){
+        Assert.strictEqual(data1.errorImageUrl, 'image/avatar-medium.png');
+        done();
       }, function(){});
     }, function(){});
   });

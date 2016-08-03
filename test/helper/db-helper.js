@@ -61,7 +61,7 @@
       };
 
       // Update twitter information
-      TwitterService.updateTwitterInfo(retrievedUser._id.toString(), twitterData, Common.logData, function() {
+      TwitterService.updateTwitterInfo(retrievedUser._id.toString(), user, twitterData, Common.logData, function() {
         callback();
       });
     }, function(){console.log('Twitter Helper -- Failed to add user')});

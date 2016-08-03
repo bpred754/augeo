@@ -102,7 +102,7 @@
     importTests('Login', './test-case/api/user-api/login');
     importTests('Session', './test-case/api/user-api/session');
     importTests('Remove User', './test-case/api/user-api/remove-user', App);
-    importTests('Save Profile Data', './test-case/api/user-api/save-profile-data', App)
+    importTests('Save Profile Data', './test-case/api/user-api/save-profile-data', App);
   });
 
   describe('Admin API', function() {
@@ -116,6 +116,10 @@
     importTests('getSkillActivity', './test-case/api/twitter-api/get-skill-activity', App);
     importTests('getTwitterHistoryPageData', './test-case/api/twitter-api/get-twitter-history-page-data', App);
   });
+
+   describe('Twitter Dependent User API', function() {
+     importTests('Set Profile Image', './test-case/api/user-api/set-profile-image', App);
+   });
 
   describe('Twitter', function() {
     importTests('Twitter', './test-case/twitter/twitter');

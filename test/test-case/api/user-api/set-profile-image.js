@@ -19,8 +19,8 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/twitter-api                        */
-  /*              'getDashboardDisplayData' requests                         */
+  /* Description: Unit test cases for api/user-api 'set-profile-image'       */
+  /*   requests                                                              */
   /***************************************************************************/
 
   // Required libraries
@@ -35,12 +35,16 @@
 
     var agent = Request.agent(app);
 
-    // Invalid username in session
-    it('should return status 401 - invalid username in session', function(done) {
+    it('should return status 401 -- invalid session', function(done) {
       this.timeout(Common.TIMEOUT);
 
+      var data = {
+        interface:'Twitter'
+      };
+
       agent
-        .get('/twitter-api/getDashboardDisplayData')
+        .post('/user-api/setProfileImage')
+        .send(data)
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -48,60 +52,41 @@
         });
     });
 
-    // Valid username in session and invalid username parameter
-    it('should return status 401 - valid username in session and invalid username parameter', function(done) {
+    it('should return status 200 -- no interface data', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
       agent
         .post('/user-api/login')
-        .send(Common.LOGIN_USER)
+        .send(Common.USER)
         .expect(200)
         .end(function(error0, response0) {
           Should.not.exist(error0);
 
           agent
-            .get('/twitter-api/getDashboardDisplayData?username=invalid')
+            .post('/user-api/setProfileImage')
+            .send({})
             .expect(200)
-            .end(function(error1, response1) {
+            .end(function (error1, response1) {
+              Assert.strictEqual(response1.body.profileImg, 'image/avatar-medium.png');
+              Assert.strictEqual(response1.body.profileIcon, 'image/avatar-small.png');
               Should.not.exist(error1);
-              Assert.strictEqual(response1.body.errorImageUrl, 'image/avatar-medium.png');
               done();
             });
         });
     });
 
-    it('should return return 200 - valid username in session and valid username parameter', function(done) {
-      this.timeout(Common.TIMEOUT);
-      agent
-        .get('/twitter-api/getDashboardDisplayData?username=' + Common.USER.username)
-        .expect(200)
-        .end(function(error, response) {
-          Should.not.exist(error);
-
-          var user = response.body.user;
-          Should.exist(user.profileImg);
-          Should.exist(user.skill);
-          Should.exist(user.subSkills);
-
-          done();
-        });
-    });
-
-    it('should return return 200 - valid username in session and no username parameter', function(done) {
+    it('should return status 200 -- interface data specified', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getDashboardDisplayData')
+        .post('/user-api/setProfileImage')
+        .send({interface:'Twitter'})
         .expect(200)
-        .end(function(error, response) {
-          Should.not.exist(error);
-
-          var user = response.body.user;
-          Should.exist(user.profileImg);
-          Should.exist(user.skill);
-          Should.exist(user.subSkills);
-
+        .end(function (error1, response1) {
+          Assert.strictEqual(response1.body.profileImg, 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg');
+          Assert.strictEqual(response1.body.profileIcon, 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs_normal.jpg');
+          Should.not.exist(error1);
           done();
         });
     });

@@ -30,12 +30,14 @@
     username: 'tester',
     password: '!Test1',
     profileImg: 'image/avatar-medium.png',
+    profileIcon: 'image/avatar-small.png',
     twitter: {
       twitterId: '1000000000',
       accessToken: '000',
       secretAccessToken: '000',
       screenName: 'testScreenName',
-      profileImageUrl: ''
+      profileImageUrl: 'twitterProfileImage.png',
+      profileIcon: 'twitterProfileIcon.png'
     },
     skill: {
       imageSrc: 'image/augeo-logo-medium.png'

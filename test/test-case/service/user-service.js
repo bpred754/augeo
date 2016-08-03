@@ -365,6 +365,25 @@
     });
   });
 
+  it('should set profile image data depending on the given interface name -- setProfileImage()', function(done) {
+
+    // Set profile image with no interface specified
+    UserService.setProfileImage({}, Common.USER, Common.logData, function(user0) {
+
+      Assert.strictEqual(user0.profileImg, 'image/avatar-medium.png');
+      Assert.strictEqual(user0.profileIcon, 'image/avatar-small.png');
+
+      // Set profile image with Twitter interface specified
+      UserService.setProfileImage({interface:'Twitter'}, Common.USER, Common.logData, function(user1) {
+
+        Assert.strictEqual(user1.profileImg, Common.USER.profileImg);
+        Assert.strictEqual(user1.profileIcon, Common.USER.profileIcon);
+
+        done();
+      });
+    });
+  });
+
   // updateRanks & updateSubSkillRanks
   it('should update the skill and sub skill ranks for all users -- updateSubSkillRanks() & updateRanks()', function(done) {
     this.timeout(Common.TIMEOUT);
@@ -380,12 +399,10 @@
       var baseSubSkillRank = general.rank;
 
       baseSkillRank.should.be.above(0);
-      //baseExperience.should.be.above(0);
       baseSubSkillRank.should.be.above(0);
 
       Assert.ok(baseSkillRank);
       Assert.ok(baseIndex);
-      //Assert.ok(baseExperience);
       Assert.ok(baseSubSkillRank);
 
       User.getNumberUsers(Common.logData, function(numUsers) {
@@ -424,8 +441,14 @@
               secretAccessToken: Common.ACTIONEE.twitter.secretAccessToken,
             };
 
+            var sessionUser = {
+              username: Common.ACTIONEE.username,
+              profileImg: 'image/avatar-medium.png',
+              profileIcon: 'image/avatar-small.png'
+            };
+
             // Update new user's twitter information
-            TwitterService.updateTwitterInfo(user2._id.toString(), twitterData, Common.logData, function() {
+            TwitterService.updateTwitterInfo(user2._id.toString(), sessionUser, twitterData, Common.logData, function() {
 
               // Verify new user's skill and subSkill rank is higher than Common.USER
               User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
