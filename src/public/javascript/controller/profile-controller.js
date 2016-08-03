@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, ProfileService, UserClientService) {
+  module.exports = function($scope, $timeout, ProfileService, UserClientService) {
 
     $scope.isGlobalUser = false;
     $scope.isEditMode = true;
@@ -87,6 +87,16 @@
 
       if($scope.profileView != 'Augeo') {
         $scope.isEditMode = false;
+
+        if($scope.profileView == 'Twitter') {
+          // Load Twitter follow button
+          $scope.targetUser.twitterFollowUrl = 'https://twitter.com/' + $scope.targetUser.twitter.screenName;
+          $timeout(function() {
+            if(twttr.widgets) {
+              twttr.widgets.load();
+            }
+          }, 500);
+        }
       } else {
         if($scope.isGlobalUser) {
           $scope.isEditMode = true;

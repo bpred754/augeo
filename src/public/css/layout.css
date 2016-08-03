@@ -280,6 +280,10 @@
     margin-top:15px;
   }
 
+  .profile-twitter-follow-container {
+    margin-top:10px;
+  }
+
   .tooltip-arrow,
   .header-tooltip + .tooltip > .tooltip-inner {background-color: #333;}
 

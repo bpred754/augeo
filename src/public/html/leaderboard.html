@@ -44,9 +44,9 @@
     <div class="container">
       <div class="row" id="entry-titles-container">
         <div class="col-md-1 hidden-xs hidden-sm"></div>
-        <div class="col-sm-1 col-xs-2 entry-title large-text text-primary">Rank</div>
+        <div class="col-xs-2 entry-title large-text text-primary">Rank</div>
         <div id="user-entry-title" class="col-sm-1 hidden-xs entry-title large-text text-primary">User</div>
-        <div id="user-entry-input-container" class="col-md-3 col-xs-4">
+        <div id="user-entry-input-container" class="col-md-2 col-xs-4">
           <input id="user-entry-input" type="text" class="form-control standard-text" ng-model="searchName">
         </div>
         <div id="go-button-container" class="col-xs-1">
@@ -54,12 +54,11 @@
             <span id="go-button-title">GO</span>
           </div>
         </div>
-        <div class="col-sm-1 entry-title large-text text-primary hidden-xs">Level</div>
-        <div class="col-xs-1 entry-title large-text text-primary hidden-sm hidden-md hidden-lg">Lvl</div>
-        <div class="col-md-2 col-sm-3 entry-title text-primary large-text hidden-xs">Experience</div>
-        <div class="col-xs-2 entry-title large-text text-primary hidden-sm hidden-md hidden-lg">Exp</div>
-        <div class="col-xs-1 entry-title large-text"></div>
-        <div class="col-xs-1 hidden-sm"></div>
+        <div class="col-sm-2 entry-title large-text text-primary hidden-xs">Level</div>
+        <div class="col-xs-2 entry-title large-text text-primary hidden-sm hidden-md hidden-lg">Lvl</div>
+        <div class="col-md-2 col-sm-2 entry-title text-primary large-text hidden-xs">Experience</div>
+        <div class="col-xs-3 entry-title large-text text-primary hidden-sm hidden-md hidden-lg">Exp</div>
+        <div class="col-md-1 hidden-sm hidden-xs"></div>
       </div>
       <div class="row">
         <leaderboard-entry ng-repeat="user in users" user="user" search-name="searchName"></leaderboard-entry>

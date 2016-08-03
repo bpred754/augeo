@@ -34,28 +34,6 @@
         templateUrl: 'html/directive/leaderboard-entry.html',
         link: function(scope, elem, attrs) {
 
-          // Initialize twitter code for follow buttons
-          window.twttr=(function(d,s,id){
-            var js,
-                fjs = d.getElementsByTagName(s)[0],
-                t = window.twttr||{};
-
-            if (d.getElementById(id))
-              return t;
-
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "https://platform.twitter.com/widgets.js";
-            fjs.parentNode.insertBefore(js,fjs);
-            t._e=[];
-
-            t.ready=function(f){
-              t._e.push(f);
-            };
-
-            return t;
-          }(document,"script","twitter-wjs"));
-
           // Method to see if the username of the directive element matches the search name
           scope.highlightEntry = function(username, searchName) {
             var className = '';
@@ -64,21 +42,6 @@
             }
             return className;
           };
-
-          scope.$watch('user.twitterScreenName', function(newVal) {
-
-            var entryContainer = $(elem).children().eq(0)[0];
-            var twitterFollowButton = $(entryContainer).find('.follow-container');
-            twitterFollowButton.empty();
-
-            if(newVal) {
-              twitterFollowButton.append('<a class="twitter-follow-button" href="https://twitter.com/' + newVal + '" data-show-count="false" data-lang="en" data-show-screen-name="false">Follow</a>');
-
-              if(twttr.widgets) {
-                twttr.widgets.load();
-              }
-            }
-          });
         }
     }
   };

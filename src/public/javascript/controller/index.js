@@ -30,7 +30,7 @@
   augeo.controller('LeaderboardController', ['$scope', 'UserClientService', require('./leaderboard-controller')]);
   augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
   augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', 'ProfileService', 'UserClientService', require('./profile-controller')]);
+  augeo.controller('ProfileController', ['$scope', '$timeout', 'ProfileService', 'UserClientService', require('./profile-controller')]);
   augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
   augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'TwitterClientService', 'UserClientService', require('./view-activity-controller')]);
 

@@ -47,5 +47,5 @@
 
   // Require libraries after page is ready
   $(document).ready(function() {
-    require('./lib/twitter-intent')();
+    require('./lib/twitter')();
   });

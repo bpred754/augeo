@@ -170,6 +170,10 @@
                   </div>
                   <!-- Twitter screen name -->
                   <div ng-if="targetUser.hasTwitterAuthentication" class="standard-text text-primary profile-attr horizontal-center">@{{targetUser.twitter.screenName}}</div>
+                  <!-- Twitter follow -->
+                  <div class="horizontal-center profile-twitter-follow-container" ng-if="targetUser.hasTwitterAuthentication">
+                    <a class="twitter-follow-button" href="{{targetUser.twitterFollowUrl}}" data-show-count="false" data-lang="en" data-show-screen-name="false">Follow</a>
+                  </div>
                 </div>
                 <!-- Github -->
                 <div ng-if="profileView == 'Github'">
