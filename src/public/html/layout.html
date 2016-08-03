@@ -105,54 +105,95 @@
               <div class="modal-title standard-text text-primary">{{targetUser.username}}</div>
             </div>
             <div id="profile-modal-body" class="modal-body row">
-              <div id="profile-img-container">
-                <img class="profile-img" src="{{targetUser.profileImg}}"/>
-              </div>
               <div id="profile-body-container">
-                <!-- Bio - Edit Mode -->
-                <div ng-if="isEditMode && isGlobalUser">
-                  <div class="profile-label">
-                    <p class="standard-text text-primary">Public Bio</p>
+                <!-- Augeo -->
+                <div ng-if="profileView == 'Augeo'">
+                  <div class="profile-img-container">
+                    <img class="profile-img" src="{{targetUser.profileImg}}"/>
                   </div>
-                  <div class="horizontal-center profile-field-input-container">
-                      <input type="text" class="form-control small-text profile-field-input" placeholder="Profession" ng-model="targetUser.profession"/>
+                  <!-- View As Link -->
+                  <div class="profile-edit-view-link" ng-if="isEditMode && isGlobalUser">
+                    <p class="small-text augeo-link" ng-click="viewAsOther()">View as other Augeo user</p>
                   </div>
-                  <div class="horizontal-center profile-field-input-container">
-                      <input type="text" class="form-control small-text profile-field-input" placeholder="Location" ng-model="targetUser.location"/>
-                  </div>
-                  <div class="horizontal-center profile-field-input-container">
-                      <input type="text" class="form-control small-text profile-field-input" placeholder="Website" ng-model="targetUser.website"/>
-                  </div>
-                  <div class="profile-label profile-label-description">
-                      <p class="standard-text text-primary">Description</p>
-                  </div>
-                  <div class="horizontal-center">
-                      <textarea id="profile-description-field" class="form-control small-text profile-field-input" placeholder="Tell us about yourself..." ng-model="targetUser.description" maxlength="180"></textarea>
-                  </div>
-                </div>
-                <!-- Authenticate with Twitter -->
-                <div id="profile-auth-container" ng-if="isEditMode && !targetUser.hasTwitterAuthentication && isGlobalUser">
-                  <div id="profile-auth-inner-container">
-                    <p class="standard-text text-primary text-align-center profile-auth-text">Authenticate with Twitter to start tracking your experience</p>
+                  <!-- Bio - Edit Mode -->
+                  <div ng-if="isEditMode && isGlobalUser">
+                    <div class="profile-label">
+                      <p class="standard-text text-primary">Public Bio</p>
+                    </div>
+                    <div class="horizontal-center profile-field-input-container">
+                        <input type="text" class="form-control small-text profile-field-input" placeholder="Profession" ng-model="targetUser.profession"/>
+                    </div>
+                    <div class="horizontal-center profile-field-input-container">
+                        <input type="text" class="form-control small-text profile-field-input" placeholder="Location" ng-model="targetUser.location"/>
+                    </div>
+                    <div class="horizontal-center profile-field-input-container">
+                        <input type="text" class="form-control small-text profile-field-input" placeholder="Website" ng-model="targetUser.website"/>
+                    </div>
+                    <div class="profile-label profile-label-description">
+                        <p class="standard-text text-primary">Description</p>
+                    </div>
                     <div class="horizontal-center">
-                      <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+                        <textarea id="profile-description-field" class="form-control small-text profile-field-input" placeholder="Tell us about yourself..." ng-model="targetUser.description" maxlength="180"></textarea>
+                    </div>
+                  </div>
+                  <!-- Bio - View Mode -->
+                  <div ng-if="!isEditMode">
+                    <p id="profile-description" class="standard-text text-primary text-align-center">{{targetUser.description}}</p>
+                    <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.profession}}</p>
+                    <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.location}}</p>
+                    <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.website}}</p>
+                  </div>
+                  <!-- Authenticate with interface -->
+                  <div class="profile-auth-container" ng-if="isGlobalUser && isEditMode && !targetUser.hasTwitterAuthentication && !targetUser.hasGithubAuthentication">
+                    <div class="profile-auth-inner-container">
+                      <p class="standard-text text-primary text-align-center profile-auth-text profile-auth-border">Select an interface below and authenticate to start tracking experience!</p>
                     </div>
                   </div>
                 </div>
-                <!-- Bio - View Mode -->
-                <div ng-if="!isEditMode">
-                  <p id="profile-description" class="standard-text text-primary text-align-center">{{targetUser.description}}</p>
-                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.profession}}</p>
-                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.location}}</p>
-                  <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.website}}</p>
+                <!-- Twitter -->
+                <div ng-if="profileView == 'Twitter'">
+                  <div class="profile-img-container" ng-if="targetUser.twitter">
+                    <img class="profile-img" src="{{targetUser.twitter.profileImageUrl}}"/>
+                  </div>
+                  <!-- Authenticate with Twitter -->
+                  <div class="profile-auth-container" ng-if="!targetUser.hasTwitterAuthentication && isGlobalUser">
+                    <div class="profile-auth-inner-container">
+                      <p class="standard-text text-primary text-align-center profile-auth-text">Authenticate with Twitter to start tracking your experience</p>
+                      <div class="horizontal-center">
+                        <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Use Twitter profile image as Augeo Image -->
+                  <div class="checkbox horizontal-center" ng-if="targetUser.hasTwitterAuthentication && isGlobalUser">
+                   <label><input type="checkbox" ng-model="isTwitterProfileImage" ng-change="setProfileImage('Twitter')">Use as Augeo profile image</label>
+                  </div>
+                  <!-- Twitter screen name -->
+                  <div ng-if="targetUser.hasTwitterAuthentication" class="standard-text text-primary profile-attr horizontal-center">@{{targetUser.twitter.screenName}}</div>
                 </div>
-                <!-- View As Link -->
-                <div class="profile-edit-view-link" ng-if="isEditMode && isGlobalUser">
-                  <p class="small-text augeo-link" ng-click="viewAsOther()">View as other Augeo user</p>
+                <!-- Github -->
+                <div ng-if="profileView == 'Github'">
+                  <div class="profile-img-container" ng-if="targetUser.github">
+                    <img class="profile-img" src="{{targetUser.github.profileImageUrl}}"/>
+                  </div>
+                  <!-- Authenticate with Github -->
+                  <div class="profile-auth-container" ng-if="!targetUser.hasGithubAuthentication && isGlobalUser">
+                    <div class="profile-auth-inner-container">
+                      <p class="standard-text text-primary text-align-center profile-auth-text">Authenticate with Github to start tracking your experience</p>
+                      <div class="horizontal-center">
+                        <button type="button" class="btn btn-primary small-text" ng-click="submitGithubAuthentication()">Authenticate</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="modal-footer" ng-if="isGlobalUser">
+            <div id="profile-interface-container" class="horizontal-center">
+              <div ng-repeat="interface in targetUser.interfaces" class="clickable profile-interface" ng-click="setView(interface)" ng-mouseenter="highlightInterface(interface)" ng-mouseleave="removeHighlight(interface)">
+                <img ng-src="{{interface.current}}"/>
+              </div>
+            </div>
+            <div class="modal-footer" ng-if="isGlobalUser && profileView == 'Augeo'">
               <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="saveProfileData()" ng-if="isEditMode">Save</button>
               <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="editProfile()" ng-if="!isEditMode">Edit Profile</button>
             </div>
@@ -237,6 +278,14 @@
             var scope = angular.element($("#delete-modal")).scope();
             scope.$apply(function() {
               scope.removeErrorMessage = '';
+            });
+          });
+
+          // Reset profile modal to Augeo view when it closes
+          $('#profile-modal').on('hidden.bs.modal', function () {
+            var scope = angular.element($("#profile-modal")).scope();
+            scope.$apply(function() {
+                scope.setView({name:'Augeo'});
             });
           });
 

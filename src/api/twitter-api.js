@@ -87,7 +87,10 @@
                 userData.secretAccessToken = oauth_access_token_secret;
 
                 // Update user's Twitter information
-                TwitterService.updateTwitterInfo(userId, userData, logData, function () {
+                TwitterService.updateTwitterInfo(userId, request.session.user, userData, logData, function (updatedUser) {
+
+                  // Update session user object
+                  request.session.user = updatedUser;
 
                   // Get queue data from user information
                   TwitterService.getQueueData(userId, screenName, logData, function (queueData) {
@@ -165,15 +168,11 @@
     };
 
     if (username) { // If user exists in session get dashboard data
-      var inUsername = request.query.username;
-      var targetUsername;
-      if(inUsername) {
-        targetUsername = inUsername
-      }
-
-      log.functionCall(API, GET_DASHBOARD_DISPLAY_DATA, null, username, {'targetUsername':targetUsername});
+      var target = (request.query.username) ? request.query.username: username;
+      log.functionCall(API, GET_DASHBOARD_DISPLAY_DATA, null, username, {'username':target});
       var logData = AugeoUtility.formatLogData(API+GET_DASHBOARD_DISPLAY_DATA, username);
-      TwitterService.getDashboardDisplayData(username, targetUsername, logData, function(displayData) {
+
+      TwitterService.getDashboardDisplayData(target, logData, function(displayData) {
         response.status(200).json(displayData);
       }, rollback);
     } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code

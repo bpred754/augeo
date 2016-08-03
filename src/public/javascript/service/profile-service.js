@@ -26,12 +26,21 @@
   module.exports = function() {
 
     var targetUser = '';
+    var profileImage = '';
 
-    this.setTargetUser = function(inTargetUser) {
-      targetUser = inTargetUser;
+    this.getProfileImage = function() {
+      return profileImage;
     };
 
     this.getTargetUser = function() {
       return targetUser;
+    };
+
+    this.setProfileImage= function(inProfileImg) {
+      profileImage = inProfileImg;
     }
+
+    this.setTargetUser = function(inTargetUser) {
+      targetUser = inTargetUser;
+    };
   };

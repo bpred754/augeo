@@ -286,6 +286,30 @@
     });
   };
 
+  exports.setProfileImage = function(interface, user, logData, callback) {
+    log.functionCall(SERVICE, 'setProfileImage', logData.parentProcess, logData.username, {'interface':interface, 'username': (user.username)?user.username:'invalid'});
+
+    var profileImageUrl = 'image/avatar-medium.png';
+    var profileIcon = 'image/avatar-small.png'
+    switch(interface) {
+      case 'Twitter':
+        profileImageUrl = user.twitter.profileImageUrl;
+        profileIcon = user.twitter.profileIcon;
+        break;
+    };
+
+    User.setProfileImage(user.username, profileImageUrl, profileIcon, logData, function(saveSuccessful) {
+
+      if(saveSuccessful) {
+        User.getUserWithUsername(user.username, logData, function(user) {
+          callback(user);
+        });
+      } else {
+        callback();
+      }
+    });
+  };
+
   exports.updateAllRanks = function(logData, callback) {
     log.functionCall(SERVICE, 'updateAllRanks', logData.parentProcess, logData.username);
 

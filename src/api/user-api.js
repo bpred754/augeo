@@ -44,6 +44,7 @@
   var LOGOUT = '/logout';
   var REMOVE = '/remove';
   var SAVE_PROFILE_DATA = '/saveProfileData';
+  var SET_PROFILE_IMAGE = '/setProfileImage';
 
   // Global variables
   var log = new Logger();
@@ -307,11 +308,39 @@
       UserService.saveProfileData(profileData, logData, function(user) {
 
         if(user) {
+          request.session.user = user; // Update session user object
           response.status(200).send(user);
         } else {
           rollback(400, 'Failed to save profile data');
         }
 
+      });
+    } else {
+      rollback(401, INVALID_SESSION);
+    }
+  });
+
+  UserRouter.post(SET_PROFILE_IMAGE, function(request, response) {
+    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+
+    var rollback = function(code, message) {
+      log.functionError(API, SET_PROFILE_IMAGE, username, message);
+      response.status(code).send(message);
+    };
+
+    var interface = request.body.interface;
+
+    if(username) {
+      var logData = AugeoUtility.formatLogData(API+SET_PROFILE_IMAGE, username);
+      log.functionCall(API, SET_PROFILE_IMAGE, null, username, {'interface': interface});
+      UserService.setProfileImage(interface, request.session.user, logData, function(user) {
+
+        if(user) {
+          request.session.user = user; // Update session user object
+          response.status(200).send(user);
+        } else {
+          rollback(400, 'Failed to set profile image');
+        }
       });
     } else {
       rollback(401, INVALID_SESSION);

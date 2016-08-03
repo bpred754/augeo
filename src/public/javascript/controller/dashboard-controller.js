@@ -29,7 +29,7 @@
     var init = function() {
 
       $scope.invalidUser = false;
-      $scope.targetUsername = $stateParams.username;
+      $scope.targetUsername = ($stateParams && $stateParams.username) ? $stateParams.username: null;
 
       // Get user's profile image and Augeo skill data
       TwitterClientService.getDashboardDisplayData($scope.targetUsername, function(data) {
@@ -38,10 +38,10 @@
 
           $scope.isLoaded = true;
 
-          if(data.dashboardData) {
-            $scope.profileData = data.dashboardData.user;
-            $scope.mainSkill = data.dashboardData.skill;
-            $scope.skills = data.dashboardData.subSkills;
+          if(data.user) {
+            $scope.dashboardData = data.user;
+            $scope.mainSkill = data.user.skill;
+            $scope.skills = data.user.subSkills;
 
             var mediumScreenArray = new Array();
             var mediumCount = 0;
@@ -101,7 +101,7 @@
 
           if (data.errorImageUrl) {
             $scope.invalidUser = true;
-            $scope.profileData = {
+            $scope.dashboardData = {
               profileImg: data.errorImageUrl
             };
           }
@@ -111,8 +111,8 @@
 
     $scope.showProfile = function() {
 
-      var targetUser = $scope.profileData;
-      if($scope.User.username == $scope.profileData.username) {
+      var targetUser = $scope.dashboardData;
+      if($scope.User.username == $scope.dashboardData.username) {
         targetUser = $scope.User;
       }
 
@@ -120,6 +120,16 @@
 
       showProfileModal();
     };
+
+
+    // If profile image changes, update profile image on dashboard
+    $scope.$watch(function() {
+        return ProfileService.getProfileImage();
+      }, function(newValue, oldValue) {
+        if(newValue != oldValue) {
+          $scope.dashboardData.profileImg = newValue;
+        }
+    });
 
     // Initialize dashboard page
     init();

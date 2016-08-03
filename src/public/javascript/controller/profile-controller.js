@@ -27,10 +27,22 @@
 
     $scope.isGlobalUser = false;
     $scope.isEditMode = true;
+    $scope.profileView = 'Augeo';
 
     $scope.editProfile = function() {
       $scope.isEditMode = true;
+      $scope.profileView = 'Augeo';
     }
+
+    $scope.highlightInterface = function(interface) {
+      interface.current = interface.active;
+    };
+
+    $scope.removeHighlight = function(interface) {
+      if(interface.name != $scope.profileView) {
+        interface.current = interface.passive;
+      }
+    };
 
     $scope.saveProfileData = function() {
       UserClientService.saveProfileData($scope.targetUser, function(user){
@@ -40,9 +52,64 @@
       });
     };
 
+    $scope.setProfileImage = function(interface) {
+
+      switch(interface) {
+        case 'Twitter':
+          $scope.isTwitterProfileImage = !$scope.isTwitterProfileImage;
+          if(!$scope.isTwitterProfileImage) {
+            interface = null;
+          }
+      };
+
+      UserClientService.setProfileImage(interface,  function(user) {
+
+        ProfileService.setProfileImage(user.profileImg);
+        
+        // Update profile icon
+        if($scope.isGlobalUser) {
+          $scope.User.profileIcon = user.profileIcon;
+        }
+      });
+    };
+
+    $scope.setView = function(interface) {
+
+      $scope.profileView = interface.name;
+
+      for(var i = 0; i < $scope.targetUser.interfaces.length; i++) {
+        if(interface.name != $scope.targetUser.interfaces[i].name) {
+          $scope.targetUser.interfaces[i].current = $scope.targetUser.interfaces[i].passive;
+        } else {
+          $scope.targetUser.interfaces[i].current = $scope.targetUser.interfaces[i].active;
+        }
+      }
+
+      if($scope.profileView != 'Augeo') {
+        $scope.isEditMode = false;
+      } else {
+        if($scope.isGlobalUser) {
+          $scope.isEditMode = true;
+        }
+      }
+    };
+
     $scope.viewAsOther = function() {
       $scope.isEditMode = false;
-    }
+    };
+
+    // If profile image changes, update profile target user and global user profile images
+    $scope.$watch(function() {
+        return ProfileService.getProfileImage();
+      }, function(newValue, oldValue) {
+
+        if(newValue != oldValue) {
+          $scope.targetUser.profileImg = newValue.profileImg;
+          if($scope.isGlobalUser) {
+            $scope.User.profileImg = newValue;
+          }
+        }
+    });
 
     $scope.$watch(function() {
       return ProfileService.getTargetUser();
@@ -52,11 +119,25 @@
 
         $scope.targetUser = newValue;
         $scope.targetUser.name = newValue.firstName + ' ' + newValue.lastName;
+        $scope.isTwitterProfileImage = false;
 
-        if(newValue.twitterScreenName || (newValue.twitter && newValue.twitter.screenName)) {
+        // Check Twitter authentication
+        if(newValue.twitter && newValue.twitter.screenName) {
           $scope.targetUser.hasTwitterAuthentication = true;
+
+          // Check if Twitter profile image is being used as Augeo profile image
+          if(newValue.profileImg == newValue.twitter.profileImageUrl) {
+            $scope.isTwitterProfileImage = true;
+          }
         } else {
           $scope.targetUser.hasTwitterAuthentication = false;
+        }
+
+        // Check Github authentication
+        if(newValue.github && newValue.github.screenName) {
+          $scope.targetUser.hasGithubAuthentication = true;
+        } else {
+          $scope.targetUser.hasGithubAuthentication = false;
         }
 
         if($scope.targetUser.username != $scope.User.username) {
@@ -66,7 +147,47 @@
           $scope.isGlobalUser = true;
           $scope.isEditMode = true;
         }
+
+        $scope.targetUser.interfaces = buildUserInterfaces($scope.targetUser, $scope.isGlobalUser);
      }
     });
   };
+
+  /***************************************************************************/
+  /* Private functions                                                       */
+  /***************************************************************************/
+
+  var buildUserInterfaces = function(targetUser, isGlobalUser) {
+
+      var interfaces = new Array();
+
+      interfaces.push({
+        name:'Augeo',
+        active: 'image/augeo-logo-small.png',
+        passive: 'image/augeo-logo-gray-small.png',
+        current: 'image/augeo-logo-small.png',
+        hasAuthentication: true
+      });
+
+      if(targetUser.hasTwitterAuthentication || isGlobalUser) {
+        interfaces.push({
+          name: 'Twitter',
+          active: 'image/twitter/logo-blue-small.png',
+          passive: 'image/twitter/logo-gray-small.png',
+          current: 'image/twitter/logo-gray-small.png',
+          hasAuthentication: targetUser.hasTwitterAuthentication
+        });
+      }
+
+      if(targetUser.hasGithubAuthentication || isGlobalUser) {
+        interfaces.push({
+          name:'Github',
+          active: 'image/github/logo-black-small.png',
+          passive: 'image/github/logo-gray-small.png',
+          current:'image/github/logo-gray-small.png',
+          hasAuthentication: targetUser.hasGithubAuthentication
+        });
+      }
+      return interfaces;
+    };
 

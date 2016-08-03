@@ -98,4 +98,11 @@
       AugeoClientService.postAugeoApi('user-api/saveProfileData', parameters, callback);
     };
 
+    this.setProfileImage = function(interface, callback) {
+      var parameters = {
+        interface: interface
+      };
+      AugeoClientService.postAugeoApi('user-api/setProfileImage', parameters, callback)
+    };
+
   };

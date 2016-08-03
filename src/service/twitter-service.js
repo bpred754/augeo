@@ -193,6 +193,59 @@
     User.getAllUsersTwitterQueueData(logData, callback);
   };
 
+  // Format necessary data to display on users dashboard
+  exports.getDashboardDisplayData = function(username, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getDashboardDisplayData', logData.parentProcess, logData.username, {'username':username});
+
+    var errorImageUrl = 'image/avatar-medium.png';
+
+    if(AugeoValidator.isUsernameValid(username, logData)) {
+      User.doesUsernameExist(username, logData, function(usernameExists) {
+
+        if(usernameExists) {
+          User.getUserWithUsername(username, logData, function(user) {
+
+            var userData = user.toJSON();
+            userData.skill.name = 'Augeo';
+            userData.skill.startExperience = AugeoUtility.getLevelStartExperience(userData.skill.level, logData); // TODO: Move to client?
+            userData.skill.endExperience = AugeoUtility.getLevelEndExperience(userData.skill.level, logData); // TODO" Move to client?
+            userData.skill.levelProgress = AugeoUtility.calculateLevelProgress(userData.skill.level, userData.skill.experience, logData); // TODO: Move to client?
+
+            for(var i = 0; i < userData.subSkills.length; i++) {
+              userData.subSkills[i].startExperience = AugeoUtility.getLevelStartExperience(userData.subSkills[i].level, logData); // TODO: Move to client?
+              userData.subSkills[i].levelProgress = AugeoUtility.calculateLevelProgress(userData.subSkills[i].level, userData.subSkills[i].experience, logData); // TODO: Move to client?
+              userData.subSkills[i].endExperience = AugeoUtility.getLevelEndExperience(userData.subSkills[i].level, logData); // TODO: Move to client?
+            }
+
+            var displayData = {
+              user:userData
+            };
+
+            if(userData.twitter) {
+              Mention.getMentions(userData.twitter.screenName, logData, function(mentionTweetIds) {
+                Tweet.getSkillActivity(userData.twitter.screenName, mentionTweetIds, null, 10, null, logData, function(tweets) {
+
+                  displayData.recentActions = TwitterUtility.transformUserDisplayExperience(tweets, mentionTweetIds, logData);
+                  callback(displayData);
+                });
+              });
+            } else {
+              callback(displayData);
+            }
+          });
+        } else {
+
+          var errorData = {
+            errorImageUrl: errorImageUrl
+          }
+          callback(errorData);
+        }
+      });
+    } else {
+      rollback('Invalid username');
+    }
+  };
+
   exports.getLatestMentionTweetId = function(screenName, logData, callback) {
     log.functionCall(SERVICE, 'getLatestMentionTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
 
@@ -248,49 +301,6 @@
       });
     } else {
       rollback('Invalid input');
-    }
-  };
-
-  // Format necessary data to display on users dashboard
-  exports.getDashboardDisplayData = function(username, targetUsername, logData, callback, rollback) {
-    log.functionCall(SERVICE, 'getDashboardDisplayData', logData.parentProcess, logData.username, {'username':username,
-        'targetUsername':targetUsername});
-
-    var errorImageUrl = 'image/avatar-medium.png';
-
-    if(targetUsername && AugeoValidator.isUsernameValid(targetUsername, logData)) {
-      User.doesUsernameExist(targetUsername, logData, function(targetUsernameExists) {
-
-        if(targetUsernameExists) {
-          getDashboardDisplayDataPrivate(targetUsername, logData, callback);
-        } else {
-
-          var errorData = {
-            errorImageUrl: errorImageUrl
-          };
-
-          callback(errorData);
-        }
-      });
-    } else {
-      if(AugeoValidator.isUsernameValid(username, logData)) {
-
-        User.doesUsernameExist(username, logData, function(usernameExists) {
-
-          if(usernameExists) {
-            getDashboardDisplayDataPrivate(username, logData, callback);
-          } else {
-
-            var errorData = {
-              errorImageUrl: errorImageUrl
-            }
-
-            callback(errorData);
-          }
-        });
-      } else {
-        rollback('Invalid username');
-      }
     }
   };
 
@@ -388,12 +398,31 @@
   };
 
   // Call DB to update user's twitter information
-  exports.updateTwitterInfo = function(userId, userData, logData, callback, rollback) {
-    log.functionCall(SERVICE, 'updateTwitterInfo', logData.parentProcess, logData.username, {'userId':userId, 'userData.screenName':(userData)?userData.screenName:'invalid'});
+  exports.updateTwitterInfo = function(userId, sessionUser, userData, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'updateTwitterInfo', logData.parentProcess, logData.username, {'userId':userId, 'sessionUser.username':(sessionUser)?sessionUser.username:'invalid',
+      'userData.screenName':(userData)?userData.screenName:'invalid'});
 
     // Validate userId
     if(AugeoValidator.isMongooseObjectIdValid(userId, logData)) {
-      User.updateTwitterInfo(userId, userData, logData, callback);
+
+      User.updateTwitterInfo(userId, userData, logData, function() {
+
+        // Don't update profile image if one already exists
+        if(sessionUser.profileImg != 'image/avatar-medium.png') {
+         userData.profileImageUrl = sessionUser.profileImg;
+        }
+
+        // Don't update profile icon if one already exists
+        if(sessionUser.profileIcon != 'image/avatar-small.png') {
+          userData.profileIcon = sessionUser.profileIcon;
+        }
+
+        User.setProfileImage(sessionUser.username, userData.profileImageUrl, userData.profileIcon, logData, function() {
+          User.getUserWithUsername(sessionUser.username, logData, function(updatedUser) {
+            callback(updatedUser);
+          });
+        });
+      });
     } else {
       rollback();
     }
@@ -434,71 +463,6 @@
     }
 
     return experience;
-  };
-
-  var getDashboardDisplayDataPrivate = function(username, logData, callback) {
-    log.functionCall(SERVICE, 'getDashboardDisplayDataPrivate (private)', logData.parentProcess, logData.username, {'username':username});
-
-    User.getUserWithUsername(username, logData, function(user) {
-
-      var profileData = {
-        username: username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        location: user.location,
-        profession: user.profession,
-        profileImg: user.profileImg,
-        website: user.website,
-        description: user.description,
-        twitterScreenName: user.twitter.screenName
-      };
-
-      var mainSkill = user.skill;
-      var mainSkillDisplay = {
-        name: 'Augeo',
-        experience: mainSkill.experience,
-        level: AugeoUtility.calculateLevel(mainSkill.experience, logData),
-        imageSrc: mainSkill.imageSrc,
-        startExperience: AugeoUtility.getLevelStartExperience(mainSkill.level, logData),
-        endExperience: AugeoUtility.getLevelEndExperience(mainSkill.level, logData),
-        levelProgress: AugeoUtility.calculateLevelProgress(mainSkill.level, mainSkill.experience, logData)
-      }
-
-      var subSkills = user.subSkills;
-      var displaySkills = new Array();
-      for(var i = 0; i < subSkills.length; i++) {
-        var subSkill = subSkills[i];
-
-        var subSkillDisplay = {
-          name: subSkill.name,
-          glyphicon: subSkill.glyphicon,
-          experience: subSkill.experience,
-          level: subSkill.level,
-          _id: subSkill._id ,
-          id: subSkill.name.toLowerCase(),
-          startExperience: AugeoUtility.getLevelStartExperience(subSkill.level, logData),
-          levelProgress: AugeoUtility.calculateLevelProgress(subSkill.level, subSkill.experience, logData),
-          endExperience: AugeoUtility.getLevelEndExperience(subSkill.level, logData)
-        }
-        displaySkills.push(subSkillDisplay);
-      }
-
-      Mention.getMentions(user.twitter.screenName, logData, function(mentionTweetIds) {
-        Tweet.getSkillActivity(user.twitter.screenName, mentionTweetIds, null, 10, null, logData, function(tweets) {
-
-          var displayData = {
-            dashboardData: {
-              'user': profileData,
-              'skill': mainSkillDisplay,
-              'subSkills': displaySkills
-            },
-            recentActions: TwitterUtility.transformUserDisplayExperience(tweets, mentionTweetIds, logData)
-          };
-
-          callback(displayData);
-        });
-      });
-    });
   };
 
   // Calculate experience from tweet

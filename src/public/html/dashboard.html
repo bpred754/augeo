@@ -25,21 +25,21 @@
         <div id="db-header-container">
           <div id="db-img-container">
               <a id="db-img" ng-click="showProfile()">
-                  <img id="db-avatar" class="db-max-size" src="{{profileData.profileImg}}">
+                  <img id="db-avatar" class="db-max-size" src="{{dashboardData.profileImg}}">
               </a>
               <div id="db-links" ng-if="!invalidUser">
                 <span class="small-text augeo-link" ng-click="showProfile()">Profile</span>
                 <span class="small-text">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-                <span><a class="small-text augeo-link" ui-sref="viewActivity({username:profileData.username})">Activity</a></span>
+                <span><a class="small-text augeo-link" ui-sref="viewActivity({username:dashboardData.username})">Activity</a></span>
               </div>
           </div>
           <div id="db-recent-activity-container">
-            <activity-transition ng-if="!invalidUser && currentTweet" id= "db-transition" visible="visible" tweet-data="currentTweet" screen-name="profileData.twitterScreenName"></activity-transition>
-            <div id="db-auth-container" ng-if="!invalidUser && !User.twitter.screenName && profileData.username == User.username">
+            <activity-transition ng-if="!invalidUser && currentTweet" id= "db-transition" visible="visible" tweet-data="currentTweet" screen-name="dashboardData.twitter.screenName"></activity-transition>
+            <div id="db-auth-container" ng-if="!invalidUser && !User.twitter.screenName && dashboardData.username == User.username">
               <div>
-                <p class="standard-text text-primary text-align-center">Authenticate with Twitter to start tracking your experience</p>
+                <p class="standard-text text-primary text-align-center">Authenticate with an interface to start tracking your experience!</p>
                 <div class="horizontal-center">
-                  <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+                  <button type="button" class="btn btn-primary small-text" ng-click="showProfile()">Authenticate</button>
                 </div>
               </div>
             </div>

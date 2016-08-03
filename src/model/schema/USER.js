@@ -50,6 +50,7 @@
     'twitter.name': 1,
     'twitter.screenName': 1,
     'twitter.profileImageUrl': 1,
+    'twitter.profileIcon': 1,
     'skill': 1,
     'subSkills': 1
   };
@@ -75,6 +76,7 @@
       name: String,
       screenName: String,
       profileImageUrl: String,
+      profileIcon: String,
       accessToken: String,
       secretAccessToken:String,
       secretToken:String
@@ -585,6 +587,30 @@
     });
   };
 
+  USER.statics.setProfileImage = function(username, profileImg, profileIcon, logData, callback) {
+
+    var query = {username: username};
+    var update = {
+      $set:{
+        "profileImg": profileImg,
+        "profileIcon": profileIcon
+      }
+    };
+
+    var options = {multi:false};
+
+    this.update(query, update, options, function(error, n) {
+      if(error) {
+        log.functionError(COLLECTION, 'setProfileImage', logData.parentProcess, logData.username,
+          'Failed to update profile image for: ' + username + '. Error: ' + error);
+        callback(false);
+      } else {
+        log.functionCall(COLLECTION, 'setProfileImage', logData.parentProcess, logData.username, {'username':username});
+        callback(true);
+      }
+    });
+  };
+
   USER.statics.updateSubSkillRank = function(doc, rank, index, logData, callback) {
 
     var setModifier = { $set: {} };
@@ -618,14 +644,13 @@
     var query = {_id:id};
     var update = {
                     $set:{
-                      "profileImg": data.profileImageUrl,
-                      "profileIcon": data.profileIcon,
                       "twitter.accessToken": data.accessToken,
                       "twitter.secretAccessToken": data.secretAccessToken,
                       "twitter.twitterId": data.twitterId,
                       "twitter.name": data.name,
                       "twitter.screenName": data.screenName,
                       "twitter.profileImageUrl": data.profileImageUrl,
+                      "twitter.profileIcon": data.profileIcon
                     }
                  };
 
