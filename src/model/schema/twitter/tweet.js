@@ -24,11 +24,10 @@
 
   // Required libraries
   var Mongoose = require('mongoose');
-  var Schema = Mongoose.Schema;
 
   // Required local modules
-  var AugeoDB = require('../database');
-  var Logger = require('../../module/logger');
+  var AugeoDB = require('../../database');
+  var Logger = require('../../../module/logger');
 
   // Constants
   var COLLECTION = 'tweet-collection';
@@ -37,7 +36,7 @@
   var log = new Logger();
 
   // Schema declaration
-  var TWEET = Mongoose.Schema({
+  var TWITTER_TWEET = Mongoose.Schema({
     twitterId: String,
     tweetId: String,
     name: String,
@@ -78,19 +77,19 @@
   /* Static Methods: Accessible at Model level                               */
   /***************************************************************************/
 
-  TWEET.statics.addTweet = function(tweet, logData, callback) {
+  TWITTER_TWEET.statics.addTweet = function(tweet, logData, callback) {
 
     // Add tweet if it doesn't exist and update when it does exist
     upsertTweet(this, tweet, logData, callback);
   };
 
-  TWEET.statics.addTweets = function(tweets, logData, callback) {
+  TWITTER_TWEET.statics.addTweets = function(tweets, logData, callback) {
 
     // Add tweets if they don't exist and update when they do exist
     upsertTweets(this, tweets, logData, callback);
   };
 
-  TWEET.statics.findTweet = function(tweetId, logData, callback) {
+  TWITTER_TWEET.statics.findTweet = function(tweetId, logData, callback) {
     this.find({tweetId:tweetId},{},{}, function(error, tweet) {
       if(error) {
         log.functionError(COLLECTION, 'findTweet', logData.parentProcess, logData.username, 'Failed to find tweet with tweetID: ' + tweetId);
@@ -101,7 +100,7 @@
     });
   };
 
-  TWEET.statics.getLatestTweetId = function(screenName, logData, callback) {
+  TWITTER_TWEET.statics.getLatestTweetId = function(screenName, logData, callback) {
     this.find({screenName:screenName},{},{sort:{'tweetId':-1},limit:1}).lean().exec(function(error, data) {
 
       if(error) {
@@ -120,7 +119,7 @@
     });
   };
 
-  TWEET.statics.getSkillActivity = function(screenName, tweetIds, skill, limit, maxTweetId, logData, callback) {
+  TWITTER_TWEET.statics.getSkillActivity = function(screenName, tweetIds, skill, limit, maxTweetId, logData, callback) {
 
     if(!maxTweetId) {
       maxTweetId = '9999999999999999999999999999999';
@@ -178,7 +177,7 @@
      });
   };
 
-  TWEET.statics.getTweetCount = function(logData, callback) {
+  TWITTER_TWEET.statics.getTweetCount = function(logData, callback) {
     this.count({}, function(error, count) {
         if(error) {
           log.functionError(COLLECTION, 'getTweetCount', logData.parentProcess, logData.username, 'Failed to retrieve tweet count. Error: ' + error);
@@ -189,7 +188,7 @@
     });
   };
 
-  TWEET.statics.incrementRetweetCount = function(tweetId, logData, callback) {
+  TWITTER_TWEET.statics.incrementRetweetCount = function(tweetId, logData, callback) {
     this.findOneAndUpdate({tweetId:tweetId}, {$inc: {retweetCount:1}}, function(error) {
       if(error) {
         log.functionError(COLLECTION, 'incrementRetweetCount', logData.parentProcess, logData.username, 'Failed to increment retweet count for tweet with ID: ' + tweetId);
@@ -200,7 +199,7 @@
     });
   };
 
-  TWEET.statics.removeTweet = function(tweetId, logData, callback) {
+  TWITTER_TWEET.statics.removeTweet = function(tweetId, logData, callback) {
     this.remove({tweetId:tweetId}, function(error) {
       if(error) {
         log.functionError(COLLECTION, 'removeTweet', logData.parentProcess, logData.username, 'Failed to remove tweet with id: ' + tweetId + '. Error:' + error);
@@ -211,7 +210,7 @@
     });
   };
 
-  TWEET.statics.removeTweets = function(screenName, logData, callback) {
+  TWITTER_TWEET.statics.removeTweets = function(screenName, logData, callback) {
     this.remove({screenName:screenName}, function(error) {
       if(error) {
         log.functionError(COLLECTION, 'removeTweets', logData.parentProcess, logData.username,
@@ -223,7 +222,7 @@
     });
   };
 
-  TWEET.statics.removeTweetsWithMentionee = function(mentioneeScreenName, logData, callback) {
+  TWITTER_TWEET.statics.removeTweetsWithMentionee = function(mentioneeScreenName, logData, callback) {
     this.remove({mentions: {$elemMatch: {screen_name:mentioneeScreenName}}}, function(error) {
       if(error) {
         log.functionError(COLLECTION, 'removeTweetsWithMentionee', logData.parentProcess, logData.username,
@@ -235,7 +234,7 @@
     });
   };
 
-  TWEET.statics.updateExperience = function(tweetId, experience, logData, callback) {
+  TWITTER_TWEET.statics.updateExperience = function(tweetId, experience, logData, callback) {
     this.findOneAndUpdate({tweetId:tweetId}, {$inc: {experience: experience.mainSkillExperience}}, function(error) {
       if(error) {
         log.functionError(COLLECTION, 'updateExperience', logData.parentProcess, logData.username,
@@ -281,4 +280,4 @@
   };
 
   // Declare Model
-  var Tweet = module.exports = AugeoDB.model('Tweet', TWEET);
+  module.exports = AugeoDB.model('TWITTER_TWEET', TWITTER_TWEET);

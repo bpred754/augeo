@@ -34,7 +34,7 @@
   var UserService = require('../../../src/service/user-service');
 
   // Global variables
-  var User = Mongoose.model('User');
+  var User = Mongoose.model('AUGEO_USER');
 
   // addUser
   it('should add new Augeo user to AugeoDB -- addUser()', function(done) {

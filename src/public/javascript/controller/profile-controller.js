@@ -88,7 +88,7 @@
       if($scope.profileView != 'Augeo') {
         $scope.isEditMode = false;
 
-        if($scope.profileView == 'Twitter') {
+        if($scope.profileView == 'Twitter' && $scope.targetUser.hasTwitterAuthentication ) {
           // Load Twitter follow button
           $scope.targetUser.twitterFollowUrl = 'https://twitter.com/' + $scope.targetUser.twitter.screenName;
           $timeout(function() {

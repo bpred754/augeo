@@ -35,19 +35,19 @@
   var TwitterValidator = require('../validator/twitter-validator');
 
   // Schemas
-  require('../model/schema/TWEET');
-  require('../model/schema/USER');
-  require('../model/schema/MENTION');
+  require('../model/schema/twitter/tweet');
+  require('../model/schema/augeo/user');
+  require('../model/schema/twitter/mention');
 
   // Constants
   var ACTIVITY_PER_PAGE = 20;
   var SERVICE = 'twitter-service';
 
   // Global variables
-  var User = AugeoDB.model('User');
-  var Tweet = AugeoDB.model('Tweet');
+  var Mention = AugeoDB.model('TWITTER_MENTION');
+  var Tweet = AugeoDB.model('TWITTER_TWEET');
+  var User = AugeoDB.model('AUGEO_USER');
   var log = new Logger();
-  var Mention = AugeoDB.model('Mention');
 
   exports.addAction = function(action, tweet, mention, logData, callback) {
     log.functionCall(SERVICE, 'addAction', logData.parentProcess, logData.username, {'action.actionerScreenName': (action)?action.actionerScreenName:'invalid',

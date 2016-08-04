@@ -40,8 +40,8 @@
   exports.REMOVE_USER_FAILURE = 'Failed to delete user';
 
   // Global variables
+  var User = AugeoDB.model('AUGEO_USER');
   var log = new Logger();
-  var User = AugeoDB.model('User');
 
   exports.addUser = function(user, logData, callback, rollback) {
     log.functionCall(SERVICE, 'addUser', logData.parentProcess, logData.username);

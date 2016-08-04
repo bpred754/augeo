@@ -26,9 +26,9 @@
   var Mongoose = require('mongoose');
 
   // Required local modules
-  var AugeoDB = require('../database');
-  var Logger = require('../../module/logger');
-  var AugeoUtility = require('../../utility/augeo-utility');
+  var AugeoDB = require('../../database');
+  var Logger = require('../../../module/logger');
+  var AugeoUtility = require('../../../utility/augeo-utility');
 
   // Constants
   var COLLECTION = 'user-collection';
@@ -56,7 +56,7 @@
   };
 
   // Schema declaration
-  var USER = Mongoose.Schema({
+  var AUGEO_USER = Mongoose.Schema({
     firstName: String,
     lastName: String,
     email: String,
@@ -100,7 +100,7 @@
   /* Static Methods: Accessible at Model level                               */
   /***************************************************************************/
 
-  USER.statics.add = function(user, logData, callback) {
+  AUGEO_USER.statics.add = function(user, logData, callback) {
     this.create({
       firstName: user.firstName,
       lastName: user.lastName,
@@ -128,7 +128,7 @@
     });
   };
 
-  USER.statics.addTwitterSecretToken = function(id, secretToken, logData, callback) {
+  AUGEO_USER.statics.addTwitterSecretToken = function(id, secretToken, logData, callback) {
     this.findOne({_id:id}, function(error, doc) {
       var success = false;
 
@@ -155,7 +155,7 @@
     })
   };
 
-  USER.statics.checkExistingTwitterAccessToken = function(accessToken, logData, callback) {
+  AUGEO_USER.statics.checkExistingTwitterAccessToken = function(accessToken, logData, callback) {
     this.count({'twitter.accessToken':accessToken}, function(error, count) {
       if(error) {
         log.functionError(COLLECTION, 'checkExistingTwitterAccessToken', logData.parentProcess, logData.username,
@@ -174,7 +174,7 @@
     });
   };
 
-  USER.statics.checkExistingTwitterUser = function(screenName, logData, callback) {
+  AUGEO_USER.statics.checkExistingTwitterUser = function(screenName, logData, callback) {
     this.count({'twitter.screenName':screenName}, function(error, count) {
       if(error) {
         log.functionError(COLLECTION, 'checkExistingTwitterUser', logData.parentProcess, logData.username,
@@ -190,7 +190,7 @@
     });
   };
 
-  USER.statics.doesEmailExist = function(email, logData, callback) {
+  AUGEO_USER.statics.doesEmailExist = function(email, logData, callback) {
     var emailExists = false;
     this.count({email:{'$regex': email, $options: 'i'}}, function(error, count) {
       if(error) {
@@ -206,7 +206,7 @@
     });
   };
 
-  USER.statics.doesUsernameExist = function(username, logData, callback) {
+  AUGEO_USER.statics.doesUsernameExist = function(username, logData, callback) {
     var usernameExists = false;
     this.count({'username':{'$regex': username, $options: 'i'}}, function(error, count) {
       if(error) {
@@ -222,7 +222,7 @@
     });
   };
 
-  USER.statics.getAllUsersTwitterQueueData = function(logData, callback) {
+  AUGEO_USER.statics.getAllUsersTwitterQueueData = function(logData, callback) {
     this.find({}, '_id twitter.screenName twitter.accessToken twitter.secretAccessToken', function(error, users) {
       if(error) {
         log.functionError(COLLECTION, 'getAllUsersTwitterQueueData', logData.parentProcess, logData.username, 'Failed to retrieve users queue data');
@@ -233,7 +233,7 @@
     });
   };
 
-  USER.statics.getCompetitorsInPage = function(skill, startRank, endRank, logData, callback) {
+  AUGEO_USER.statics.getCompetitorsInPage = function(skill, startRank, endRank, logData, callback) {
 
     if(skill === 'Augeo') {
 
@@ -299,7 +299,7 @@
     }
   };
 
-  USER.statics.getMaxRank = function(skill, logData, callback) {
+  AUGEO_USER.statics.getMaxRank = function(skill, logData, callback) {
 
     if(skill === 'Augeo') {
       // Find max rank
@@ -338,7 +338,7 @@
     }
   };
 
-  USER.statics.getNumberUsers = function(logData, callback) {
+  AUGEO_USER.statics.getNumberUsers = function(logData, callback) {
     this.count({},function(error, count) {
       if(error) {
         log.functionError(COLLECTION, 'getNumberUsers', logData.parentProcess, logData.username,
@@ -350,7 +350,7 @@
     });
   };
 
-  USER.statics.getPasswordWithEmail = function(email, logData, callback) {
+  AUGEO_USER.statics.getPasswordWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': email, $options: 'i'}}, {password:1}, function(error, data) {
       if(error) {
         log.functionError(COLLECTION, 'getPasswordWithEmail', logData.parentProcess, logData.username,
@@ -367,7 +367,7 @@
     });
   };
 
-  USER.statics.getPasswordWithUsername = function(username, logData, callback) {
+  AUGEO_USER.statics.getPasswordWithUsername = function(username, logData, callback) {
     this.findOne({username:{'$regex': username, $options: 'i'}}, {password:1}, function(error, data) {
       if(error) {
         log.functionError(COLLECTION, 'getPasswordWithUsername', logData.parentProcess, logData.username,
@@ -384,7 +384,7 @@
     });
   };
 
-  USER.statics.getSkillRank = function(username, skill, logData, callback) {
+  AUGEO_USER.statics.getSkillRank = function(username, skill, logData, callback) {
 
     if(skill === 'Augeo') {
 
@@ -423,7 +423,7 @@
     }
   };
 
-  USER.statics.getSubSkillRanks = function(skill, logData, callback) {
+  AUGEO_USER.statics.getSubSkillRanks = function(skill, logData, callback) {
     this.aggregate([
         getSubSkillQuery(skill),
         {
@@ -442,7 +442,7 @@
     );
   };
 
-  USER.statics.getTwitterTokens = function(id, logData, callback) {
+  AUGEO_USER.statics.getTwitterTokens = function(id, logData, callback) {
     this.findOne({_id:id}, {'twitter.accessToken':1, 'twitter.secretAccessToken':1, 'twitter.secretToken':1}, function(error, data) {
       if(error) {
         log.functionError(COLLECTION, 'getTwitterTokens', logData.parentProcess, logData.username,
@@ -465,7 +465,7 @@
     });
   };
 
-  USER.statics.getRanks = function(logData, callback) {
+  AUGEO_USER.statics.getRanks = function(logData, callback) {
     this.find({}, '', {sort: {'skill.experience':-1}}, function(error, docs) {
       if(error) {
         log.functionError(COLLECTION, 'getRanks', logData.parentProcess, logData.username, 'Failed to get ranks. Error:' + error);
@@ -476,7 +476,7 @@
     });
   }
 
-  USER.statics.getTwitterUsers = function(logData, callback) {
+  AUGEO_USER.statics.getTwitterUsers = function(logData, callback) {
     this.find({}, 'twitter.twitterId', function(error, users) {
       if(error) {
         log.functionError(COLLECTION, 'getTwitterUsers', logData.parentProcess, logData.username, 'Failed to retrieve users. Error: ' + error);
@@ -487,7 +487,7 @@
     });
   };
 
-  USER.statics.getUserWithEmail = function(email, logData, callback) {
+  AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': email, $options: 'i'}}, clientSafeProjection, function(error, user) {
       if(error) {
         log.functionError(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username,
@@ -499,7 +499,7 @@
     });
   };
 
-  USER.statics.getUserWithScreenName = function(screenName, logData, callback) {
+  AUGEO_USER.statics.getUserWithScreenName = function(screenName, logData, callback) {
     this.findOne({'twitter.screenName':screenName}, clientSafeProjection, function(error, user) {
       if(error) {
         log.functionError(COLLECTION, 'getUserWithScreenName', logData.parentProcess, logData.username,
@@ -511,7 +511,7 @@
     });
   };
 
-  USER.statics.getUserWithTwitterId = function(twitterId, logData, callback) {
+  AUGEO_USER.statics.getUserWithTwitterId = function(twitterId, logData, callback) {
     this.findOne({'twitter.twitterId':twitterId}, clientSafeProjection, function(error, user) {
       if(error) {
         log.functionError(COLLECTION, 'getUserWithTwitterId', logData.parentProcess, logData.username,
@@ -523,7 +523,7 @@
     });
   };
 
-  USER.statics.getUserWithUsername = function(username, logData, callback) {
+  AUGEO_USER.statics.getUserWithUsername = function(username, logData, callback) {
     this.findOne({'username':{'$regex': username, $options: 'i'}}, clientSafeProjection, function(error, user) {
       if(error) {
         log.functionError(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username,
@@ -536,7 +536,7 @@
     });
   };
 
-  USER.statics.remove = function(username, logData, callback) {
+  AUGEO_USER.statics.remove = function(username, logData, callback) {
     this.findOneAndRemove({'username':{'$regex': username, $options: 'i'}}, function(error, user) {
       if(error) {
         log.functionError(COLLECTION, 'remove', logData.parentProcess, logData.username, 'Failed to remove ' + username + '. Error: ' + error);
@@ -547,7 +547,7 @@
     });
   };
 
-  USER.statics.saveDocument = function(doc, logData, callback) {
+  AUGEO_USER.statics.saveDocument = function(doc, logData, callback) {
     doc.save(function(error) {
       if(error) {
         log.functionError(COLLECTION, 'saveDocument', logData.parentProcess, logData.username, 'Failed to save USER document. ' + error);
@@ -560,7 +560,7 @@
     });
   };
 
-  USER.statics.saveProfileData = function(profileData, logData, callback) {
+  AUGEO_USER.statics.saveProfileData = function(profileData, logData, callback) {
 
     var query = {username: profileData.username};
     var update = {
@@ -587,7 +587,7 @@
     });
   };
 
-  USER.statics.setProfileImage = function(username, profileImg, profileIcon, logData, callback) {
+  AUGEO_USER.statics.setProfileImage = function(username, profileImg, profileIcon, logData, callback) {
 
     var query = {username: username};
     var update = {
@@ -611,7 +611,7 @@
     });
   };
 
-  USER.statics.updateSubSkillRank = function(doc, rank, index, logData, callback) {
+  AUGEO_USER.statics.updateSubSkillRank = function(doc, rank, index, logData, callback) {
 
     var setModifier = { $set: {} };
     setModifier.$set['subSkills.' + index + '.rank'] = Math.round(rank);
@@ -635,7 +635,7 @@
     });
   };
 
-  USER.statics.updateTwitterInfo = function(id, data, logData, callback) {
+  AUGEO_USER.statics.updateTwitterInfo = function(id, data, logData, callback) {
 
     if(data.subSkills == null) {
       data.subSkills = new Array();
@@ -668,7 +668,7 @@
     });
   };
 
-  USER.statics.updateSkillData = function(id, experience, logData, callback) {
+  AUGEO_USER.statics.updateSkillData = function(id, experience, logData, callback) {
     this.findOne({_id:id}, function(error, doc) {
 
       if(error) {
@@ -732,4 +732,4 @@
   };
 
   // Declare model
-  var User = module.exports = AugeoDB.model('User', USER);
+  module.exports = AugeoDB.model('AUGEO_USER', AUGEO_USER);

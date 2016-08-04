@@ -36,9 +36,9 @@
   var UserService = require('../../../src/service/user-service');
 
   // Global variables
-  var User = AugeoDB.model('User');
-  var Tweet = AugeoDB.model('Tweet');
-  var Mention = AugeoDB.model('Mention');
+  var Mention = AugeoDB.model('TWITTER_MENTION');
+  var Tweet = AugeoDB.model('TWITTER_TWEET');
+  var User = AugeoDB.model('AUGEO_USER');
 
   // updateTwitterInfo
   it("should add Test Tester's Twitter information to database entry -- updateTwitterInfo()", function(done) {

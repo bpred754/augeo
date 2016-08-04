@@ -31,9 +31,6 @@
   var Common = require('../../common');
   var AugeoDB = require('../../../../src/model/database');
 
-  // Global variables
-  var User = AugeoDB.model('User');
-
   module.exports = function(app) {
 
     var agent = Request.agent(app);

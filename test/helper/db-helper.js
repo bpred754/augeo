@@ -31,9 +31,9 @@
   var UserService = require('../../src/service/user-service');
 
   // Global variables
-  var Mention = AugeoDB.model('Mention');
-  var Tweet = AugeoDB.model('Tweet');
-  var User = AugeoDB.model('User');
+  var Mention = AugeoDB.model('TWITTER_MENTION');
+  var Tweet = AugeoDB.model('TWITTER_TWEET');
+  var User = AugeoDB.model('AUGEO_USER');
 
   exports.addTestUsers = function(callback) {
     exports.addUser(Common.USER, function() {

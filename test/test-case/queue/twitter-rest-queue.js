@@ -35,9 +35,9 @@
   var TwitterUtility = require('../../../src/utility/twitter-utility');
 
   // Global variables
-  var Mention = AugeoDB.model('Mention');
-  var Tweet = AugeoDB.model('Tweet');
-  var User = AugeoDB.model('User');
+  var Mention = AugeoDB.model('TWITTER_MENTION');
+  var Tweet = AugeoDB.model('TWITTER_TWEET');
+  var User = AugeoDB.model('AUGEO_USER');
   var twitterRestQueue = new TwitterRestQueue();
 
   it('should add a user to the mention queue -- addUserToMentionQueue()', function(done) {

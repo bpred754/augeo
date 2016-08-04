@@ -24,11 +24,10 @@
 
   // Required libraries
   var Mongoose = require('mongoose');
-  var Schema = Mongoose.Schema;
 
   // Required local modules
-  var AugeoDB = require('../database');
-  var Logger = require('../../module/logger');
+  var AugeoDB = require('../../database');
+  var Logger = require('../../../module/logger');
 
   // Constants
   var COLLECTION = 'mention-collection';
@@ -37,7 +36,7 @@
   var log = new Logger();
 
   // Schema declaration
-  var MENTION = Mongoose.Schema({
+  var TWITTER_MENTION = Mongoose.Schema({
     mentioneeScreenName: String, // User being mentioned
     tweetId: String,
   });
@@ -46,19 +45,19 @@
   /* Static Methods: Accessible at Model level                               */
   /***************************************************************************/
 
-  MENTION.statics.addMention = function(mention, logData, callback) {
+  TWITTER_MENTION.statics.addMention = function(mention, logData, callback) {
 
     // Add mention if it doesn't exist and update if it does
     upsertMention(this, mention, logData, callback);
   };
 
-  MENTION.statics.addMentions = function(mentions, logData, callback) {
+  TWITTER_MENTION.statics.addMentions = function(mentions, logData, callback) {
 
     // Add mentions if they don't exist and update when they do exist
     upsertMentions(this, mentions, logData, callback);
   };
 
-  MENTION.statics.findMention = function(mentioneeScreenName, tweetId, logData, callback) {
+  TWITTER_MENTION.statics.findMention = function(mentioneeScreenName, tweetId, logData, callback) {
     this.find({ $and : [{mentioneeScreenName:mentioneeScreenName}, {tweetId:tweetId}]}, function(error, mention) {
       if(error) {
         log.functionError(COLLECTION, 'findMention', logData.parentProcess, logData.username,
@@ -71,7 +70,7 @@
     });
   }
 
-  MENTION.statics.getLatestMentionTweetId = function(screenName, logData, callback) {
+  TWITTER_MENTION.statics.getLatestMentionTweetId = function(screenName, logData, callback) {
     this.find({mentioneeScreenName:screenName},{},{sort:{'tweetId':-1},limit:1}).lean().exec(function(error, data) {
 
       if(error) {
@@ -91,7 +90,7 @@
     });
   };
 
-  MENTION.statics.getMention = function(tweetId, logData, callback) {
+  TWITTER_MENTION.statics.getMention = function(tweetId, logData, callback) {
     this.find({tweetId:tweetId},{},{}, function(error, mention) {
       if(error) {
         log.functionError(COLLECTION, 'getMention', logData.parentProcess, logData.username,
@@ -104,7 +103,7 @@
     });
   };
 
-  MENTION.statics.getMentionCount = function(logData, callback) {
+  TWITTER_MENTION.statics.getMentionCount = function(logData, callback) {
     this.count({}, function(error, count) {
       if(error) {
         log.functionError(COLLECTION, 'getMentionCount', logData.parentProcess, logData.username, 'Failed to retrieve MENTION count. ' + error);
@@ -117,7 +116,7 @@
   };
 
   // Get all the tweetId's for a twitterId
-  MENTION.statics.getMentions = function(screenName, logData, callback) {
+  TWITTER_MENTION.statics.getMentions = function(screenName, logData, callback) {
 
     this.find({mentioneeScreenName:screenName}, 'tweetId',function(error, mentions) {
       if(error) {
@@ -135,7 +134,7 @@
     });
   };
 
-  MENTION.statics.removeMentions = function(mentioneeScreenName, logData, callback) {
+  TWITTER_MENTION.statics.removeMentions = function(mentioneeScreenName, logData, callback) {
     this.remove({mentioneeScreenName:mentioneeScreenName}, function(error) {
       if(error) {
         log.functionError(COLLECTION, 'removeMentions', logData.parentProcess, logData.username, 'Failed to remove mentions for screenName:' + mentioneeScreenName + '. Error: ' + error);
@@ -176,4 +175,4 @@
   };
 
   // Declare Model
-  var Mention = module.exports = AugeoDB.model('Mention', MENTION);
+  module.exports = AugeoDB.model('TWITTER_MENTION', TWITTER_MENTION);

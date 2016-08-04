@@ -33,9 +33,9 @@
   var TwitterUtility = require('../../../src/utility/twitter-utility');
 
   // Global variables
-  var Tweet = AugeoDB.model('Tweet');
-  var Mention = AugeoDB.model('Mention');
-  var User = AugeoDB.model('User');
+  var Mention = AugeoDB.model('TWITTER_MENTION');
+  var Tweet = AugeoDB.model('TWITTER_TWEET');
+  var User = AugeoDB.model('AUGEO_USER');
   var streamQueue = new TwitterStreamQueue();
 
   it('should add standard tweet to database and update ranks -- addAction("Add")', function(done) {
