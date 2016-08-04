@@ -28,7 +28,7 @@
 
   #header-title {
     display:inline-block;
-    margin-bottom:15px;
+    margin-bottom:5px;
   }
 
   #loader {
@@ -38,7 +38,7 @@
   }
 
   #skill-container {
-    width:170px;
+    width:125px;
     margin:0 auto;
     margin-bottom: 15px;
   }

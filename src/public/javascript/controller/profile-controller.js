@@ -173,9 +173,9 @@
 
       interfaces.push({
         name:'Augeo',
-        active: 'image/augeo-logo-small.png',
+        active: 'image/augeo-logo-black-small.png',
         passive: 'image/augeo-logo-gray-small.png',
-        current: 'image/augeo-logo-small.png',
+        current: 'image/augeo-logo-black-small.png',
         hasAuthentication: true
       });
 
