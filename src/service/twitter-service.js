@@ -34,11 +34,6 @@
   var TwitterUtility = require('../utility/twitter-utility');
   var TwitterValidator = require('../validator/twitter-validator');
 
-  // Schemas
-  require('../model/schema/twitter/tweet');
-  require('../model/schema/augeo/user');
-  require('../model/schema/twitter/mention');
-
   // Constants
   var ACTIVITY_PER_PAGE = 20;
   var SERVICE = 'twitter-service';
@@ -46,6 +41,7 @@
   // Global variables
   var Mention = AugeoDB.model('TWITTER_MENTION');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
+  var TwitterUser = AugeoDB.model('TWITTER_USER');
   var User = AugeoDB.model('AUGEO_USER');
   var log = new Logger();
 
@@ -59,10 +55,10 @@
       if(returnedTweet.length === 0) {
 
         // Find twitterId for actioner
-        User.getUserWithScreenName(action.actionerScreenName, logData, function(actioner) {
+        TwitterUser.getUserWithScreenName(action.actionerScreenName, logData, function(actioner) {
 
           // Find twitterId for actionee
-          User.getUserWithScreenName(action.actioneeScreenName, logData, function(actionee) {
+          TwitterUser.getUserWithScreenName(action.actioneeScreenName, logData, function(actionee) {
 
             // Update twitter skill data
             if(actioner) {
@@ -129,7 +125,7 @@
   exports.addUserSecretToken = function(userId, secretToken, logData, callback, rollback) {
     log.functionCall(SERVICE, 'addUserSecretToken', logData.parentProcess, logData.username, {'userId':userId, 'secretToken':secretToken});
 
-    User.addTwitterSecretToken(userId, secretToken, logData, function(success) {
+    TwitterUser.add(userId, secretToken, logData, function(success) {
       if(success) {
         callback();
       } else {
@@ -177,7 +173,7 @@
   exports.checkExistingAccessToken = function(accessToken, logData, callback, rollback) {
     log.functionCall(SERVICE, 'checkExistingAccessToken', logData.parentProcess, logData.username, {'accessToken':accessToken});
 
-    User.checkExistingTwitterAccessToken(accessToken, logData, function(existingAccessToken) {
+    TwitterUser.checkExistingAccessToken(accessToken, logData, function(existingAccessToken) {
 
       if(existingAccessToken != undefined) {
         callback(existingAccessToken);
@@ -190,7 +186,7 @@
   exports.getAllUsersQueueData = function(logData, callback) {
     log.functionCall(SERVICE, 'getAllUsersQueueData', logData.parentProcess, logData.username);
 
-    User.getAllUsersTwitterQueueData(logData, callback);
+    TwitterUser.getAllQueueData(logData, callback);
   };
 
   // Format necessary data to display on users dashboard
@@ -264,10 +260,10 @@
     if (AugeoValidator.isMongooseObjectIdValid(userId, logData) && TwitterValidator.isScreenNameValid(screenName, logData)) {
 
       // Get user's access tokens
-      User.getTwitterTokens(userId, logData, function(tokens) {
+      TwitterUser.getTokens(userId, logData, function(tokens) {
 
         if(tokens) {
-          User.checkExistingTwitterUser(screenName, logData, function(userExists) {
+          TwitterUser.doesUserExist(screenName, logData, function(userExists) {
 
             if(userExists) {
               var accessToken = tokens.accessToken;
@@ -343,13 +339,13 @@
   exports.getUsers = function(logData, callback) {
     log.functionCall(SERVICE, 'getUsers', logData.parentProcess, logData.username);
 
-    User.getTwitterUsers(logData, callback);
+    TwitterUser.getUsers(logData, callback);
   };
 
   exports.getUserSecretToken = function(userId, logData, callback, rollback) {
     log.functionCall(SERVICE, 'getUserSecretToken', logData.parentProcess, logData.username, {'userId':userId});
 
-    User.getTwitterTokens(userId, logData, function(tokens) {
+    TwitterUser.getTokens(userId, logData, function(tokens) {
       if(tokens && tokens.secretToken) {
         callback(tokens.secretToken);
       } else {
@@ -386,7 +382,7 @@
         };
 
         // Get User's ID
-        User.getUserWithTwitterId(tweetData.user_id_str, logData, function(user) {
+        TwitterUser.getUserWithTwitterId(tweetData.user_id_str, logData, function(user) {
 
           // Update users experience
           User.updateSkillData(user._id, experience, logData, function() {
@@ -405,20 +401,20 @@
     // Validate userId
     if(AugeoValidator.isMongooseObjectIdValid(userId, logData)) {
 
-      User.updateTwitterInfo(userId, userData, logData, function() {
+      TwitterUser.updateUser(userId, userData, sessionUser.username, logData, function () {
 
         // Don't update profile image if one already exists
-        if(sessionUser.profileImg != 'image/avatar-medium.png') {
-         userData.profileImageUrl = sessionUser.profileImg;
+        if (sessionUser.profileImg != 'image/avatar-medium.png') {
+          userData.profileImageUrl = sessionUser.profileImg;
         }
 
         // Don't update profile icon if one already exists
-        if(sessionUser.profileIcon != 'image/avatar-small.png') {
+        if (sessionUser.profileIcon != 'image/avatar-small.png') {
           userData.profileIcon = sessionUser.profileIcon;
         }
 
-        User.setProfileImage(sessionUser.username, userData.profileImageUrl, userData.profileIcon, logData, function() {
-          User.getUserWithUsername(sessionUser.username, logData, function(updatedUser) {
+        User.setProfileImage(sessionUser.username, userData.profileImageUrl, userData.profileIcon, logData, function () {
+          User.getUserWithUsername(sessionUser.username, logData, function (updatedUser) {
             callback(updatedUser);
           });
         });

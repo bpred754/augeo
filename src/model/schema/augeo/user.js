@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Logic for USER database collection                         */
+  /* Description: Logic for AUGEO_USER database collection                   */
   /***************************************************************************/
 
   // Required libraries
@@ -31,7 +31,8 @@
   var AugeoUtility = require('../../../utility/augeo-utility');
 
   // Constants
-  var COLLECTION = 'user-collection';
+  var COLLECTION = 'augeo_user-collection';
+  exports.PROJECTION_STRING = 'firstName lastName username admin profileImg profileIcon profession location website description skill subSkills';
 
   // Global variables
   var log = new Logger();
@@ -46,14 +47,10 @@
     'location': 1,
     'website': 1,
     'description': 1,
-    'twitter.twitterId': 1,
-    'twitter.name': 1,
-    'twitter.screenName': 1,
-    'twitter.profileImageUrl': 1,
-    'twitter.profileIcon': 1,
     'skill': 1,
     'subSkills': 1
   };
+  var twitterProjection = 'augeoUser name profileIcon profileImageUrl screenName twitterId';
 
   // Schema declaration
   var AUGEO_USER = Mongoose.Schema({
@@ -72,14 +69,8 @@
     website: String,
     description: String,
     twitter: {
-      twitterId: String,
-      name: String,
-      screenName: String,
-      profileImageUrl: String,
-      profileIcon: String,
-      accessToken: String,
-      secretAccessToken:String,
-      secretToken:String
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: 'TWITTER_USER'
     },
     skill: {
       imageSrc: String,
@@ -128,68 +119,6 @@
     });
   };
 
-  AUGEO_USER.statics.addTwitterSecretToken = function(id, secretToken, logData, callback) {
-    this.findOne({_id:id}, function(error, doc) {
-      var success = false;
-
-      if(error) {
-        log.functionError(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username,
-          'Failed to find user with ID: ' + id + '. Error: ' + error);
-        callback(success);
-      } else {
-        log.functionCall(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username, {'id':id}, 'Found user');
-
-        doc.twitter.secretToken = secretToken;
-        doc.save(function(error) {
-          if(error) {
-            log.functionError(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username,
-              'Failed to set secret token for user with id:' + id + '. Error: ' + error);
-            callback(success)
-          } else {
-            log.functionCall(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username, {'id':id}, 'Saved');
-            success = true;
-            callback(success);
-          }
-        });
-      }
-    })
-  };
-
-  AUGEO_USER.statics.checkExistingTwitterAccessToken = function(accessToken, logData, callback) {
-    this.count({'twitter.accessToken':accessToken}, function(error, count) {
-      if(error) {
-        log.functionError(COLLECTION, 'checkExistingTwitterAccessToken', logData.parentProcess, logData.username,
-          'Failed to find count for access token:' + accessToken + '. Error: ' + error);
-        callback();
-      } else {
-
-        var accessTokenExists = false;
-        if(count > 0) {
-          accessTokenExists = true;
-        }
-
-        log.functionCall(COLLECTION, 'checkExistingTwitterAccessToken', logData.parentProcess, logData.username, {'accessToken':accessToken});
-        callback(accessTokenExists);
-      }
-    });
-  };
-
-  AUGEO_USER.statics.checkExistingTwitterUser = function(screenName, logData, callback) {
-    this.count({'twitter.screenName':screenName}, function(error, count) {
-      if(error) {
-        log.functionError(COLLECTION, 'checkExistingTwitterUser', logData.parentProcess, logData.username,
-          'Failed to check if Twitter screen name exists ' + screenName + '. Error: ' + error);
-      } else {
-        log.functionCall(COLLECTION, 'checkExistingTwitterUser', logData.parentProcess, logData.username, {'screenName':screenName});
-        var userExists = false;
-        if(count > 0) {
-          userExists = true;
-        }
-        callback(userExists);
-      }
-    });
-  };
-
   AUGEO_USER.statics.doesEmailExist = function(email, logData, callback) {
     var emailExists = false;
     this.count({email:{'$regex': email, $options: 'i'}}, function(error, count) {
@@ -222,17 +151,6 @@
     });
   };
 
-  AUGEO_USER.statics.getAllUsersTwitterQueueData = function(logData, callback) {
-    this.find({}, '_id twitter.screenName twitter.accessToken twitter.secretAccessToken', function(error, users) {
-      if(error) {
-        log.functionError(COLLECTION, 'getAllUsersTwitterQueueData', logData.parentProcess, logData.username, 'Failed to retrieve users queue data');
-      } else {
-        log.functionCall(COLLECTION, 'getAllUsersTwitterQueueData', logData.parentProcess, logData.username);
-        callback(users);
-      }
-    });
-  };
-
   AUGEO_USER.statics.getCompetitorsInPage = function(skill, startRank, endRank, logData, callback) {
 
     if(skill === 'Augeo') {
@@ -243,7 +161,6 @@
         },
         { // Specify attributes to return
           'username': 1,
-          'twitter.screenName':1,
           'skill.rank':1,
           'skill.level':1,
           'skill.experience':1
@@ -252,8 +169,8 @@
           sort: {
             'skill.rank':1
           }
-        },
-        function(error, competitors) {
+        })
+        .exec(function(error, competitors) {
           if(error) {
             log.functionError(COLLECTION, 'getCompetitorsInPage', logData.parentProcess, logData.username,
               'Failed to get competitors in page for skill: ' + skill + '. Error: ' + error);
@@ -268,7 +185,6 @@
       // Build query
       var fields = getSubSkillQuery(skill);
       fields.$project['username'] = 1;
-      fields.$project['twitter.screenName'] = 1;
 
       this.aggregate([
         fields,
@@ -442,29 +358,6 @@
     );
   };
 
-  AUGEO_USER.statics.getTwitterTokens = function(id, logData, callback) {
-    this.findOne({_id:id}, {'twitter.accessToken':1, 'twitter.secretAccessToken':1, 'twitter.secretToken':1}, function(error, data) {
-      if(error) {
-        log.functionError(COLLECTION, 'getTwitterTokens', logData.parentProcess, logData.username,
-          'Failed to retrieve users access tokens with id:' + id + '. Error: ' + error);
-        callback();
-      } else {
-        log.functionCall(COLLECTION, 'getTwitterTokens', logData.parentProcess, logData.username, {'id':id});
-
-        if(data) {
-          var tokens = {
-            accessToken: data.twitter.accessToken,
-            secretAccessToken: data.twitter.secretAccessToken,
-            secretToken: data.twitter.secretToken
-          }
-          callback(tokens);
-        } else {
-          callback();
-        }
-      }
-    });
-  };
-
   AUGEO_USER.statics.getRanks = function(logData, callback) {
     this.find({}, '', {sort: {'skill.experience':-1}}, function(error, docs) {
       if(error) {
@@ -474,66 +367,35 @@
         callback(docs);
       }
     });
-  }
-
-  AUGEO_USER.statics.getTwitterUsers = function(logData, callback) {
-    this.find({}, 'twitter.twitterId', function(error, users) {
-      if(error) {
-        log.functionError(COLLECTION, 'getTwitterUsers', logData.parentProcess, logData.username, 'Failed to retrieve users. Error: ' + error);
-      } else {
-        log.functionCall(COLLECTION, 'getTwitterUsers', logData.parentProcess, logData.username);
-        callback(users);
-      }
-    });
   };
 
   AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
-    this.findOne({email:{'$regex': email, $options: 'i'}}, clientSafeProjection, function(error, user) {
-      if(error) {
-        log.functionError(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username,
-          'Failed to retrieve ' + email + '. Error: ' + error);
-      } else {
-        log.functionCall(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username, {'email':email});
-        callback(user);
-      }
-    });
-  };
-
-  AUGEO_USER.statics.getUserWithScreenName = function(screenName, logData, callback) {
-    this.findOne({'twitter.screenName':screenName}, clientSafeProjection, function(error, user) {
-      if(error) {
-        log.functionError(COLLECTION, 'getUserWithScreenName', logData.parentProcess, logData.username,
-          'Failed to retrieve ' + screenName + '. Error: ' + error);
-      } else {
-        log.functionCall(COLLECTION, 'getUserWithScreenName', logData.parentProcess, logData.username, {'screenName':screenName});
-        callback(user);
-      }
-    });
-  };
-
-  AUGEO_USER.statics.getUserWithTwitterId = function(twitterId, logData, callback) {
-    this.findOne({'twitter.twitterId':twitterId}, clientSafeProjection, function(error, user) {
-      if(error) {
-        log.functionError(COLLECTION, 'getUserWithTwitterId', logData.parentProcess, logData.username,
-          'Failed to retrieve ' + twitterId + '. Error: ' + error);
-      } else {
-        log.functionCall(COLLECTION, 'getUserWithTwitterId', logData.parentProcess, logData.username, {'twitterId':twitterId});
-        callback(user);
-      }
-    });
+    this.findOne({email:{'$regex': email, $options: 'i'}})
+      .populate('twitter', twitterProjection)
+      .exec(function(error, user) {
+        if(error) {
+          log.functionError(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username,
+            'Failed to retrieve ' + email + '. Error: ' + error);
+        } else {
+          log.functionCall(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username, {'email':email});
+          callback(user);
+        }
+      });
   };
 
   AUGEO_USER.statics.getUserWithUsername = function(username, logData, callback) {
-    this.findOne({'username':{'$regex': username, $options: 'i'}}, clientSafeProjection, function(error, user) {
-      if(error) {
-        log.functionError(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username,
-          'Failed to retrieve ' + username + '. Error: ' + error);
-        callback();
-      } else {
-        log.functionCall(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username, {'username':username});
-        callback(user);
-      }
-    });
+    this.findOne({'username':{'$regex': username, $options: 'i'}})
+      .populate('twitter', twitterProjection)
+      .exec(function(error, user) {
+        if(error) {
+          log.functionError(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username,
+            'Failed to retrieve ' + username + '. Error: ' + error);
+          callback();
+        } else {
+          log.functionCall(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username, {'username':username});
+          callback(user);
+        }
+      });
   };
 
   AUGEO_USER.statics.remove = function(username, logData, callback) {
@@ -631,39 +493,6 @@
         if(callback) {
           callback(n);
         }
-      }
-    });
-  };
-
-  AUGEO_USER.statics.updateTwitterInfo = function(id, data, logData, callback) {
-
-    if(data.subSkills == null) {
-      data.subSkills = new Array();
-    }
-
-    var query = {_id:id};
-    var update = {
-                    $set:{
-                      "twitter.accessToken": data.accessToken,
-                      "twitter.secretAccessToken": data.secretAccessToken,
-                      "twitter.twitterId": data.twitterId,
-                      "twitter.name": data.name,
-                      "twitter.screenName": data.screenName,
-                      "twitter.profileImageUrl": data.profileImageUrl,
-                      "twitter.profileIcon": data.profileIcon
-                    }
-                 };
-
-    var options = {multi:false};
-
-    this.update(query, update, options, function(error, n) {
-      if(error) {
-        log.functionError(COLLECTION, 'updateTwitterInfo', logData.parentProcess, logData.username,
-          'Failed to update Twitter data for screenName: ' + (data)?data.screenName:'invalid' + '. Error: ' + error);
-      } else {
-        log.functionCall(COLLECTION, 'updateTwitterInfo', logData.parentProcess, logData.username, {'id':id,
-          'data.screenName':(data)?data.screenName:'invalid'});
-        callback();
       }
     });
   };

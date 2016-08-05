@@ -58,6 +58,8 @@
 
     var rollback = function(message) {
       log.functionError(API, CALLBACK, username, message);
+
+      // TODO: Remove invalid entries from TWITTER_USER
       response.redirect(301, process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
     };
 

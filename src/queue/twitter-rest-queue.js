@@ -153,7 +153,7 @@
 
                 // Create queue data for each user
                 var queueData = {
-                  userId: new Mongoose.Types.ObjectId(user._id),
+                  userId: new Mongoose.Types.ObjectId(user.augeoUser),
                   screenName: user.twitter.screenName,
                   accessToken: user.twitter.accessToken,
                   secretAccessToken: user.twitter.secretAccessToken,
