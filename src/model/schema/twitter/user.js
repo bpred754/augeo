@@ -170,7 +170,7 @@
 
   TWITTER_USER.statics.getUserWithTwitterId = function(twitterId, logData, callback) {
     this.findOne({'twitterId':twitterId})
-      .populate('augeoUser', AugeoUserser.PROJECTION_STRING)
+      .populate('augeoUser', AugeoUser.PROJECTION_STRING)
       .exec(function(error0, twitterUser) {
         if(error0) {
           log.functionError(COLLECTION, 'getUserWithTwitterId', logData.parentProcess, logData.username,
@@ -184,6 +184,18 @@
           callback(user);
         }
     });
+  };
+
+  TWITTER_USER.statics.remove = function(augeoId, logData, callback) {
+    this.findOneAndRemove({augeoUser:augeoId})
+      .exec(function(error) {
+        if(error) {
+          log.functionError(COLLECTION, 'remove', logData.parentProcess, logData.username, 'Failed to remove Twitter user with augeoId: ' + id + '. Error: ' + error);
+        } else {
+          log.functionCall(COLLECTION, 'remove', logData.parentProcess, logData.username, {'augeoId':augeoId});
+        }
+        callback();
+      });
   };
 
   TWITTER_USER.statics.updateUser = function(id, data, username, logData, callback) {

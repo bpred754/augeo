@@ -32,24 +32,10 @@
 
   // Constants
   var COLLECTION = 'augeo_user-collection';
-  exports.PROJECTION_STRING = 'firstName lastName username admin profileImg profileIcon profession location website description skill subSkills';
+  exports.PROJECTION_STRING = 'firstName lastName username admin profileImg profileIcon profession location website description skill subSkills twitter';
 
   // Global variables
   var log = new Logger();
-  var clientSafeProjection = {
-    'firstName': 1,
-    'lastName': 1,
-    'username': 1,
-    'admin':1,
-    'profileImg': 1,
-    'profileIcon': 1,
-    'profession': 1,
-    'location': 1,
-    'website': 1,
-    'description': 1,
-    'skill': 1,
-    'subSkills': 1
-  };
   var twitterProjection = 'augeoUser name profileIcon profileImageUrl screenName twitterId';
 
   // Schema declaration
@@ -371,6 +357,7 @@
 
   AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': email, $options: 'i'}})
+      .select(exports.PROJECTION_STRING)
       .populate('twitter', twitterProjection)
       .exec(function(error, user) {
         if(error) {
@@ -385,6 +372,7 @@
 
   AUGEO_USER.statics.getUserWithUsername = function(username, logData, callback) {
     this.findOne({'username':{'$regex': username, $options: 'i'}})
+      .select(exports.PROJECTION_STRING)
       .populate('twitter', twitterProjection)
       .exec(function(error, user) {
         if(error) {

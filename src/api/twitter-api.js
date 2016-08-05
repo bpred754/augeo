@@ -59,7 +59,11 @@
     var rollback = function(message) {
       log.functionError(API, CALLBACK, username, message);
 
-      // TODO: Remove invalid entries from TWITTER_USER
+      // Remove invalid entry from TWITTER_USER
+      if(username && request.session.user._id) {
+        var logData = AugeoUtility.formatLogData(API+CALLBACK, username);
+        TwitterService.removeUser(request.session.user._id, logData, function(){});
+      }
       response.redirect(301, process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
     };
 

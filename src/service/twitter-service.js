@@ -393,6 +393,11 @@
     });
   };
 
+  exports.removeUser = function(augeoId, logData, callback) {
+    log.functionCall(SERVICE, 'removeUser', logData.parentProcess, logData.username, {'augeoId': augeoId});
+    TwitterUser.remove(augeoId, logData, callback);
+  };
+
   // Call DB to update user's twitter information
   exports.updateTwitterInfo = function(userId, sessionUser, userData, logData, callback, rollback) {
     log.functionCall(SERVICE, 'updateTwitterInfo', logData.parentProcess, logData.username, {'userId':userId, 'sessionUser.username':(sessionUser)?sessionUser.username:'invalid',
