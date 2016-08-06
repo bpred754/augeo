@@ -147,16 +147,16 @@
 
           var user = users[i];
 
-            TwitterService.getLatestTweetId(user.twitter.screenName, logData, function(tweetId) {
+            TwitterService.getLatestTweetId(user.screenName, logData, function(tweetId) {
 
-              TwitterService.getLatestMentionTweetId(user.twitter.screenName, logData, function(mentionTweetId) {
+              TwitterService.getLatestMentionTweetId(user.screenName, logData, function(mentionTweetId) {
 
                 // Create queue data for each user
                 var queueData = {
                   userId: new Mongoose.Types.ObjectId(user.augeoUser),
-                  screenName: user.twitter.screenName,
-                  accessToken: user.twitter.accessToken,
-                  secretAccessToken: user.twitter.secretAccessToken,
+                  screenName: user.screenName,
+                  accessToken: user.accessToken,
+                  secretAccessToken: user.secretAccessToken,
                   isNewUser: true
                 };
 

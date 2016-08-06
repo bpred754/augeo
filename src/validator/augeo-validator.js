@@ -51,6 +51,7 @@
     var isValid = false;
     if(objectId) {
       var objectIdRegex = new RegExp("^[0-9a-fA-F]{24}$");
+      if(typeof objectId != String) objectId = objectId.toString();
       if(objectId.match(objectIdRegex)) {
         isValid = true;
       }

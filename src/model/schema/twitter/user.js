@@ -151,7 +151,7 @@
   };
 
   TWITTER_USER.statics.getUserWithScreenName = function(screenName, logData, callback) {
-    document.findOne({'screenName':screenName})
+    this.findOne({'screenName':screenName})
       .populate('augeoUser')
       .exec(function(error0, twitterUser) {
         if(error0) {
@@ -160,9 +160,12 @@
         } else {
           log.functionCall(COLLECTION, 'getUserWithScreenName', logData.parentProcess, logData.username, {'screenName':screenName});
 
-          // Restructure data
-          var user = twitterUser.toJSON().augeoUser;
-          user.twitter = twitterUser;
+          var user;
+          if(twitterUser) {
+            // Restructure data
+            user = twitterUser.toJSON().augeoUser;
+            user.twitter = twitterUser;
+          }
           callback(user);
         }
       });
@@ -188,14 +191,50 @@
 
   TWITTER_USER.statics.remove = function(augeoId, logData, callback) {
     this.findOneAndRemove({augeoUser:augeoId})
-      .exec(function(error) {
+      .exec(function(error, user) {
         if(error) {
-          log.functionError(COLLECTION, 'remove', logData.parentProcess, logData.username, 'Failed to remove Twitter user with augeoId: ' + id + '. Error: ' + error);
+          log.functionError(COLLECTION, 'remove', logData.parentProcess, logData.username, 'Failed to remove Twitter user with augeoId: ' + augeoId + '. Error: ' + error);
         } else {
           log.functionCall(COLLECTION, 'remove', logData.parentProcess, logData.username, {'augeoId':augeoId});
         }
-        callback();
+        callback(user);
       });
+  };
+
+  TWITTER_USER.statics.removeInvalid = function(logData, callback) {
+    this.find({screenName:{$eq:null}}, function(error, twitterUsers) {
+      if(error) {
+        log.functionError(COLLECTION, 'removeInvalid', logData.parentProcess, logData.username,
+          'Failed to find invalid Twitter users. Error: ' + error);
+      } else {
+        log.functionCall(COLLECTION, 'removeInvalid', logData.parentProcess, logData.username, 'Twitter users found: ' + (twitterUsers)?twitterUsers.length:'invalid');
+
+        // Asynchronous method calls in loop - Using Recursion
+        if(twitterUsers.length > 0) {
+          (function myClojure(i) {
+
+            var twitterUser = twitterUsers[i];
+            twitterUser.remove(function (error1, result) {
+              if (error1) {
+                log.functionError(COLLECTION, 'removeInvalid', logData.parentProcess, logData.username,
+                  'Failed to remove invalid Twitter User with twitterId: ' + (twitterUser) ? twitterUser.twitterId : 'invalid' + '. Error: ' + error);
+              } else {
+                i++;
+                if (i < twitterUsers.length) {
+                  myClojure(i);
+                } else {
+                  log.functionCall(COLLECTION, 'removeInvalid', logData.parentProcess, logData.username, 'complete');
+                  callback();
+                }
+              }
+            });
+          })(0); // Pass i as 0 to myClojure
+        } else {
+          log.functionCall(COLLECTION, 'removeInvalid', logData.parentProcess, logData.username, 'complete');
+          callback();
+        }
+      }
+    });
   };
 
   TWITTER_USER.statics.updateUser = function(id, data, username, logData, callback) {

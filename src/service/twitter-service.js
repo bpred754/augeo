@@ -38,6 +38,12 @@
   var ACTIVITY_PER_PAGE = 20;
   var SERVICE = 'twitter-service';
 
+  // Schemas
+  require('../model/schema/augeo/user');
+  require('../model/schema/twitter/tweet');
+  require('../model/schema/twitter/user');
+  require('../model/schema/twitter/mention');
+
   // Global variables
   var Mention = AugeoDB.model('TWITTER_MENTION');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
@@ -124,6 +130,7 @@
 
   exports.addUserSecretToken = function(userId, secretToken, logData, callback, rollback) {
     log.functionCall(SERVICE, 'addUserSecretToken', logData.parentProcess, logData.username, {'userId':userId, 'secretToken':secretToken});
+
 
     TwitterUser.add(userId, secretToken, logData, function(success) {
       if(success) {

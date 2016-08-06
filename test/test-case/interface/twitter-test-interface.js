@@ -83,7 +83,7 @@
     TwitterTestInterface.getOAuthAccessToken(data, oauthSecretToken, Common.logData, function(accessToken, secretAccessToken, screenName) {
       Assert.strictEqual(accessToken.length, 50);
       Assert.strictEqual(secretAccessToken.length, 50);
-      Assert.strictEqual(screenName, Common.USER.twitter.screenName);
+      Assert.strictEqual(screenName, Common.USER_TWITTER.screenName);
       done();
     });
   });
@@ -145,10 +145,10 @@
   });
 
   it('should return user Twitter data -- getTwitterData()', function(done) {
-    TwitterTestInterface.getTwitterData(messenger, Common.USER.twitter.screenName, Common.logData, function(error, data, response) {
-      Assert.strictEqual(data.id_str, Common.USER.twitter.twitterId);
+    TwitterTestInterface.getTwitterData(messenger, Common.USER_TWITTER.screenName, Common.logData, function(error, data, response) {
+      Assert.strictEqual(data.id_str, Common.USER_TWITTER.twitterId);
       Assert.strictEqual(data.name, Common.USER.firstName + ' ' + Common.USER.lastName);
-      Assert.strictEqual(data.screen_name, Common.USER.twitter.screenName);
+      Assert.strictEqual(data.screen_name, Common.USER_TWITTER.screenName);
       Assert.strictEqual(data.profile_image_url_https, "https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs_normal.jpg");
       done();
     });

@@ -61,10 +61,10 @@
         User.getUserWithEmail(Common.ACTIONEE.email, Common.logData, function(initialUser2) {
 
           var userId = initialUser._id + '';
-          TwitterService.getQueueData(userId, Common.USER.twitter.screenName, Common.logData, function(queueData) {
+          TwitterService.getQueueData(userId, Common.USER_TWITTER.screenName, Common.logData, function(queueData) {
 
             var userId2 = initialUser2._id + '';
-            TwitterService.getQueueData(userId2, Common.ACTIONEE.twitter.screenName, Common.logData, function(queueData2) {
+            TwitterService.getQueueData(userId2, Common.ACTIONEE_TWITTER.screenName, Common.logData, function(queueData2) {
 
               var iteration = 0;
               var mentionsAdded = 0;
@@ -154,10 +154,10 @@
         User.getUserWithEmail(Common.ACTIONEE.email, Common.logData, function(initialUser2) {
 
           var userId = initialUser._id + '';
-          TwitterService.getQueueData(userId, Common.USER.twitter.screenName, Common.logData, function(queueData) {
+          TwitterService.getQueueData(userId, Common.USER_TWITTER.screenName, Common.logData, function(queueData) {
 
             var userId2 = initialUser2._id + '';
-            TwitterService.getQueueData(userId2, Common.ACTIONEE.twitter.screenName, Common.logData, function(queueData2) {
+            TwitterService.getQueueData(userId2, Common.ACTIONEE_TWITTER.screenName, Common.logData, function(queueData2) {
 
               var iteration = 0;
               var tweetsAdded = 0;

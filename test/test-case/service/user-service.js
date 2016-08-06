@@ -35,6 +35,7 @@
 
   // Global variables
   var User = Mongoose.model('AUGEO_USER');
+  var TwitterUser = Mongoose.model('TWITTER_USER');
 
   // addUser
   it('should add new Augeo user to AugeoDB -- addUser()', function(done) {
@@ -283,6 +284,50 @@
     });
   });
 
+  // removeInvalidUser
+  it('should remove user from database with a specified username -- removeInvalidUser()', function(done) {
+    this.timeout(Common.TIMEOUT);
+
+    var invalidUser = {
+      _id: '001',
+      firstName: 'blah',
+      lastName: 'blah blah',
+      username: 'blahblahblah',
+      password: 'blahblah'
+    }
+
+    var request = {
+      session: {
+        user: invalidUser
+      }
+    };
+
+    // Verify user to be added is not in DB
+    User.getUserWithUsername(invalidUser.username, Common.logData, function(user0) {
+      Should.not.exist(user0);
+
+      // Add invalid user
+      User.add(invalidUser, Common.logData, function() {
+
+        // Verify new user in db
+        User.getUserWithUsername(invalidUser.username, Common.logData, function(user1) {
+          Assert.strictEqual(user1.firstName, invalidUser.firstName);
+
+          // Remove invalid users
+          UserService.removeUser(request.session.user.username, Common.logData, function(user2) {
+            Assert.strictEqual(user2.firstName, invalidUser.firstName)
+
+            // Verify user is no longer in db
+            User.getUserWithUsername(invalidUser.username, Common.logData, function(user3) {
+              Should.not.exist(user3);
+              done();
+            });
+          });
+        })
+      });
+    });
+  });
+
   // removeUserWithPassword
   it('should remove user from USER table - removeUserWithPassword()', function(done) {
     this.timeout(Common.TIMEOUT);
@@ -432,67 +477,71 @@
           // Add new user to database
           User.add(newUser, Common.logData, function(user2) {
 
-            var twitterData = {
-              twitterId: Common.ACTIONEE.twitter.twitterId,
-              name: Common.ACTIONEE.fullName,
-              screenName: Common.ACTIONEE.twitter.screenName,
-              profileImageUrl: Common.ACTIONEE.twitter.profileImageUrl,
-              accessToken: Common.ACTIONEE.twitter.accessToken,
-              secretAccessToken: Common.ACTIONEE.twitter.secretAccessToken,
-            };
+            // Add Twitter user to database
+            TwitterUser.add(user2._id, Common.USER_TWITTER.secretToken, Common.logData, function(isSuccessful) {
 
-            var sessionUser = {
-              username: Common.ACTIONEE.username,
-              profileImg: 'image/avatar-medium.png',
-              profileIcon: 'image/avatar-small.png'
-            };
+              var twitterData = {
+                twitterId: Common.ACTIONEE_TWITTER.twitterId,
+                name: Common.ACTIONEE.fullName,
+                screenName: Common.ACTIONEE_TWITTER.screenName,
+                profileImageUrl: Common.ACTIONEE_TWITTER.profileImageUrl,
+                accessToken: Common.ACTIONEE_TWITTER.accessToken,
+                secretAccessToken: Common.ACTIONEE_TWITTER.secretAccessToken,
+              };
 
-            // Update new user's twitter information
-            TwitterService.updateTwitterInfo(user2._id.toString(), sessionUser, twitterData, Common.logData, function() {
+              var sessionUser = {
+                username: Common.ACTIONEE.username,
+                profileImg: 'image/avatar-medium.png',
+                profileIcon: 'image/avatar-small.png'
+              };
 
-              // Verify new user's skill and subSkill rank is higher than Common.USER
-              User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
+              // Update new user's twitter information
+              TwitterService.updateTwitterInfo(user2._id, sessionUser, twitterData, Common.logData, function() {
 
-                var newUserSkillRank = user3.skill.rank;
-                var newUserSubSkillRank = user3.subSkills[baseIndex].rank;
+                // Verify new user's skill and subSkill rank is higher than Common.USER
+                User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
 
-                newUserSkillRank.should.be.above(baseSkillRank);
-                newUserSubSkillRank.should.be.above(baseSubSkillRank);
+                  var newUserSkillRank = user3.skill.rank;
+                  var newUserSubSkillRank = user3.subSkills[baseIndex].rank;
 
-                var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData);
-                updateSubSkillExperiences[AugeoUtility.SUB_SKILLS[baseIndex].name] = (baseExperience+1)*100;
-                var updateExperience = {
-                  mainSkillExperience: (baseExperience+1)*100,
-                  subSkillsExperience: updateSubSkillExperiences
-                }
+                  newUserSkillRank.should.be.above(baseSkillRank);
+                  newUserSubSkillRank.should.be.above(baseSubSkillRank);
 
-                // Update new user's subSkill experience to be more than Common.USER - use User.updateSkillData
-                User.updateSkillData(user3._id, updateExperience, Common.logData, function() {
+                  var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData);
+                  updateSubSkillExperiences[AugeoUtility.SUB_SKILLS[baseIndex].name] = (baseExperience+1)*100;
+                  var updateExperience = {
+                    mainSkillExperience: (baseExperience+1)*100,
+                    subSkillsExperience: updateSubSkillExperiences
+                  }
 
-                  // Update ranks
-                  UserService.updateRanks(Common.logData, function() {
+                  // Update new user's subSkill experience to be more than Common.USER - use User.updateSkillData
+                  User.updateSkillData(user3._id, updateExperience, Common.logData, function() {
 
-                    // Update sub skill ranks
-                    UserService.updateSubSkillRanks(general.name, Common.logData, function() {
+                    // Update ranks
+                    UserService.updateRanks(Common.logData, function() {
 
-                      User.getUserWithUsername(Common.USER.username, Common.logData, function(user4) {
+                      // Update sub skill ranks
+                      UserService.updateSubSkillRanks(general.name, Common.logData, function() {
 
-                        // Update baseline variables
-                        baseSkillRank = user4.skill.rank;
-                        baseSubSkillRank = user4.subSkills[baseIndex].rank;
+                        User.getUserWithUsername(Common.USER.username, Common.logData, function(user4) {
 
-                        // Verify new user's subSkill rank is lower than Common.USER
-                        User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user5) {
-                          user5.skill.rank.should.be.below(baseSkillRank);
-                          user5.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
-                          done();
+                          // Update baseline variables
+                          baseSkillRank = user4.skill.rank;
+                          baseSubSkillRank = user4.subSkills[baseIndex].rank;
+
+                          // Verify new user's subSkill rank is lower than Common.USER
+                          User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user5) {
+                            user5.skill.rank.should.be.below(baseSkillRank);
+                            user5.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
+                            done();
+                          });
                         });
                       });
                     });
                   });
                 });
-              });
-            }, function(){});
+              }, function(){});
+            });
           });
         });
       });

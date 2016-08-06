@@ -31,38 +31,42 @@
   var UserService = require('../../src/service/user-service');
 
   // Global variables
+  var AugeoUser = AugeoDB.model('AUGEO_USER');
   var Mention = AugeoDB.model('TWITTER_MENTION');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
-  var User = AugeoDB.model('AUGEO_USER');
+  var TwitterUser = AugeoDB.model('TWITTER_USER');
 
   exports.addTestUsers = function(callback) {
-    exports.addUser(Common.USER, function() {
-      exports.addUser(Common.ACTIONEE, function() {
+    exports.addUser(Common.USER, Common.USER_TWITTER, function() {
+      exports.addUser(Common.ACTIONEE, Common.ACTIONEE_TWITTER, function() {
         callback();
       });
     });
   };
 
-  exports.addUser = function(user, callback) {
+  exports.addUser = function(user, twitter, callback) {
 
     UserService.addUser(user, {}, function(retrievedUser) {
 
-      var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData), Common.logData);
+      TwitterUser.add(retrievedUser._id, twitter.secretToken, Common.logData, function() {
 
-      var twitterData = {
-        twitterId: user.twitter.twitterId,
-        name: user.fullName,
-        screenName: user.twitter.screenName,
-        profileImageUrl: user.twitter.profileImageUrl,
-        accessToken: user.twitter.accessToken,
-        secretAccessToken: user.twitter.secretAccessToken,
-        skill: AugeoUtility.getMainSkill(0, Common.logData),
-        subSkills: newUserSubSkills
-      };
+        var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData), Common.logData);
 
-      // Update twitter information
-      TwitterService.updateTwitterInfo(retrievedUser._id.toString(), user, twitterData, Common.logData, function() {
-        callback();
+        var twitterData = {
+          twitterId: twitter.twitterId,
+          name: user.fullName,
+          screenName: twitter.screenName,
+          profileImageUrl: twitter.profileImageUrl,
+          accessToken: twitter.accessToken,
+          secretAccessToken: twitter.secretAccessToken,
+          skill: AugeoUtility.getMainSkill(0, Common.logData),
+          subSkills: newUserSubSkills
+        };
+
+        // Update twitter information
+        TwitterService.updateTwitterInfo(retrievedUser._id, user, twitterData, Common.logData, function(updatedUser) {
+          callback();
+        });
       });
     }, function(){console.log('Twitter Helper -- Failed to add user')});
   };
@@ -98,9 +102,15 @@
   };
 
   exports.cleanUsers = function(callback) {
-    User.remove('tester', Common.logData, function(user1) {
-      User.remove('actionee', Common.logData, function(user2) {
-        callback();
+    AugeoUser.remove('tester', Common.logData, function(user1) {
+      AugeoUser.remove('actionee', Common.logData, function(user2) {
+        TwitterUser.remove((user1)?user1._id:'', Common.logData, function(removedUser1) {
+          TwitterUser.remove((user2)?user2._id:'', Common.logData, function(removedUser2) {
+            TwitterUser.removeInvalid(Common.logData, function() {
+              callback();
+            });
+          });
+        });
       });
     });
   };

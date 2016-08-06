@@ -31,17 +31,19 @@
     password: '!Test1',
     profileImg: 'image/avatar-medium.png',
     profileIcon: 'image/avatar-small.png',
-    twitter: {
-      twitterId: '1000000000',
-      accessToken: '000',
-      secretAccessToken: '000',
-      screenName: 'testScreenName',
-      profileImageUrl: 'twitterProfileImage.png',
-      profileIcon: 'twitterProfileIcon.png'
-    },
     skill: {
       imageSrc: 'image/augeo-logo-medium.png'
     }
+  };
+
+  exports.USER_TWITTER = {
+    twitterId: '1000000000',
+    accessToken: '000',
+    secretToken: '00',
+    secretAccessToken: '000',
+    screenName: 'testScreenName',
+    profileImageUrl: 'twitterProfileImage.png',
+    profileIcon: 'twitterProfileIcon.png'
   };
 
   exports.ACTIONEE = {
@@ -52,16 +54,17 @@
     username: 'actionee',
     password: '!Test1',
     profileImg: 'image/avatar-medium.png',
-    twitter: {
-      twitterId: '2000000000',
-      accessToken: '100',
-      secretAccessToken: '100',
-      screenName: 'twitterActionee',
-      profileImageUrl: 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg'
-    },
     skill: {
       imageSrc: 'image/twitter/logo-blue-medium.png'
     }
+  };
+
+  exports.ACTIONEE_TWITTER = {
+    twitterId: '2000000000',
+    accessToken: '100',
+    secretAccessToken: '100',
+    screenName: 'twitterActionee',
+    profileImageUrl: 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg'
   };
 
   exports.LOGIN_USER = {
@@ -80,7 +83,7 @@
     id_str: '300000000000000000',
     text: '@twitterActionee Yes, it is!',
     user: {
-      screen_name: exports.USER.twitter.screenName
+      screen_name: exports.USER_TWITTER.screenName
     },
     in_reply_to_screen_name: 'twitterActionee',
     in_reply_to_status_id_str: '621504664077373440'
@@ -90,7 +93,7 @@
     id_str: '400000000000000000',
     text: "RT @twitterActionee: I'm a ping pong master",
     user: {
-      screen_name: exports.USER.twitter.screenName
+      screen_name: exports.USER_TWITTER.screenName
     },
     in_reply_to_screen_name: null,
     in_reply_to_status_id_str: null,
@@ -106,7 +109,7 @@
     id_str: '200000000000000000',
     text: '@twitterActionee ah hell yeah!',
     user: {
-      screen_name: exports.USER.twitter.screenName
+      screen_name: exports.USER_TWITTER.screenName
     },
     in_reply_to_screen_name: 'twitterActionee',
     in_reply_to_status_id_str: null
@@ -116,7 +119,7 @@
     id_str: '100000000000000000',
     text: 'Testing local stream',
     user: {
-      screen_name: exports.USER.twitter.screenName
+      screen_name: exports.USER_TWITTER.screenName
     },
     in_reply_to_screen_name: null,
     in_reply_to_status_id_str: null
@@ -131,12 +134,12 @@
     id_str: '800000000000000000',
     text: "@testScreenName Is local stream working?",
     in_reply_to_status_id_str: null,
-    in_reply_to_user_id_str: exports.USER.twitter.twitterId,
-    in_reply_to_screen_name: exports.USER.twitter.screenName,
+    in_reply_to_user_id_str: exports.USER_TWITTER.twitterId,
+    in_reply_to_screen_name: exports.USER_TWITTER.screenName,
     user: {
-      id_str: exports.ACTIONEE.twitter.twitterId,
+      id_str: exports.ACTIONEE_TWITTER.twitterId,
       name: exports.ACTIONEE.fullName,
-      screen_name: exports.ACTIONEE.twitter.screenName,
+      screen_name: exports.ACTIONEE_TWITTER.screenName,
       profile_image_url_https: "https://pbs.twimg.com/profile_images/500446770178965505/g2R-J08w_normal.png",
     },
     retweet_count: 0,
@@ -146,9 +149,9 @@
       user_mentions: [
         {
           indices: [0,11],
-          id_str: exports.USER.twitter.twitterId,
+          id_str: exports.USER_TWITTER.twitterId,
           name: exports.USER.fullName,
-          screen_name: exports.USER.twitter.screenName,
+          screen_name: exports.USER_TWITTER.screenName,
           profile_image_url_https: 'https://pbs.twimg.com/profile_images/500446770178965505/g2R-J08w_normal.png'
         }
       ],
@@ -165,9 +168,9 @@
     favorite_count: 0,
     created_at: 'Sat Mar 28 20:15:48 +0000 2015',
     user: {
-      id_str: exports.USER.twitter.twitterId,
+      id_str: exports.USER_TWITTER.twitterId,
       name: exports.USER.fullName,
-      screen_name: exports.USER.twitter.screenName,
+      screen_name: exports.USER_TWITTER.screenName,
       profile_image_url_https: 'https://abs.twimg.com/images/themes/theme1/bg.png'
     },
     entities: {
@@ -226,18 +229,18 @@
     favorite_count: 0,
     created_at: 'Tue Mar 31 20:15:48 +0000 2015',
     user: {
-      id_str: exports.ACTIONEE.twitter.twitterId,
+      id_str: exports.ACTIONEE_TWITTER.twitterId,
       name: exports.ACTIONEE.fullName,
-      screen_name: exports.ACTIONEE.twitter.screenName,
+      screen_name: exports.ACTIONEE_TWITTER.screenName,
       profile_image_url_https: 'https://abs.twimg.com/images/themes/theme1/bg.png'
     },
     entities: {
       user_mentions: [
         {
           indices: [3,17],
-          id_str: exports.USER.twitter.twitterId,
+          id_str: exports.USER_TWITTER.twitterId,
           name: exports.USER.fullName,
-          screen_name: exports.USER.twitter.screenName
+          screen_name: exports.USER_TWITTER.screenName
         }
       ],
       hashtags: [],
@@ -247,9 +250,9 @@
       id_str: '500000000000000000',
       text: 'testing retweets',
       user: {
-        id_str: exports.USER.twitter.twitterId,
+        id_str:exports.USER_TWITTER.twitterId,
         name: exports.USER.fullName,
-        screen_name: exports.USER.twitter.screenName
+        screen_name: exports.USER_TWITTER.screenName
       }
     }
   };
@@ -261,9 +264,9 @@
     favorite_count: 0,
     created_at: 'Mon Mar 30 21:54:28 +0000 2015',
     user: {
-      id_str: exports.USER.twitter.twitterId,
+      id_str: exports.USER_TWITTER.twitterId,
       name: exports.USER.fullName,
-      screen_name: exports.USER.twitter.screenName,
+      screen_name: exports.USER_TWITTER.screenName,
       profile_image_url_https: 'https://abs.twimg.com/images/themes/theme1/bg.png'
     },
     entities: {
@@ -280,9 +283,9 @@
     favorite_count: 0,
     created_at: 'Mon Mar 30 21:54:28 +0000 2015',
     user: {
-      id_str: exports.ACTIONEE.twitter.twitterId,
+      id_str: exports.ACTIONEE_TWITTER.twitterId,
       name: exports.ACTIONEE.fullName,
-      screen_name: exports.ACTIONEE.twitter.screenName,
+      screen_name: exports.ACTIONEE_TWITTER.screenName,
       profile_image_url_https: 'https://abs.twimg.com/images/themes/theme1/bg.png'
     },
     entities: {
@@ -299,9 +302,9 @@
     favorite_count: 0,
     created_at: 'Thu Dec 31 23:24:29 +0000 2015',
     user: {
-      id_str: exports.USER.twitter.twitterId,
+      id_str: exports.USER_TWITTER.twitterId,
       name: exports.USER.fullName,
-      screen_name: exports.USER.twitter.screenName,
+      screen_name: exports.USER_TWITTER.screenName,
       profile_image_url_https: 'https://abs.twimg.com/images/themes/theme1/bg.png'
     },
     entities: {
@@ -322,18 +325,18 @@
     favorite_count: 0,
     created_at: 'Sat Jun 20 23:24:29 +0000 2015',
     user: {
-      id_str: exports.USER.twitter.twitterId,
+      id_str: exports.USER_TWITTER.twitterId,
       name: exports.USER.fullName,
-      screen_name: exports.USER.twitter.screenName,
+      screen_name: exports.USER_TWITTER.screenName,
       profile_image_url_https: 'https://abs.twimg.com/images/themes/theme1/bg.png'
     },
     entities: {
       user_mentions: [
         {
           indices: [0,12],
-          id_str: exports.ACTIONEE.twitter.twitterId,
+          id_str: exports.ACTIONEE_TWITTER.twitterId,
           name: exports.ACTIONEE.fullName,
-          screen_name: exports.ACTIONEE.twitter.screenName
+          screen_name: exports.ACTIONEE_TWITTER.screenName
         }
       ],
       hashtags: [],
