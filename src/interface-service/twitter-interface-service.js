@@ -163,9 +163,9 @@
       experience: tweetExperience,
       retweetCount: retweetCount,
       favoriteCount: favoriteCount,
-      mentions: data.entities.user_mentions,
-      hashtags: data.entities.hashtags,
-      links: data.entities.urls,
+      mentions: extractMentionScreenNames(data.entities.user_mentions, logData),
+      hashtags: extractHashtags(data.entities.hashtags, logData),
+      links: extractLinks(data.entities.urls, logData),
       media:{
         url:'',
         height:0,
@@ -319,6 +319,36 @@
   /***************************************************************************/
   /* Private Functions                                                       */
   /***************************************************************************/
+
+  var extractHashtags = function(rawHashtags, logData) {
+    log.functionCall(SERVICE, 'extractHashtags (private)', logData.parentProcess, logData.username, {'rawHashtags.length':(rawHashtags)?rawHashtags.length:'invalid'});
+
+    var hashtags = new Array();
+    for(var i = 0; i < rawHashtags.length; i++) {
+      hashtags.push(rawHashtags[i].text);
+    }
+    return hashtags;
+  };
+
+  var extractLinks = function(rawLinks, logData) {
+    log.functionCall(SERVICE, 'extractLinks (private)', logData.parentProcess, logData.username, {'rawLinks.length':(rawLinks)?rawLinks.length:'invalid'});
+
+    var links = new Array();
+    for(var i = 0; i < rawLinks.length; i++) {
+      links.push(rawLinks[i].url);
+    }
+    return links;
+  };
+
+  var extractMentionScreenNames = function(mentions, logData) {
+    log.functionCall(SERVICE, 'extractMentionScreenNames (private)', logData.parentProcess, logData.username, {'mentions.length':(mentions)?mentions.length:"invalid"});
+
+    var screenNames = new Array();
+    for(var i = 0; i < mentions.length; i++) {
+      screenNames.push(mentions[i].screen_name);
+    }
+    return screenNames;
+  };
 
   // Loop through data and extract tweets
   var extractTweets = function(data, checkClassification, logData) {

@@ -37,40 +37,26 @@
 
   // Schema declaration
   var TWITTER_TWEET = Mongoose.Schema({
-    twitterId: String,
-    tweetId: String,
-    name: String,
-    screenName: String,
     avatarImageSrc: String,
-    text: String,
     classification: String,
     classificationGlyphicon: String,
+    date: String,
+    experience: Number,
+    favoriteCount: Number,
+    hashtags: [String],
+    links: [String],
     media: [{
       url: String,
       width: Number,
       height: Number
     }],
-    date: String,
-    experience: Number,
+    mentions: [String], // Screen Name
+    name: String,
     retweetCount: Number,
-    favoriteCount: Number,
-    mentions: [{
-      screen_name: String,
-      name: String,
-      id: Number,
-      id_str: String,
-      indices:[Number]
-    }],
-    hashtags: [{
-      text: String,
-      indices: [Number]
-    }],
-    links: [{
-      url: String,
-      expanded_url: String,
-      display_url: String,
-      indices: [Number]
-    }]
+    screenName: String,
+    text: String,
+    tweetId: String,
+    twitterId: String
   });
 
   /***************************************************************************/
