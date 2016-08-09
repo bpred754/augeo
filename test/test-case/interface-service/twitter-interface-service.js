@@ -118,7 +118,7 @@
     Assert.strictEqual(extractedTweetWithMention.retweetCount, 0);
     Assert.strictEqual(extractedTweetWithMention.favoriteCount, 0);
     Assert.strictEqual(extractedTweetWithMention.mentions.length, 1);
-    Assert.strictEqual(extractedTweetWithMention.mentions[0].screen_name, Common.ACTIONEE_TWITTER.screenName);
+    Assert.strictEqual(extractedTweetWithMention.mentions[0], Common.ACTIONEE_TWITTER.screenName);
     Assert.strictEqual(extractedTweetWithMention.hashtags.length, 0);
     Assert.strictEqual(extractedTweetWithMention.links.length, 0);
     Assert.strictEqual(extractedTweetWithMention.media.url,'');
@@ -140,7 +140,7 @@
     Assert.strictEqual(extractedTweetWithHashtag.favoriteCount, 0);
     Assert.strictEqual(extractedTweetWithHashtag.mentions.length, 0);
     Assert.strictEqual(extractedTweetWithHashtag.hashtags.length, 1);
-    Assert.strictEqual(extractedTweetWithHashtag.hashtags[0].text, 'augeoBusiness');
+    Assert.strictEqual(extractedTweetWithHashtag.hashtags[0], 'augeoBusiness');
     Assert.strictEqual(extractedTweetWithHashtag.links.length, 0);
     Assert.strictEqual(extractedTweetWithHashtag.media.url,'');
     Assert.strictEqual(extractedTweetWithHashtag.media.height,0);
@@ -160,10 +160,10 @@
     Assert.strictEqual(extractedRetweet.retweetCount, 0);
     Assert.strictEqual(extractedRetweet.favoriteCount, 0);
     Assert.strictEqual(extractedRetweet.mentions.length, 1);
-    Assert.strictEqual(extractedRetweet.mentions[0].screen_name, 'Gizmodo');
+    Assert.strictEqual(extractedRetweet.mentions[0], 'Gizmodo');
     Assert.strictEqual(extractedRetweet.hashtags.length, 0);
     Assert.strictEqual(extractedRetweet.links.length, 1);
-    Assert.strictEqual(extractedRetweet.links[0].url, 'http://t.co/oIyRqJ2jcv');
+    Assert.strictEqual(extractedRetweet.links[0], 'http://t.co/oIyRqJ2jcv');
     Assert.strictEqual(extractedRetweet.media.url, 'https://pbs.twimg.com/media/CBNbTEUW8AA5Yxj.jpg:large');
     Assert.strictEqual(extractedRetweet.media.height, 150);
     Assert.strictEqual(extractedRetweet.media.width, 150);
