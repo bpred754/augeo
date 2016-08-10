@@ -90,29 +90,8 @@
     }); // End findTweet
   };
 
-  // Add mentions and their respective tweets to the given user
-  exports.addMentions = function(userId, screenName, userMentionTweets, userMentions, logData, callback) {
-    log.functionCall(SERVICE, 'addMentions', logData.parentProcess, logData.username, {'userId':userId,'screenName':screenName,
-      'userMentionTweets':(userMentionTweets)?userMentionTweets.length:'invalid', 'userMentions':(userMentions)?userMentions.length:'invalid'});
-
-    // Add the user's mentionTweets to the TWEET table
-    Tweet.addTweets(userMentionTweets, logData, function() {}); // End addTweets
-
-    // Add the user's mentions to the Mention table
-    Mention.addMentions(userMentions, logData, function() {}); // End addMentions
-
-    // Calculate experience from the user's mentionTweets
-    var isMention = true;
-    var twitterExperience = calculateTwitterExperience(userMentionTweets, screenName, isMention, logData);
-
-    // Update user's experience
-    User.updateSkillData(userId, twitterExperience, logData, function() {
-      callback();
-    }); // End updateSkillData
-  };
-
   // Add tweets to the given user
-  exports.addTweets = function(userId, screenName, userTweets, logData, callback) {
+  exports.addTweets = function(userId, screenName, userTweets, areMentions, logData, callback) {
     log.functionCall(SERVICE, 'addTweets', logData.parentProcess, logData.username, {'userId':userId, 'screenName':screenName,
       'userTweets':(userTweets)?userTweets.length:'invalid'});
 
@@ -120,7 +99,7 @@
     Tweet.addTweets(userTweets, logData, function() {}); // End addTweets
 
     // Determine experience from tweets
-    var twitterExperience = calculateTwitterExperience(userTweets, screenName, null, logData);
+    var twitterExperience = calculateTwitterExperience(userTweets, screenName, areMentions, logData);
 
     // Update user's experience
     User.updateSkillData(userId, twitterExperience, logData, function() {
@@ -225,12 +204,9 @@
             };
 
             if(userData.twitter) {
-              Mention.getMentions(userData.twitter.screenName, logData, function(mentionTweetIds) {
-                Tweet.getSkillActivity(userData.twitter.screenName, mentionTweetIds, null, 10, null, logData, function(tweets) {
-
-                  displayData.recentActions = TwitterUtility.transformUserDisplayExperience(tweets, mentionTweetIds, logData);
-                  callback(displayData);
-                });
+              Tweet.getSkillActivity(userData.twitter.screenName, null, 10, null, logData, function(tweets) {
+                displayData.recentActions = TwitterUtility.transformUserDisplayExperience(userData.twitter.screenName, tweets, logData);
+                callback(displayData);
               });
             } else {
               callback(displayData);
@@ -318,17 +294,14 @@
         if(user) {
           var screenName = user.twitter.screenName;
           if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isNumberValid(tweetId, logData)) {
+            Tweet.getSkillActivity(screenName, skill, ACTIVITY_PER_PAGE, tweetId, logData, function (tweets) {
 
-            Mention.getMentions(screenName, logData, function (mentionTweetIds) {
-              Tweet.getSkillActivity(screenName, mentionTweetIds, skill, ACTIVITY_PER_PAGE, tweetId, logData, function (tweets) {
+              // Set callback data
+              var data = {
+                activity: TwitterUtility.transformUserDisplayExperience(screenName, tweets, logData)
+              };
 
-                // Set callback data
-                var data = {
-                  activity: TwitterUtility.transformUserDisplayExperience(tweets, mentionTweetIds, logData)
-                };
-
-                callback(data);
-              });
+              callback(data);
             });
           } else {
            rollback(404, 'Invalid skill or tweetId');
@@ -510,8 +483,6 @@
 
       // Get tweetId to update tweets's experience
       tweetId = action.replyId;
-
-      Mention.addMention(mention, logData, function() {});
     } // End reply to else
 
     // Update actionee's Tweet experience

@@ -89,24 +89,12 @@
   };
 
   // Transforms mention display experience so only the specified user's experience is reflected
-  exports.transformUserDisplayExperience = function(tweets, mentionTweetIds, logData) {
-    log.functionCall(UTILITY, 'updateUserDisplayExperience', logData.parentProcess, logData.username, {'tweets':(tweets)?'defined':'invalid',
-      'mentionTweetIds':(mentionTweetIds)?'defined':'invalid'});
+  exports.transformUserDisplayExperience = function(screenName, tweets, logData) {
+    log.functionCall(UTILITY, 'updateUserDisplayExperience', logData.parentProcess, logData.username, {'screenName':screenName,'tweets':(tweets)?'defined':'invalid'});
 
     for(var i = 0; i < tweets.length; i++) {
       var tweet = tweets[i];
-
-      var isMention = false;
-      for(var j = 0; j < mentionTweetIds.length; j++) {
-        var mentionTweetId = mentionTweetIds[j];
-
-        if(mentionTweetId == tweet.tweetId) {
-          isMention = true;
-          break;
-        }
-      }
-
-      if(isMention == true) {
+      if(screenName != tweet.screenName) {
         tweet.experience = exports.MENTION_EXPERIENCE;
       }
     }

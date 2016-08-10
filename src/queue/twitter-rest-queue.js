@@ -74,7 +74,6 @@
     self.mentionRequestOpen = true;
     self.mentionMessenger;
     self.userMentionTweets;
-    self.userMentions;
 
     self.tweetRequestOpen = true;
     self.tweetMessenger;
@@ -99,7 +98,7 @@
             }
           } else {
             if(queueData.onIteration) {
-              queueData.onIteration(self.userMentionTweets, self.userMentions);
+              queueData.onIteration(self.userMentionTweets);
             }
           }
           callback();
@@ -348,16 +347,14 @@
     if(isNewUser === true) {
       self.mentionMessenger = TwitterInterfaceService.createTwitterMessenger(queueData.accessToken, queueData.secretAccessToken, logData);
       self.userMentionTweets = new Array();
-      self.userMentions = new Array();
     }
 
     // Get Mentions
-    TwitterInterfaceService.getMentions(self.mentionMessenger, screenName, logData, function(error, mentionTweets, mentions) {
+    TwitterInterfaceService.getMentions(self.mentionMessenger, screenName, logData, function(error, mentionTweets) {
       log.functionCall(QUEUE, 'getUserMentions (private)', logData.parentProcess, logData.username,
-        {'error':error,'mentionTweets.length':(mentionTweets)?mentionTweets.length:'invalid', 'mentions.length':(mentions)?mentions.length:'invalid'},
-        'Received tweets from Twitter');
+        {'error':error,'mentionTweets.length':(mentionTweets)?mentionTweets.length:'invalid'}, 'Received tweets from Twitter');
 
-      if(mentions.length == 0) {
+      if(mentionTweets.length == 0) {
 
         // Set current mentions userId to null
         self.currentMentionUserId = null;
@@ -365,7 +362,6 @@
         // Reset global variables
         self.mentionMessenger = null;
         self.userMentionTweets = null;
-        self.userMentions = null;
 
         callback();
         return;
@@ -383,10 +379,9 @@
       // Remove first element from mentionTweets if a tweet id was passed in
       if(tweetId) {
         mentionTweets = AugeoUtility.trimArray(mentionTweets, logData);
-        mentions = AugeoUtility.trimArray(mentions, logData);
       }
 
-      // Push mentionTweets and mentions into mentionTweets and mentions respectively
+      // Push mentionTweets into mentionTweets
       var isMinMentionFound = false;
       for(var i = 0; i < mentionTweets.length;i++) {
         if(mentionTweets[i].tweetId == queueData.minMentionTweetId) {
@@ -394,7 +389,6 @@
           break;
         } else {
           self.userMentionTweets.push(mentionTweets[i])
-          self.userMentions.push(mentions[i]);
         }
       }
 
@@ -414,12 +408,12 @@
         // Set current mentions userId to null
         self.currentMentionUserId = null;
 
-        TwitterService.addMentions(userId, screenName, self.userMentionTweets, self.userMentions, logData, function() {
+        var areMentions = true;
+        TwitterService.addTweets(userId, screenName, self.userMentionTweets, areMentions, logData, function() {
 
           // Reset global variables
           self.mentionMessenger = null;
           self.userMentionTweets = null;
-          self.userMentions = null;
 
           UserService.updateAllRanks(logData, callback);
         });
@@ -505,7 +499,8 @@
         // Set current tweet userId to null
         self.currentTweetUserId = null;
 
-        TwitterService.addTweets(userId, screenName, self.userTweets, logData, function() {
+        var areMentions = false;
+        TwitterService.addTweets(userId, screenName, self.userTweets, areMentions, logData, function() {
 
           // Reset global variables
           self.tweetMessenger = null;

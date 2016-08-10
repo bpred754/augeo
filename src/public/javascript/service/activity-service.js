@@ -37,9 +37,15 @@
         // Convert twitter mentions into href links
         for(var j = 0; j < mentions.length; j++) {
           var mention = mentions[j];
-          html = html.replace('@' + mention, '<a href="https://www.twitter.com/' + mention + '" class="clickable" style="color:#0084B4" target="_blank">' + '@' + mention + '</a>');
+          if(mention != tweet.screenName) {
+            html = html.replace('@' + mention, '<a href="https://www.twitter.com/' + mention + '" class="clickable" style="color:#0084B4" target="_blank">' + '@' + mention + '</a>');
+          }
         }
       }
+
+      // Replace all instances of tweet's screen name with a link
+      var screenName = tweet.screenName;
+      html = html.replace('@' + screenName, '<a href="https://www.twitter.com/' + screenName + '" class="clickable" style="color:#0084B4" target="_blank">' + '@' + screenName + '</a>');
 
       // Check if tweet contains hashtags
       if(tweet.hashtags.length > 0) {

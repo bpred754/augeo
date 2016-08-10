@@ -77,32 +77,6 @@
     }
   };
 
-  // Extract desired information from mentions
-  exports.extractMentionData = function(data, screenName, logData) {
-    log.functionCall(SERVICE,'extractMentionData',logData.parentProcess, logData.username, {'data.length':(data)?data.length:'invalid',
-      'screenName':screenName});
-
-    var mentioneesArray = new Array();
-
-    for(var i = 0; i < data.length; i++) {
-      var mentionees = data[i].entities.user_mentions;
-
-      for(var j = 0; j < mentionees.length; j++) {
-
-        if(screenName == mentionees[j].screen_name) {
-          var mentioneeData = {
-            mentioneeScreenName: mentionees[j].screen_name,
-            tweetId:data[i].id_str
-          };
-
-          mentioneesArray.push(mentioneeData);
-        }
-      }
-    }
-
-    return mentioneesArray;
-  };
-
   // Extract reply data from tweet
   exports.extractReply = function(tweet, logData) {
     log.functionCall(SERVICE,'extractReply',logData.parentProcess, logData.username, {'tweet.id_str':(tweet)?tweet.id_str:'invalid'});
@@ -163,7 +137,7 @@
       experience: tweetExperience,
       retweetCount: retweetCount,
       favoriteCount: favoriteCount,
-      mentions: extractMentionScreenNames(data.entities.user_mentions, logData),
+      mentions: extractMentionScreenNames(data.user.screen_name, data.entities.user_mentions, data.retweeted_status, logData),
       hashtags: extractHashtags(data.entities.hashtags, logData),
       links: extractLinks(data.entities.urls, logData),
       media:{
@@ -199,19 +173,17 @@
     TwitterInterface.getMentions(twitterMessenger, logData, function(error, mentionData, response) {
 
       // Extract relevant data from Twitter's tweet results
-      var hasError = false
+      var hasError = false;
       var mentionTweets = null;
-      var mentions = null;
 
       if(error) {
-        mentionTweets = mentionData // set tweets to error message from twit library
+        mentionTweets = mentionData; // set tweets to error message from twit library
         hasError = true;
       } else {
         mentionTweets = extractTweets(mentionData, false, logData);
-        mentions = exports.extractMentionData(mentionData, screenName, logData);
       }
 
-      callback(hasError, mentionTweets, mentions);
+      callback(hasError, mentionTweets);
 
     }, tweetId);
   };
@@ -291,7 +263,7 @@
           screenName: screenName,
           profileImageUrl: profileImageUrl,
           profileIcon: url
-        }
+        };
         callback(userData);
       } else {
         rollback('Response from Twitter does not contain user data');
@@ -340,12 +312,21 @@
     return links;
   };
 
-  var extractMentionScreenNames = function(mentions, logData) {
-    log.functionCall(SERVICE, 'extractMentionScreenNames (private)', logData.parentProcess, logData.username, {'mentions.length':(mentions)?mentions.length:"invalid"});
+  var extractMentionScreenNames = function(screenName, mentions, isRetweet, logData) {
+    log.functionCall(SERVICE, 'extractMentionScreenNames (private)', logData.parentProcess, logData.username, {'screenName':screenName,
+      'mentions.length':(mentions)?mentions.length:"invalid", 'isRetweet':(isRetweet)?'true':'false'});
 
     var screenNames = new Array();
     for(var i = 0; i < mentions.length; i++) {
-      screenNames.push(mentions[i].screen_name);
+
+      var isValid = true;
+      if(isRetweet && screenName == mentions[i].screen_name) {
+        isValid = false;
+      }
+
+      if(isValid) {
+        screenNames.push(mentions[i].screen_name);
+      }
     }
     return screenNames;
   };

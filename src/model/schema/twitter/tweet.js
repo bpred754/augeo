@@ -105,39 +105,30 @@
     });
   };
 
-  TWITTER_TWEET.statics.getSkillActivity = function(screenName, tweetIds, skill, limit, maxTweetId, logData, callback) {
+  TWITTER_TWEET.statics.getSkillActivity = function(screenName, skill, limit, maxTweetId, logData, callback) {
 
     if(!maxTweetId) {
       maxTweetId = '9999999999999999999999999999999';
     }
 
-    var query = {};
-    if(tweetIds != null) {
-      query = {
-        $or : [
-          {
-            $and :[
-              {screenName: screenName},
-              {tweetId : {$lt: maxTweetId}}
-            ]
-          },
-          {
-            $and :[
-              {tweetId: {$in: tweetIds}},
-              {tweetId: {$lt: maxTweetId}}
-            ]
-          }
-        ]
-      };
-
-    } else {
-      query = {
-        $and :[
-          {screenName: screenName},
-          {tweetId : {$lt: maxTweetId}},
-        ]
-      };
-    }
+    var query = {
+      $and:[
+        {
+          tweetId: {$lt: maxTweetId},
+          $or: [
+            {
+              mentions:{
+                $elemMatch:{
+                  $eq: screenName
+                }
+              }
+            }, {
+              screenName:screenName
+            }
+          ]
+        }
+      ]
+    };
 
     if(skill && skill != 'Augeo') {
       query.classification = skill;
@@ -145,7 +136,7 @@
 
     var options = {
       sort: {'tweetId': -1}
-    }
+    };
 
     if(limit) {
       options.limit = limit
@@ -156,8 +147,8 @@
          log.functionError(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
            'Failed to retrieve ' + screenName + ' tweets for skill:' + skill + '. Error: ' + error);
        } else {
-         log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username, {'screenName':screenName,
-           'tweetIds':(tweetIds)?'defined':'invalid','skill':skill,'maxTweetId':maxTweetId});
+         log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
+             {'screenName':screenName, 'skill':skill,'maxTweetId':maxTweetId});
          callback(tweets);
        }
      });
