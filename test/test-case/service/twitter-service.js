@@ -203,7 +203,7 @@
     this.timeout(Common.TIMEOUT);
 
     var twitterMessenger = {};
-    TwitterInterfaceService.getMentions(twitterMessenger, Common.USER_TWITTER.screenName, Common.logData, function(error, mentionTweets, mentions) {
+    TwitterInterfaceService.getMentions(twitterMessenger, Common.logData, function(error, mentionTweets) {
 
       var tweetIDs = new Array();
       for(var i = 0; i < mentionTweets.length; i++) {

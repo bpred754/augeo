@@ -174,7 +174,7 @@
   it('should return list of extracted mentions from the test database -- getMentions()', function(done) {
 
     var twitterMessenger = {};
-    TwitterInterfaceService.getMentions(twitterMessenger, Common.USER_TWITTER.screenName, Common.logData, function(error, mentionTweets, mentions) {
+    TwitterInterfaceService.getMentions(twitterMessenger, Common.logData, function(error, mentionTweets) {
       Assert.strictEqual(error, false);
 
       Assert.strictEqual(mentionTweets.length, Data.RETRIEVE_LIMIT);

@@ -165,9 +165,8 @@
   };
 
   // Get twitter mentions from Twitter for user
-  exports.getMentions = function(twitterMessenger, screenName, logData, callback, tweetId) {
-    log.functionCall(SERVICE,'getMentions', logData.parentProcess, logData.username, {'twitterMessenger':(twitterMessenger)?'defined':'invalid',
-      'screenName':screenName});
+  exports.getMentions = function(twitterMessenger, logData, callback, tweetId) {
+    log.functionCall(SERVICE,'getMentions', logData.parentProcess, logData.username, {'twitterMessenger':(twitterMessenger)?'defined':'invalid'});
 
     // Get Mentions
     TwitterInterface.getMentions(twitterMessenger, logData, function(error, mentionData, response) {

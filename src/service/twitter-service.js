@@ -108,7 +108,6 @@
   exports.addUserSecretToken = function(userId, secretToken, logData, callback, rollback) {
     log.functionCall(SERVICE, 'addUserSecretToken', logData.parentProcess, logData.username, {'userId':userId, 'secretToken':secretToken});
 
-
     TwitterUser.add(userId, secretToken, logData, function(success) {
       if(success) {
         callback();
