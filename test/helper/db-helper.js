@@ -32,7 +32,6 @@
 
   // Global variables
   var AugeoUser = AugeoDB.model('AUGEO_USER');
-  var Mention = AugeoDB.model('TWITTER_MENTION');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
 
@@ -71,20 +70,10 @@
     }, function(){console.log('Twitter Helper -- Failed to add user')});
   };
 
-  exports.cleanMentions = function(callback) {
-    Mention.removeMentions('testScreenName', Common.logData, function() {
-      Mention.removeMentions('twitterActionee', Common.logData, function() {
-        callback();
-      });
-    });
-  };
-
   exports.cleanAugeoDB = function(callback) {
     exports.cleanTweets(function() {
-      exports.cleanMentions(function() {
-        exports.cleanUsers(function(){
-          callback()
-        });
+      exports.cleanUsers(function(){
+        callback()
       });
     });
   };

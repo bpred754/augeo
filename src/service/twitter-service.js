@@ -42,10 +42,8 @@
   require('../model/schema/augeo/user');
   require('../model/schema/twitter/tweet');
   require('../model/schema/twitter/user');
-  require('../model/schema/twitter/mention');
 
   // Global variables
-  var Mention = AugeoDB.model('TWITTER_MENTION');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
   var User = AugeoDB.model('AUGEO_USER');
@@ -228,7 +226,7 @@
   exports.getLatestMentionTweetId = function(screenName, logData, callback) {
     log.functionCall(SERVICE, 'getLatestMentionTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
 
-    Mention.getLatestMentionTweetId(screenName, logData, callback);
+    Tweet.getLatestMentionTweetId(screenName, logData, callback);
   };
 
   exports.getLatestTweetId = function(screenName, logData, callback) {

@@ -40,7 +40,6 @@
   require('./model/schema/augeo/user');
   require('./model/schema/twitter/tweet');
   require('./model/schema/twitter/user');
-  require('./model/schema/twitter/mention');
 
   // Required local modules
   var AugeoApi = require('./api/augeo-api');

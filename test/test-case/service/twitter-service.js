@@ -33,10 +33,8 @@
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
   var TwitterService = require('../../../src/service/twitter-service');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
-  var UserService = require('../../../src/service/user-service');
 
   // Global variables
-  var Mention = AugeoDB.model('TWITTER_MENTION');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var User = AugeoDB.model('AUGEO_USER');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
@@ -150,8 +148,8 @@
                 Assert.strictEqual(returnedTweet1[0].experience, TwitterUtility.TWEET_EXPERIENCE);
                 experience += returnedTweet1[0].experience;
 
-                Mention.getMention(tweet1.tweetId, Common.logData, function(returnedMention0) {
-                  Assert.strictEqual(returnedMention0[0].mentioneeScreenName, Common.USER_TWITTER.screenName);
+                Tweet.findTweet(tweet1.tweetId, Common.logData, function(returnedMention0) {
+                  returnedMention0[0].mentions.indexOf(Common.USER_TWITTER.screenName).should.be.above(-1);
 
                   // Verify experience was added to twitter skill
                   User.getUserWithUsername(Common.USER.username, Common.logData, function(user2) {
@@ -218,50 +216,26 @@
         mentionTweets[i].name = Common.ACTIONEE.fullName;
       }
 
-      // Count how many mentions are for Test Tester
-      var count = 0;
-      var mentionIDs = new Array();
-      var filteredMentions = new Array();
-      for(var i = 0; i < mentions.length; i++) {
-        if(mentions[i].mentioneeScreenName === Common.USER_TWITTER.screenName) {
-          mentionIDs.push(mentions[i].tweetId);
-          filteredMentions.push(mentions[i]); // Filter mentions so DB is easier to clean up
-          count++;
-        }
-      }
-
       TwitterUser.getUserWithScreenName(Common.USER_TWITTER.screenName, Common.logData, function(userBefore) {
         var initialExperience = userBefore.skill.experience;
-        TwitterService.addMentions(userBefore._id, Common.USER_TWITTER.screenName, mentionTweets, filteredMentions, Common.logData, function() {
+        TwitterService.addTweets(userBefore._id, Common.USER_TWITTER.screenName, mentionTweets, true, Common.logData, function() {
           TwitterUser.getUserWithScreenName(Common.USER_TWITTER.screenName, Common.logData, function(userAfter) {
-            Assert.strictEqual(userAfter.skill.experience, initialExperience + count * TwitterUtility.MENTION_EXPERIENCE);
+            Assert.strictEqual(userAfter.skill.experience, initialExperience + tweetIDs.length * TwitterUtility.MENTION_EXPERIENCE);
 
             // Asynchronous method calls in loop - Using Recursion
-            (function checkMentions(i) {
-              Mention.getMention(mentionIDs[i], Common.logData, function(returnedMention) {
-                Assert.ok(returnedMention);
-                returnedMention.length.should.be.above(0);
-                i++;
-                if(i < mentionIDs.length) {
-                  checkMentions(i);
-                } else {
-                  checkTweets(0);
-                }
-              });
-            })(0); // Pass i as 0
-
-            function checkTweets(j) {
-              Tweet.findTweet(tweetIDs[j], Common.logData, function(returnedTweet) {
+            // Verify tweets are in database
+            (function checkTweets(i) {
+              Tweet.findTweet(tweetIDs[i], Common.logData, function(returnedTweet) {
                 Assert.ok(returnedTweet);
                 returnedTweet.length.should.be.above(0);
-                j++;
-                if(j < tweetIDs.length) {
-                  checkTweets(j);
+                i++;
+                if(i < tweetIDs.length) {
+                  checkTweets(i);
                 } else {
                   done();
                 }
               });
-            };
+            })(0); // Pass i as 0
           });
         });
       });
@@ -296,7 +270,7 @@
           initialSubSkillExperiences[i] = userBefore.subSkills[i].experience;
         }
 
-        TwitterService.addTweets(userBefore._id, Common.USER_TWITTER.screenName, tweets, Common.logData, function() {
+        TwitterService.addTweets(userBefore._id, Common.USER_TWITTER.screenName, tweets, false, Common.logData, function() {
           User.getUserWithUsername(Common.USER.username, Common.logData, function(userAfter) {
 
             // Verify Twitter experience is updated

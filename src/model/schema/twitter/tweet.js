@@ -86,6 +86,26 @@
     });
   };
 
+  TWITTER_TWEET.statics.getLatestMentionTweetId = function(screenName, logData, callback) {
+    this.find({mentions:{$elemMatch:{$eq: screenName}}},{},{sort:{'tweetId':-1},limit:1}).lean().exec(function(error, data) {
+
+      if(error) {
+        log.functionError(COLLECTION, 'getLatestMentionTweetId', logData.parentProcess, logData.username,
+          'Failed to find tweet with max mention tweetId for user:' + screenName + '. Error: ' + error);
+      } else {
+        log.functionCall(COLLECTION, 'getLatestMentionTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
+
+        var latestTweetId;
+        if(data[0]) {
+          log.functionCall(COLLECTION, 'getLatestMentionTweetId', logData.parentProcess, logData.username, {'screenName':screenName},
+            'Latest Mention TweetId: ' + data[0].tweetId);
+          latestTweetId = data[0].tweetId;
+        }
+        callback(latestTweetId);
+      }
+    });
+  };
+
   TWITTER_TWEET.statics.getLatestTweetId = function(screenName, logData, callback) {
     this.find({screenName:screenName},{},{sort:{'tweetId':-1},limit:1}).lean().exec(function(error, data) {
 
@@ -103,6 +123,17 @@
         callback(latestTweetId);
       }
     });
+  };
+
+  TWITTER_TWEET.statics.getMentionCount = function(screenName, logData, callback) {
+    this.count({mentions:{$elemMatch:{$eq: screenName}}}, function(error, count) {
+      if(error) {
+        log.functionError(COLLECTION, 'getMentionCount', logData.parentProcess, logData.username, 'Failed to retrieve mention count. ' + error);
+      } else {
+        log.functionCall(COLLECTION, 'getMentionCount', logData.parentProcess, logData.username, {'screenName': screenName});
+        callback(count);
+      }
+    })
   };
 
   TWITTER_TWEET.statics.getSkillActivity = function(screenName, skill, limit, maxTweetId, logData, callback) {
@@ -199,13 +230,13 @@
     });
   };
 
-  TWITTER_TWEET.statics.removeTweetsWithMentionee = function(mentioneeScreenName, logData, callback) {
-    this.remove({mentions: {$elemMatch: {screen_name:mentioneeScreenName}}}, function(error) {
+  TWITTER_TWEET.statics.removeTweetsWithMentionee = function(screenName, logData, callback) {
+    this.remove({mentions:{$elemMatch:{$eq: screenName}}}, function(error) {
       if(error) {
         log.functionError(COLLECTION, 'removeTweetsWithMentionee', logData.parentProcess, logData.username,
           'Failed to remove tweets for screenName: ' + screenName + '. Error: ' + error);
       } else {
-        log.functionCall(COLLECTION, 'removeTweetsWithMentionee', logData.parentProcess, logData.username, {'mentioneeScreenName':mentioneeScreenName});
+        log.functionCall(COLLECTION, 'removeTweetsWithMentionee', logData.parentProcess, logData.username, {'screenName':screenName});
       }
       callback();
     });

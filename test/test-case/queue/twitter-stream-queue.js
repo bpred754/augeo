@@ -33,7 +33,6 @@
   var TwitterUtility = require('../../../src/utility/twitter-utility');
 
   // Global variables
-  var Mention = AugeoDB.model('TWITTER_MENTION');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var User = AugeoDB.model('AUGEO_USER');
   var streamQueue = new TwitterStreamQueue();
@@ -96,8 +95,8 @@
             Assert.strictEqual(Common.rawMentionOfTestUser.id_str, rawMentionOfTestUser[0].tweetId);
 
             // Verify mention is in database
-            Mention.findMention(Common.rawMentionOfTestUser.entities.user_mentions[0].screen_name, Common.rawMentionOfTestUser.id_str, Common.logData, function(mention) {
-              Assert.strictEqual(Common.rawMentionOfTestUser.id_str, mention[0].tweetId);
+            Tweet.findTweet(Common.rawMentionOfTestUser.id_str, Common.logData, function(mention) {
+              mention[0].mentions.indexOf(Common.USER_TWITTER.screenName).should.be.above(-1);
 
               // Get after experience for User and Actionee
               User.getUserWithEmail(Common.USER.email, Common.logData, function(userAfter) {

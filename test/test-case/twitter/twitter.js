@@ -75,16 +75,15 @@
     TwitterInterface.getMentions(messenger, Common.logData, function(error, data, response) {
 
       data.length.should.be.above(0);
-
-      var mentions = TwitterInterfaceService.extractMentionData(data, process.env.TWITTER_SCREEN_NAME, Common.logData);
-
-      Assert.strictEqual(data.length, mentions.length);
-
-      for(var i = 0; i < mentions.length; i++) {
-        Assert.strictEqual(mentions[i].mentioneeScreenName, process.env.TWITTER_SCREEN_NAME);
-        mentions[i].tweetId.length.should.be.above(0);
+      for(var i = 0; i < data.length; i++) {
+        var isValid = false;
+        for(var j = 0; j < data[i].entities.user_mentions.length; j++) {
+          if(data[i].entities.user_mentions[j].screen_name == process.env.TWITTER_SCREEN_NAME) {
+            isValid = true;
+          }
+        }
+        Assert.strictEqual(true, isValid);
       }
-
       done();
     });
   });

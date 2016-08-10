@@ -186,16 +186,6 @@
         tweet.mentions.length.should.be.above(0);
       }
 
-      for(var i = 0; i < mentions.length; i++) {
-        var mention = mentions[i];
-        // mentioneeScreenName
-        Assert.strictEqual(typeof mention.mentioneeScreenName, 'string');
-        mention.mentioneeScreenName.length.should.be.above(1);
-        // tweetId
-        Assert.strictEqual(typeof mention.tweetId, 'string');
-        mention.tweetId.length.should.be.above(1);
-      }
-
       done();
     });
   });
