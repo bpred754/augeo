@@ -163,8 +163,7 @@
     });
 
     stream.on('delete', function(deleteMessage) {
-      log.functionCall(INTERFACE, 'openStream - delete', logData.parentProcess, logData.username, {'deleteMessage.user.id_str':(deleteMessage)?deleteMessage.user.id_str:'invalid'},
-        'Received delete request from Twitter');
+      log.functionCall(INTERFACE, 'openStream - delete', logData.parentProcess, logData.username, {}, 'Received delete request from Twitter');
 
       // TODO: Complete remove logic
       // removeCallback(deleteMessage);
