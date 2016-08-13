@@ -1,0 +1,80 @@
+
+    <!-------------------------------------------------------------------------->
+    <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+    <!-- to classify a user's internet activity into different 'skills'.      -->
+    <!-- Copyright (C) 2016 Brian Redd                                        -->
+    <!--                                                                      -->
+    <!-- This program is free software: you can redistribute it and/or modify -->
+    <!-- it under the terms of the GNU General Public License as published by -->
+    <!-- the Free Software Foundation, either version 3 of the License, or    -->
+    <!-- (at your option) any later version.                                  -->
+    <!--                                                                      -->
+    <!-- This program is distributed in the hope that it will be useful,      -->
+    <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+    <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+    <!-- GNU General Public License for more details.                         -->
+    <!--                                                                      -->
+    <!-- You should have received a copy of the GNU General Public License    -->
+    <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+    <!-------------------------------------------------------------------------->
+
+    <div class="tat-container">
+        <div class="tat-head-container">
+            <div class="tat-center">
+                <div class="tat-avatar-container">
+                    <div ng-if="screenName != tweet.screenName" class="tat-avatar-image-container">
+                        <a href="https://twitter.com/{{tweet.screenName}}" target="_blank">
+                            <img src="{{tweet.avatarImageSrc}}" class="tat-avatar-image"/>
+                        </a>
+                    </div>
+                    <a href="https://twitter.com/{{tweet.screenName}}" target="_blank" class="large-text tat-avatar-text tat-name">{{tweet.name}}</a>
+                    <a href="https://twitter.com/{{tweet.screenName}}" target="_blank" class="standard-text text-secondary tat-avatar-text tat-screen-name">@{{tweet.screenName}}</a>
+                </div>
+                <div class="tat-experience-container">
+                    <div class="tat-experience-inner-container">
+                        <div class="large-text tat-experience">+{{activity.experience}}</div>
+                        <div class="glyphicon {{activity.classificationGlyphicon}} tat-classification"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tat-text-container">
+            <div class="standard-text text-align-center" ng-bind-html="tweet.text | html"></div>
+            <div class="tat-image-container" ng-if="tweet.media">
+                <a href="https://twitter.com/statuses/{{tweet.tweetId}}" target="_blank" ng-repeat="media in tweet.media" ng-if="media.url">
+                    <img src="{{activity.data.formatMedia()}}" class="tat-image"/>
+                </a>
+            </div>
+        </div>
+        <div class="tat-footer-container">
+            <div class="height-100 text-align-center">
+                <div class="tat-footer">
+                    <div class="tat-date-container">
+                        <a class="small-text text-secondary" href="https://twitter.com/statuses/{{tweet.tweetId}}" target="_blank">{{activity.data.formatDate()}}</a>
+                    </div>
+                    <div class="tat-intent-container" ng-init="replySrc='image/twitter/default-reply.png'">
+                        <a href="https://twitter.com/intent/tweet?in_reply_to={{tweet.tweetId}}" target="_blank">
+                            <img src="{{replySrc}}" class="tat-intent" ng-mouseover="replySrc='image/twitter/reply-hover.png'" ng-mouseout="replySrc='image/twitter/default-reply.png'">
+                        </a>
+                    </div>
+                    <div class="tat-intent-container" ng-init="retweetSrc='image/twitter/default-retweet.png'">
+                        <a href="https://twitter.com/intent/retweet?tweet_id={{tweet.tweetId}}" target="_blank">
+                            <img src="{{retweetSrc}}" class="tat-intent" ng-mouseover="retweetSrc='image/twitter/retweet-hover.png'" ng-mouseout="retweetSrc='image/twitter/default-retweet.png'">
+                        </a>
+                    </div>
+                    <div class="tat-intent-count-container" ng-if="tweet.retweetCount > 0">
+                        <p class="small-text text-secondary tat-intent-count">{{tweet.retweetCount}}</p>
+                    </div>
+                    <div class="tat-intent-container" ng-init="favoriteSrc='image/twitter/default-favorite.png'">
+                        <a href="https://twitter.com/intent/favorite?tweet_id={{tweet.tweetId}}" target="_blank">
+                            <img src="{{favoriteSrc}}" class="tat-intent" ng-mouseover="favoriteSrc='image/twitter/favorite-hover.png'" ng-mouseout="favoriteSrc='image/twitter/default-favorite.png'">
+                        </a>
+                    </div>
+                    <div class="tat-intent-count-container" ng-if="tweet.favoriteCount > 0">
+                        <p class="small-text text-secondary tat-intent-count">{{tweet.favoriteCount}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+

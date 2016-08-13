@@ -1,4 +1,5 @@
 
+
   /***************************************************************************/
   /* Augeo.io is a web application that uses Natural Language Processing to  */
   /* classify a user's internet activity into different 'skills'.            */
@@ -19,26 +20,10 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Javascript for activity-transition directive               */
+  /* Description: Index file that requires all directives for browserify     */
   /***************************************************************************/
 
-  // Reminder: Update directive/index.js when directive params are modified
-  module.exports = function() {
-    return {
-      restrict: 'E',
-      scope: {
-        'tweetData': '=',
-        'visible': '=',
-        'screenName': '='
-      },
-      templateUrl: 'html/directive/activity-transition.html',
-      controller: "ActivityController",
-      link: function(scope, element, attributes) {
+  var augeo = require('angular').module('augeo');
 
-        scope.$watch('visible', function(val, oldVal) {
-          if(val === oldVal) return; // Skip initial call
-          element[val ? 'fadeIn' : 'fadeOut'](1000);
-        });
-      }
-    }
-  };
+  augeo.directive('twitterActivityCard', require('./twitter-activity-card'));
+  augeo.directive('twitterActivityTransition', require('./twitter-activity-transition'));

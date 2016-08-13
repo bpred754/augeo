@@ -33,14 +33,14 @@
           </div>
           <select id="skill-select" class="form-control standard-text">
             <option>Augeo</option>
-            <option ng-if="!invalidUser" ng-repeat="twitterSkill in twitterSkills">{{twitterSkill.name}}</option>
+            <option ng-if="!invalidUser" ng-repeat="skill in skills">{{skill.name}}</option>
           </select>
         </div>
       </div>
     </div> <!-- end header row -->
   </div> <!-- end header container -->
 
-  <div id="va-auth-container" ng-if="!User.twitter.screenName && username == User.username && !invalidUser">
+  <div id="va-auth-container" ng-if="!User.hasAuthentications && username == User.username && !invalidUser">
     <div>
       <p class="standard-text text-primary text-align-center">Authenticate with an interface to start tracking your Activity!</p>
       <div class="horizontal-center">
@@ -50,14 +50,14 @@
   </div>
 
   <div id="activity-wrap" class="container" ng-if="!invalidUser">
-    <ul ng-if="screenSize == 'large'" class="dynamic-grid" angular-grid="tweets" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
-      <li data-ng-repeat="tweet in tweets" class="w3-card-4 grid">
-        <activity-card tweet-data="tweet" is-card="true" screen-size="screenSize"></activity-card>
+    <ul ng-if="screenSize == 'large'" class="dynamic-grid" angular-grid="activities" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
+      <li data-ng-repeat="activity in activities" class="w3-card-4 grid">
+        <twitter-activity-card ng-if="activity.kind == 'TWITTER_TWEET'" activity="activity" is-card="true" screen-size="screenSize"></twitter-activity-card>
       </li>
     </ul>
     <div ng-if="screenSize != 'large'" class="activity-list" infinite-scroll="getNewPage()" infinite-scroll-distance="0">
-      <div ng-repeat="tweet in tweets" class="activity-list-card w3-card-4">
-        <activity-card tweet-data="tweet" is-card="true" screen-size="screenSize"></activity-card>
+      <div ng-repeat="activity in activities" class="activity-list-card w3-card-4">
+        <twitter-activity-card activity="activity" is-card="true" screen-size="screenSize"></twitter-activity-card>
       </div>
     </div>
   </div>

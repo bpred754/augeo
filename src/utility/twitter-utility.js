@@ -87,16 +87,3 @@
     }
     return experience;
   };
-
-  // Transforms mention display experience so only the specified user's experience is reflected
-  exports.transformUserDisplayExperience = function(screenName, tweets, logData) {
-    log.functionCall(UTILITY, 'updateUserDisplayExperience', logData.parentProcess, logData.username, {'screenName':screenName,'tweets':(tweets)?'defined':'invalid'});
-
-    for(var i = 0; i < tweets.length; i++) {
-      var tweet = tweets[i];
-      if(screenName != tweet.screenName) {
-        tweet.experience = exports.MENTION_EXPERIENCE;
-      }
-    }
-    return tweets;
-  };

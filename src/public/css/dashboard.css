@@ -76,6 +76,10 @@
     align-self:center
   }
 
+  #db-transition-container {
+    display:flex;
+  }
+
   .db-max-size {
     max-height:100%;
     max-width:100%;

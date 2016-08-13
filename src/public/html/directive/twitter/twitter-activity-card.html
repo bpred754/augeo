@@ -22,26 +22,26 @@
         <div class="activity-header-container">
             <div class="activity-header">
                 <div class="activity-avatar-container">
-                    <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank">
-                        <img src="{{tweetData.avatarImageSrc}}" class="activity-avatar"/>
+                    <a href="https://twitter.com/{{tweet.screenName}}" target="_blank">
+                        <img src="{{tweet.avatarImageSrc}}" class="activity-avatar"/>
                     </a>
                 </div>
                 <div class="activity-header-right">
                     <div class="activity-experience-container">
-                        <div class="large-text activity-experience">+{{tweetData.experience}}</div>
-                        <div class="glyphicon {{tweetData.classificationGlyphicon}} activity-classification"></div>
+                        <div class="large-text activity-experience">+{{activity.experience}}</div>
+                        <div class="glyphicon {{activity.classificationGlyphicon}} activity-classification"></div>
                     </div>
                 </div>
                 <div class="activity-name-container">
-                    <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank" ng-class="{'standard-text': screenSize == 'x-small', 'large-text': screenSize != 'x-small'}" class="text-primary activity-name">{{tweetData.name}}</a>
+                    <a href="https://twitter.com/{{tweet.screenName}}" target="_blank" ng-class="{'standard-text': screenSize == 'x-small', 'large-text': screenSize != 'x-small'}" class="text-primary activity-name">{{tweet.name}}</a>
                     <div>
-                        <a href="https://twitter.com/{{tweetData.screenName}}" target="_blank" class="small-text text-primary">@{{tweetData.screenName}}</a>
+                        <a href="https://twitter.com/{{tweet.screenName}}" target="_blank" class="small-text text-primary">@{{tweet.screenName}}</a>
                     </div>
                 </div>
             </div>
-            <div ng-class="{'small-text': screenSize == 'x-small', 'standard-text': screenSize != 'x-small'}" class="activity-text" ng-bind-html="tweetData.text | html"></div>
+            <div ng-class="{'small-text': screenSize == 'x-small', 'standard-text': screenSize != 'x-small'}" class="activity-text" ng-bind-html="tweet.text | html"></div>
         </div>
-        <a href="https://twitter.com/statuses/{{tweetData.tweetId}}" target="_blank" ng-repeat="media in tweetData.media" ng-if="media.url">
+        <a href="https://twitter.com/statuses/{{tweet.tweetId}}" target="_blank" ng-repeat="media in tweet.media" ng-if="media.url">
             <img src="{{media.url}}" ng-class="{'activity-grid-img': screenSize == 'large', 'activity-grid-img-ss': screenSize != 'large'}" data-actual-width="{{media.width}}"  data-actual-height="{{media.height}}"/>
         </a>
         <div class="activity-footer-container">
@@ -53,25 +53,25 @@
             <div class="activity-footer">
                 <div class="small-text activity-date-container">
                     <div class="activity-date">
-                        <a href="https://twitter.com/statuses/{{tweetData.tweetId}}" target="_blank" class="text-secondary" >{{tweetData.formatDate()}}</a>
+                        <a href="https://twitter.com/statuses/{{tweet.tweetId}}" target="_blank" class="text-secondary" >{{tweet.formatDate()}}</a>
                     </div>
                 </div>
                 <div class="activity-intent-container" ng-init="replySrc='image/twitter/default-reply.png'">
-                    <a href="https://twitter.com/intent/tweet?in_reply_to={{tweetData.tweetId}}" target="_blank">
+                    <a href="https://twitter.com/intent/tweet?in_reply_to={{tweet.tweetId}}" target="_blank">
                         <img src="{{replySrc}}" class="activity-intent" ng-mouseover="replySrc='image/twitter/reply-hover.png'" ng-mouseout="replySrc='image/twitter/default-reply.png'">
                     </a>
                 </div>
                 <div class="activity-intent-container" ng-init="retweetSrc='image/twitter/default-retweet.png'">
-                    <a href="https://twitter.com/intent/retweet?tweet_id={{tweetData.tweetId}}" target="_blank">
+                    <a href="https://twitter.com/intent/retweet?tweet_id={{tweet.tweetId}}" target="_blank">
                         <img src="{{retweetSrc}}" class="activity-intent" ng-mouseover="retweetSrc='image/twitter/retweet-hover.png'" ng-mouseout="retweetSrc='image/twitter/default-retweet.png'">
                     </a>
-                    <p class="small-text text-secondary activity-intent-count" ng-if="tweetData.retweetCount > 0">{{tweetData.retweetCount}}</p>
+                    <p class="small-text text-secondary activity-intent-count" ng-if="tweet.retweetCount > 0">{{tweet.retweetCount}}</p>
                 </div>
                 <div class="activity-intent-container" ng-init="favoriteSrc='image/twitter/default-favorite.png'">
-                    <a href="https://twitter.com/intent/favorite?tweet_id={{tweetData.tweetId}}" target="_blank">
+                    <a href="https://twitter.com/intent/favorite?tweet_id={{tweet.tweetId}}" target="_blank">
                         <img src="{{favoriteSrc}}" class="activity-intent" ng-mouseover="favoriteSrc='image/twitter/favorite-hover.png'" ng-mouseout="favoriteSrc='image/twitter/default-favorite.png'">
                     </a>
-                    <p class="small-text text-secondary activity-intent-count" ng-if="tweetData.favoriteCount > 0">{{tweetData.favoriteCount}}</p>
+                    <p class="small-text text-secondary activity-intent-count" ng-if="tweet.favoriteCount > 0">{{tweet.favoriteCount}}</p>
                 </div>
             </div>
         </div>

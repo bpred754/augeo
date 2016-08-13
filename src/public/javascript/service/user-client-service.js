@@ -66,9 +66,27 @@
       });
     };
 
+    this.getDashboardDisplayData = function(username, callback) {
+      var parameters = {username:username};
+      AugeoClientService.getAugeoApi('user-api/getDashboardDisplayData', parameters, function(data) {
+        callback(data);
+      });
+    };
+
     this.getLeaderboardDisplayData = function(callback) {
       var parameters = null;
       AugeoClientService.getAugeoApi('user-api/getLeaderboardDisplayData', parameters, function(data) {
+        callback(data);
+      });
+    };
+
+    this.getSkillActivity = function(username, skill, timestamp, callback) {
+      var parameters = {
+        username:username,
+        skill:skill,
+        timestamp: timestamp
+      };
+      AugeoClientService.getAugeoApi('user-api/getSkillActivity', parameters, function(data) {
         callback(data);
       });
     };

@@ -35,6 +35,12 @@
         // Set global User object
         $scope.User = user;
 
+        // Determine if User has any authentications
+        $scope.User.hasAuthentications = false;
+        if($scope.User.twitter) {
+          $scope.User.hasAuthentications = true;
+        }
+
         if(toState.name != 'logout') {
           if(user.firstName) {
             $scope.layoutNavbar = 'initial';
@@ -45,8 +51,8 @@
           $scope.layoutNavbar = 'hidden';
         }
         if($scope.User.username && toState.name != 'signupError') {
-          // Display welcome popup if user has not authenticated with Twitter and has not viewed it within this session
-          if (!$scope.User.twitter && !$scope.isWelcomeModalViewed) {
+          // Display welcome popup if user has no authentications and has not viewed it within this session
+          if (!$scope.User.hasAuthentications && !$scope.isWelcomeModalViewed) {
             $scope.isWelcomeModalViewed = true;
             $scope.aboutModalHeading = 'Welcome to Augeo!'
             showAboutModal();
@@ -74,7 +80,7 @@
     }
 
     $scope.showProfile = function() {
-      ProfileController.setTargetUser($scope.User)
+      ProfileController.setTargetUser($scope.User);
       showProfileModal();
     };
 

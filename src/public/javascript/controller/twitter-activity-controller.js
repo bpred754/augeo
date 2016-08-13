@@ -19,31 +19,42 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Javascript for activity directives                         */
+  /* Description: Javascript for Twitter activity directives                 */
   /***************************************************************************/
 
-   // Reminder: Update controller/index.js when controller params are modified
-   module.exports = function($scope, ActivityService) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, ActivityService) {
 
+    // Check for transition
     $scope.$watch(function() {
-      return $scope.tweetData;
+      return $scope.tweet;
     }, function() {
 
-      if($scope.tweetData) {
+      if($scope.activity) {
 
-        $scope.tweetData.formatDate = function (date) {
-          $scope.tweetData.date = $scope.tweetData.date.substring(0, 11);
-          return $scope.tweetData.date;
+        $scope.tweet.formatDate = function () {
+          var monthNames = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+            "Aug", "Sep", "Oct", "Nov", "Dec"
+          ];
+
+          var date = new Date($scope.activity.timestamp);
+          var day = date.getDate();
+          var monthIndex = date.getMonth();
+          var year = date.getFullYear();
+
+          $scope.tweet.date = day + ' ' + monthNames[monthIndex] + ' ' + year;
+          return $scope.tweet.date;
+        };
+
+        $scope.tweet.formatMedia = function () {
+          $scope.tweet.media[0].url = $scope.tweet.media[0].url.substring(0, $scope.tweet.media[0].url.length - 6) + ":thumb";
+          return $scope.tweet.media[0].url;
         }
 
-        $scope.tweetData.formatMedia = function (media) {
-          $scope.tweetData.media[0].url = $scope.tweetData.media[0].url.substring(0, $scope.tweetData.media[0].url.length - 6) + ":thumb";
-          return $scope.tweetData.media[0].url;
-        }
-
-        if($scope.isCard === true && !$scope.tweetData.isTextFormatted) {
-          $scope.tweetData.text = ActivityService.formatTweet($scope.tweetData).text;
-          $scope.tweetData.isTextFormatted = true;
+        if($scope.isCard === true && !$scope.activity.isTextFormatted) {
+          $scope.tweet.text = ActivityService.formatActivity($scope.activity).data.text;
+          $scope.activity.isTextFormatted = true;
         }
       }
     });

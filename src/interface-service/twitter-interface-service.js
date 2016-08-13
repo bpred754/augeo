@@ -77,16 +77,6 @@
     }
   };
 
-  // Extract reply data from tweet
-  exports.extractReply = function(tweet, logData) {
-    log.functionCall(SERVICE,'extractReply',logData.parentProcess, logData.username, {'tweet.id_str':(tweet)?tweet.id_str:'invalid'});
-
-    return {
-      mentioneeScreenName: tweet.in_reply_to_screen_name ? tweet.in_reply_to_screen_name : '',
-      tweetId: tweet.id_str
-    };
-  };
-
   // Extract desired information from tweet
   exports.extractTweet = function(data, checkClassification, logData) {
     log.functionCall(SERVICE,'extractTweet',logData.parentProcess, logData.username, {'data.id_str':(data)?data.id_str:'invalid',
@@ -237,7 +227,6 @@
       }
 
       callback(hasError, tweets);
-
     }, tweetId);
   };
 
@@ -277,7 +266,7 @@
     // create a comma separated list of twitter id's
     var twitterIds = "";
     for(var i = 0; i < users.length; i++) {
-      twitterIds += users[i].twitter.twitterId;
+      twitterIds += users[i].twitterId;
 
       if(i != users.length -1) {
         twitterIds += ", ";
@@ -342,4 +331,4 @@
     }
 
     return tweets;
-  }
+  };

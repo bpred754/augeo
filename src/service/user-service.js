@@ -32,6 +32,7 @@
   var Logger = require('../module/logger');
 
   // Private Constants
+  var ACTIVITY_PER_PAGE = 20;
   var USERS_PER_PAGE = 25;
   var SERVICE = 'user-service';
 
@@ -40,6 +41,7 @@
   exports.REMOVE_USER_FAILURE = 'Failed to delete user';
 
   // Global variables
+  var Activity = AugeoDB.model('ACTIVITY');
   var User = AugeoDB.model('AUGEO_USER');
   var log = new Logger();
 
@@ -168,6 +170,51 @@
     }
   };
 
+  // Format necessary data to display on users dashboard
+  exports.getDashboardDisplayData = function(username, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getDashboardDisplayData', logData.parentProcess, logData.username, {'username':username});
+
+    var errorImageUrl = 'image/avatar-medium.png';
+
+    if(AugeoValidator.isUsernameValid(username, logData)) {
+      User.doesUsernameExist(username, logData, function(usernameExists) {
+
+        if(usernameExists) {
+          User.getUserWithUsername(username, logData, function(user) {
+
+            var userData = user.toJSON();
+            userData.skill.name = 'Augeo';
+            userData.skill.startExperience = AugeoUtility.getLevelStartExperience(userData.skill.level, logData);
+            userData.skill.endExperience = AugeoUtility.getLevelEndExperience(userData.skill.level, logData);
+            userData.skill.levelProgress = AugeoUtility.calculateLevelProgress(userData.skill.level, userData.skill.experience, logData);
+
+            for(var i = 0; i < userData.subSkills.length; i++) {
+              userData.subSkills[i].startExperience = AugeoUtility.getLevelStartExperience(userData.subSkills[i].level, logData);
+              userData.subSkills[i].levelProgress = AugeoUtility.calculateLevelProgress(userData.subSkills[i].level, userData.subSkills[i].experience, logData);
+              userData.subSkills[i].endExperience = AugeoUtility.getLevelEndExperience(userData.subSkills[i].level, logData);
+            }
+
+            Activity.getSkillActivity(userData._id, null, 10, null, logData, function(activities) {
+              var displayData = {
+                user:userData,
+                recentActions: activities
+              };
+              callback(displayData);
+            });
+          });
+        } else {
+
+          var errorData = {
+            errorImageUrl: errorImageUrl
+          }
+          callback(errorData);
+        }
+      });
+    } else {
+      rollback('Invalid username');
+    }
+  };
+
   exports.getNumberUsers = function(logData, callback) {
     log.functionCall(SERVICE, 'getNumberUsers', logData.parentProcess, logData.username);
     User.getNumberUsers(logData, callback);
@@ -182,6 +229,37 @@
       });
     } else {
       rollback();
+    }
+  };
+
+  exports.getSkillActivity = function(username, skill, timestamp, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'getSkillActivity', logData.parentProcess, logData.username, {'username':username, 'skill':skill,
+      'timestamp':timestamp});
+
+    if(AugeoValidator.isUsernameValid(username, logData)) {
+
+      User.getUserWithUsername(username, logData, function(user) {
+
+        if(user) {
+          if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isTimestampValid(timestamp, logData)) {
+            Activity.getSkillActivity(user._id, skill, ACTIVITY_PER_PAGE, timestamp, logData, function(activities) {
+
+              // Set callback data
+              var data = {
+                activity: activities
+              };
+
+              callback(data);
+            });
+          } else {
+            rollback(404, 'Invalid skill or timestamp');
+          }
+        } else {
+          callback();
+        }
+      });
+    } else {
+      rollback(404, 'Invalid username');
     }
   };
 

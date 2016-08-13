@@ -24,11 +24,11 @@
 
   var augeo = require('angular').module('augeo');
 
-  augeo.directive('activityCard', require('./activity-card'));
-  augeo.directive('activityTransition', require('./activity-transition'));
+  augeo.directive('infiniteScroll', ['$rootScope', '$window', '$timeout', require('./angular-infinite-scroll')]);
   augeo.directive('leaderboardEntry', require('./leaderboard-entry'));
   augeo.directive('paginate', require('./paginate'));
   augeo.directive('passwordInput', require('./password-input'));
   augeo.directive('skillView', require('./skill-view'));
-  augeo.directive('infiniteScroll', ['$rootScope', '$window', '$timeout', require('./angular-infinite-scroll')]);
+
+  require('./twitter');
 

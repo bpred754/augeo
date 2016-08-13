@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/twitter-api                        */
+  /* Description: Unit test cases for api/user-api                        */
   /*              'getActivityDisplayData' requests                          */
   /***************************************************************************/
 
@@ -42,7 +42,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?skill=Augeo&tweetID=9999999999999999999999999999999')
+        .get('/user-api/getSkillActivity?skill=Augeo&tweetID=9999999999999999999999999999999')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -63,7 +63,7 @@
           Should.not.exist(error0);
 
         agent
-          .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&tweetID=9999999999999999999999999999999')
+          .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&tweetID=9999999999999999999999999999999')
           .expect(404)
           .end(function(error1, response1) {
             Should.not.exist(error1);
@@ -77,7 +77,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo')
+        .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo')
         .expect(404)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -90,7 +90,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/twitter-api/getSkillActivity?username=invalid&skill=Augeo&tweetId=9999999999999999999999999999999')
+        .get('/user-api/getSkillActivity?username=invalid&skill=Augeo&tweetId=9999999999999999999999999999999')
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -105,18 +105,19 @@
       // Add activity to be retrieved
       var action0 = TwitterInterfaceService.extractAction(Common.rawStandardTweet, Common.logData);
       var tweet0 = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, false, Common.logData);
-      var mention0 = TwitterInterfaceService.extractReply(Common.rawStandardTweet, Common.logData);
 
-      TwitterService.addAction(action0, tweet0, mention0, Common.logData, function(classification0) {
+      TwitterService.addAction(action0, tweet0, Common.logData, function(classification0) {
+
+        var timestamp = new Date(8640000000000000);
 
         agent
-          .get('/twitter-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo&tweetId=9999999999999999999999999999999')
+          .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo&timestamp=' + timestamp)
           .expect(200)
           .end(function(error, response) {
             Should.not.exist(error);
             Should.exist(response.body.activity);
             Assert.strictEqual(response.body.activity.length, 1);
-            Assert.strictEqual(response.body.activity[0].tweetId, Common.rawStandardTweet.id_str);
+            Assert.strictEqual(response.body.activity[0].data.tweetId, Common.rawStandardTweet.id_str);
             done();
           });
       });

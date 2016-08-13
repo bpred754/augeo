@@ -31,6 +31,7 @@
   var UserService = require('../../src/service/user-service');
 
   // Global variables
+  var Activity = AugeoDB.model('ACTIVITY');
   var AugeoUser = AugeoDB.model('AUGEO_USER');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
@@ -70,10 +71,24 @@
     }, function(){console.log('Twitter Helper -- Failed to add user')});
   };
 
+  exports.cleanActivities = function(callback) {
+    AugeoUser.getUserWithUsername(Common.USER.username, Common.logData, function(user0) {
+      AugeoUser.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user1) {
+        Activity.removeActivities((user0)?user0._id:'', Common.logData, function() {
+          Activity.removeActivities((user1)?user1._id:'', Common.logData, function() {
+            callback();
+          });
+        })
+      });
+    });
+  };
+
   exports.cleanAugeoDB = function(callback) {
     exports.cleanTweets(function() {
-      exports.cleanUsers(function(){
-        callback()
+      exports.cleanActivities(function() {
+        exports.cleanUsers(function() {
+          callback();
+        });
       });
     });
   };

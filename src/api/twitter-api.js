@@ -39,8 +39,6 @@
   var API = 'twitter-api';
   var CALLBACK = '/callback';
   var GET_AUTHENTICATION_DATA = '/getAuthenticationData';
-  var GET_DASHBOARD_DISPLAY_DATA = '/getDashboardDisplayData';
-  var GET_SKILL_ACTIVITY = '/getSkillActivity';
   var GET_TWITTER_HISTORY_PAGE_DATA = '/getTwitterHistoryPageData';
   var INVALID_SESSION = 'Invalid session';
 
@@ -162,50 +160,6 @@
       }, rollback);
     } else {
       rollback(INVALID_SESSION);
-    }
-  });
-
-  TwitterRouter.get(GET_DASHBOARD_DISPLAY_DATA, function(request, response) {
-    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
-
-    var rollback = function(message) {
-      log.functionError(API, GET_DASHBOARD_DISPLAY_DATA, username, message);
-      response.sendStatus(401);
-    };
-
-    if (username) { // If user exists in session get dashboard data
-      var target = (request.query.username) ? request.query.username: username;
-      log.functionCall(API, GET_DASHBOARD_DISPLAY_DATA, null, username, {'username':target});
-      var logData = AugeoUtility.formatLogData(API+GET_DASHBOARD_DISPLAY_DATA, username);
-
-      TwitterService.getDashboardDisplayData(target, logData, function(displayData) {
-        response.status(200).json(displayData);
-      }, rollback);
-    } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
-      rollback(INVALID_SESSION);
-    }
-  });
-
-  TwitterRouter.get(GET_SKILL_ACTIVITY, function(request, response) {
-    var sessionUsername = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
-
-    var rollback = function (code, message) {
-      log.functionError(API, GET_SKILL_ACTIVITY, sessionUsername, message);
-      response.sendStatus(code);
-    };
-
-    if(sessionUsername) {
-      var username = request.query.username;
-      var skill = request.query.skill;
-      var tweetId = request.query.tweetId;
-
-      log.functionCall(API, GET_SKILL_ACTIVITY, null, sessionUsername, {'username':username,'skill':skill,'tweetId':tweetId});
-      var logData = AugeoUtility.formatLogData(API+GET_SKILL_ACTIVITY, sessionUsername);
-      TwitterService.getSkillActivity(username, skill, tweetId, logData, function (newData) {
-        response.status(200).json(newData);
-      }, rollback);
-    } else {
-      rollback(401)
     }
   });
 

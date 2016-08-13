@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($rootScope, $scope, $stateParams, $window, TwitterClientService, UserClientService) {
+  module.exports = function($rootScope, $scope, $stateParams, $window, UserClientService) {
 
     /***************************************************************************/
     /* Private functions                                                       */
@@ -46,12 +46,12 @@
     /***************************************************************************/
 
     // Constants
-    var MAX_ID = '9999999999999999999999999999999';
+    var MAX_TIMESTAMP = new Date(8640000000000000);
 
-    var maxId = MAX_ID;
+    var maxTimestamp = MAX_TIMESTAMP;
     $scope.activityLoaded = false;
     $scope.finishedLoading = false;
-    $scope.tweets = new Array();
+    $scope.activities = new Array();
     $scope.state = 'viewActivity';
     $scope.screenSize = getScreenSize($window.innerWidth);
 
@@ -75,16 +75,16 @@
           $scope.username = $scope.User.username;
         }
 
-        $scope.twitterSkills = data.skills;
+        $scope.skills = data.skills;
         $scope.setSkillActivity('Augeo');
       }
     });
 
     $scope.getGlyphicon = function(name) {
       var glyphicon = '';
-      for(var i = 0; i < $scope.twitterSkills.length; i++) {
-        if($scope.twitterSkills[i].name == name) {
-          glyphicon = $scope.twitterSkills[i].glyphicon;
+      for(var i = 0; i < $scope.skills.length; i++) {
+        if($scope.skills[i].name == name) {
+          glyphicon = $scope.skills[i].glyphicon;
           break;
         }
       }
@@ -95,12 +95,12 @@
 
       if($scope.activityLoaded) {
         $scope.activityLoaded = false;
-        TwitterClientService.getSkillActivity($scope.username, $scope.currentSkill, maxId, function(data) {
+        UserClientService.getSkillActivity($scope.username, $scope.currentSkill, maxTimestamp, function(data) {
 
           if(data.activity) {
             if (data.activity.length > 0) {
-              $scope.tweets = $scope.tweets.concat(data.activity);
-              maxId = data.activity[data.activity.length - 1].tweetId;
+              $scope.activities = $scope.activities.concat(data.activity);
+              maxTimestamp = data.activity[data.activity.length - 1].timestamp;
               $scope.activityLoaded = true;
             } else {
               $scope.finishedLoading = true;
@@ -114,8 +114,8 @@
 
     $scope.setSkillActivity = function(skill) {
 
-      maxId = MAX_ID;
-      $scope.tweets = new Array();
+      maxTimestamp = MAX_TIMESTAMP;
+      $scope.activities = new Array();
       $scope.currentSkill = skill;
       $scope.activityLoaded = true;
       $scope.finishedLoading = false;

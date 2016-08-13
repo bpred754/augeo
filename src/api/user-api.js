@@ -38,7 +38,9 @@
   var GET_ACTIVITY_DISPLAY_DATA = '/getActivityDisplayData';
   var GET_COMPETITORS = '/getCompetitors';
   var GET_CURRENT_USER = '/getCurrentUser';
+  var GET_DASHBOARD_DISPLAY_DATA = '/getDashboardDisplayData';
   var GET_LEADERBOARD_DISPLAY_DATA = '/getLeaderboardDisplayData';
+  var GET_SKILL_ACTIVITY = '/getSkillActivity';
   var INVALID_SESSION = 'Invalid session';
   var LOGIN = '/login';
   var LOGOUT = '/logout';
@@ -117,6 +119,27 @@
     }
   });
 
+  UserRouter.get(GET_DASHBOARD_DISPLAY_DATA, function(request, response) {
+    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+
+    var rollback = function(message) {
+      log.functionError(API, GET_DASHBOARD_DISPLAY_DATA, username, message);
+      response.sendStatus(401);
+    };
+
+    if (username) { // If user exists in session get dashboard data
+      var target = (request.query.username) ? request.query.username: username;
+      log.functionCall(API, GET_DASHBOARD_DISPLAY_DATA, null, username, {'username':target});
+      var logData = AugeoUtility.formatLogData(API+GET_DASHBOARD_DISPLAY_DATA, username);
+
+      UserService.getDashboardDisplayData(target, logData, function(displayData) {
+        response.status(200).json(displayData);
+      }, rollback);
+    } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
+      rollback(INVALID_SESSION);
+    }
+  });
+
   UserRouter.get(GET_LEADERBOARD_DISPLAY_DATA, function(request, response) {
 
     if(AugeoValidator.isSessionValid(request)) {
@@ -137,6 +160,29 @@
       response.sendStatus(401);
     }
 
+  });
+
+  UserRouter.get(GET_SKILL_ACTIVITY, function(request, response) {
+    var sessionUsername = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+
+    var rollback = function (code, message) {
+      log.functionError(API, GET_SKILL_ACTIVITY, sessionUsername, message);
+      response.sendStatus(code);
+    };
+
+    if(sessionUsername) {
+      var username = request.query.username;
+      var skill = request.query.skill;
+      var timestamp = new Date(request.query.timestamp);
+
+      log.functionCall(API, GET_SKILL_ACTIVITY, null, sessionUsername, {'username':username,'skill':skill,'timestamp':timestamp});
+      var logData = AugeoUtility.formatLogData(API+GET_SKILL_ACTIVITY, sessionUsername);
+      UserService.getSkillActivity(username, skill, timestamp, logData, function (newData) {
+        response.status(200).json(newData);
+      }, rollback);
+    } else {
+      rollback(401)
+    }
   });
 
   /***************************************************************************/

@@ -144,7 +144,7 @@
                     <p class="standard-text text-primary text-align-center profile-attr">{{targetUser.website}}</p>
                   </div>
                   <!-- Authenticate with interface -->
-                  <div class="profile-auth-container" ng-if="isGlobalUser && isEditMode && !targetUser.hasTwitterAuthentication && !targetUser.hasGithubAuthentication">
+                  <div class="profile-auth-container" ng-if="isGlobalUser && isEditMode && !User.hasAuthentications">
                     <div class="profile-auth-inner-container">
                       <p class="standard-text text-primary text-align-center profile-auth-text profile-auth-border">Select an interface below and authenticate to start tracking experience!</p>
                     </div>

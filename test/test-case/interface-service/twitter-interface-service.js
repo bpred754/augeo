@@ -69,19 +69,6 @@
     done();
   });
 
-  it('should extract and return relevant mention information from a raw tweet -- extractReply()', function(done) {
-
-    var mention0 = TwitterInterfaceService.extractReply(Common.rawTweetWithMentionCondensed, Common.logData);
-    Assert.strictEqual(mention0.mentioneeScreenName, Common.ACTIONEE_TWITTER.screenName);
-    Assert.strictEqual(mention0.tweetId, Common.rawTweetWithMentionCondensed.id_str);
-
-    var mention1 = TwitterInterfaceService.extractReply(Common.standardRawTweetCondensed, Common.logData);
-    Assert.strictEqual(mention1.mentioneeScreenName, '');
-    Assert.strictEqual(mention1.tweetId, Common.standardRawTweetCondensed.id_str);
-
-    done();
-  });
-
   it('should extract and return relevant tweet information from a raw tweet -- extractTweet()', function(done) {
 
     var extractedtweet = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, true, Common.logData);

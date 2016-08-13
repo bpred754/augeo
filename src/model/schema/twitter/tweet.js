@@ -38,10 +38,6 @@
   // Schema declaration
   var TWITTER_TWEET = Mongoose.Schema({
     avatarImageSrc: String,
-    classification: String,
-    classificationGlyphicon: String,
-    date: String,
-    experience: Number,
     favoriteCount: Number,
     hashtags: [String],
     links: [String],
@@ -197,12 +193,12 @@
   };
 
   TWITTER_TWEET.statics.incrementRetweetCount = function(tweetId, logData, callback) {
-    this.findOneAndUpdate({tweetId:tweetId}, {$inc: {retweetCount:1}}, function(error) {
+    this.findOneAndUpdate({tweetId:tweetId}, {$inc: {retweetCount:1}}, {'new':true}, function(error, updatedTweet) {
       if(error) {
         log.functionError(COLLECTION, 'incrementRetweetCount', logData.parentProcess, logData.username, 'Failed to increment retweet count for tweet with ID: ' + tweetId);
       } else {
         log.functionCall(COLLECTION, 'incrementRetweetCount', logData.parentProcess, logData.username, {'tweetId':tweetId});
-        callback();
+        callback(updatedTweet);
       }
     });
   };
@@ -242,49 +238,43 @@
     });
   };
 
-  TWITTER_TWEET.statics.updateExperience = function(tweetId, experience, logData, callback) {
-    this.findOneAndUpdate({tweetId:tweetId}, {$inc: {experience: experience.mainSkillExperience}}, function(error) {
-      if(error) {
-        log.functionError(COLLECTION, 'updateExperience', logData.parentProcess, logData.username,
-          'Failed to update experience for tweet with ID ' + tweetId + '. Error: ' + error);
-      } else {
-        log.functionCall(COLLECTION, 'updateExperience', logData.parentProcess, logData.username, {'tweetId':tweetId,
-          'experience':experience});
-        callback();
-      }
-    });
-  };
-
   /***************************************************************************/
   /* Private Methods                                                         */
   /***************************************************************************/
 
   var upsertTweet = function(tweetDocument, tweet,logData, callback) {
-    tweetDocument.update({tweetId:tweet.tweetId}, tweet, {upsert:true}, function(error, numAffected) {
+    tweetDocument.findOneAndUpdate({tweetId:tweet.tweetId}, tweet, {upsert:true, 'new':true}, function(error, updatedTweet) {
       if (error) {
         log.functionError(COLLECTION, 'upsertTweet (private)', logData.parentProcess, logData.username,
           'Failed to upsert tweet with ID: ' + (tweet)?tweet.tweetId:'invalid' + '. Error: ' + error);
       } else {
         log.functionCall(COLLECTION, 'upsertTweet (private)', logData.parentProcess, logData.username, {'tweetDocument':(tweetDocument)?'defined':'invalid',
           'tweet':(tweet)?tweet.tweetId:'invalid'});
-        callback();
+        callback(updatedTweet);
       }
     });
 
   };
 
   var upsertTweets = function(tweetDocument, tweets, logData, callback) {
-    var inserted = 0;
-    var upsertCallback = function(){};
-    for(var i = 0; i < tweets.length; i++) {
+    var updatedTweets = new Array();
 
-      if (++inserted == tweets.length) {
-        upsertCallback = callback;
-      }
-
-      upsertTweet(tweetDocument, tweets[i], logData, upsertCallback);
+    if(tweets.length > 0) {
+      // Asynchronous method calls in loop - Using Recursion
+      (function myClojure(i) {
+        upsertTweet(tweetDocument, tweets[i], logData, function (updatedTweet) {
+          updatedTweets.push(updatedTweet);
+          i++;
+          if (i < tweets.length) {
+            myClojure(i);
+          } else {
+            callback(updatedTweets);
+          }
+        });
+      })(0); // Pass i as 0 and myArray to myClojure
+    } else {
+      callback(updatedTweets);
     }
-
   };
 
   // Declare Model

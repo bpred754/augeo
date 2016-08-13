@@ -25,14 +25,14 @@
   var augeo = require('angular').module('augeo');
 
   augeo.controller('AppController', ['$scope', '$state', '$window', 'UserClientService', 'ProfileService', 'TwitterClientService', require('./app-controller')]);
-  augeo.controller('ActivityController', ['$scope', 'ActivityService', require('./activity-controller')]);
-  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'TwitterClientService', 'ActivityService', 'ProfileService', require('./dashboard-controller')]);
+  augeo.controller('TwitterActivityController', ['$scope', 'ActivityService', require('./twitter-activity-controller')]);
+  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'UserClientService', 'ActivityService', 'ProfileService', require('./dashboard-controller')]);
   augeo.controller('LeaderboardController', ['$scope', 'UserClientService', require('./leaderboard-controller')]);
   augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
   augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
   augeo.controller('ProfileController', ['$scope', '$timeout', 'ProfileService', 'UserClientService', require('./profile-controller')]);
   augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'TwitterClientService', 'UserClientService', require('./view-activity-controller')]);
+  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', require('./view-activity-controller')]);
 
   // Error controllers
   require('./error');

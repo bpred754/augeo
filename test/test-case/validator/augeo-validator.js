@@ -188,6 +188,26 @@
     done();
   });
 
+  // isTimestampValid - negative
+  it('should return false for invalid timestamp - isTimestampValid()', function(done) {
+
+    var invalid = new Date('');
+    var isValid = AugeoValidator.isTimestampValid(invalid, Common.logData);
+    Assert.strictEqual(isValid, false);
+
+    done();
+  });
+
+  // isTimestampValid - positive
+  it('should return true for valid timestamp - isTimestampValid()', function(done) {
+
+    var valid = new Date();
+    var isValid = AugeoValidator.isTimestampValid(valid, Common.logData);
+    Assert.strictEqual(isValid, true);
+
+    done();
+  });
+
   // isUsernameValid - negative
   it('should return false for invalid username - isUsernameValid()', function(done) {
 

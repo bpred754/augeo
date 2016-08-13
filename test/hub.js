@@ -63,6 +63,7 @@
   describe('Service', function() {
     importTests('userService', './test-case/service/user-service.js')
     importTests('twitterService', './test-case/service/twitter-service.js');
+    importTests('userServiceDependent', './test-case/service/user-service-dependent.js');
 
     after(function(done) {
       this.timeout(Common.TIMEOUT);
@@ -98,6 +99,7 @@
     importTests('Add User', './test-case/api/user-api/add-user');
     importTests('getActivityDisplayData', './test-case/api/user-api/get-activity-display-data', App);
     importTests('getCompetitors', './test-case/api/user-api/get-competitors', App);
+    importTests('getDashboardDisplayData', './test-case/api/user-api/get-dashboard-display-data', App);
     importTests('getLeaderboardDisplayData', './test-case/api/user-api/get-leaderboard-display-data', App);
     importTests('Login', './test-case/api/user-api/login');
     importTests('Session', './test-case/api/user-api/session');
@@ -112,12 +114,11 @@
   describe('Twitter API', function() {
     importTests('getAuthenticationData', './test-case/api/twitter-api/get-authentication-data', App);
     importTests('callback', './test-case/api/twitter-api/callback', App);
-    importTests('getDashboardDisplayData', './test-case/api/twitter-api/get-dashboard-display-data', App);
-    importTests('getSkillActivity', './test-case/api/twitter-api/get-skill-activity', App);
     importTests('getTwitterHistoryPageData', './test-case/api/twitter-api/get-twitter-history-page-data', App);
   });
 
    describe('Twitter Dependent User API', function() {
+     importTests('getSkillActivity', './test-case/api/user-api/get-skill-activity', App);
      importTests('Set Profile Image', './test-case/api/user-api/set-profile-image', App);
    });
 

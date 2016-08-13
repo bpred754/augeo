@@ -34,8 +34,10 @@
               </div>
           </div>
           <div id="db-recent-activity-container">
-            <activity-transition ng-if="!invalidUser && currentTweet" id= "db-transition" visible="visible" tweet-data="currentTweet" screen-name="dashboardData.twitter.screenName"></activity-transition>
-            <div id="db-auth-container" ng-if="!invalidUser && !User.twitter.screenName && dashboardData.username == User.username">
+            <div id="db-transition-container" ng-if="!invalidUser && currentActivity">
+              <twitter-activity-transition ng-if="currentActivity.kind == 'TWITTER_TWEET'" id= "db-transition" visible="visible" activity="currentActivity" screen-name="dashboardData.twitter.screenName"></twitter-activity-transition>
+            </div>
+            <div id="db-auth-container" ng-if="!invalidUser && !User.hasAuthentications && dashboardData.username == User.username">
               <div>
                 <p class="standard-text text-primary text-align-center">Authenticate with an interface to start tracking your experience!</p>
                 <div class="horizontal-center">

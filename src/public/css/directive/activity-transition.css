@@ -19,38 +19,38 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: css for activity-transition.html                           */
+  /* Description: css for twitter-activity-transition.html                   */
   /***************************************************************************/
 
-  .at-avatar-container {
+  .tat-avatar-container {
     height:100%;
     display:inline-block;
   }
 
-  .at-avatar-image {
+  .tat-avatar-image {
     max-height:100%;
     max-width:100%;
     border-radius:6px;
   }
 
-  .at-avatar-image-container {
+  .tat-avatar-image-container {
     height:100%;
     width:35px;
     float:left;
   }
 
-  .at-avatar-text {
+  .tat-avatar-text {
     float:left;
     margin-bottom:0px;
     padding-left:5px;
   }
 
-  .at-center {
+  .tat-center {
     text-align:center;
     height:100%;
   }
 
-  .at-classification {
+  .tat-classification {
     height:100%;
     width:35px;
     float:left;
@@ -58,30 +58,30 @@
     padding-left:5px;
   }
 
-  .at-container {
+  .tat-container {
     max-height:250px;
   }
 
-  .at-date-container {
+  .tat-date-container {
     display:flex;
     align-items:flex-end;
     min-height:100%;
     float:left;
   }
 
-  .at-date-container a:hover {
+  .tat-date-container a:hover {
     text-decoration: none;
     color:#333;
   }
 
-  .at-experience {
+  .tat-experience {
     height:100%;
     width:75px;
     float:left;
     text-align:right;
   }
 
-  .at-experience-container {
+  .tat-experience-container {
     height:35px;
     width:120px;
     display:inline-block;
@@ -89,42 +89,42 @@
     margin-top:-20px;
   }
 
-  .at-experience-inner-container {
+  .tat-experience-inner-container {
     height:100%;
     padding:5px;
   }
 
-  .at-footer {
+  .tat-footer {
     height:100%;
     display:inline-block;
   }
 
-  .at-footer-container {
+  .tat-footer-container {
     height:20px;
   }
 
-  .at-head-container {
+  .tat-head-container {
     height:35px;
   }
 
-  .at-image {
+  .tat-image {
     height:115px;
     width:115px;
     border-radius:5px;
     margin-bottom: 10px;
   }
 
-  .at-image-container {
+  .tat-image-container {
     width:115px;
     margin:0 auto;
     padding-top:10px;
   }
 
-  .at-intent {
+  .tat-intent {
     width:20px;
   }
 
-  .at-intent-container {
+  .tat-intent-container {
     height:100%;
     float:left;
     display:flex;
@@ -134,37 +134,37 @@
     width:40px;
   }
 
-  .at-intent-count {
+  .tat-intent-count {
     display:flex;
     align-items:flex-end;
     min-height:100%;
   }
 
-  .at-intent-count-container {
+  .tat-intent-count-container {
     height:100%;
     float:left;
     padding-left:5px;
   }
 
-  .at-name {
+  .tat-name {
     color:#333;
     margin-top:6px;
   }
 
-  .at-name:hover {
+  .tat-name:hover {
     text-decoration: none;
     color:#9d9d9d;
   }
 
-  .at-screen-name {
+  .tat-screen-name {
     margin-top:11px;
   }
 
-  .at-screen-name:hover {
+  .tat-screen-name:hover {
     text-decoration: none;
     color:#333;
   }
 
-  .at-text-container {
+  .tat-text-container {
     padding-top:10px;
   }

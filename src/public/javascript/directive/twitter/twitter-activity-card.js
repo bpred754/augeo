@@ -19,23 +19,23 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton that contains logic for activity controllers     */
+  /* Description: Javascript for activity-card directive                     */
   /***************************************************************************/
 
-  // Reminder: Update service/index.js when service params are modified
-  module.exports = function(TwitterClientService) {
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
+    return {
+      restrict: 'E',
+      scope: {
+        'activity': '=',
+        'isCard': '=',
+        'screenSize': '='
+      },
+      templateUrl: 'html/directive/twitter/twitter-activity-card.html',
+      controller: 'TwitterActivityController',
+      link: function(scope, element, attributes) {
 
-    this.formatActivity = function(activity) {
-      switch(activity.kind) {
-        case TwitterClientService.ACTIVITY_KIND:
-          activity = TwitterClientService.formatTweet(activity);
-          break;
-      };
-      return activity;
-    };
-
+        scope.tweet = scope.activity.data;
+      }
+    }
   };
-
-
-
-

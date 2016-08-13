@@ -177,12 +177,13 @@
                   }
 
                   if(queue == 'ALL' || queue == 'MENTION') {
+                    var mentionQueueData = Object.create(queueData);
                     if(mentionTweetId){
-                      queueData.minMentionTweetId = mentionTweetId;
+                      mentionQueueData.minTweetId = mentionTweetId;
                     }
 
                     // Add user to Mention Queue
-                    self.addUserToMentionQueue(queueData, logData);
+                    self.addUserToMentionQueue(mentionQueueData, logData);
                   }
                 }
 
@@ -351,9 +352,9 @@
     if(queueType == 'TWEET') {
 
       // Get tweets
-      TwitterInterfaceService.getTweets(self.tweetMessenger, logData, function (error, tweets) {
+      TwitterInterfaceService.getTweets(self.tweetMessenger, logData, function (error, tweetActivities) {
         log.functionCall(QUEUE, 'getTweets (private)', logData.parentProcess, logData.username,
-          {'error': error, 'tweets.length': (tweets) ? tweets.length : 'invalid'}, 'Received tweets from Twitter');
+          {'error': error, 'tweetActivities.length': (tweetActivities) ? tweetActivities.length : 'invalid'}, 'Received tweets from Twitter');
 
         // Check for error from getting tweets
         if (error) {
@@ -362,14 +363,14 @@
           return;
         }
 
-        handleTweets(queueType, currentUserId, queue, tweetArray, queueData, tweets, callback);
+        handleTweets(queueType, currentUserId, queue, tweetArray, queueData, tweetActivities, callback);
       }, queueData.tweetId); // End getTweets
     } else {
 
       // Get mentions
-      TwitterInterfaceService.getMentions(self.mentionMessenger, logData, function (error, tweets) {
+      TwitterInterfaceService.getMentions(self.mentionMessenger, logData, function (error, tweetActivities) {
         log.functionCall(QUEUE, 'getMentions (private)', logData.parentProcess, logData.username,
-          {'error': error, 'tweets.length': (tweets) ? tweets.length : 'invalid'}, 'Received mentions from Twitter');
+          {'error': error, 'tweetActivities.length': (tweetActivities) ? tweetActivities.length : 'invalid'}, 'Received mentions from Twitter');
 
         // Check for error from getting tweets
         if (error) {
@@ -378,7 +379,7 @@
           return;
         }
 
-        handleTweets(queueType, currentUserId, queue, tweetArray, queueData, tweets, callback);
+        handleTweets(queueType, currentUserId, queue, tweetArray, queueData, tweetActivities, callback);
       }, queueData.tweetId); // End getTweets
     }
   };
@@ -433,15 +434,21 @@
       log.functionCall(QUEUE, 'getTweets (private)', logData.parentProcess, logData.username, {'screenName':screenName},
         'Retrieved all tweets');
 
-      var areMentions = false;
-      if(queueType == 'MENTION') {
-        areMentions = true;
-      }
+      if(tweetArray.length > 0) {
 
-      TwitterService.addTweets(userId, screenName, tweetArray, areMentions, logData, function() {
+        var areMentions = false;
+        if(queueType == 'MENTION') {
+          areMentions = true;
+        }
+
+        TwitterService.addTweets(userId, screenName, tweetArray, areMentions, logData, function() {
+          resetGlobals(queueType);
+          UserService.updateAllRanks(logData, callback);
+        });
+      } else {
         resetGlobals(queueType);
-        UserService.updateAllRanks(logData, callback);
-      });
+        callback();
+      }
     }
   };
 

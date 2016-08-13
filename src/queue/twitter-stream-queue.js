@@ -73,10 +73,9 @@
       if(action == 'Add') {
         var checkClassification = true;
         var tweet = TwitterInterfaceService.extractTweet(data, checkClassification, logData);
-        var mention = TwitterInterfaceService.extractReply(data, logData);
         var action = TwitterInterfaceService.extractAction(data, logData);
 
-        TwitterService.addAction(action, tweet, mention, logData, callback);
+        TwitterService.addAction(action, tweet, logData, callback);
       } else if(action == 'Remove') { // Remove logic
         TwitterService.removeTweet(data.status, logData, callback);
       } else if(action == 'Open') {

@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $timeout, $interval, $stateParams, TwitterClientService, ActivityService, ProfileService) {
+  module.exports = function($scope, $timeout, $interval, $stateParams, UserClientService, ActivityService, ProfileService) {
 
     // Internal functions
     var init = function() {
@@ -32,7 +32,7 @@
       $scope.targetUsername = ($stateParams && $stateParams.username) ? $stateParams.username: null;
 
       // Get user's profile image and Augeo skill data
-      TwitterClientService.getDashboardDisplayData($scope.targetUsername, function(data) {
+      UserClientService.getDashboardDisplayData($scope.targetUsername, function(data) {
 
         if(data != 'Unauthorized') {
 
@@ -71,28 +71,28 @@
           // Set recent activity
           if (data.recentActions && data.recentActions.length > 0) {
             var currentIndex = 0;
-            var formatTweets = true;
+            var formatActivity = true;
 
             $scope.visible = true;
-            data.recentActions[0] = ActivityService.formatTweet(data.recentActions[0]);
-            $scope.currentTweet = data.recentActions[0];
+            data.recentActions[0] = ActivityService.formatActivity(data.recentActions[0]);
+            $scope.currentActivity = data.recentActions[0];
 
             // Transition logic
             $interval(function () {
               $scope.visible = false;
               currentIndex++;
 
-              // Reset to first tweet
+              // Reset to first activity
               if (currentIndex == data.recentActions.length) {
                 currentIndex = 0;
-                formatTweets = false;
+                formatActivity = false;
               }
 
               $timeout(function () {
-                if (formatTweets === true) {
-                  data.recentActions[currentIndex] = ActivityService.formatTweet(data.recentActions[currentIndex]);
+                if (formatActivity === true) {
+                  data.recentActions[currentIndex] = ActivityService.formatActivity(data.recentActions[currentIndex]);
                 }
-                $scope.currentTweet = data.recentActions[currentIndex];
+                $scope.currentActivity = data.recentActions[currentIndex];
 
                 $scope.visible = true;
               }, 1000);

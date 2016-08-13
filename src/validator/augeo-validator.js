@@ -131,6 +131,12 @@
     return isValid;
   };
 
+  exports.isTimestampValid = function(timestamp, logData) {
+    log.functionCall(VALIDATOR, 'isTimestampValid', logData.parentProcess, logData.username, {'timestamp':timestamp});
+
+    return timestamp && timestamp.getTime && !isNaN(timestamp.getTime());
+  };
+
   exports.isUsernameValid = function(username, logData) {
     log.functionCall(VALIDATOR, 'isUsernameValid', logData.parentProcess, logData.username, {'username':username});
 

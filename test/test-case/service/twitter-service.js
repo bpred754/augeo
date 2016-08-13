@@ -35,6 +35,7 @@
   var TwitterUtility = require('../../../src/utility/twitter-utility');
 
   // Global variables
+  var Activity = AugeoDB.model('ACTIVITY');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var User = AugeoDB.model('AUGEO_USER');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
@@ -117,72 +118,78 @@
     // Standard Tweet from Test Tester
     var action0 = TwitterInterfaceService.extractAction(Common.rawStandardTweet, Common.logData);
     var tweet0 = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, false, Common.logData);
-    var mention0 = TwitterInterfaceService.extractReply(Common.rawStandardTweet, Common.logData);
 
     var experience = 0;
     // Determine initial skill experience
     User.getUserWithUsername(Common.USER.username, Common.logData, function(user0) {
       experience = user0.skill.experience;
 
-      TwitterService.addAction(action0, tweet0, mention0, Common.logData, function(classification0) {
+      TwitterService.addAction(action0, tweet0, Common.logData, function(classification0) {
 
-        // Verify tweet was added
+        // Verify activity was added
         Tweet.findTweet(tweet0.tweetId, Common.logData, function(returnedTweet0) {
-          Assert.strictEqual(returnedTweet0[0].experience, TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
-          experience += returnedTweet0[0].experience;
+          Activity.getActivity(user0.id, returnedTweet0[0]._id, Common.logData, function(returnedActivity0) {
+            Assert.strictEqual(returnedActivity0[0].experience, TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
+            experience += returnedActivity0[0].experience;
 
-          // Verify experience was added to twitter skill
-          User.getUserWithUsername(Common.USER.username, Common.logData, function(user1) {
-            Assert.strictEqual(user1.skill.experience, experience);
+            // Verify experience was added to twitter skill
+            User.getUserWithUsername(Common.USER.username, Common.logData, function(user1) {
+              Assert.strictEqual(user1.skill.experience, experience);
 
-            // A tweet with Test Tester mentioned
-            var action1 = TwitterInterfaceService.extractAction(Common.rawMentionOfTestUser, Common.logData);
-            var tweet1 = TwitterInterfaceService.extractTweet(Common.rawMentionOfTestUser, false, Common.logData);
-            var mention1 = TwitterInterfaceService.extractReply(Common.rawMentionOfTestUser, Common.logData);
+              // A tweet with Test Tester mentioned
+              var action1 = TwitterInterfaceService.extractAction(Common.rawMentionOfTestUser, Common.logData);
+              var tweet1 = TwitterInterfaceService.extractTweet(Common.rawMentionOfTestUser, false, Common.logData);
 
-            TwitterService.addAction(action1, tweet1, mention1, Common.logData, function(classification1) {
+              TwitterService.addAction(action1, tweet1, Common.logData, function(classification1) {
 
-              // Verify tweet was added for user doing the mentioning
-              Tweet.findTweet(tweet1.tweetId, Common.logData, function(returnedTweet1) {
-                Assert.strictEqual(returnedTweet1[0].screenName, Common.ACTIONEE_TWITTER.screenName);
-                Assert.strictEqual(returnedTweet1[0].experience, TwitterUtility.TWEET_EXPERIENCE);
-                experience += returnedTweet1[0].experience;
+                // Verify tweet was added for user doing the mentioning
+                Tweet.findTweet(tweet1.tweetId, Common.logData, function(returnedTweet1) {
+                  Activity.getActivity(user0._id, returnedTweet1[0]._id, Common.logData, function(returnedActivity1) {
 
-                Tweet.findTweet(tweet1.tweetId, Common.logData, function(returnedMention0) {
-                  returnedMention0[0].mentions.indexOf(Common.USER_TWITTER.screenName).should.be.above(-1);
+                    Assert.strictEqual(returnedTweet1[0].screenName, Common.ACTIONEE_TWITTER.screenName);
+                    returnedTweet1[0].mentions.indexOf(Common.USER_TWITTER.screenName).should.be.above(-1);
+                    Assert.strictEqual(returnedActivity1[0].experience, TwitterUtility.TWEET_EXPERIENCE);
+                    experience += returnedActivity1[0].experience;
 
-                  // Verify experience was added to twitter skill
-                  User.getUserWithUsername(Common.USER.username, Common.logData, function(user2) {
-                    Assert.strictEqual(user2.skill.experience, experience);
+                    // Verify experience was added to twitter skill
+                    User.getUserWithUsername(Common.USER.username, Common.logData, function(user2) {
+                      Assert.strictEqual(user2.skill.experience, experience);
 
-                    // User retweets Test Tester's post
-                    var action2 = TwitterInterfaceService.extractAction(Common.rawRetweetOfUser, Common.logData);
-                    var tweet2 = TwitterInterfaceService.extractTweet(Common.rawRetweetOfUser, false, Common.logData);
-                    var mention2 = TwitterInterfaceService.extractReply(Common.rawRetweetOfUser, Common.logData);
+                      // User retweets Test Tester's post
+                      var action2 = TwitterInterfaceService.extractAction(Common.rawRetweetOfUser, Common.logData);
+                      var tweet2 = TwitterInterfaceService.extractTweet(Common.rawRetweetOfUser, false, Common.logData);
 
-                    // Get original experience and retweet count of tweet to be retweeted
-                    Tweet.findTweet(action2.retweetId, Common.logData, function(returnedTweet2) {
-                      var originalTweetExperience = returnedTweet2[0].experience;
-                      var originalRetweetCount = returnedTweet2[0].retweetCount;
+                      // Get original experience and retweet count of tweet to be retweeted
+                      Tweet.findTweet(action2.retweetId, Common.logData, function(returnedTweet2) {
+                        Activity.getActivity(user0._id, returnedTweet2[0]._id, Common.logData, function(returnedActivity2) {
+                          var originalTweetExperience = returnedActivity2[0].experience;
+                          var originalRetweetCount = returnedTweet2[0].retweetCount;
 
-                      TwitterService.addAction(action2, tweet2, mention2, Common.logData, function(classification2) {
+                          TwitterService.addAction(action2, tweet2, Common.logData, function(classification2) {
 
-                        // Verify tweet was added for user doing retweeting
-                        Tweet.findTweet(tweet2.tweetId, Common.logData, function(returnedTweet3) {
-                          Assert.strictEqual(returnedTweet3[0].screenName, Common.ACTIONEE_TWITTER.screenName);
-                          Assert.strictEqual(returnedTweet3[0].experience, TwitterUtility.TWEET_EXPERIENCE);
-                          experience += TwitterUtility.RETWEET_EXPERIENCE;
+                            // Verify tweet was added for user doing retweeting
+                            User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
+                              Tweet.findTweet(tweet2.tweetId, Common.logData, function(returnedTweet3) {
+                                Activity.getActivity(user3._id, returnedTweet3[0]._id, Common.logData, function(returnedActivity3) {
+                                  Assert.strictEqual(returnedTweet3[0].screenName, Common.ACTIONEE_TWITTER.screenName);
+                                  Assert.strictEqual(returnedActivity3[0].experience, TwitterUtility.TWEET_EXPERIENCE);
+                                  experience += TwitterUtility.RETWEET_EXPERIENCE;
 
-                          // Verify original tweet's experience and retweet count increased
-                          Tweet.findTweet(action2.retweetId, Common.logData, function(returnedTweet4) {
+                                  // Verify original tweet's experience and retweet count increased
+                                  Tweet.findTweet(action2.retweetId, Common.logData, function(returnedTweet4) {
+                                    Activity.getActivity(user0._id, returnedTweet4[0]._id, Common.logData, function(returnedActivity4) {
+                                      Assert.strictEqual(returnedActivity4[0].experience, originalTweetExperience + TwitterUtility.RETWEET_EXPERIENCE);
+                                      Assert.strictEqual(returnedTweet4[0].retweetCount, originalRetweetCount + 1);
 
-                            Assert.strictEqual(returnedTweet4[0].experience, originalTweetExperience + TwitterUtility.RETWEET_EXPERIENCE);
-                            Assert.strictEqual(returnedTweet4[0].retweetCount, originalRetweetCount + 1);
-
-                            // Verify user's skill experience
-                            User.getUserWithUsername(Common.USER.username, Common.logData, function(user3) {
-                              Assert.strictEqual(user3.skill.experience, experience);
-                              done();
+                                      // Verify user's skill experience
+                                      User.getUserWithUsername(Common.USER.username, Common.logData, function(user3) {
+                                        Assert.strictEqual(user3.skill.experience, experience);
+                                        done();
+                                      });
+                                    });
+                                  });
+                                });
+                              });
                             });
                           });
                         });
@@ -325,28 +332,6 @@
     }, function(){});
   });
 
-  // getDashboardDisplayData
-  it('should return dashboard display data -- getDashboardDisplayData()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Valid targetUsername
-    TwitterService.getDashboardDisplayData(Common.USER.username, Common.logData, function(data0) {
-
-      Assert.ok(data0.user);
-      Assert.ok(data0.user.profileImg);
-      Assert.ok(data0.user.skill);
-      Assert.ok(data0.user.subSkills);
-      Assert.ok(data0.recentActions);
-      data0.recentActions.length.should.be.above(0);
-
-      // Invalid target
-      TwitterService.getDashboardDisplayData('username', Common.logData, function(data1){
-        Assert.strictEqual(data1.errorImageUrl, 'image/avatar-medium.png');
-        done();
-      }, function(){});
-    }, function(){});
-  });
-
   // getQueueData
   it('should return queue data for a given a user id and screenName -- getQueueData()', function(done) {
     this.timeout(Common.TIMEOUT);
@@ -395,38 +380,6 @@
               });
             });
           });
-        });
-      });
-    });
-  });
-
-  // getSkillActivity
-  it('should return skill activity for a user username, skill, and tweetId -- getSkillActivity()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Invalid username
-    TwitterService.getSkillActivity('', 'Augeo', '0', Common.logData, function(){}, function() {
-
-      // Invalid skills
-      TwitterService.getSkillActivity(Common.USER.username, 'invalidSkill', '0', Common.logData, function(){}, function() {
-
-        // Invalid tweetId
-        TwitterService.getSkillActivity(Common.USER.username, 'Augeo', '', Common.logData, function(){}, function() {
-
-          // Valid input - no max
-          TwitterService.getSkillActivity(Common.USER.username, 'Augeo', '9999999999999999999999999999999', Common.logData, function(data0) {
-            Assert.ok(data0.activity);
-            data0.activity.length.should.be.above(0);
-            var maxId = data0.activity[0].tweetId;
-
-            // Valid input - max tweet ID
-            TwitterService.getSkillActivity(Common.USER.username, 'Augeo', maxId, Common.logData, function(data1) {
-              Assert.ok(data1.activity);
-              data1.activity.length.should.be.above(0);
-              Assert.notStrictEqual(data1.activity[0].tweetId, maxId);
-              done();
-            }, function(){});
-          }, function(){});
         });
       });
     });
@@ -512,25 +465,31 @@
 
       // Verify tweet exists
       Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet0) {
-        Assert.strictEqual(returnedTweet0[0].tweetId, Common.rawStandardTweet.id_str);
-        experience -= returnedTweet0[0].experience;
+        Activity.getActivity(user0._id, returnedTweet0[0]._id, Common.logData, function(returnedActivity0) {
+          Assert.strictEqual(returnedTweet0[0].tweetId, Common.rawStandardTweet.id_str);
+          experience -= returnedActivity0[0].experience;
 
-        var tweetData = {
-          id_str: Common.rawStandardTweet.id_str,
-          user_id_str: Common.rawStandardTweet.user.id_str
-        }
+          var tweetData = {
+            id_str: Common.rawStandardTweet.id_str,
+            user_id_str: Common.rawStandardTweet.user.id_str
+          };
 
-        // Remove tweet
-        TwitterService.removeTweet(tweetData, Common.logData, function(classification0) {
+          // Remove tweet
+          TwitterService.removeTweet(tweetData, Common.logData, function(classification0) {
 
-          // Verify tweet was removed
-          Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet1) {
-            Assert.strictEqual(0, returnedTweet1.length);
+            // Verify tweet was removed
+            Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet1) {
+              Assert.strictEqual(0, returnedTweet1.length);
 
-            // Verify experience was removed from twitter skill
-            User.getUserWithUsername(Common.USER.username, Common.logData, function(user1) {
-              Assert.strictEqual(user1.skill.experience, experience);
-              done();
+              Activity.getActivity(user0._id, returnedTweet0._id, Common.logData, function(returnedActivity2) {
+                Assert.strictEqual(0, returnedActivity2.length);
+
+                // Verify experience was removed from twitter skill
+                User.getUserWithUsername(Common.USER.username, Common.logData, function(user1) {
+                  Assert.strictEqual(user1.skill.experience, experience);
+                  done();
+                });
+              });
             });
           });
         });

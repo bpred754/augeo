@@ -228,7 +228,7 @@
   });
 
   // getNumberUsers
-  it('should return the number of users in the database', function(done) {
+  it('should return the number of users in the database -- getNumberUsers()', function(done) {
     this.timeout(Common.TIMEOUT);
 
     UserService.getNumberUsers(Common.logData, function(numberUsers) {
