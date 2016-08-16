@@ -30,7 +30,7 @@
   // Required local modules
   var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
-  var Classifier = require('../classifier/twitter-classifier');
+  var Classifier = require('../classifier/app-classifier');
   var Logger = require('../module/logger');
   var TwitterUtility = require('../utility/twitter-utility');
   var TwitterValidator = require('../validator/twitter-validator');

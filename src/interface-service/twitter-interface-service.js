@@ -25,7 +25,7 @@
   // Required local modules
   var AugeoUtility = require('../utility/augeo-utility');
   var Logger = require('../module/logger');
-  var TwitterClassifier = require('../classifier/twitter-classifier');
+  var Classifier = require('../classifier/app-classifier');
   var twitterInterfaceUrl = process.env.TEST === 'true' ? '../../test/interface/twitter-test-interface' : '../interface/twitter-interface';
   var TwitterInterface = require(twitterInterfaceUrl);
   var TwitterUtility = require('../utility/twitter-utility');
@@ -35,7 +35,7 @@
   var SERVICE = 'twitter-interface_service';
 
   // Global variables
-  var classifier = new TwitterClassifier();
+  var classifier = new Classifier();
   var log = new Logger();
 
   // Create object to communicate with Twitter

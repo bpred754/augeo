@@ -32,35 +32,35 @@
   var Natural = require('natural');
 
   // Constants
-  var CLASSIFIER = 'twitter-classifier';
+  var CLASSIFIER = 'app-classifier';
 
   // Global variables
   var classifier = null;
   var log = new Logger();
 
   // Constructor
-  function TwitterClassifier() {
+  function Classifier() {
 
-    // TwitterClassifier is a singleton
-    if (!TwitterClassifier.classifier) {
+    // Classifier is a singleton
+    if (!Classifier.classifier) {
       this.init();
-      TwitterClassifier.classifier = this;
+      Classifier.classifier = this;
     }
 
-    return TwitterClassifier.classifier;
+    return Classifier.classifier;
   };
 
-  TwitterClassifier.prototype.classify = function(text, logData) {
+  Classifier.prototype.classify = function(text, logData) {
     log.functionCall(CLASSIFIER, 'classify', logData.parentProcess, logData.username, {'text':text});
     return classifier.classify(text);
   };
 
-  TwitterClassifier.prototype.getClassifications = function(text, logData) {
+  Classifier.prototype.getClassifications = function(text, logData) {
     log.functionCall(CLASSIFIER, 'getClassifications', logData.parentProcess, logData.username, {'text':text});
     return classifier.getClassifications(text);
   };
 
-  TwitterClassifier.prototype.init = function init() {
+  Classifier.prototype.init = function init() {
     log.functionCall(CLASSIFIER, 'init');
 
     classifier = new Natural.BayesClassifier();
@@ -78,7 +78,7 @@
 
     classifier.train();
 
-    classifier.save('./classifier/TwitterClassifier.json', function(err, classifier) {});
+    classifier.save('./classifier/classifier.json', function(err, classifier) {});
   };
 
   /***************************************************************************/
@@ -306,4 +306,4 @@
       classifier.addDocument(technologyTier3,"Technology");
     };
 
-    module.exports = TwitterClassifier;
+    module.exports = Classifier;
