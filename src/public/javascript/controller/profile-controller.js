@@ -49,6 +49,7 @@
 
         // Update global User object
         $scope.$parent.User = user;
+        UserClientService.setAuthentications($scope.User);
       });
     };
 

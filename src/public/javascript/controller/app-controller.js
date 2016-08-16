@@ -34,12 +34,7 @@
 
         // Set global User object
         $scope.User = user;
-
-        // Determine if User has any authentications
-        $scope.User.hasAuthentications = false;
-        if($scope.User.twitter) {
-          $scope.User.hasAuthentications = true;
-        }
+        UserClientService.setAuthentications($scope.User);
 
         if(toState.name != 'logout') {
           if(user.firstName) {
