@@ -56,7 +56,7 @@
     log.functionCall(SERVICE, 'addAction', logData.parentProcess, logData.username, {'action.actionerScreenName': (action)?action.actionerScreenName:'invalid',
       'tweet.tweetId':(tweet)?tweet.tweetId:'invalid'});
 
-    Tweet.findTweet(action.tweetId, logData, function(returnedTweet) {
+    Tweet.getTweet(action.tweetId, logData, function(returnedTweet) {
 
       // Make sure tweet is unique
       if(returnedTweet.length === 0) {
@@ -313,7 +313,7 @@
     TwitterUser.getUserWithTwitterId(tweetData.user_id_str, logData, function(user) {
 
       // Get tweet to be removed from database
-      Tweet.findTweet(tweetData.id_str, logData, function (tweet) {
+      Tweet.getTweet(tweetData.id_str, logData, function (tweet) {
         Activity.getActivity(user._id, tweet[0]._id, logData, function(activity) {
 
           var tweetExperience = activity[0].experience * -1;

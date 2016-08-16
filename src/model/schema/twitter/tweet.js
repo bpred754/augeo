@@ -71,17 +71,6 @@
     upsertTweets(this, tweets, logData, callback);
   };
 
-  TWITTER_TWEET.statics.findTweet = function(tweetId, logData, callback) {
-    this.find({tweetId:tweetId},{},{}, function(error, tweet) {
-      if(error) {
-        log.functionError(COLLECTION, 'findTweet', logData.parentProcess, logData.username, 'Failed to find tweet with tweetID: ' + tweetId);
-      } else {
-        log.functionCall(COLLECTION, 'findTweet', logData.parentProcess, logData.username, {'tweetId':tweetId});
-        callback(tweet);
-      }
-    });
-  };
-
   TWITTER_TWEET.statics.getLatestMentionTweetId = function(screenName, logData, callback) {
     this.find({mentions:{$elemMatch:{$eq: screenName}}},{},{sort:{'tweetId':-1},limit:1}).lean().exec(function(error, data) {
 
@@ -179,6 +168,17 @@
          callback(tweets);
        }
      });
+  };
+
+  TWITTER_TWEET.statics.getTweet = function(tweetId, logData, callback) {
+    this.find({tweetId:tweetId},{},{}, function(error, tweet) {
+      if(error) {
+        log.functionError(COLLECTION, 'getTweet', logData.parentProcess, logData.username, 'Failed to get tweet with tweetID: ' + tweetId);
+      } else {
+        log.functionCall(COLLECTION, 'getTweet', logData.parentProcess, logData.username, {'tweetId':tweetId});
+        callback(tweet);
+      }
+    });
   };
 
   TWITTER_TWEET.statics.getTweetCount = function(logData, callback) {

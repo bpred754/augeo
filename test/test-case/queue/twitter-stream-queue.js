@@ -52,7 +52,7 @@
       streamQueue.addAction(queueData, Common.logData, function() {
 
         // Verify tweet is in database
-        Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
+        Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
           Assert.strictEqual(Common.rawStandardTweet.id_str, rawStandardTweet[0].tweetId);
 
           // Verify experience gained
@@ -91,11 +91,11 @@
         streamQueue.addAction(queueData, Common.logData, function() {
 
           // Verify tweet is in database
-          Tweet.findTweet(Common.rawMentionOfTestUser.id_str, Common.logData, function(rawMentionOfTestUser) {
+          Tweet.getTweet(Common.rawMentionOfTestUser.id_str, Common.logData, function(rawMentionOfTestUser) {
             Assert.strictEqual(Common.rawMentionOfTestUser.id_str, rawMentionOfTestUser[0].tweetId);
 
             // Verify mention is in database
-            Tweet.findTweet(Common.rawMentionOfTestUser.id_str, Common.logData, function(mention) {
+            Tweet.getTweet(Common.rawMentionOfTestUser.id_str, Common.logData, function(mention) {
               mention[0].mentions.indexOf(Common.USER_TWITTER.screenName).should.be.above(-1);
 
               // Get after experience for User and Actionee
@@ -146,7 +146,7 @@
           initialUserExperience += (Common.rawStandardTweet.retweet_count * TwitterUtility.RETWEET_EXPERIENCE) + (Common.rawStandardTweet.favorite_count * TwitterUtility.FAVORITE_EXPERIENCE);
 
           // Verify tweet is in database
-          Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(originalTweet) {
+          Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(originalTweet) {
 
             // Get original retweet count
             var originalRetweetCount = originalTweet[0].retweetCount;
@@ -159,11 +159,11 @@
             streamQueue.addAction(queueData1, Common.logData, function() {
 
               // Verify tweet is in database
-              Tweet.findTweet(Common.rawRetweetOfUser.id_str, Common.logData, function(retweetOfUser) {
+              Tweet.getTweet(Common.rawRetweetOfUser.id_str, Common.logData, function(retweetOfUser) {
                 Assert.strictEqual(Common.rawRetweetOfUser.id_str, retweetOfUser[0].tweetId);
 
                 // Verify retweet count incremented
-                Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(originalTweetAfter) {
+                Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(originalTweetAfter) {
                   Assert.strictEqual(originalRetweetCount+1, originalTweetAfter[0].retweetCount);
 
                   // Get after experience for User and Actionee
@@ -234,7 +234,7 @@
               streamQueue.addAction(queueData2, Common.logData, function() {
 
                 // Verify tweet is not in database
-                Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
+                Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
                   Assert.strictEqual(0, rawStandardTweet.length);
 
                   // Verify experience removed

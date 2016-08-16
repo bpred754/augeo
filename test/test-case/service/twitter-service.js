@@ -127,7 +127,7 @@
       TwitterService.addAction(action0, tweet0, Common.logData, function(classification0) {
 
         // Verify activity was added
-        Tweet.findTweet(tweet0.tweetId, Common.logData, function(returnedTweet0) {
+        Tweet.getTweet(tweet0.tweetId, Common.logData, function(returnedTweet0) {
           Activity.getActivity(user0.id, returnedTweet0[0]._id, Common.logData, function(returnedActivity0) {
             Assert.strictEqual(returnedActivity0[0].experience, TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
             experience += returnedActivity0[0].experience;
@@ -143,7 +143,7 @@
               TwitterService.addAction(action1, tweet1, Common.logData, function(classification1) {
 
                 // Verify tweet was added for user doing the mentioning
-                Tweet.findTweet(tweet1.tweetId, Common.logData, function(returnedTweet1) {
+                Tweet.getTweet(tweet1.tweetId, Common.logData, function(returnedTweet1) {
                   Activity.getActivity(user0._id, returnedTweet1[0]._id, Common.logData, function(returnedActivity1) {
 
                     Assert.strictEqual(returnedTweet1[0].screenName, Common.ACTIONEE_TWITTER.screenName);
@@ -160,7 +160,7 @@
                       var tweet2 = TwitterInterfaceService.extractTweet(Common.rawRetweetOfUser, false, Common.logData);
 
                       // Get original experience and retweet count of tweet to be retweeted
-                      Tweet.findTweet(action2.retweetId, Common.logData, function(returnedTweet2) {
+                      Tweet.getTweet(action2.retweetId, Common.logData, function(returnedTweet2) {
                         Activity.getActivity(user0._id, returnedTweet2[0]._id, Common.logData, function(returnedActivity2) {
                           var originalTweetExperience = returnedActivity2[0].experience;
                           var originalRetweetCount = returnedTweet2[0].retweetCount;
@@ -169,14 +169,14 @@
 
                             // Verify tweet was added for user doing retweeting
                             User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
-                              Tweet.findTweet(tweet2.tweetId, Common.logData, function(returnedTweet3) {
+                              Tweet.getTweet(tweet2.tweetId, Common.logData, function(returnedTweet3) {
                                 Activity.getActivity(user3._id, returnedTweet3[0]._id, Common.logData, function(returnedActivity3) {
                                   Assert.strictEqual(returnedTweet3[0].screenName, Common.ACTIONEE_TWITTER.screenName);
                                   Assert.strictEqual(returnedActivity3[0].experience, TwitterUtility.TWEET_EXPERIENCE);
                                   experience += TwitterUtility.RETWEET_EXPERIENCE;
 
                                   // Verify original tweet's experience and retweet count increased
-                                  Tweet.findTweet(action2.retweetId, Common.logData, function(returnedTweet4) {
+                                  Tweet.getTweet(action2.retweetId, Common.logData, function(returnedTweet4) {
                                     Activity.getActivity(user0._id, returnedTweet4[0]._id, Common.logData, function(returnedActivity4) {
                                       Assert.strictEqual(returnedActivity4[0].experience, originalTweetExperience + TwitterUtility.RETWEET_EXPERIENCE);
                                       Assert.strictEqual(returnedTweet4[0].retweetCount, originalRetweetCount + 1);
@@ -232,7 +232,7 @@
             // Asynchronous method calls in loop - Using Recursion
             // Verify tweets are in database
             (function checkTweets(i) {
-              Tweet.findTweet(tweetIDs[i], Common.logData, function(returnedTweet) {
+              Tweet.getTweet(tweetIDs[i], Common.logData, function(returnedTweet) {
                 Assert.ok(returnedTweet);
                 returnedTweet.length.should.be.above(0);
                 i++;
@@ -292,7 +292,7 @@
 
             // Verify tweets are in database
             (function checkTweets(i) {
-              Tweet.findTweet(tweetIDs[i], Common.logData, function(returnedTweet) {
+              Tweet.getTweet(tweetIDs[i], Common.logData, function(returnedTweet) {
                 Assert.ok(returnedTweet);
                 returnedTweet.length.should.be.above(0);
                 i++;
@@ -464,7 +464,7 @@
       experience = user0.skill.experience;
 
       // Verify tweet exists
-      Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet0) {
+      Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet0) {
         Activity.getActivity(user0._id, returnedTweet0[0]._id, Common.logData, function(returnedActivity0) {
           Assert.strictEqual(returnedTweet0[0].tweetId, Common.rawStandardTweet.id_str);
           experience -= returnedActivity0[0].experience;
@@ -478,7 +478,7 @@
           TwitterService.removeTweet(tweetData, Common.logData, function(classification0) {
 
             // Verify tweet was removed
-            Tweet.findTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet1) {
+            Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet1) {
               Assert.strictEqual(0, returnedTweet1.length);
 
               Activity.getActivity(user0._id, returnedTweet0._id, Common.logData, function(returnedActivity2) {
