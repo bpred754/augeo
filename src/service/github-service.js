@@ -19,55 +19,51 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Routes all requests to the appropriate Augeo API           */
+  /* Description: Handles Github  business logic                             */
   /***************************************************************************/
 
   // Required local modules
+  var AugeoDB = require('../model/database');
+  var AugeoValidator = require('../validator/augeo-validator');
+  var Classifier = require('../classifier/app-classifier');
   var Logger = require('../module/logger');
 
   // Constants
-  var API = 'augeo-api';
+  var SERVICE = 'github-service';
 
   // Global variables
+  var GithubUser = AugeoDB.model('GITHUB_USER');
+  var classifier = new Classifier();
   var log = new Logger();
 
-  exports.mapRequests = function(app) {
-    log.functionCall(API, 'mapRequests', 'INIT', 'System', {}, 'Initializing Request Mapping');
+  exports.addUser = function(username, user, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'addUser', logData.parentProcess, logData.username, {'user.augeoUser': (user)?user.augeoUser:'invalid'});
 
-    // Route middleware that will happen on every request
-    app.use(function(req, res, next) {
-
-      // Redirect all non-secure requests as secured requests
-      if(req.headers['x-forwarded-proto'] !== 'https' && process.env.ENV == 'prod') {
-        return res.redirect(['https://', req.get('Host'), req.url].join(''));
-      }
-
-      // Log each request
-      log.trace(req.method + ' ' + req.originalUrl);
-
-      // Continue to the route handler
-      next();
-    });
-
-    // Route all admin requests to admin-api.js
-    app.use('/admin-api', require('./admin-api'));
-
-    // Router all github-api requests to github-api.js
-    app.use('/github-api', require('./github-api'));
-
-    // Route all twitter-api requests to twitter-api.js
-    app.use('/twitter-api', require('./twitter-api'));
-
-    // Route all user-api requests to user-api.js
-    app.use('/user-api', require('./user-api'));
-
-    // For local environment request only, route test-api requests to the test twitter-api.js file
-    if(process.env.ENV == 'local') {
-      app.use('/test-api', require('../../test/api/twitter-api'));
+    if(AugeoValidator.isMongooseObjectIdValid(user.augeoUser, logData) && user.githubId && user.screenName && user.accessToken) {
+      GithubUser.add(username, user, logData, callback);
+    } else {
+      rollback('Invalid Github user');
     }
+  };
 
-    // Single Page Application - serve layout.html for all requests
-    app.get('*', function(req, res) {
-      res.sendfile('./src/public/html/layout.html');
+  exports.checkExistingScreenName = function(screenName, logData, callback) {
+    log.functionCall(SERVICE, 'checkExistingScreenName', logData.parentProcess, logData.username, {'screenName': screenName});
+
+    GithubUser.getUserWithScreenName(screenName, logData, function(user) {
+      if(user) {
+        callback(true);
+      } else {
+        callback(false);
+      }
     });
+  };
+
+  exports.removeUser = function(augeoId, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'removeUser', logData.parentProcess, logData.username, {'augeoId': augeoId});
+
+    if(AugeoValidator.isMongooseObjectIdValid(augeoId, logData)) {
+      GithubUser.remove(augeoId, logData,  callback);
+    } else {
+      rollback('Invalid AugeoUser ID');
+    }
   };

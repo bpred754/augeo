@@ -19,20 +19,30 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all controllers for browserify    */
+  /* Description: GithubInterface mock so requests are not made to Github    */
+  /*              during unit text execution                                 */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Required local modules
+  var Common = require('../test-case/common');
 
-  augeo.controller('AppController', ['$scope', '$state', '$window', 'UserClientService', 'ProfileService', 'TwitterClientService', 'GithubClientService', require('./app-controller')]);
-  augeo.controller('TwitterActivityController', ['$scope', 'ActivityService', require('./twitter-activity-controller')]);
-  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'UserClientService', 'ActivityService', 'ProfileService', require('./dashboard-controller')]);
-  augeo.controller('LeaderboardController', ['$scope', 'UserClientService', require('./leaderboard-controller')]);
-  augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
-  augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', '$timeout', 'ProfileService', 'UserClientService', require('./profile-controller')]);
-  augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', require('./view-activity-controller')]);
+  exports.getAccessToken = function(code, logData, callback) {
 
-  // Error controllers
-  require('./error');
+    if(code == 'failAccessToken') {
+      callback();
+    } else if (code == 'failUserData') {
+      callback('{"access_token":"failUserData"}');
+    } else {
+      callback('{"access_token":"11111"}');
+    }
+  };
+
+  exports.getUserData = function(accessToken, logData, callback) {
+    if(accessToken != 'failUserData') {
+      callback('{"id": "' + Common.USER_GITHUB.githubId + '", "name": "' + Common.USER.firstName + '", "avatarUrl":"' + Common.USER_GITHUB.profileImageUrl + '", "login": "' + Common.USER_GITHUB.screenName + '"}');
+    } else {
+      callback();
+    }
+  };
+
+

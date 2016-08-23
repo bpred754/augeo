@@ -19,20 +19,50 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all controllers for browserify    */
+  /* Description: Handles logic related to interfacing with Github           */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Required local modules
+  var githubInterfaceUrl = process.env.TEST === 'true' ? '../../test/test-interface/github-test-interface' : '../interface/github-interface';
+  var GithubInterface = require(githubInterfaceUrl);
+  var Logger = require('../module/logger');
 
-  augeo.controller('AppController', ['$scope', '$state', '$window', 'UserClientService', 'ProfileService', 'TwitterClientService', 'GithubClientService', require('./app-controller')]);
-  augeo.controller('TwitterActivityController', ['$scope', 'ActivityService', require('./twitter-activity-controller')]);
-  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'UserClientService', 'ActivityService', 'ProfileService', require('./dashboard-controller')]);
-  augeo.controller('LeaderboardController', ['$scope', 'UserClientService', require('./leaderboard-controller')]);
-  augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
-  augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', '$timeout', 'ProfileService', 'UserClientService', require('./profile-controller')]);
-  augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', require('./view-activity-controller')]);
+  // Constants
+  var SERVICE = 'github-interface_service';
 
-  // Error controllers
-  require('./error');
+  // Global variables
+  var log = new Logger();
+
+  exports.getAccessToken = function(code, logData, callback) {
+    log.functionCall(SERVICE, 'getAccessToken', logData.parentProcess, logData.username, {'code':(code)?'valid':'invalid'});
+
+    GithubInterface.getAccessToken(code, logData, function(data) {
+
+      var accessToken = '';
+      if(data) {
+        accessToken = JSON.parse(data).access_token;
+      }
+
+      callback(accessToken);
+    });
+  };
+
+  exports.getUserData = function(accessToken, logData, callback) {
+    log.functionCall(SERVICE, 'getUserData', logData.parentProcess, logData.username, {'accessToken': (accessToken)?'valid':'invalid'});
+
+    GithubInterface.getUserData(accessToken, logData, function(userData) {
+
+      var user = {};
+      if(userData) {
+        var json = JSON.parse(userData);
+        user = {
+          accessToken:accessToken,
+          githubId: json.id,
+          name: json.name,
+          profileImageUrl: json.avatar_url,
+          screenName: json.login
+        };
+      }
+      callback(user);
+    });
+  };

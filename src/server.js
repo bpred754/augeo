@@ -37,7 +37,9 @@
   var log = new Logger(logOptions);
 
   // Schemas
+  require('./model/schema/augeo/activity');
   require('./model/schema/augeo/user');
+  require('./model/schema/github/user');
   require('./model/schema/twitter/tweet');
   require('./model/schema/twitter/user');
 

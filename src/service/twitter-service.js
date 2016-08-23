@@ -19,8 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Handles logic interfacing with the TWEET and MENTION       */
-  /*              collections                                                */
+  /* Description: Handles Twitter business logic                             */
   /***************************************************************************/
 
   // Required files
@@ -37,12 +36,6 @@
 
   // Constants
   var SERVICE = 'twitter-service';
-
-  // Schemas
-  require('../model/schema/augeo/activity');
-  require('../model/schema/augeo/user');
-  require('../model/schema/twitter/tweet');
-  require('../model/schema/twitter/user');
 
   // Global variables
   var Activity = AugeoDB.model('ACTIVITY');

@@ -374,6 +374,9 @@
         profileImageUrl = user.twitter.profileImageUrl;
         profileIcon = user.twitter.profileIcon;
         break;
+      case 'Github':
+        profileImageUrl = user.github.profileImageUrl;
+        profileIcon = user.github.profileImageUrl;
     };
 
     User.setProfileImage(user.username, profileImageUrl, profileIcon, logData, function(saveSuccessful) {

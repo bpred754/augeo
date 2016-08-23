@@ -60,11 +60,11 @@
       secretToken: secretToken
     },function(error1) {
         if(error1) {
-          log.functionError(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username,
+          log.functionError(COLLECTION, 'add', logData.parentProcess, logData.username,
             'Failed to save TWITTER_USER for user with id: ' + id + ' Error: ' + error1);
           callback(false);
         } else {
-          log.functionCall(COLLECTION, 'addTwitterSecretToken', logData.parentProcess, logData.username, {'id':id}, 'Saved TWITTER_USER');
+          log.functionCall(COLLECTION, 'add', logData.parentProcess, logData.username, {'id':id}, 'Saved TWITTER_USER');
           callback(true)
         }
       });

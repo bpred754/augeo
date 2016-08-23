@@ -39,7 +39,7 @@
     </div> <!-- end header container -->
 
     <!-- Authenticate with Twitter -->
-    <div id="th-auth-container" ng-if="!User.twitter.screenName">
+    <div id="th-auth-container" ng-if="!User.hasAuthentications">
       <div id="th-auth-inner-container">
         <p class="standard-text text-primary text-align-center">Authenticate with Twitter to gather past activity</p>
         <div class="horizontal-center">

@@ -19,20 +19,55 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all controllers for browserify    */
+  /* Description: Unit test cases for api/github-api                         */
+  /*              'getAuthenticationData' requests                           */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Required libraries
+  var Request = require('supertest');
+  var Should = require('should');
 
-  augeo.controller('AppController', ['$scope', '$state', '$window', 'UserClientService', 'ProfileService', 'TwitterClientService', 'GithubClientService', require('./app-controller')]);
-  augeo.controller('TwitterActivityController', ['$scope', 'ActivityService', require('./twitter-activity-controller')]);
-  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'UserClientService', 'ActivityService', 'ProfileService', require('./dashboard-controller')]);
-  augeo.controller('LeaderboardController', ['$scope', 'UserClientService', require('./leaderboard-controller')]);
-  augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
-  augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', '$timeout', 'ProfileService', 'UserClientService', require('./profile-controller')]);
-  augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', require('./view-activity-controller')]);
+  // Required local modules
+  var Common = require('../../common');
 
-  // Error controllers
-  require('./error');
+  module.exports = function(app) {
+
+    var agent = Request.agent(app);
+
+    // Invalid session
+    it('should return status 401 invalid user in session -- getAuthenticationData()', function(done) {
+      this.timeout(Common.TIMEOUT);
+
+      agent
+        .get('/github-api/getAuthenticationData')
+        .expect(401)
+        .end(function(error, response) {
+          Should.not.exist(error);
+          done();
+        });
+    });
+
+    // Valid
+    it('should return status 200 valid user and session -- getAuthenticationData()', function(done) {
+      this.timeout(Common.TIMEOUT);
+
+      // Login user
+      agent
+        .post('/user-api/login')
+        .send(Common.USER)
+        .expect(200)
+        .end(function(error0, response0) {
+          Should.not.exist(error0);
+
+          agent
+            .get('/github-api/getAuthenticationData')
+            .expect(200)
+            .end(function(error1, response1) {
+              Should.not.exist(error1);
+              response1.body.should.have.property('state')
+              done();
+            });
+        });
+    });
+  };
+

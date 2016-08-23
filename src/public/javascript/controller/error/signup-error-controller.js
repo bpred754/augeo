@@ -29,6 +29,6 @@
     $controller('LoginController', { $scope: $scope });
 
     // Set error message
-    $scope.signupMessage = 'Invalid Twitter account';
+    $scope.signupMessage = 'Failed to authenticate with Interface';
 
   };

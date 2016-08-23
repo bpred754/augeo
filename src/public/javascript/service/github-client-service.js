@@ -19,20 +19,17 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all controllers for browserify    */
+  /* Description: Singleton that fetches data for Augeo's github-api.        */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Reminder: Update service/index.js when service params are modified
+  module.exports = function(AugeoClientService) {
 
-  augeo.controller('AppController', ['$scope', '$state', '$window', 'UserClientService', 'ProfileService', 'TwitterClientService', 'GithubClientService', require('./app-controller')]);
-  augeo.controller('TwitterActivityController', ['$scope', 'ActivityService', require('./twitter-activity-controller')]);
-  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'UserClientService', 'ActivityService', 'ProfileService', require('./dashboard-controller')]);
-  augeo.controller('LeaderboardController', ['$scope', 'UserClientService', require('./leaderboard-controller')]);
-  augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'TwitterClientService', 'ClientValidator',require('./login-controller')]);
-  augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', '$timeout', 'ProfileService', 'UserClientService', require('./profile-controller')]);
-  augeo.controller('TwitterHistoryController', ['$scope', 'TwitterClientService', require('./twitter-history-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', require('./view-activity-controller')]);
+    this.getAuthenticationData = function(callback) {
+      var parameters = null;
+      AugeoClientService.getAugeoApi('github-api/getAuthenticationData', parameters, function(data, status) {
+        callback(data, status);
+      });
+    };
+  };
 
-  // Error controllers
-  require('./error');

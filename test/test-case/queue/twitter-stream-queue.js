@@ -28,7 +28,7 @@
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
   var Common = require('../common');
-  var TwitterInterface = require('../../interface/twitter-test-interface');
+  var TwitterInterface = require('../../test-interface/twitter-test-interface');
   var TwitterStreamQueue = require('../../../src/queue/twitter-stream-queue');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
 

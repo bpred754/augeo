@@ -58,9 +58,18 @@
       switch(interface) {
         case 'Twitter':
           $scope.isTwitterProfileImage = !$scope.isTwitterProfileImage;
+          $scope.isGithubProfileImage = false
           if(!$scope.isTwitterProfileImage) {
             interface = null;
           }
+          break;
+        case 'Github':
+          $scope.isGithubProfileImage = !$scope.isGithubProfileImage;
+          $scope.isTwitterProfileImage = false;
+          if(!$scope.isGithubProfileImage) {
+            interface = null;
+          }
+          break;
       };
 
       UserClientService.setProfileImage(interface,  function(user) {
@@ -147,6 +156,11 @@
         // Check Github authentication
         if(newValue.github && newValue.github.screenName) {
           $scope.targetUser.hasGithubAuthentication = true;
+
+          // Check if Github profile image is being used as Augeo profile image
+          if(newValue.profileImg == newValue.github.profileImageUrl) {
+            $scope.isGithubProfileImage = true;
+          }
         } else {
           $scope.targetUser.hasGithubAuthentication = false;
         }

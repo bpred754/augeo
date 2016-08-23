@@ -119,7 +119,7 @@
     this.setAuthentications = function(user) {
       // Determine if User has any authentications
       user.hasAuthentications = false;
-      if(user.twitter) {
+      if(user.twitter || user.github) {
         user.hasAuthentications = true;
       }
     };

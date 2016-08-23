@@ -19,7 +19,8 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for test/interface/twitter-test-interface  */
+  /* Description: Unit test cases for                                        */
+  /*   test/test-interface/twitter-test-interface                            */
   /***************************************************************************/
 
   // Required libraries
@@ -29,7 +30,7 @@
   // Required local modules
   var Common = require('../common');
   var Data = require('../../data');
-  var TwitterTestInterface = require('../../interface/twitter-test-interface');
+  var TwitterTestInterface = require('../../test-interface/twitter-test-interface');
 
   // Global variables
   var messenger = {};

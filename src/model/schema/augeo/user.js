@@ -32,32 +32,28 @@
 
   // Constants
   var COLLECTION = 'augeo_user-collection';
-  exports.PROJECTION_STRING = 'firstName lastName username admin profileImg profileIcon profession location website description skill subSkills twitter';
+  exports.PROJECTION_STRING = 'firstName github lastName username admin profileImg profileIcon profession location website description skill subSkills twitter';
 
   // Global variables
+  var githubProjection = 'githubId name profileImageUrl screenName'
   var log = new Logger();
   var twitterProjection = 'augeoUser name profileIcon profileImageUrl screenName twitterId';
 
   // Schema declaration
   var AUGEO_USER = Mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: String,
-    username: String,
-    password: String,
-    signupDate: { type: Date, default: Date.now },
     admin: Boolean,
-    sendGridId: String,
-    profileImg: String,
-    profileIcon: String,
-    profession: String,
-    location: String,
-    website: String,
     description: String,
-    twitter: {
-      type: Mongoose.Schema.Types.ObjectId,
-      ref: 'TWITTER_USER'
-    },
+    email: String,
+    firstName: String,
+    github: {type: Mongoose.Schema.Types.ObjectId, ref: 'GITHUB_USER'},
+    lastName: String,
+    location: String,
+    password: String,
+    profession: String,
+    profileIcon: String,
+    profileImg: String,
+    sendGridId: String,
+    signupDate: { type: Date, default: Date.now },
     skill: {
       imageSrc: String,
       level: Number,
@@ -70,7 +66,10 @@
       experience: Number,
       level: Number,
       rank:Number
-    }]
+    }],
+    twitter: {type: Mongoose.Schema.Types.ObjectId, ref: 'TWITTER_USER'},
+    username: String,
+    website: String
   });
 
   /***************************************************************************/
@@ -358,7 +357,7 @@
   AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': email, $options: 'i'}})
       .select(exports.PROJECTION_STRING)
-      .populate('twitter', twitterProjection)
+      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}])
       .exec(function(error, user) {
         if(error) {
           log.functionError(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username,
@@ -373,7 +372,7 @@
   AUGEO_USER.statics.getUserWithUsername = function(username, logData, callback) {
     this.findOne({'username':{'$regex': username, $options: 'i'}})
       .select(exports.PROJECTION_STRING)
-      .populate('twitter', twitterProjection)
+      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}])
       .exec(function(error, user) {
         if(error) {
           log.functionError(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username,

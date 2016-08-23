@@ -250,13 +250,6 @@
     padding-bottom:5px;
   }
 
-  .profile-interface {
-    height:24px;
-    width:24px;
-    margin-left:10px;
-    margin-right:10px;
-  }
-
   .profile-img {
     max-height:100%;
     max-width:100%;
@@ -270,6 +263,22 @@
     justify-content: center;
     width:100%;
     margin-bottom:10px;
+  }
+
+  .profile-interface {
+    height:24px;
+    width:24px;
+    margin-left:10px;
+    margin-right:10px;
+  }
+
+  .profile-interface-screen-name {
+    color:#333;
+  }
+
+  .profile-interface-screen-name:hover {
+    color:#9d9d9d;
+    text-decoration: none;
   }
 
   .profile-label {

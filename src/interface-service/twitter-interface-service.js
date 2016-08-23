@@ -26,7 +26,7 @@
   var AugeoUtility = require('../utility/augeo-utility');
   var Logger = require('../module/logger');
   var Classifier = require('../classifier/app-classifier');
-  var twitterInterfaceUrl = process.env.TEST === 'true' ? '../../test/interface/twitter-test-interface' : '../interface/twitter-interface';
+  var twitterInterfaceUrl = process.env.TEST === 'true' ? '../../test/test-interface/twitter-test-interface' : '../interface/twitter-interface';
   var TwitterInterface = require(twitterInterfaceUrl);
   var TwitterUtility = require('../utility/twitter-utility');
   var TwitterValidator = require('../validator/twitter-validator');

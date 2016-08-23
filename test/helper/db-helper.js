@@ -23,6 +23,13 @@
   /*              testing                                                    */
   /***************************************************************************/
 
+  // Schemas
+  require('../../src/model/schema/augeo/user');
+  require('../../src/model/schema/augeo/activity');
+  require('../../src/model/schema/github/user');
+  require('../../src/model/schema/twitter/tweet');
+  require('../../src/model/schema/twitter/user');
+
   // Required local modules
   var AugeoDB = require('../../src/model/database');
   var AugeoUtility = require('../../src/utility/augeo-utility');
@@ -33,6 +40,7 @@
   // Global variables
   var Activity = AugeoDB.model('ACTIVITY');
   var AugeoUser = AugeoDB.model('AUGEO_USER');
+  var GithubUser = AugeoDB.model('GITHUB_USER');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
 
@@ -111,7 +119,11 @@
         TwitterUser.remove((user1)?user1._id:'', Common.logData, function(removedUser1) {
           TwitterUser.remove((user2)?user2._id:'', Common.logData, function(removedUser2) {
             TwitterUser.removeInvalid(Common.logData, function() {
-              callback();
+              GithubUser.remove((user1)?user1._id:'', Common.logData, function(removedUser3) {
+                GithubUser.remove((user2)?user2._id:'', Common.logData, function(removedUser4) {
+                  callback();
+                });
+              });
             });
           });
         });

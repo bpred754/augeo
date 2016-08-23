@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $state, $window, UserClientService, ProfileController, TwitterClientService) {
+  module.exports = function($scope, $state, $window, UserClientService, ProfileController, TwitterClientService, GithubClientService) {
 
     $scope.layoutNavbar = 'hidden';
     $scope.isWelcomeModalViewed = false;
@@ -77,6 +77,21 @@
     $scope.showProfile = function() {
       ProfileController.setTargetUser($scope.User);
       showProfileModal();
+    };
+
+    $scope.submitGithubAuthentication = function() {
+
+      // Authenticate user with Github
+      GithubClientService.getAuthenticationData(function(authData) {
+
+        if(authData.clientId) {
+          $window.location.href = 'https://github.com/login/oauth/authorize?client_id=' + authData.clientId +
+            '&redirect_url=' + authData.redirectUrl + '&scope=' + authData.scope + '&state=' + authData.state;
+        } else {
+          $state.go('login');
+          $scope.loginMessage = 'Failed to Authenticate with Github'
+        }
+      });
     };
 
     $scope.submitTwitterAuthentication = function() {

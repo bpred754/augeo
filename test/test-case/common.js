@@ -36,6 +36,13 @@
     }
   };
 
+  exports.USER_GITHUB = {
+    githubId: '1000000000',
+    accessToken: '000',
+    screenName: 'githubScreenName',
+    profileImageUrl: 'githubProfileImage.png'
+  };
+
   exports.USER_TWITTER = {
     twitterId: '1000000000',
     accessToken: '000',

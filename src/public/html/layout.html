@@ -169,7 +169,7 @@
                    <label><input type="checkbox" ng-model="isTwitterProfileImage" ng-change="setProfileImage('Twitter')">Use as Augeo profile image</label>
                   </div>
                   <!-- Twitter screen name -->
-                  <div ng-if="targetUser.hasTwitterAuthentication" class="standard-text text-primary profile-attr horizontal-center">@{{targetUser.twitter.screenName}}</div>
+                  <div ng-if="targetUser.hasTwitterAuthentication" class="standard-text text-primary profile-attr horizontal-center"><a class="profile-interface-screen-name normal-text clickable" href="https://twitter.com/{{targetUser.twitter.screenName}}" target="_blank">@{{targetUser.twitter.screenName}}</a></div>
                   <!-- Twitter follow -->
                   <div class="horizontal-center profile-twitter-follow-container" ng-if="targetUser.hasTwitterAuthentication">
                     <a class="twitter-follow-button" href="{{targetUser.twitterFollowUrl}}" data-show-count="false" data-lang="en" data-show-screen-name="false">Follow</a>
@@ -189,6 +189,12 @@
                       </div>
                     </div>
                   </div>
+                  <!-- Use Github profile image as Augeo Image -->
+                  <div class="checkbox horizontal-center" ng-if="targetUser.github && isGlobalUser">
+                    <label><input type="checkbox" ng-model="isGithubProfileImage" ng-change="setProfileImage('Github')">Use as Augeo profile image</label>
+                  </div>
+                  <!-- Github screen name -->
+                  <div ng-if="targetUser.github" class="standard-text text-primary profile-attr horizontal-center"><a class="profile-interface-screen-name normal-text clickable" href="https://github.com/{{targetUser.github.screenName}}" target="_blank">{{targetUser.github.screenName}}</a></div>
                 </div>
               </div>
             </div>
@@ -238,19 +244,18 @@
             </div>
             <div class="modal-body standard-text">
               Augeo is a tool that gives you the power to view your interests in a quantitative way. It's common sense...
-              the more you do something the better you become. In this case, we take your Twitter feed and categorize your
-              tweets/mentions into different skills. Experience is then awarded to each post depending on the amount of
-              activity the post generates. As your experience grows, you will gain levels and be ranked among other Augeo
-              users. Although the current application only takes Twitter activity into consideration, the
-              <a href="https://github.com/bpred754/augeo/wiki/Vision" target="_blank">vision</a> for Augeo is much larger.
-              Our intention is to expand to a vast set of interfaces, from other sites and blogs to health related apps
-              such as FitBit. The possibilities are endless. In a nutshell, Augeo is the gamification of life.
+              the more you do something the better you become. In this case, we categorize your online activity
+              into different skills and award experience depending on the activity type. As your experience grows,
+              you will gain levels and be ranked among other Augeo users. Although the current application only takes
+              Twitter and Github activity into consideration, the <a href="https://github.com/bpred754/augeo/wiki/Vision" target="_blank">vision</a>
+              for Augeo is much larger. Our intention is to expand to a vast set of interfaces, from other sites and blogs to
+              health related apps such as FitBit. The possibilities are endless. In a nutshell, Augeo is the gamification of life.
             </div>
             <div id="about-logo">
               <img id="about-logo-image" src="image/augeo-logo-medium.png">
             </div>
             <div class="modal-footer" ng-if="aboutModalHeading != 'About'">
-              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="submitTwitterAuthentication()">Authenticate with Twitter</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="showProfile()">Authenticate with Interface</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Later</button>
             </div>
           </div>

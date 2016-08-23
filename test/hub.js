@@ -23,6 +23,13 @@
   /*              cases.                                                     */
   /***************************************************************************/
 
+  // Schemas
+  require('../src/model/schema/augeo/activity');
+  require('../src/model/schema/augeo/user');
+  require('../src/model/schema/github/user');
+  require('../src/model/schema/twitter/tweet');
+  require('../src/model/schema/twitter/user');
+
   // Required local modules
   var App = require('../src/server');
   var Helper = require('./helper/db-helper');
@@ -52,8 +59,9 @@
     importTests('twitterUtility', './test-case/utility/twitter-utility');
   });
 
-  describe('Interface', function() {
-    importTests('twitterTesttInterface', './test-case/interface/twitter-test-interface');
+  describe('Test Interface', function() {
+    importTests('githubTestInterface', './test-case/test-interface/github-test-interface');
+    importTests('twitterTestInterface', './test-case/test-interface/twitter-test-interface');
   });
 
   describe('Interface Service', function() {
@@ -61,7 +69,8 @@
   });
 
   describe('Service', function() {
-    importTests('userService', './test-case/service/user-service.js')
+    importTests('userService', './test-case/service/user-service.js');
+    importTests('githubService', './test-case/service/github-service.js');
     importTests('twitterService', './test-case/service/twitter-service.js');
     importTests('userServiceDependent', './test-case/service/user-service-dependent.js');
 
@@ -111,6 +120,11 @@
     importTests('Set Log Level', './test-case/api/admin-api/set-log-level', App);
   });
 
+  describe('Github API', function() {
+    importTests('callback', './test-case/api/github-api/callback', App);
+    importTests('getAuthenticationData', './test-case/api/github-api/get-authentication-data', App);
+  });
+
   describe('Twitter API', function() {
     importTests('getAuthenticationData', './test-case/api/twitter-api/get-authentication-data', App);
     importTests('callback', './test-case/api/twitter-api/callback', App);
@@ -122,6 +136,6 @@
      importTests('Set Profile Image', './test-case/api/user-api/set-profile-image', App);
    });
 
-  describe('Twitter', function() {
-    importTests('Twitter', './test-case/twitter/twitter');
+  describe('Interface', function() {
+    importTests('Twitter', './test-case/interface/twitter');
   });
