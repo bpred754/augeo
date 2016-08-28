@@ -51,7 +51,26 @@
     };
 
     Https.request(options, function(response) {
-      requestCallback(response, callback)
+      requestCallback(response, logData, callback)
+    }).end();
+  };
+
+  exports.getPushEvents = function(accessToken, path, eTag, logData, callback) {
+    log.functionCall(INTERFACE, 'getPushEvents', logData.parentProcess, logData.username, {'accessToken':(accessToken)?'valid':'invalid','path':path,'eTag':eTag});
+
+    var options = {
+      hostname: 'api.github.com',
+      method: 'GET',
+      path: path,
+      headers: {
+        'Authorization': 'token ' + accessToken,
+        'If-None-Match': eTag,
+        'User-Agent': 'bpred754'
+      }
+    };
+
+    Https.request(options, function(response) {
+      requestCallback(response, logData, callback)
     }).end();
   };
 
@@ -63,13 +82,13 @@
       method: 'GET',
       path: '/user',
       headers: {
-        'User-Agent': 'Other',
+        'User-Agent': 'bpred754',
         'Authorization': 'token ' + accessToken
       }
     };
 
     Https.request(options, function(response) {
-      requestCallback(response, callback)
+      requestCallback(response, logData, callback)
     }).end();
   };
 
@@ -77,13 +96,19 @@
   /* Private functions                                                       */
   /***************************************************************************/
 
-  var requestCallback = function(response, callback) {
+  var requestCallback = function(response, logData, callback) {
     var data = '';
     response.on('data', function (chunk) {
       data += chunk;
     });
 
     response.on('end', function () {
-      callback(data);
+      log.functionCall(INTERFACE, 'requestCallback (private)', logData.parentProcess, logData.username, {}, 'Retrieved all data from Github request');
+
+      callback(data, response.headers);
+    });
+
+    response.on('error', function(error) {
+      log.functionError(INTERFACE, 'requestCallback (private)', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
     });
   };

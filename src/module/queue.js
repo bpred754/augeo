@@ -103,10 +103,12 @@
             callback: typeof callback === 'function' ? callback : null
           };
 
-          if (pos) {
+          if (pos === true) {
             q.tasks.unshift(item);
-          } else {
+          } else if(pos === false) {
             q.tasks.push(item);
+          } else if(typeof pos === "number") {
+            q.tasks.splice(pos, 0, item);
           }
 
           if (q.saturated && q.tasks.length === q.concurrency) {
@@ -125,6 +127,9 @@
         drain: null,
         started: false,
         paused: false,
+        insert: function(index, data, callback) {
+          _insert(q, data, index, callback);
+        },
         push: function (data, callback) {
           _insert(q, data, false, callback);
         },
@@ -175,12 +180,12 @@
           q.paused = false;
           q.process();
         },
-        getTaskPosition: function(attribute, value) {
+        getTaskPosition: function(attribute, value, checkExists) {
           var position = -1;
           for(var i = 0; i < q.tasks.length; i++) {
             var taskData = q.tasks[i].data;
-            if (taskData[attribute] != undefined) {
-              if (taskData[attribute].equals(value)) {
+            if (taskData[attribute]) {
+              if(checkExists || taskData[attribute].equals(value)) {
                 position = i;
                 break;
               }

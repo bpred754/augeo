@@ -26,7 +26,7 @@
   var Bunyan = require('bunyan');
 
   // Required local modules
-  var AbstractObject = require('./abstract-object');
+  var AbstractObject = require('./common/abstract-object');
 
   // Global variables
   var log = null;

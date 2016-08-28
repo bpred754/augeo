@@ -136,7 +136,7 @@
         Activity.addActivities(activities, logData, function () {
 
           // Determine experience from tweets
-          var skillsExperience = calculateSkillsExperience(activities, logData);
+          var skillsExperience = AugeoUtility.calculateSkillsExperience(activities, logData);
 
           // Update user's experience
           User.updateSkillData(userId, skillsExperience, logData, function () {
@@ -375,30 +375,6 @@
   /***************************************************************************/
   /* Private Functions                                                       */
   /***************************************************************************/
-
-  // Calculate skills experience based on tweets and mentions
-  var calculateSkillsExperience = function(activities, logData) {
-    log.functionCall(SERVICE, 'calculateSkillsExperience (private)', logData.parentProcess, logData.username, {'activities.length':(activities)?activities.length:'invalid'});
-
-    var mainSkillExperience = 0;
-    var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData);
-    for(var i = 0; i < activities.length; i++) {
-      var activity = activities[i];
-
-      // Add tweet experience to mainSkill
-      mainSkillExperience += activity.experience;
-
-      // Add experience to subSkill
-      subSkillsExperience[activity.classification] += activity.experience;
-    }
-
-    var experience = {
-      mainSkillExperience: mainSkillExperience,
-      subSkillsExperience: subSkillsExperience
-    };
-
-    return experience;
-  };
 
   var extractActivity = function(tweet, timestamp, checkClassification, isMention, isRetweet, logData) {
     log.functionCall(SERVICE, 'extractActivity', logData.parentProcess, logData.username, {'tweet':(tweet)?tweet.tweetId:'invalid',

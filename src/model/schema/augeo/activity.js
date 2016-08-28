@@ -158,7 +158,7 @@
         log.functionError(COLLECTION, 'upsertActivity (private)', logData.parentProcess, logData.username,
           'Failed to upsert activity with data ID: ' + (activity)?activity.data:'invalid' + '. Error: ' + error);
       } else {
-        log.functionCall(COLLECTION, 'upsertTweet (private)', logData.parentProcess, logData.username, {'activityDocument':(activityDocument)?'defined':'invalid',
+        log.functionCall(COLLECTION, 'upsertActivity (private)', logData.parentProcess, logData.username, {'activityDocument':(activityDocument)?'defined':'invalid',
           'activity.data':(activity)?activity.data:'invalid'});
         callback(updatedActivity);
       }

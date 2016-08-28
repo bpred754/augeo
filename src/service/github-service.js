@@ -24,17 +24,45 @@
 
   // Required local modules
   var AugeoDB = require('../model/database');
+  var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
   var Classifier = require('../classifier/app-classifier');
+  var GithubQueueTask = require('../queue-task/github-queue-task');
   var Logger = require('../module/logger');
 
   // Constants
   var SERVICE = 'github-service';
 
   // Global variables
+  var Activity = AugeoDB.model('ACTIVITY');
+  var Commit = AugeoDB.model('GITHUB_COMMIT');
   var GithubUser = AugeoDB.model('GITHUB_USER');
+  var User = AugeoDB.model('AUGEO_USER');
   var classifier = new Classifier();
   var log = new Logger();
+
+  exports.addCommits = function(screenName, commits, logData, callback) {
+    log.functionCall(SERVICE, 'addCommits', logData.parentProcess, logData.username, {'screenName': screenName, 'commits.length': (commits)?commits.length:'invalid'});
+
+    if(commits.length > 0) {
+      Commit.addCommits(screenName, commits, logData, function(insertedCommits) {
+
+        // Update commits with database IDs
+        for(var i = 0; i < insertedCommits.length; i++) {
+          commits[i].data = insertedCommits[i]._id;
+        }
+
+        Activity.addActivities(commits, logData, function() {
+          var skillsExperience = AugeoUtility.calculateSkillsExperience(commits, logData);
+          User.updateSkillData(commits[0].user, skillsExperience, logData, function () {
+            callback();
+          });
+        });
+      });
+    } else {
+      callback();
+    }
+  };
 
   exports.addUser = function(username, user, logData, callback, rollback) {
     log.functionCall(SERVICE, 'addUser', logData.parentProcess, logData.username, {'user.augeoUser': (user)?user.augeoUser:'invalid'});
@@ -46,6 +74,27 @@
     }
   };
 
+  exports.addUsersToEventQueue = function(eventQueue, logData) {
+    log.functionCall(SERVICE, 'addUsersToEventQueue', logData.parentProcess, logData.username);
+
+    GithubUser.getAllUsers(logData, function(users) {
+      if(users.length > 0) {
+        // Asynchronous method calls in loop - Using Recursion
+        (function myClojure(i) {
+          var user = users[i];
+          exports.getLatestCommitEventId(user.screenName, logData, function (eventId) {
+            var task = new GithubQueueTask(user.augeoUser, user.screenName, user.accessToken, eventId, logData);
+            eventQueue.addTask(task, logData);
+            i++;
+            if (i < users.length) {
+              myClojure(i);
+            }
+          });
+        })(0); // Pass i as 0 and myArray to myClojure
+      }
+    });
+  };
+
   exports.checkExistingScreenName = function(screenName, logData, callback) {
     log.functionCall(SERVICE, 'checkExistingScreenName', logData.parentProcess, logData.username, {'screenName': screenName});
 
@@ -55,6 +104,18 @@
       } else {
         callback(false);
       }
+    });
+  };
+
+  exports.getLatestCommitEventId = function(screenName, logData, callback) {
+    log.functionCall(SERVICE, 'getLatestCommitEventId', logData.parentProcess, logData.username, {'screenName':screenName});
+
+    Commit.getLatestCommit(screenName, logData, function(commit) {
+      var eventId = null;
+      if(commit) {
+        eventId = commit.eventId;
+      }
+      callback(eventId);
     });
   };
 

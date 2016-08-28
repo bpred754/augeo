@@ -77,6 +77,18 @@
     });
   };
 
+  GITHUB_USER.statics.getAllUsers = function(logData, callback) {
+    this.find({}, function(error, users) {
+      if(error) {
+        log.functionError(COLLECTION, 'getAllUsers', logData.parentProcess, logData.username, 'Failed to get Github users:' + error);
+        callback();
+      } else {
+        log.functionCall(COLLECTION, 'getAllUsers', logData.parentProcess, logData.username);
+        callback(users);
+      }
+    });
+  };
+
   GITHUB_USER.statics.getUserWithScreenName = function(screenName, logData, callback) {
     this.findOne({'screenName':screenName})
       .exec(function(error, githubUser) {

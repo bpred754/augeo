@@ -29,7 +29,9 @@
   var AugeoUtility = require('../utility/augeo-utility');
   var Logger = require('../module/logger');
   var AugeoValidator = require('../validator/augeo-validator');
+  var GithubEventQueue = require('../queue/github-event-queue');
   var GithubInterfaceService = require('../interface-service/github-interface-service');
+  var GithubQueueTask = require('../queue-task/github-queue-task');
   var GithubService = require('../service/github-service');
   var UserService = require('../service/user-service');
 
@@ -87,22 +89,26 @@
 
                   GithubService.addUser(username, userData, logData, function (addedUser) {
 
-                    // Set user's session data
-                    request.session.user = addedUser.toJSON();
-                    delete userData.accessToken;
-                    request.session.user.github = userData;
+                    GithubService.getLatestCommitEventId(userData.screenName, logData, function(eventId) {
+                      var eventQueue = new GithubEventQueue();
+                      var task = new GithubQueueTask(userId, userData.screenName, userData.accessToken, eventId, logData);
+                      eventQueue.addTask(task, logData);
 
-                    // TODO: Place Github user on queue
+                      // Set user's session data
+                      request.session.user = addedUser.toJSON();
+                      delete userData.accessToken;
+                      request.session.user.github = userData;
 
-                    // Set profile image if none is set
-                    if (request.session.user.profileImg == 'image/avatar-medium.png') {
-                      UserService.setProfileImage('Github', request.session.user, logData, function (updatedUser) {
-                        request.session.user = updatedUser;
+                      // Set profile image if none is set
+                      if (request.session.user.profileImg == 'image/avatar-medium.png') {
+                        UserService.setProfileImage('Github', request.session.user, logData, function (updatedUser) {
+                          request.session.user = updatedUser;
+                          response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
+                        });
+                      } else {
                         response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
-                      });
-                    } else {
-                      response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
-                    }
+                      }
+                    });
                   }, function (message) {
                     rollback(400, message);
                   });

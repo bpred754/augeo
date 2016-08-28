@@ -19,28 +19,25 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Custom object mechanism                                    */
+  /* Description: Abstract object to manage queue tasks                      */
   /***************************************************************************/
 
-  var surrogateConstructor = function() {};
+  // Required local modules
+  var AbstractObject = require('../module/common/abstract-object');
 
-  // Logic to extend classes
-  exports.extend = function(base, sub, methods) {
-    surrogateConstructor.prototype = base.prototype;
-    sub.prototype = new surrogateConstructor();
-    sub.prototype.constructor = sub;
+  // Constructor
+  var $this = function(userId) {
+    $this.base.constructor.call(this, userId);
+    this.userId = userId;
+    this.wait = 0;
+  };
 
-    // Add a reference to the parent's prototype
-    sub.base = base.prototype;
+  AbstractObject.extend(AbstractObject.GenericObject, $this, {
 
-    // Copy the methods passed in to the prototype
-    for (var name in methods) {
-      sub.prototype[name] = methods[name];
-    }
+    execute: function(){} // Override in child object
 
-    // So we can define the constructor inline
-    return sub;
-  }
+  });
 
-  // Generic object class
-  exports.GenericObject = function(){};
+  module.exports = $this;
+
+

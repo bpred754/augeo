@@ -73,6 +73,30 @@
     return levelProgress;
   };
 
+  // Calculate skills experience
+  exports.calculateSkillsExperience = function(activities, logData) {
+    log.functionCall(UTILITY, 'calculateSkillsExperience', logData.parentProcess, logData.username, {'activities.length':(activities)?activities.length:'invalid'});
+
+    var mainSkillExperience = 0;
+    var subSkillsExperience = exports.initializeSubSkillsExperienceArray(exports.SUB_SKILLS, logData);
+    for(var i = 0; i < activities.length; i++) {
+      var activity = activities[i];
+
+      // Add tweet experience to mainSkill
+      mainSkillExperience += activity.experience;
+
+      // Add experience to subSkill
+      subSkillsExperience[activity.classification] += activity.experience;
+    }
+
+    var experience = {
+      mainSkillExperience: mainSkillExperience,
+      subSkillsExperience: subSkillsExperience
+    };
+
+    return experience;
+  };
+
   // Create user's sub skills given the sub skills experience
   exports.createSubSkills = function(skillsExperience, logData) {
     log.functionCall(UTILITY, 'createSubSkills', logData.parentProcess, logData.username, {'skillsExperience':(skillsExperience)?'defined':'invalid'});
