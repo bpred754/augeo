@@ -33,7 +33,8 @@
   // Required local modules
   var AugeoDB = require('../../src/model/database');
   var AugeoUtility = require('../../src/utility/augeo-utility');
-  var Common = require('../test-case/common');
+  var Common = require('../data/common');
+  var TwitterData = require('../data/twitter-data');
   var TwitterService = require('../../src/service/twitter-service');
   var UserService = require('../../src/service/user-service');
 
@@ -45,8 +46,8 @@
   var TwitterUser = AugeoDB.model('TWITTER_USER');
 
   exports.addTestUsers = function(callback) {
-    exports.addUser(Common.USER, Common.USER_TWITTER, function() {
-      exports.addUser(Common.ACTIONEE, Common.ACTIONEE_TWITTER, function() {
+    exports.addUser(Common.USER, TwitterData.USER_TWITTER, function() {
+      exports.addUser(Common.ACTIONEE, TwitterData.ACTIONEE_TWITTER, function() {
         callback();
       });
     });

@@ -26,7 +26,7 @@
   var Assert = require('assert');
 
   // Required local modules
-  var Common = require('../common');
+  var Common = require('../../data/common');
   var UserService = require('../../../src/service/user-service');
 
   // getDashboardDisplayData

@@ -28,7 +28,8 @@
   var Should = require('should');
 
   // Required local modules
-  var Common = require('../common');
+  var Common = require('../../data/common');
+  var GithubData = require('../../data/github-data');
   var GithubTestInterface = require('../../test-interface/github-test-interface');
 
   it('should return empty token when given "failAccessToken" code param -- getAccessToken()', function(done) {
@@ -75,10 +76,10 @@
       Should.exist(data);
 
       var json = JSON.parse(data);
-      Assert.strictEqual(json.id, Common.USER_GITHUB.githubId);
+      Assert.strictEqual(json.id, GithubData.USER_GITHUB.githubId);
       Assert.strictEqual(json.name, Common.USER.firstName);
-      Assert.strictEqual(json.avatarUrl, Common.USER_GITHUB.profileImageUrl);
-      Assert.strictEqual(json.login, Common.USER_GITHUB.screenName);
+      Assert.strictEqual(json.avatarUrl, GithubData.USER_GITHUB.profileImageUrl);
+      Assert.strictEqual(json.login, GithubData.USER_GITHUB.screenName);
       done();
     });
   });

@@ -28,8 +28,9 @@
 
   // Required local modules
   var AugeoUtility = require('../../../src/utility/augeo-utility');
-  var Common = require('../common');
+  var Common = require('../../data/common');
   var Mongoose = require('../../../src/model/database');
+  var TwitterData = require('../../data/twitter-data')
   var TwitterService = require('../../../src/service/twitter-service');
   var UserService = require('../../../src/service/user-service');
 
@@ -478,15 +479,15 @@
           User.add(newUser, Common.logData, function(user2) {
 
             // Add Twitter user to database
-            TwitterUser.add(user2._id, Common.USER_TWITTER.secretToken, Common.logData, function(isSuccessful) {
+            TwitterUser.add(user2._id, TwitterData.USER_TWITTER.secretToken, Common.logData, function(isSuccessful) {
 
               var twitterData = {
-                twitterId: Common.ACTIONEE_TWITTER.twitterId,
+                twitterId: TwitterData.ACTIONEE_TWITTER.twitterId,
                 name: Common.ACTIONEE.fullName,
-                screenName: Common.ACTIONEE_TWITTER.screenName,
-                profileImageUrl: Common.ACTIONEE_TWITTER.profileImageUrl,
-                accessToken: Common.ACTIONEE_TWITTER.accessToken,
-                secretAccessToken: Common.ACTIONEE_TWITTER.secretAccessToken,
+                screenName: TwitterData.ACTIONEE_TWITTER.screenName,
+                profileImageUrl: TwitterData.ACTIONEE_TWITTER.profileImageUrl,
+                accessToken: TwitterData.ACTIONEE_TWITTER.accessToken,
+                secretAccessToken: TwitterData.ACTIONEE_TWITTER.secretAccessToken,
               };
 
               var sessionUser = {

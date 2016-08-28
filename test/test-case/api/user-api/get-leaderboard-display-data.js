@@ -29,7 +29,7 @@
   var Should = require('should');
 
   // Required local modules
-  var Common = require('../../common');
+  var Common = require('../../../data/common');
   var AugeoUtility = require('../../../../src/utility/augeo-utility');
 
   module.exports = function(app) {

@@ -29,7 +29,8 @@
 
   // Required local modules
   var AugeoDB = require('../../../../src/model/database');
-  var Common = require('../../common');
+  var Common = require('../../../data/common');
+  var GithubData = require('../../../data/github-data');
 
   // Global variables
   var GithubUser = AugeoDB.model('GITHUB_USER');
@@ -122,10 +123,10 @@
         // Add Github user to collection
         var githubUser = {
           augeoUser: user._id,
-          githubId: Common.USER_GITHUB.githubId,
-          accessToken: Common.USER_GITHUB.accessToken,
-          screenName: Common.USER_GITHUB.screenName,
-          profileImageUrl: Common.USER_GITHUB.profileImageUrl
+          githubId: GithubData.USER_GITHUB.githubId,
+          accessToken: GithubData.USER_GITHUB.accessToken,
+          screenName: GithubData.USER_GITHUB.screenName,
+          profileImageUrl: GithubData.USER_GITHUB.profileImageUrl
         };
 
         GithubUser.add(Common.USER.username, githubUser, Common.logData, function() {
@@ -171,7 +172,7 @@
             Should.exist(user.github.githubId);
 
             // Verify user was added to GITHUB_USER collection
-            GithubUser.getUserWithScreenName(Common.USER_GITHUB.screenName, Common.logData, function(githubUser) {
+            GithubUser.getUserWithScreenName(GithubData.USER_GITHUB.screenName, Common.logData, function(githubUser) {
               Assert.strictEqual(githubUser.augeoUser.toString(), user._id.toString());
               done();
             });

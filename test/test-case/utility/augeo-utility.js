@@ -27,7 +27,7 @@
 
   // Required local modules
   var AugeoUtility = require('../../../src/utility/augeo-utility');
-  var Common = require('../common');
+  var Common = require('../../data/common');
 
   it('should return correct levels for given experiences -- calculateLevel()', function(done) {
     Assert.strictEqual(AugeoUtility.calculateLevel(0, Common.logData), 1);
@@ -58,6 +58,29 @@
     Assert.strictEqual(AugeoUtility.calculateLevelProgress(1, 'test', Common.logData), 0);
     Assert.strictEqual(AugeoUtility.calculateLevelProgress(undefined, -1, Common.logData), 0);
     Assert.strictEqual(AugeoUtility.calculateLevelProgress(1, undefined, Common.logData), 0);
+    done();
+  });
+
+  it('should return an object with main skill and sub skill experiences -- calculateSkillsExperience()', function(done) {
+
+    var activities = new Array();
+    activities.push({
+      classification: "Technology",
+      experience: 100
+    });
+    activities.push({
+      classification: "Technology",
+      experience: 100
+    });
+    activities.push({
+      classification: "General",
+      experience: 10
+    });
+
+    var skillExperiences = AugeoUtility.calculateSkillsExperience(activities, Common.logData);
+    Assert.strictEqual(skillExperiences.mainSkillExperience, 210);
+    Assert.strictEqual(skillExperiences.subSkillsExperience['Technology'], 200);
+    Assert.strictEqual(skillExperiences.subSkillsExperience['General'], 10);
     done();
   });
 

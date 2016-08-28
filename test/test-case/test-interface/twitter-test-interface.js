@@ -28,16 +28,17 @@
   var Request = require('supertest');
 
   // Required local modules
-  var Common = require('../common');
-  var Data = require('../../data');
+  var Common = require('../../data/common');
+  var TwitterData = require('../../data/twitter-data');
   var TwitterTestInterface = require('../../test-interface/twitter-test-interface');
+  var TwitterStreamData = require('../../data/twitter-stream-data');
 
   // Global variables
   var messenger = {};
 
   it('should return 3 raw mentions from test database -- getMentions()', function(done) {
     TwitterTestInterface.getMentions(messenger, Common.logData, function(error, data, response) {
-      Assert.strictEqual(data.length, Data.RETRIEVE_LIMIT);
+      Assert.strictEqual(data.length, TwitterStreamData.RETRIEVE_LIMIT);
 
       // Verify all required attributes are in raw data
       for(var i = 0; i < data.length; i++) {
@@ -51,13 +52,13 @@
   it('should return 3 raw mentions from test database with IDs less than the max ID -- getMentions()', function(done) {
 
     // Get raw Mentions
-    var mentions = Data.getRawMentions();
-    Assert.strictEqual(mentions.length, Data.RETRIEVE_LIMIT);
+    var mentions = TwitterStreamData.getRawMentions();
+    Assert.strictEqual(mentions.length, TwitterStreamData.RETRIEVE_LIMIT);
 
     var maxId = mentions[1].id_str;
 
     TwitterTestInterface.getMentions(messenger, Common.logData, function(error, data, response) {
-      Assert.strictEqual(data.length, Data.RETRIEVE_LIMIT);
+      Assert.strictEqual(data.length, TwitterStreamData.RETRIEVE_LIMIT);
 
       for(var i = 0; i < data.length; i++) {
         validateTweet(data[i]);
@@ -84,7 +85,7 @@
     TwitterTestInterface.getOAuthAccessToken(data, oauthSecretToken, Common.logData, function(accessToken, secretAccessToken, screenName) {
       Assert.strictEqual(accessToken.length, 50);
       Assert.strictEqual(secretAccessToken.length, 50);
-      Assert.strictEqual(screenName, Common.USER_TWITTER.screenName);
+      Assert.strictEqual(screenName, TwitterData.USER_TWITTER.screenName);
       done();
     });
   });
@@ -111,7 +112,7 @@
 
   it('should return 3 raw tweets from test database -- getTweets()', function(done) {
     TwitterTestInterface.getTweets(messenger, Common.logData, function(error, data, response) {
-      Assert.strictEqual(data.length, Data.RETRIEVE_LIMIT);
+      Assert.strictEqual(data.length, TwitterStreamData.RETRIEVE_LIMIT);
 
       // Verify all required attributes are in raw data
       for(var i = 0; i < data.length; i++) {
@@ -125,12 +126,12 @@
   it('should return 3 raw tweets from test database with IDs less than the max ID -- getTweets()', function(done) {
 
     // Get raw tweets
-    var tweets = Data.getRawTweets();
-    Assert.strictEqual(tweets.length, Data.RETRIEVE_LIMIT);
+    var tweets = TwitterStreamData.getRawTweets();
+    Assert.strictEqual(tweets.length, TwitterStreamData.RETRIEVE_LIMIT);
     var maxId = tweets[1].id_str;
 
     TwitterTestInterface.getTweets(messenger, Common.logData, function(error, data, response) {
-      Assert.strictEqual(data.length, Data.RETRIEVE_LIMIT);
+      Assert.strictEqual(data.length, TwitterStreamData.RETRIEVE_LIMIT);
 
       for(var i = 0; i < data.length; i++) {
         validateTweet(data[i]);
@@ -146,10 +147,10 @@
   });
 
   it('should return user Twitter data -- getTwitterData()', function(done) {
-    TwitterTestInterface.getTwitterData(messenger, Common.USER_TWITTER.screenName, Common.logData, function(error, data, response) {
-      Assert.strictEqual(data.id_str, Common.USER_TWITTER.twitterId);
+    TwitterTestInterface.getTwitterData(messenger, TwitterData.USER_TWITTER.screenName, Common.logData, function(error, data, response) {
+      Assert.strictEqual(data.id_str, TwitterData.USER_TWITTER.twitterId);
       Assert.strictEqual(data.name, Common.USER.firstName + ' ' + Common.USER.lastName);
-      Assert.strictEqual(data.screen_name, Common.USER_TWITTER.screenName);
+      Assert.strictEqual(data.screen_name, TwitterData.USER_TWITTER.screenName);
       Assert.strictEqual(data.profile_image_url_https, "https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs_normal.jpg");
       done();
     });
@@ -162,7 +163,7 @@
       validateTweet(tweet);
 
       // Verify tweetId is less than all tweet Ids in raw Tweet table
-      var testTweet = Data.getMostRecentTweet();
+      var testTweet = TwitterStreamData.getMostRecentTweet();
       tweet.id_str.should.be.below(testTweet.id_str);
       done();
 
@@ -182,7 +183,7 @@
       validateTweet(tweet);
 
       // Verify tweetId is less than all tweet Ids in raw Mention table
-      var testTweet = Data.getMostRecentMention();
+      var testTweet = TwitterStreamData.getMostRecentMention();
       tweet.id_str.should.be.below(testTweet.id_str);
       done();
     });

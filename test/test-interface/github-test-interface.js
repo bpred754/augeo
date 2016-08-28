@@ -24,7 +24,8 @@
   /***************************************************************************/
 
   // Required local modules
-  var Common = require('../test-case/common');
+  var Common = require('../data/common');
+  var GithubData = require('../data/github-data');
 
   exports.getAccessToken = function(code, logData, callback) {
 
@@ -39,7 +40,7 @@
 
   exports.getUserData = function(accessToken, logData, callback) {
     if(accessToken != 'failUserData') {
-      callback('{"id": "' + Common.USER_GITHUB.githubId + '", "name": "' + Common.USER.firstName + '", "avatarUrl":"' + Common.USER_GITHUB.profileImageUrl + '", "login": "' + Common.USER_GITHUB.screenName + '"}');
+      callback('{"id": "' + GithubData.USER_GITHUB.githubId + '", "name": "' + Common.USER.firstName + '", "avatarUrl":"' + GithubData.USER_GITHUB.profileImageUrl + '", "login": "' + GithubData.USER_GITHUB.screenName + '"}');
     } else {
       callback();
     }

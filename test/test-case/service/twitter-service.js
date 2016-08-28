@@ -29,7 +29,8 @@
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
   var AugeoUtility = require('../../../src/utility/augeo-utility');
-  var Common = require('../common');
+  var Common = require('../../data/common');
+  var TwitterData = require('../../data/twitter-data');
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
   var TwitterService = require('../../../src/service/twitter-service');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
@@ -77,13 +78,13 @@
 
       // Get Test Tester's twitter information from database
       var twitterMessenger = '';
-      TwitterInterfaceService.getTwitterUser(twitterMessenger, Common.USER_TWITTER.screenName, Common.logData, function(userData) {
+      TwitterInterfaceService.getTwitterUser(twitterMessenger, TwitterData.USER_TWITTER.screenName, Common.logData, function(userData) {
 
         Assert.ok(userData.twitterId);
         Assert.strictEqual(userData.name, Common.USER.fullName);
 
-        userData.accessToken = Common.USER_TWITTER.accessToken;
-        userData.secretAccessToken = Common.USER_TWITTER.secretAccessToken;
+        userData.accessToken = TwitterData.USER_TWITTER.accessToken;
+        userData.secretAccessToken = TwitterData.USER_TWITTER.secretAccessToken;
 
         TwitterService.updateTwitterInfo(user._id, Common.USER, userData, Common.logData, function() {
 
@@ -92,9 +93,9 @@
 
             Assert.strictEqual(userAfterUpdate.firstName, Common.USER.firstName);
             Assert.strictEqual(userAfterUpdate.lastName, Common.USER.lastName);
-            Assert.strictEqual(userAfterUpdate.twitter.twitterId, Common.USER_TWITTER.twitterId);
+            Assert.strictEqual(userAfterUpdate.twitter.twitterId, TwitterData.USER_TWITTER.twitterId);
             Assert.strictEqual(userAfterUpdate.twitter.name, Common.USER.fullName);
-            Assert.strictEqual(userAfterUpdate.twitter.screenName, Common.USER_TWITTER.screenName);
+            Assert.strictEqual(userAfterUpdate.twitter.screenName, TwitterData.USER_TWITTER.screenName);
             Assert.strictEqual(userAfterUpdate.skill.imageSrc, Common.USER.skill.imageSrc);
             Assert.strictEqual(userAfterUpdate.skill.level, 1);
             Assert.strictEqual(userAfterUpdate.skill.experience, 0);
@@ -116,8 +117,8 @@
     this.timeout(Common.TIMEOUT);
 
     // Standard Tweet from Test Tester
-    var action0 = TwitterInterfaceService.extractAction(Common.rawStandardTweet, Common.logData);
-    var tweet0 = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, false, Common.logData);
+    var action0 = TwitterInterfaceService.extractAction(TwitterData.rawStandardTweet, Common.logData);
+    var tweet0 = TwitterInterfaceService.extractTweet(TwitterData.rawStandardTweet, false, Common.logData);
 
     var experience = 0;
     // Determine initial skill experience
@@ -137,8 +138,8 @@
               Assert.strictEqual(user1.skill.experience, experience);
 
               // A tweet with Test Tester mentioned
-              var action1 = TwitterInterfaceService.extractAction(Common.rawMentionOfTestUser, Common.logData);
-              var tweet1 = TwitterInterfaceService.extractTweet(Common.rawMentionOfTestUser, false, Common.logData);
+              var action1 = TwitterInterfaceService.extractAction(TwitterData.rawMentionOfTestUser, Common.logData);
+              var tweet1 = TwitterInterfaceService.extractTweet(TwitterData.rawMentionOfTestUser, false, Common.logData);
 
               TwitterService.addAction(action1, tweet1, Common.logData, function(classification1) {
 
@@ -146,8 +147,8 @@
                 Tweet.getTweet(tweet1.tweetId, Common.logData, function(returnedTweet1) {
                   Activity.getActivity(user0._id, returnedTweet1[0]._id, Common.logData, function(returnedActivity1) {
 
-                    Assert.strictEqual(returnedTweet1[0].screenName, Common.ACTIONEE_TWITTER.screenName);
-                    returnedTweet1[0].mentions.indexOf(Common.USER_TWITTER.screenName).should.be.above(-1);
+                    Assert.strictEqual(returnedTweet1[0].screenName, TwitterData.ACTIONEE_TWITTER.screenName);
+                    returnedTweet1[0].mentions.indexOf(TwitterData.USER_TWITTER.screenName).should.be.above(-1);
                     Assert.strictEqual(returnedActivity1[0].experience, TwitterUtility.TWEET_EXPERIENCE);
                     experience += returnedActivity1[0].experience;
 
@@ -156,8 +157,8 @@
                       Assert.strictEqual(user2.skill.experience, experience);
 
                       // User retweets Test Tester's post
-                      var action2 = TwitterInterfaceService.extractAction(Common.rawRetweetOfUser, Common.logData);
-                      var tweet2 = TwitterInterfaceService.extractTweet(Common.rawRetweetOfUser, false, Common.logData);
+                      var action2 = TwitterInterfaceService.extractAction(TwitterData.rawRetweetOfUser, Common.logData);
+                      var tweet2 = TwitterInterfaceService.extractTweet(TwitterData.rawRetweetOfUser, false, Common.logData);
 
                       // Get original experience and retweet count of tweet to be retweeted
                       Tweet.getTweet(action2.retweetId, Common.logData, function(returnedTweet2) {
@@ -171,7 +172,7 @@
                             User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
                               Tweet.getTweet(tweet2.tweetId, Common.logData, function(returnedTweet3) {
                                 Activity.getActivity(user3._id, returnedTweet3[0]._id, Common.logData, function(returnedActivity3) {
-                                  Assert.strictEqual(returnedTweet3[0].screenName, Common.ACTIONEE_TWITTER.screenName);
+                                  Assert.strictEqual(returnedTweet3[0].screenName, TwitterData.ACTIONEE_TWITTER.screenName);
                                   Assert.strictEqual(returnedActivity3[0].experience, TwitterUtility.TWEET_EXPERIENCE);
                                   experience += TwitterUtility.RETWEET_EXPERIENCE;
 
@@ -218,15 +219,15 @@
         tweetIDs.push(mentionTweets[i].tweetId)
 
         // Change user of tweet to Actionee so DB is easier to clean up
-        mentionTweets[i].twitterId = Common.ACTIONEE_TWITTER.twitterId;
-        mentionTweets[i].screenName = Common.ACTIONEE_TWITTER.screenName;
+        mentionTweets[i].twitterId = TwitterData.ACTIONEE_TWITTER.twitterId;
+        mentionTweets[i].screenName = TwitterData.ACTIONEE_TWITTER.screenName;
         mentionTweets[i].name = Common.ACTIONEE.fullName;
       }
 
-      TwitterUser.getUserWithScreenName(Common.USER_TWITTER.screenName, Common.logData, function(userBefore) {
+      TwitterUser.getUserWithScreenName(TwitterData.USER_TWITTER.screenName, Common.logData, function(userBefore) {
         var initialExperience = userBefore.skill.experience;
-        TwitterService.addTweets(userBefore._id, Common.USER_TWITTER.screenName, mentionTweets, true, Common.logData, function() {
-          TwitterUser.getUserWithScreenName(Common.USER_TWITTER.screenName, Common.logData, function(userAfter) {
+        TwitterService.addTweets(userBefore._id, TwitterData.USER_TWITTER.screenName, mentionTweets, true, Common.logData, function() {
+          TwitterUser.getUserWithScreenName(TwitterData.USER_TWITTER.screenName, Common.logData, function(userAfter) {
             Assert.strictEqual(userAfter.skill.experience, initialExperience + tweetIDs.length * TwitterUtility.MENTION_EXPERIENCE);
 
             // Asynchronous method calls in loop - Using Recursion
@@ -277,7 +278,7 @@
           initialSubSkillExperiences[i] = userBefore.subSkills[i].experience;
         }
 
-        TwitterService.addTweets(userBefore._id, Common.USER_TWITTER.screenName, tweets, false, Common.logData, function() {
+        TwitterService.addTweets(userBefore._id, TwitterData.USER_TWITTER.screenName, tweets, false, Common.logData, function() {
           User.getUserWithUsername(Common.USER.username, Common.logData, function(userAfter) {
 
             // Verify Twitter experience is updated
@@ -337,7 +338,7 @@
     this.timeout(Common.TIMEOUT);
 
     // Invalid userId
-    TwitterService.getQueueData('', Common.USER_TWITTER.screenName, Common.logData, function(){}, function() {
+    TwitterService.getQueueData('', TwitterData.USER_TWITTER.screenName, Common.logData, function(){}, function() {
 
       // Get user's id
       User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
@@ -357,13 +358,13 @@
             }
 
             // Invalid tokens - userId doesnt exists
-            TwitterService.getQueueData(changedID, Common.USER_TWITTER.screenName, Common.logData, function(){}, function() {
+            TwitterService.getQueueData(changedID, TwitterData.USER_TWITTER.screenName, Common.logData, function(){}, function() {
 
               // UserId exists && screenName doesnt exist
               TwitterService.getQueueData(user._id.toString(), 'screenName', Common.logData, function(){}, function() {
 
                 // UserId exists && screeName exists
-                TwitterService.getQueueData(user._id.toString(), Common.USER_TWITTER.screenName, Common.logData, function(queueData) {
+                TwitterService.getQueueData(user._id.toString(), TwitterData.USER_TWITTER.screenName, Common.logData, function(queueData) {
                   Assert.ok(queueData.tweetQueueData);
                   Assert.strictEqual(queueData.tweetQueueData.userId.toString(), user._id.toString());
                   Assert.strictEqual(queueData.tweetQueueData.screenName, user.twitter.screenName);
@@ -464,21 +465,21 @@
       experience = user0.skill.experience;
 
       // Verify tweet exists
-      Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet0) {
+      Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(returnedTweet0) {
         Activity.getActivity(user0._id, returnedTweet0[0]._id, Common.logData, function(returnedActivity0) {
-          Assert.strictEqual(returnedTweet0[0].tweetId, Common.rawStandardTweet.id_str);
+          Assert.strictEqual(returnedTweet0[0].tweetId, TwitterData.rawStandardTweet.id_str);
           experience -= returnedActivity0[0].experience;
 
           var tweetData = {
-            id_str: Common.rawStandardTweet.id_str,
-            user_id_str: Common.rawStandardTweet.user.id_str
+            id_str: TwitterData.rawStandardTweet.id_str,
+            user_id_str: TwitterData.rawStandardTweet.user.id_str
           };
 
           // Remove tweet
           TwitterService.removeTweet(tweetData, Common.logData, function(classification0) {
 
             // Verify tweet was removed
-            Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(returnedTweet1) {
+            Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(returnedTweet1) {
               Assert.strictEqual(0, returnedTweet1.length);
 
               Activity.getActivity(user0._id, returnedTweet0._id, Common.logData, function(returnedActivity2) {
@@ -507,14 +508,14 @@
         Assert.strictEqual(isSuccessful, true);
 
         // Verify Twitter user is in database
-        TwitterUser.getUserWithScreenName(Common.ACTIONEE_TWITTER.screenName, Common.logData, function(retrievedUser0) {
+        TwitterUser.getUserWithScreenName(TwitterData.ACTIONEE_TWITTER.screenName, Common.logData, function(retrievedUser0) {
           Assert.strictEqual(retrievedUser0.screenName, Common.ACTIONEE.screenName);
 
           TwitterService.removeUser(user._id, Common.logData, function(removedUser) {
-            Assert.strictEqual(removedUser.screenName, Common.ACTIONEE_TWITTER.screenName);
+            Assert.strictEqual(removedUser.screenName, TwitterData.ACTIONEE_TWITTER.screenName);
 
             // Verify Twitter user is not in database
-            TwitterUser.getUserWithScreenName(Common.ACTIONEE_TWITTER.screenName, Common.logData, function(retrievedUser1) {
+            TwitterUser.getUserWithScreenName(TwitterData.ACTIONEE_TWITTER.screenName, Common.logData, function(retrievedUser1) {
               Should.not.exist(retrievedUser1);
               done();
             });

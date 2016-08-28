@@ -27,7 +27,7 @@
 
   // Required local modules
   var TwitterValidator = require('../../../src/validator/twitter-validator');
-  var Common = require('../common');
+  var Common = require('../../data/common');
 
   // containsTwitterData - negative
   it('should return false for invalid Twitter data - containsTwitterData()', function(done) {

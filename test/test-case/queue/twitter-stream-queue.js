@@ -27,7 +27,8 @@
 
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
-  var Common = require('../common');
+  var Common = require('../../data/common');
+  var TwitterData = require('../../data/twitter-data');
   var TwitterInterface = require('../../test-interface/twitter-test-interface');
   var TwitterStreamQueue = require('../../../src/queue/twitter-stream-queue');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
@@ -47,13 +48,13 @@
 
       var queueData = {};
       queueData.action = 'Add';
-      queueData.data = Common.rawStandardTweet;
+      queueData.data = TwitterData.rawStandardTweet;
 
       streamQueue.addAction(queueData, Common.logData, function() {
 
         // Verify tweet is in database
-        Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
-          Assert.strictEqual(Common.rawStandardTweet.id_str, rawStandardTweet[0].tweetId);
+        Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
+          Assert.strictEqual(TwitterData.rawStandardTweet.id_str, rawStandardTweet[0].tweetId);
 
           // Verify experience gained
           User.getUserWithEmail(Common.USER.email, Common.logData, function(userAfter) {
@@ -86,17 +87,17 @@
 
         var queueData = {};
         queueData.action = 'Add';
-        queueData.data = Common.rawMentionOfTestUser;
+        queueData.data = TwitterData.rawMentionOfTestUser;
 
         streamQueue.addAction(queueData, Common.logData, function() {
 
           // Verify tweet is in database
-          Tweet.getTweet(Common.rawMentionOfTestUser.id_str, Common.logData, function(rawMentionOfTestUser) {
-            Assert.strictEqual(Common.rawMentionOfTestUser.id_str, rawMentionOfTestUser[0].tweetId);
+          Tweet.getTweet(TwitterData.rawMentionOfTestUser.id_str, Common.logData, function(rawMentionOfTestUser) {
+            Assert.strictEqual(TwitterData.rawMentionOfTestUser.id_str, rawMentionOfTestUser[0].tweetId);
 
             // Verify mention is in database
-            Tweet.getTweet(Common.rawMentionOfTestUser.id_str, Common.logData, function(mention) {
-              mention[0].mentions.indexOf(Common.USER_TWITTER.screenName).should.be.above(-1);
+            Tweet.getTweet(TwitterData.rawMentionOfTestUser.id_str, Common.logData, function(mention) {
+              mention[0].mentions.indexOf(TwitterData.USER_TWITTER.screenName).should.be.above(-1);
 
               // Get after experience for User and Actionee
               User.getUserWithEmail(Common.USER.email, Common.logData, function(userAfter) {
@@ -138,32 +139,32 @@
 
         var queueData0 = {};
         queueData0.action = 'Add';
-        queueData0.data = Common.rawStandardTweet;
+        queueData0.data = TwitterData.rawStandardTweet;
 
         // Insert User's tweet to be retweeted
         streamQueue.addAction(queueData0, Common.logData, function() {
 
-          initialUserExperience += (Common.rawStandardTweet.retweet_count * TwitterUtility.RETWEET_EXPERIENCE) + (Common.rawStandardTweet.favorite_count * TwitterUtility.FAVORITE_EXPERIENCE);
+          initialUserExperience += (TwitterData.rawStandardTweet.retweet_count * TwitterUtility.RETWEET_EXPERIENCE) + (TwitterData.rawStandardTweet.favorite_count * TwitterUtility.FAVORITE_EXPERIENCE);
 
           // Verify tweet is in database
-          Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(originalTweet) {
+          Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(originalTweet) {
 
             // Get original retweet count
             var originalRetweetCount = originalTweet[0].retweetCount;
 
             var queueData1 = {};
             queueData1.action = 'Add';
-            queueData1.data = Common.rawRetweetOfUser;
+            queueData1.data = TwitterData.rawRetweetOfUser;
 
             // Add the retweet
             streamQueue.addAction(queueData1, Common.logData, function() {
 
               // Verify tweet is in database
-              Tweet.getTweet(Common.rawRetweetOfUser.id_str, Common.logData, function(retweetOfUser) {
-                Assert.strictEqual(Common.rawRetweetOfUser.id_str, retweetOfUser[0].tweetId);
+              Tweet.getTweet(TwitterData.rawRetweetOfUser.id_str, Common.logData, function(retweetOfUser) {
+                Assert.strictEqual(TwitterData.rawRetweetOfUser.id_str, retweetOfUser[0].tweetId);
 
                 // Verify retweet count incremented
-                Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(originalTweetAfter) {
+                Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(originalTweetAfter) {
                   Assert.strictEqual(originalRetweetCount+1, originalTweetAfter[0].retweetCount);
 
                   // Get after experience for User and Actionee
@@ -201,14 +202,14 @@
     // First add tweet to database
     var queueData0 = {};
     queueData0.action = 'Add';
-    queueData0.data = Common.rawStandardTweet;
+    queueData0.data = TwitterData.rawStandardTweet;
 
     // Add tweet for Common.USER
     streamQueue.addAction(queueData0, Common.logData, function() {
 
       var queueData1 = {};
       queueData1.action = 'Add';
-      queueData1.data = Common.rawStandardTweet2;
+      queueData1.data = TwitterData.rawStandardTweet2;
 
       // Add tweet for Common.ACTIONEE
       streamQueue.addAction(queueData1, Common.logData, function() {
@@ -227,14 +228,14 @@
               queueData2.action = 'Remove';
               queueData2.data = {};
               queueData2.data.status = {
-                id_str: Common.rawStandardTweet.id_str,
-                user_id_str: Common.rawStandardTweet.user.id_str
+                id_str: TwitterData.rawStandardTweet.id_str,
+                user_id_str: TwitterData.rawStandardTweet.user.id_str
               };
 
               streamQueue.addAction(queueData2, Common.logData, function() {
 
                 // Verify tweet is not in database
-                Tweet.getTweet(Common.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
+                Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
                   Assert.strictEqual(0, rawStandardTweet.length);
 
                   // Verify experience removed

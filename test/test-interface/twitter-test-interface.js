@@ -24,7 +24,7 @@
   /***************************************************************************/
 
   // Required local modules
-  var Data = require('../data');
+  var Data = require('../data/twitter-stream-data');
   var Stream = require('../stream/twitter-test-stream');
 
   // Global variables

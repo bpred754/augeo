@@ -28,7 +28,7 @@
   var Should = require('should');
 
   // Required local modules
-  var Common = require('../../common');
+  var Common = require('../../../data/common');
   var AugeoDB = require('../../../../src/model/database');
 
   module.exports = function(app) {

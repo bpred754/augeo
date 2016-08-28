@@ -28,7 +28,8 @@
 
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
-  var Common = require('../common');
+  var Common = require('../../data/common');
+  var GithubData = require('../../data/github-data');
   var GithubService = require('../../../src/service/github-service');
 
   // Global variables
@@ -38,15 +39,15 @@
   // addUser
   it('should add a Github user to the GITHUB_USER collection -- addUser()', function(done) {
 
-    GithubService.addUser(Common.USER.username, Common.USER_GITHUB, Common.logData, function(){}, function(message0) {
+    GithubService.addUser(Common.USER.username, GithubData.USER_GITHUB, Common.logData, function(){}, function(message0) {
       Assert.strictEqual(message0, 'Invalid Github user');
 
       User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
 
         var missingGithubId = {
           augeoUser: user._id,
-          accessToken: Common.USER_GITHUB.accessToken,
-          screenName: Common.USER_GITHUB.screenName
+          accessToken: GithubData.USER_GITHUB.accessToken,
+          screenName: GithubData.USER_GITHUB.screenName
         };
 
         GithubService.addUser(Common.USER.username, missingGithubId, Common.logData, function(){}, function(message1) {
@@ -54,8 +55,8 @@
 
           var missingScreenName = {
             augeoUser: user._id,
-            githubId: Common.USER_GITHUB.githubId,
-            accessToken: Common.USER_GITHUB.accessToken
+            githubId: GithubData.USER_GITHUB.githubId,
+            accessToken: GithubData.USER_GITHUB.accessToken
           };
 
           GithubService.addUser(Common.USER.username, missingScreenName, Common.logData, function(){}, function(message2) {
@@ -63,8 +64,8 @@
 
             var missingAccessToken = {
               augeoUser: user._id,
-              githubId: Common.USER_GITHUB.githubId,
-              screenName: Common.USER_GITHUB.screenName
+              githubId: GithubData.USER_GITHUB.githubId,
+              screenName: GithubData.USER_GITHUB.screenName
             };
 
             GithubService.addUser(Common.USER.username, missingAccessToken, Common.logData, function(){}, function(message3) {
@@ -72,14 +73,14 @@
 
               var valid = {
                 augeoUser: user._id,
-                githubId: Common.USER_GITHUB.githubId,
-                accessToken: Common.USER_GITHUB.accessToken,
-                screenName: Common.USER_GITHUB.screenName
+                githubId: GithubData.USER_GITHUB.githubId,
+                accessToken: GithubData.USER_GITHUB.accessToken,
+                screenName: GithubData.USER_GITHUB.screenName
               };
 
               GithubService.addUser(Common.USER.username, valid, Common.logData, function(){
                 User.getUserWithUsername(Common.USER.username, Common.logData, function(updatedUser) {
-                  Assert.strictEqual(updatedUser.github.githubId, Common.USER_GITHUB.githubId);
+                  Assert.strictEqual(updatedUser.github.githubId, GithubData.USER_GITHUB.githubId);
 
                   done();
                 });
@@ -100,7 +101,7 @@
       Assert.strictEqual(doesExist0, false);
 
       // Valid existing screen name
-      GithubService.checkExistingScreenName(Common.USER_GITHUB.screenName, Common.logData, function(doesExist1) {
+      GithubService.checkExistingScreenName(GithubData.USER_GITHUB.screenName, Common.logData, function(doesExist1) {
         Assert.strictEqual(doesExist1, true);
         done();
       });
@@ -115,14 +116,14 @@
     }, function (message) {
       Assert.strictEqual(message, 'Invalid AugeoUser ID');
 
-      GithubUser.getUserWithScreenName(Common.USER_GITHUB.screenName, Common.logData, function (user0) {
+      GithubUser.getUserWithScreenName(GithubData.USER_GITHUB.screenName, Common.logData, function (user0) {
 
         // Valid AugeoUser ID
         GithubService.removeUser(user0.augeoUser, Common.logData, function (removedUser) {
-          Assert.strictEqual(removedUser.screenName, Common.USER_GITHUB.screenName);
+          Assert.strictEqual(removedUser.screenName, GithubData.USER_GITHUB.screenName);
 
           // Verify Github user is no longer in GITHUB_USER collection
-          GithubUser.getUserWithScreenName(Common.USER_GITHUB.screenName, Common.logData, function (user1) {
+          GithubUser.getUserWithScreenName(GithubData.USER_GITHUB.screenName, Common.logData, function (user1) {
             Should.not.exist(user1);
 
             // Verify AugeoUser no longer has reference to GITHUB_USER
@@ -135,6 +136,3 @@
       });
     });
   });
-
-
-

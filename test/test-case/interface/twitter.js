@@ -28,7 +28,7 @@
   var Should = require('should');
 
   // Required local modules
-  var Common = require('../common');
+  var Common = require('../../data/common');
   var TwitterInterface = require('../../../src/interface/twitter-interface');
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
   var TwitterValidator = require('../../../src/validator/twitter-validator');

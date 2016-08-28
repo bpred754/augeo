@@ -27,7 +27,7 @@
   var Should = require('should');
 
   // Required local modules
-  var Common = require('../../common');
+  var Common = require('../../../data/common');
 
   it('should return status 400 - add user with missing information', function(done) {
     this.timeout(Common.TIMEOUT);

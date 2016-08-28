@@ -26,7 +26,7 @@
   // Required local modules
   var Events = require('events');
   var EventEmitter = new Events.EventEmitter();
-  var Data = require('../data');
+  var Data = require('../data/twitter-stream-data');
 
   // Global variables
   var tweetCallback = function(){console.log('tweetCallback has not been set')};

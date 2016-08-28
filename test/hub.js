@@ -33,7 +33,7 @@
   // Required local modules
   var App = require('../src/server');
   var Helper = require('./helper/db-helper');
-  var Common = require('./test-case/common');
+  var Common = require('./data/common');
 
   function importTests(name, path, app) {
     describe(name, function () {

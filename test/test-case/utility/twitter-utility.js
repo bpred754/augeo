@@ -26,7 +26,7 @@
   var Assert = require('assert');
 
   // Required local modules
-  var Common = require('../common');
+  var Common = require('../../data/common');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
 
   it("should return the correct experience for a given tweet's retweet and favorite counts -- calculateTweetExperience()", function(done) {

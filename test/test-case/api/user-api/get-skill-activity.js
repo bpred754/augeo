@@ -29,7 +29,8 @@
   var Should = require('should');
 
   // Required local modules
-  var Common = require('../../common');
+  var Common = require('../../../data/common');
+  var TwitterData = require('../../../data/twitter-data');
   var TwitterInterfaceService = require('../../../../src/interface-service/twitter-interface-service');
   var TwitterService = require('../../../../src/service/twitter-service');
 
@@ -103,8 +104,8 @@
       this.timeout(Common.TIMEOUT);
 
       // Add activity to be retrieved
-      var action0 = TwitterInterfaceService.extractAction(Common.rawStandardTweet, Common.logData);
-      var tweet0 = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, false, Common.logData);
+      var action0 = TwitterInterfaceService.extractAction(TwitterData.rawStandardTweet, Common.logData);
+      var tweet0 = TwitterInterfaceService.extractTweet(TwitterData.rawStandardTweet, false, Common.logData);
 
       TwitterService.addAction(action0, tweet0, Common.logData, function(classification0) {
 
@@ -117,7 +118,7 @@
             Should.not.exist(error);
             Should.exist(response.body.activity);
             Assert.strictEqual(response.body.activity.length, 1);
-            Assert.strictEqual(response.body.activity[0].data.tweetId, Common.rawStandardTweet.id_str);
+            Assert.strictEqual(response.body.activity[0].data.tweetId, TwitterData.rawStandardTweet.id_str);
             done();
           });
       });

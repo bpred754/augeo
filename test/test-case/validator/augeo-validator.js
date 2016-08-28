@@ -27,7 +27,7 @@
 
   // Required local modules
   var AugeoValidator = require('../../../src/validator/augeo-validator');
-  var Common = require('../common');
+  var Common = require('../../data/common');
 
   // isEmailValid - negative
   it('should return false for invalid email - isEmailValid()', function(done) {

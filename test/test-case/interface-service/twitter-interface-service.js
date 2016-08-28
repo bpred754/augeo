@@ -28,42 +28,43 @@
   var Request = require('supertest');
 
   // Required local modules
-  var Common = require('../common');
-  var Data = require('../../data');
+  var Common = require('../../data/common');
+  var TwitterData = require('../../data/twitter-data');
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
+  var TwitterStreamData = require('../../data/twitter-stream-data');
 
   it('should extract and return relevant action information from a raw tweet -- extractAction()', function(done) {
 
-    var tweetAction = TwitterInterfaceService.extractAction(Common.standardRawTweetCondensed, Common.logData);
-    Assert.strictEqual(tweetAction.tweetId, Common.standardRawTweetCondensed.id_str);
-    Assert.strictEqual(tweetAction.actionerScreenName, Common.USER_TWITTER.screenName);
+    var tweetAction = TwitterInterfaceService.extractAction(TwitterData.standardRawTweetCondensed, Common.logData);
+    Assert.strictEqual(tweetAction.tweetId, TwitterData.standardRawTweetCondensed.id_str);
+    Assert.strictEqual(tweetAction.actionerScreenName, TwitterData.USER_TWITTER.screenName);
     Assert.strictEqual(tweetAction.actioneeScreenName, '');
     Assert.strictEqual(tweetAction.isRetweet, false);
     Assert.strictEqual(tweetAction.retweetId, '');
     Assert.strictEqual(tweetAction.replyId, '');
 
-    var replyToUserAction = TwitterInterfaceService.extractAction(Common.rawTweetWithMentionCondensed, Common.logData);
-    Assert.strictEqual(replyToUserAction.tweetId, Common.rawTweetWithMentionCondensed.id_str);
-    Assert.strictEqual(replyToUserAction.actionerScreenName, Common.USER_TWITTER.screenName);
-    Assert.strictEqual(replyToUserAction.actioneeScreenName, Common.ACTIONEE_TWITTER.screenName);
+    var replyToUserAction = TwitterInterfaceService.extractAction(TwitterData.rawTweetWithMentionCondensed, Common.logData);
+    Assert.strictEqual(replyToUserAction.tweetId, TwitterData.rawTweetWithMentionCondensed.id_str);
+    Assert.strictEqual(replyToUserAction.actionerScreenName, TwitterData.USER_TWITTER.screenName);
+    Assert.strictEqual(replyToUserAction.actioneeScreenName, TwitterData.ACTIONEE_TWITTER.screenName);
     Assert.strictEqual(replyToUserAction.isRetweet, false);
     Assert.strictEqual(replyToUserAction.retweetId, '');
     Assert.strictEqual(replyToUserAction.replyId, '');
 
-    var replyToPostAction = TwitterInterfaceService.extractAction(Common.rawReplyToPostCondensed, Common.logData);
-    Assert.strictEqual(replyToPostAction.tweetId, Common.rawReplyToPostCondensed.id_str);
-    Assert.strictEqual(replyToPostAction.actionerScreenName, Common.USER_TWITTER.screenName);
-    Assert.strictEqual(replyToPostAction.actioneeScreenName, Common.ACTIONEE_TWITTER.screenName);
+    var replyToPostAction = TwitterInterfaceService.extractAction(TwitterData.rawReplyToPostCondensed, Common.logData);
+    Assert.strictEqual(replyToPostAction.tweetId, TwitterData.rawReplyToPostCondensed.id_str);
+    Assert.strictEqual(replyToPostAction.actionerScreenName, TwitterData.USER_TWITTER.screenName);
+    Assert.strictEqual(replyToPostAction.actioneeScreenName, TwitterData.ACTIONEE_TWITTER.screenName);
     Assert.strictEqual(replyToPostAction.isRetweet, false);
     Assert.strictEqual(replyToPostAction.retweetId, '');
-    Assert.strictEqual(replyToPostAction.replyId, Common.rawReplyToPostCondensed.in_reply_to_status_id_str);
+    Assert.strictEqual(replyToPostAction.replyId, TwitterData.rawReplyToPostCondensed.in_reply_to_status_id_str);
 
-    var retweetAction = TwitterInterfaceService.extractAction(Common.rawRetweetCondensed, Common.logData);
-    Assert.strictEqual(retweetAction.tweetId, Common.rawRetweetCondensed.id_str);
-    Assert.strictEqual(retweetAction.actionerScreenName, Common.USER_TWITTER.screenName);
-    Assert.strictEqual(retweetAction.actioneeScreenName, Common.ACTIONEE_TWITTER.screenName);
+    var retweetAction = TwitterInterfaceService.extractAction(TwitterData.rawRetweetCondensed, Common.logData);
+    Assert.strictEqual(retweetAction.tweetId, TwitterData.rawRetweetCondensed.id_str);
+    Assert.strictEqual(retweetAction.actionerScreenName, TwitterData.USER_TWITTER.screenName);
+    Assert.strictEqual(retweetAction.actioneeScreenName, TwitterData.ACTIONEE_TWITTER.screenName);
     Assert.strictEqual(retweetAction.isRetweet, true);
-    Assert.strictEqual(retweetAction.retweetId, Common.rawRetweetCondensed.retweeted_status.id_str);
+    Assert.strictEqual(retweetAction.retweetId, TwitterData.rawRetweetCondensed.retweeted_status.id_str);
     Assert.strictEqual(retweetAction.replyId, '');
 
     done();
@@ -71,11 +72,11 @@
 
   it('should extract and return relevant tweet information from a raw tweet -- extractTweet()', function(done) {
 
-    var extractedtweet = TwitterInterfaceService.extractTweet(Common.rawStandardTweet, true, Common.logData);
-    Assert.strictEqual(extractedtweet.twitterId, Common.USER_TWITTER.twitterId);
-    Assert.strictEqual(extractedtweet.tweetId, Common.rawStandardTweet.id_str);
+    var extractedtweet = TwitterInterfaceService.extractTweet(TwitterData.rawStandardTweet, true, Common.logData);
+    Assert.strictEqual(extractedtweet.twitterId, TwitterData.USER_TWITTER.twitterId);
+    Assert.strictEqual(extractedtweet.tweetId, TwitterData.rawStandardTweet.id_str);
     Assert.strictEqual(extractedtweet.name, Common.USER.fullName);
-    Assert.strictEqual(extractedtweet.screenName, Common.USER_TWITTER.screenName);
+    Assert.strictEqual(extractedtweet.screenName, TwitterData.USER_TWITTER.screenName);
     Assert.strictEqual(extractedtweet.avatarImageSrc, 'https://abs.twimg.com/images/themes/theme1/bg.png');
     Assert.strictEqual(extractedtweet.text, 'testing retweets');
     Assert.strictEqual(extractedtweet.classification, 'General');
@@ -91,11 +92,11 @@
     Assert.strictEqual(extractedtweet.media.height,0);
     Assert.strictEqual(extractedtweet.media.width,0);
 
-    var extractedTweetWithMention = TwitterInterfaceService.extractTweet(Common.rawTweetWithMention, true, Common.logData);
-    Assert.strictEqual(extractedTweetWithMention.twitterId, Common.USER_TWITTER.twitterId);
-    Assert.strictEqual(extractedTweetWithMention.tweetId, Common.rawTweetWithMention.id_str);
+    var extractedTweetWithMention = TwitterInterfaceService.extractTweet(TwitterData.rawTweetWithMention, true, Common.logData);
+    Assert.strictEqual(extractedTweetWithMention.twitterId, TwitterData.USER_TWITTER.twitterId);
+    Assert.strictEqual(extractedTweetWithMention.tweetId, TwitterData.rawTweetWithMention.id_str);
     Assert.strictEqual(extractedTweetWithMention.name, Common.USER.fullName);
-    Assert.strictEqual(extractedTweetWithMention.screenName, Common.USER_TWITTER.screenName);
+    Assert.strictEqual(extractedTweetWithMention.screenName, TwitterData.USER_TWITTER.screenName);
     Assert.strictEqual(extractedTweetWithMention.avatarImageSrc, 'https://abs.twimg.com/images/themes/theme1/bg.png');
     Assert.strictEqual(extractedTweetWithMention.text, '@twitterActionee Are my tweets being extracted correctly?');
     Assert.strictEqual(extractedTweetWithMention.classification, 'General');
@@ -105,18 +106,18 @@
     Assert.strictEqual(extractedTweetWithMention.retweetCount, 0);
     Assert.strictEqual(extractedTweetWithMention.favoriteCount, 0);
     Assert.strictEqual(extractedTweetWithMention.mentions.length, 1);
-    Assert.strictEqual(extractedTweetWithMention.mentions[0], Common.ACTIONEE_TWITTER.screenName);
+    Assert.strictEqual(extractedTweetWithMention.mentions[0], TwitterData.ACTIONEE_TWITTER.screenName);
     Assert.strictEqual(extractedTweetWithMention.hashtags.length, 0);
     Assert.strictEqual(extractedTweetWithMention.links.length, 0);
     Assert.strictEqual(extractedTweetWithMention.media.url,'');
     Assert.strictEqual(extractedTweetWithMention.media.height,0);
     Assert.strictEqual(extractedTweetWithMention.media.width,0);
 
-    var extractedTweetWithHashtag = TwitterInterfaceService.extractTweet(Common.rawTweetWithHashtag, true, Common.logData);
-    Assert.strictEqual(extractedTweetWithHashtag.twitterId, Common.USER_TWITTER.twitterId);
-    Assert.strictEqual(extractedTweetWithHashtag.tweetId, Common.rawTweetWithHashtag.id_str);
+    var extractedTweetWithHashtag = TwitterInterfaceService.extractTweet(TwitterData.rawTweetWithHashtag, true, Common.logData);
+    Assert.strictEqual(extractedTweetWithHashtag.twitterId, TwitterData.USER_TWITTER.twitterId);
+    Assert.strictEqual(extractedTweetWithHashtag.tweetId, TwitterData.rawTweetWithHashtag.id_str);
     Assert.strictEqual(extractedTweetWithHashtag.name, Common.USER.fullName);
-    Assert.strictEqual(extractedTweetWithHashtag.screenName, Common.USER_TWITTER.screenName);
+    Assert.strictEqual(extractedTweetWithHashtag.screenName, TwitterData.USER_TWITTER.screenName);
     Assert.strictEqual(extractedTweetWithHashtag.avatarImageSrc, 'https://abs.twimg.com/images/themes/theme1/bg.png');
     Assert.strictEqual(extractedTweetWithHashtag.text, 'testing hashtag');
     Assert.strictEqual(extractedTweetWithHashtag.classification, 'Business');
@@ -133,11 +134,11 @@
     Assert.strictEqual(extractedTweetWithHashtag.media.height,0);
     Assert.strictEqual(extractedTweetWithHashtag.media.width,0);
 
-    var extractedRetweet = TwitterInterfaceService.extractTweet(Common.rawRetweet, true, Common.logData);
-    Assert.strictEqual(extractedRetweet.twitterId, Common.USER_TWITTER.twitterId);
-    Assert.strictEqual(extractedRetweet.tweetId, Common.rawRetweet.id_str);
+    var extractedRetweet = TwitterInterfaceService.extractTweet(TwitterData.rawRetweet, true, Common.logData);
+    Assert.strictEqual(extractedRetweet.twitterId, TwitterData.USER_TWITTER.twitterId);
+    Assert.strictEqual(extractedRetweet.tweetId, TwitterData.rawRetweet.id_str);
     Assert.strictEqual(extractedRetweet.name, Common.USER.fullName);
-    Assert.strictEqual(extractedRetweet.screenName, Common.USER_TWITTER.screenName);
+    Assert.strictEqual(extractedRetweet.screenName, TwitterData.USER_TWITTER.screenName);
     Assert.strictEqual(extractedRetweet.avatarImageSrc, 'https://abs.twimg.com/images/themes/theme1/bg.png');
     Assert.strictEqual(extractedRetweet.text, 'RT @Gizmodo: A new type of Dyson sphere may be nearly impossible to detect: http://t.co/oIyRqJ2jcv');
     Assert.strictEqual(extractedRetweet.classification, 'General');
@@ -164,7 +165,7 @@
     TwitterInterfaceService.getMentions(twitterMessenger, Common.logData, function(error, mentionTweets) {
       Assert.strictEqual(error, false);
 
-      Assert.strictEqual(mentionTweets.length, Data.RETRIEVE_LIMIT);
+      Assert.strictEqual(mentionTweets.length, TwitterStreamData.RETRIEVE_LIMIT);
       for(var i = 0; i < mentionTweets.length; i++) {
         var tweet = mentionTweets[i];
         validateExtractedTweet(tweet);
@@ -208,7 +209,7 @@
           Assert.strictEqual(typeof secretAccessToken, 'string');
           Assert.strictEqual(secretAccessToken.length, 50);
 
-          Assert.strictEqual(screenName, Common.USER_TWITTER.screenName);
+          Assert.strictEqual(screenName, TwitterData.USER_TWITTER.screenName);
 
           done();
         }, rollbackFailure);
@@ -238,7 +239,7 @@
     TwitterInterfaceService.getTweets(twitterMessenger, Common.logData, function(error, tweets) {
       Assert.strictEqual(error, false);
 
-      Assert.strictEqual(tweets.length, Data.RETRIEVE_LIMIT);
+      Assert.strictEqual(tweets.length, TwitterStreamData.RETRIEVE_LIMIT);
       for(var i = 0; i < tweets.length; i++) {
         validateExtractedTweet(tweets[i]);
       }
@@ -262,11 +263,11 @@
     TwitterInterfaceService.getTwitterUser(twitterMessenger, 'invalidScreenName', Common.logData, callbackFailure, function() {
 
       // Valid screen name
-      TwitterInterfaceService.getTwitterUser(twitterMessenger, Common.USER_TWITTER.screenName, Common.logData, function(userData) {
+      TwitterInterfaceService.getTwitterUser(twitterMessenger, TwitterData.USER_TWITTER.screenName, Common.logData, function(userData) {
 
-        Assert.strictEqual(userData.twitterId, Common.USER_TWITTER.twitterId);
+        Assert.strictEqual(userData.twitterId, TwitterData.USER_TWITTER.twitterId);
         Assert.strictEqual(userData.name, Common.USER.fullName);
-        Assert.strictEqual(userData.screenName, Common.USER_TWITTER.screenName);
+        Assert.strictEqual(userData.screenName, TwitterData.USER_TWITTER.screenName);
         Assert.strictEqual(userData.profileImageUrl, 'https://pbs.twimg.com/profile_images/671841456340860928/clMctOYs.jpg');
 
         done();
@@ -279,7 +280,7 @@
     var userIds = new Array();
     userIds.push({
       twitter: {
-        twitterId: Common.USER_TWITTER.twitterId
+        twitterId: TwitterData.USER_TWITTER.twitterId
       }
     });
 

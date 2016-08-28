@@ -28,7 +28,7 @@
   var Should = require('should');
 
   // Required local modules
-  var Common = require('../../common');
+  var Common = require('../../../data/common');
 
   module.exports = function(app) {
 

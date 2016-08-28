@@ -27,11 +27,12 @@
 
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
-  var Common = require('../common');
-  var Data = require('../../data');
+  var Common = require('../../data/common');
+  var TwitterData = require('../../data/twitter-data');
   var TwitterInterfaceService = require('../../../src/interface-service/twitter-interface-service');
   var TwitterRestQueue = require('../../../src/queue/twitter-rest-queue');
   var TwitterService = require('../../../src/service/twitter-service');
+  var TwitterStreamData = require('../../data/twitter-stream-data');
   var TwitterUtility = require('../../../src/utility/twitter-utility');
 
   // Global variables
@@ -60,10 +61,10 @@
         User.getUserWithEmail(Common.ACTIONEE.email, Common.logData, function(initialUser2) {
 
           var userId = initialUser._id + '';
-          TwitterService.getQueueData(userId, Common.USER_TWITTER.screenName, Common.logData, function(queueData) {
+          TwitterService.getQueueData(userId, TwitterData.USER_TWITTER.screenName, Common.logData, function(queueData) {
 
             var userId2 = initialUser2._id + '';
-            TwitterService.getQueueData(userId2, Common.ACTIONEE_TWITTER.screenName, Common.logData, function(queueData2) {
+            TwitterService.getQueueData(userId2, TwitterData.ACTIONEE_TWITTER.screenName, Common.logData, function(queueData2) {
 
               var iteration = 0;
               var mentionsAdded = 0;
@@ -74,7 +75,7 @@
 
                 // Verify correct number of mentions are being grabbed each iteration
                 if(iteration == 0) {
-                  Assert.strictEqual(mentionTweets.length, Data.RETRIEVE_LIMIT);
+                  Assert.strictEqual(mentionTweets.length, TwitterStreamData.RETRIEVE_LIMIT);
                   mentionsAdded = mentionTweets.length;
                 } else {
                   var expectedLength = mentionsAdded + newMentionsLength;
@@ -88,9 +89,9 @@
                 iteration++;
 
                 // Verify number of iterations
-                var rawMentionCount = Data.getMentionCount();
-                var adjustedCount = rawMentionCount - Data.RETRIEVE_LIMIT;
-                var expectedIterations = 1 + Math.ceil(adjustedCount/(Data.RETRIEVE_LIMIT-1)) + 1;
+                var rawMentionCount = TwitterStreamData.getMentionCount();
+                var adjustedCount = rawMentionCount - TwitterStreamData.RETRIEVE_LIMIT;
+                var expectedIterations = 1 + Math.ceil(adjustedCount/(TwitterStreamData.RETRIEVE_LIMIT-1)) + 1;
 
                 Assert.strictEqual(iteration, expectedIterations);
 
@@ -151,10 +152,10 @@
         User.getUserWithEmail(Common.ACTIONEE.email, Common.logData, function(initialUser2) {
 
           var userId = initialUser._id + '';
-          TwitterService.getQueueData(userId, Common.USER_TWITTER.screenName, Common.logData, function(queueData) {
+          TwitterService.getQueueData(userId, TwitterData.USER_TWITTER.screenName, Common.logData, function(queueData) {
 
             var userId2 = initialUser2._id + '';
-            TwitterService.getQueueData(userId2, Common.ACTIONEE_TWITTER.screenName, Common.logData, function(queueData2) {
+            TwitterService.getQueueData(userId2, TwitterData.ACTIONEE_TWITTER.screenName, Common.logData, function(queueData2) {
 
               var iteration = 0;
               var tweetsAdded = 0;
@@ -165,7 +166,7 @@
 
                 // Verify correct number of tweets are being grabbed each iteration
                 if(iteration == 0) {
-                  Assert.strictEqual(tweets.length, Data.RETRIEVE_LIMIT);
+                  Assert.strictEqual(tweets.length, TwitterStreamData.RETRIEVE_LIMIT);
                   tweetsAdded = tweets.length;
                 } else {
                   var expectedLength = tweetsAdded + newTweetsLength;
@@ -179,9 +180,9 @@
                 iteration++;
 
                 // Verify number of iterations
-                rawTweetCount = Data.getTweetCount();
-                var adjustedCount = rawTweetCount - Data.RETRIEVE_LIMIT;
-                var expectedIterations = 1 + Math.ceil(adjustedCount/(Data.RETRIEVE_LIMIT-1)) + 1;
+                rawTweetCount = TwitterStreamData.getTweetCount();
+                var adjustedCount = rawTweetCount - TwitterStreamData.RETRIEVE_LIMIT;
+                var expectedIterations = 1 + Math.ceil(adjustedCount/(TwitterStreamData.RETRIEVE_LIMIT-1)) + 1;
 
                 Assert.strictEqual(iteration, expectedIterations);
 
@@ -227,7 +228,7 @@
     User.remove(Common.ACTIONEE.email, Common.logData, function() {
 
       // Add second to last tweet to user's tweets
-      var data0 = Data.getSecondMostRecentTweet();
+      var data0 = TwitterStreamData.getSecondMostRecentTweet();
       var tweet = TwitterInterfaceService.extractTweet(data0, false, Common.logData);
       var tweets = new Array();
       tweets.push(tweet);
@@ -239,7 +240,7 @@
             Assert.strictEqual(tweet.tweetId, returnedTweet0[0].tweetId);
 
             // Add second to last mention to user's mentions
-            var data1 = Data.getSecondMostRecentMention();
+            var data1 = TwitterStreamData.getSecondMostRecentMention();
             var datas = Array();
             datas.push(data1);
             var mentionTweet = TwitterInterfaceService.extractTweet(data1, false, Common.logData);
@@ -252,7 +253,7 @@
                 returnedTweet1[0].mentions.indexOf(user.twitter.screenName).should.be.above(-1);
 
                 // Verify that the last raw tweet is not in the TWEET table
-                var latestTweet = Data.getOldestTweet();
+                var latestTweet = TwitterStreamData.getOldestTweet();
                 Tweet.getTweet(latestTweet.id_str, Common.logData, function(returnedTweet2) {
                   Assert.strictEqual(0, returnedTweet2.length);
 
@@ -264,7 +265,7 @@
 
                       twitterRestQueue.addAllUsersToQueues('MENTION', Common.logData, function() {
                         // Verify the last raw mention is in the Mention table
-                        var latestMention = Data.getOldestMention();
+                        var latestMention = TwitterStreamData.getOldestMention();
                         Tweet.getTweet(latestMention.id_str, Common.logData, function(returnedTweet4) {
                           returnedTweet4[0].mentions.indexOf(user.twitter.screenName).should.be.above(-1);
                           done();

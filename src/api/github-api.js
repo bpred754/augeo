@@ -90,9 +90,12 @@
                   GithubService.addUser(username, userData, logData, function (addedUser) {
 
                     GithubService.getLatestCommitEventId(userData.screenName, logData, function(eventId) {
-                      var eventQueue = new GithubEventQueue();
-                      var task = new GithubQueueTask(userId, userData.screenName, userData.accessToken, eventId, logData);
-                      eventQueue.addTask(task, logData);
+
+                      if (process.env.TEST != 'true') {
+                        var eventQueue = new GithubEventQueue();
+                        var task = new GithubQueueTask(userId, userData.screenName, userData.accessToken, eventId, logData);
+                        eventQueue.addTask(task, logData);
+                      }
 
                       // Set user's session data
                       request.session.user = addedUser.toJSON();
