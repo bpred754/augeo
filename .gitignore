@@ -29,9 +29,6 @@ node_modules
 # Mac OSX file storage information
 .DS_Store
 
-# MongoDB data
-data
-
 # Notes directory
 notes
 
