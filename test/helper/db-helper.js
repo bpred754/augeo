@@ -26,6 +26,7 @@
   // Schemas
   require('../../src/model/schema/augeo/user');
   require('../../src/model/schema/augeo/activity');
+  require('../../src/model/schema/github/commit');
   require('../../src/model/schema/github/user');
   require('../../src/model/schema/twitter/tweet');
   require('../../src/model/schema/twitter/user');
@@ -34,6 +35,7 @@
   var AugeoDB = require('../../src/model/database');
   var AugeoUtility = require('../../src/utility/augeo-utility');
   var Common = require('../data/common');
+  var GithubData = require('../data/github-data');
   var TwitterData = require('../data/twitter-data');
   var TwitterService = require('../../src/service/twitter-service');
   var UserService = require('../../src/service/user-service');
@@ -41,6 +43,7 @@
   // Global variables
   var Activity = AugeoDB.model('ACTIVITY');
   var AugeoUser = AugeoDB.model('AUGEO_USER');
+  var Commit = AugeoDB.model('GITHUB_COMMIT');
   var GithubUser = AugeoDB.model('GITHUB_USER');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
@@ -94,19 +97,27 @@
 
   exports.cleanAugeoDB = function(callback) {
     exports.cleanTweets(function() {
-      exports.cleanActivities(function() {
-        exports.cleanUsers(function() {
-          callback();
+      exports.cleanCommits(function() {
+        exports.cleanActivities(function() {
+          exports.cleanUsers(function() {
+            callback();
+          });
         });
       });
     });
   };
 
+  exports.cleanCommits = function(callback) {
+    Commit.removeCommits(GithubData.USER_GITHUB.screenName, Common.logData, function() {
+      callback();
+    });
+  };
+
   exports.cleanTweets = function(callback) {
-    Tweet.removeTweets('testScreenName', Common.logData, function() {
-      Tweet.removeTweets('twitterActionee', Common.logData, function() {
-        Tweet.removeTweetsWithMentionee("testScreenName", Common.logData, function() {
-          Tweet.removeTweetsWithMentionee("twitterActionee", Common.logData, function() {
+    Tweet.removeTweets(TwitterData.USER_TWITTER.screenName, Common.logData, function() {
+      Tweet.removeTweets(TwitterData.ACTIONEE_TWITTER.screenName, Common.logData, function() {
+        Tweet.removeTweetsWithMentionee(TwitterData.USER_TWITTER.screenName, Common.logData, function() {
+          Tweet.removeTweetsWithMentionee(TwitterData.ACTIONEE_TWITTER.screenName, Common.logData, function() {
             callback();
           });
         });
@@ -115,8 +126,8 @@
   };
 
   exports.cleanUsers = function(callback) {
-    AugeoUser.remove('tester', Common.logData, function(user1) {
-      AugeoUser.remove('actionee', Common.logData, function(user2) {
+    AugeoUser.remove(Common.USER.lastName, Common.logData, function(user1) {
+      AugeoUser.remove(Common.ACTIONEE.lastName, Common.logData, function(user2) {
         TwitterUser.remove((user1)?user1._id:'', Common.logData, function(removedUser1) {
           TwitterUser.remove((user2)?user2._id:'', Common.logData, function(removedUser2) {
             TwitterUser.removeInvalid(Common.logData, function() {

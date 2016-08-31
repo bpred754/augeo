@@ -106,5 +106,16 @@
     });
   };
 
+  GITHUB_COMMIT.statics.removeCommits = function(screenName, logData, callback) {
+    this.remove({screenName:screenName}, function(error) {
+      if(error) {
+        log.functionError(COLLECTION, 'removeCommits', logData.parentProcess, logData.username, 'Failed to remove commits for ' + screenName + '. Error: ' + error);
+      } else {
+        log.functionCall(COLLECTION, 'removeCommits', logData.parentProcess, logData.username, {'screenName': screenName});
+        callback();
+      }
+    });
+  };
+
   // Declare Model
   module.exports = AugeoDB.model('GITHUB_COMMIT', GITHUB_COMMIT);
