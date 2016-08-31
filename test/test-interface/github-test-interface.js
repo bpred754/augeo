@@ -38,9 +38,46 @@
     }
   };
 
+  exports.getPushEvents = function(accessToken, path, eTag, logData, callback) {
+
+    var headers = {
+      'x-ratelimit-reset': (new Date()).getTime()/1000 + 60,
+      'x-ratelimit-remaining': 1
+    };
+
+    if(eTag != 0) {
+      headers['etag'] = '1';
+      headers['status'] = '200';
+      headers['link'] = '<github.com/next>;rel="next"';
+
+      var eventsArray = new Array();
+      eventsArray.push(GithubData.event3);
+      eventsArray.push(GithubData.event2);
+      eventsArray.push(GithubData.event1);
+      eventsArray.push(GithubData.event0);
+
+      var events = "[";
+      for(var i = 0; i < eventsArray.length; i++) {
+        events += JSON.stringify(eventsArray[i]);
+        if(i < eventsArray.length -1) {
+          events += ', ';
+        } else {
+          events += ']'
+        }
+      }
+
+    } else {
+      headers['etag'] = eTag;
+      headers['status'] = '304';
+      headers['link'] = '';
+    }
+
+    callback(events, headers)
+  };
+
   exports.getUserData = function(accessToken, logData, callback) {
     if(accessToken != 'failUserData') {
-      callback('{"id": "' + GithubData.USER_GITHUB.githubId + '", "name": "' + Common.USER.firstName + '", "avatarUrl":"' + GithubData.USER_GITHUB.profileImageUrl + '", "login": "' + GithubData.USER_GITHUB.screenName + '"}');
+      callback('{"id": "' + GithubData.USER_GITHUB.githubId + '", "name": "' + Common.USER.firstName + '", "avatar_url":"' + GithubData.USER_GITHUB.profileImageUrl + '", "login": "' + GithubData.USER_GITHUB.screenName + '"}');
     } else {
       callback();
     }

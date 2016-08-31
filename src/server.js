@@ -48,7 +48,6 @@
   var AugeoApi = require('./api/augeo-api');
   var AugeoUtility = require('./utility/augeo-utility');
   var GithubEventQueue = require('./queue/github-event-queue');
-  var GithubService = require('./service/github-service');
   var TwitterRestQueue = require('./queue/twitter-rest-queue');
   var TwitterService = require('./service/twitter-service');
   var TwitterStreamQueue = require('./queue/twitter-stream-queue');
@@ -104,6 +103,6 @@
   }
 
   // Add all Github users to Github event queue
-  GithubService.addUsersToEventQueue(githubEventQueue, logData);
+  githubEventQueue.addAllUsers(logData);
 
   module.exports = app;

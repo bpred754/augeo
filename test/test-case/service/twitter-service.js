@@ -97,13 +97,13 @@
             Assert.strictEqual(userAfterUpdate.twitter.name, Common.USER.fullName);
             Assert.strictEqual(userAfterUpdate.twitter.screenName, TwitterData.USER_TWITTER.screenName);
             Assert.strictEqual(userAfterUpdate.skill.imageSrc, Common.USER.skill.imageSrc);
-            Assert.strictEqual(userAfterUpdate.skill.level, 1);
-            Assert.strictEqual(userAfterUpdate.skill.experience, 0);
+            userAfterUpdate.skill.level.should.be.aboveOrEqual(1);
+            userAfterUpdate.skill.experience.should.be.aboveOrEqual(0);
 
             var subSkills = userAfterUpdate.subSkills;
             for(var i = 0; i < subSkills.length; i++) {
-              Assert.strictEqual(subSkills[i].level, 1);
-              Assert.strictEqual(subSkills[i].experience, 0);
+              subSkills[i].level.should.be.aboveOrEqual(1);
+              subSkills[i].experience.should.be.aboveOrEqual(0);
             }
             done();
           });

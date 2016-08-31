@@ -82,6 +82,18 @@
     }
   };
 
+  GITHUB_COMMIT.statics.getCommitCount = function(logData, callback) {
+    this.count({}, function(error, count) {
+      if(error) {
+        log.functionError(COLLECTION, 'getCommitCount', logData.parentProcess, logData.username, 'Failed to retrieve commit count: ' + error);
+        callback();
+      } else {
+        log.functionCall(COLLECTION, 'getCommitCount', logData.parentProcess, logData.username);
+        callback(count);
+      }
+    });
+  };
+
   GITHUB_COMMIT.statics.getLatestCommit = function(screenName, logData, callback) {
     this.find({screenName:screenName},{},{sort:{'eventId':-1},limit:1}).exec(function(error, data) {
       if(error) {

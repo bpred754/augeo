@@ -19,63 +19,18 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Handles all interfaces with the Github API                 */
+  /* Description: Test cases that verify the data format from Github hasn't  */
+  /*              changed                                                    */
   /***************************************************************************/
 
   // Required libraries
+  var Common = require('../../data/common');
   var Https = require('https');
+  var Should = require('should');
 
-  // Required local modules
-  var Logger = require('../module/logger');
-
-  // Constants
-  var INTERFACE = 'twitter-interface';
-
-  // Global variables
-  var log = new Logger();
-
-  /***************************************************************************/
-  /* Github Calls                                                            */
-  /***************************************************************************/
-
-  exports.getAccessToken = function(code, logData, callback) {
-    log.functionCall(INTERFACE, 'getAccessToken', logData.parentProcess, logData.username);
-
-    var options = {
-      hostname: 'github.com',
-      method: 'POST',
-      path: '/login/oauth/access_token?client_id=' + process.env.GITHUB_CLIENT_ID + '&client_secret=' + process.env.GITHUB_CLIENT_SECRET + '&code=' + code,
-      headers: {
-        'accept': 'application/json'
-      }
-    };
-
-    Https.request(options, function(response) {
-      requestCallback(response, logData, callback)
-    }).end();
-  };
-
-  exports.getPushEvents = function(accessToken, path, eTag, logData, callback) {
-    log.functionCall(INTERFACE, 'getPushEvents', logData.parentProcess, logData.username, {'accessToken':(accessToken)?'valid':'invalid','path':path,'eTag':eTag});
-
-    var options = {
-      hostname: 'api.github.com',
-      method: 'GET',
-      path: path,
-      headers: {
-        'Authorization': 'token ' + accessToken,
-        'If-None-Match': eTag,
-        'User-Agent': process.env.GITHUB_SCREEN_NAME
-      }
-    };
-
-    Https.request(options, function(response) {
-      requestCallback(response, logData, callback)
-    }).end();
-  };
-
-  exports.getUserData = function(accessToken, logData, callback) {
-    log.functionCall(INTERFACE, 'getUserData', logData.parentProcess, logData.username, {'accessToken':(accessToken)?'valid':'invalid'})
+  // Get user data
+  it('should test Githubs api call for user data', function(done) {
+    this.timeout(Common.TIMEOUT);
 
     var options = {
       hostname: 'api.github.com',
@@ -83,32 +38,84 @@
       path: '/user',
       headers: {
         'User-Agent': process.env.GITHUB_SCREEN_NAME,
-        'Authorization': 'token ' + accessToken
+        'Authorization': 'Bearer ' + process.env.GITHUB_ACCESS_TOKEN
       }
     };
 
     Https.request(options, function(response) {
-      requestCallback(response, logData, callback)
+      requestCallback(response, function(data) {
+        var json = JSON.parse(data);
+        Should.exist(json.id);
+        Should.exist(json.name);
+        Should.exist(json.avatar_url);
+        Should.exist(json.login);
+        done();
+      });
     }).end();
-  };
+  });
+
+  // Get commits
+  it('should test Githubs api call for user commits', function(done) {
+    this.timeout(Common.TIMEOUT);
+
+    var options = {
+      hostname: 'api.github.com',
+      method: 'GET',
+      path: '/users/' + process.env.GITHUB_SCREEN_NAME + '/events',
+      headers: {
+        'User-Agent': process.env.GITHUB_SCREEN_NAME,
+        'Authorization': 'Bearer ' + process.env.GITHUB_ACCESS_TOKEN
+      }
+    };
+
+    Https.request(options, function(response) {
+      requestCallback(response, function(data, headers) {
+
+        var events = JSON.parse(data);
+        for(var i = 0; i < events.length; i++) {
+
+          var event = events[i];
+          Should.exist(event.type);
+          Should.exist(event.public);
+          Should.exist(event.created_at);
+          Should.exist(event.id);
+          Should.exist(event.repo.name);
+
+          var actor = event.actor;
+          Should.exist(actor.avatar_url);
+          Should.exist(actor.id);
+          Should.exist(actor.display_login);
+
+          var payload = event.payload;
+          Should.exist(payload);
+
+          if(event.type == 'PushEvent') {
+            var commits = payload.commits;
+            commits.length.should.be.above(0);
+          }
+        }
+        done();
+      });
+    }).end();
+  });
 
   /***************************************************************************/
   /* Private functions                                                       */
   /***************************************************************************/
 
-  var requestCallback = function(response, logData, callback) {
+  var requestCallback = function(response, callback) {
     var data = '';
     response.on('data', function (chunk) {
       data += chunk;
     });
 
     response.on('end', function () {
-      log.functionCall(INTERFACE, 'requestCallback (private)', logData.parentProcess, logData.username, {}, 'Retrieved all data from Github request');
-
       callback(data, response.headers);
     });
 
     response.on('error', function(error) {
-      log.functionError(INTERFACE, 'requestCallback (private)', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
+      console.log(error);
     });
   };
+
+

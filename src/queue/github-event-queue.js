@@ -25,9 +25,12 @@
   // Required local modules
   var AbstractObject = require('../module/common/abstract-object');
   var AbstractQueue = require('./abtract-queue');
+  var GithubQueueTask = require('../queue-task/github-queue-task');
   var GithubService = require('../service/github-service');
+  var Logger = require('../module/logger');
 
   // Global variables
+  var log = new Logger();
   var pollTime = 0;
   var queueSingleton;
 
@@ -44,6 +47,17 @@
 
   if(!queueSingleton) {
     AbstractObject.extend(AbstractQueue, $this, {
+
+      addAllUsers: function(logData){
+        log.functionCall(this.QUEUE, 'addAllUsers', logData.parentProcess, logData.username);
+
+        var self = this;
+        GithubService.loopThroughUsersQueueData(logData, function(queueData) {
+          var user = queueData.user;
+          var task = new GithubQueueTask(user.augeoUser, user.screenName, user.accessToken, queueData.eventId, logData);
+          self.addTask(task, logData);
+        });
+      },
 
       addQueueTask: function(task) {
         var self = this.singleton;

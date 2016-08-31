@@ -64,7 +64,7 @@
         wait: calculateNextRequestWaitTime(headers)
       };
 
-      if(status.indexOf('200') > -1) {
+      if(status.indexOf('200') > -1) { // If there are results..
 
         result.path = extractNextRequestPath(headers['link']);
 
@@ -82,7 +82,7 @@
         }
 
         result.commits = commits;
-      } else {
+      } else { // No changes
         log.functionCall(SERVICE, 'getCommits', logData.parentProcess, logData.username, {}, '304 - Not Modified');
       }
 

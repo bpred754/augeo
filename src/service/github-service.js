@@ -27,7 +27,6 @@
   var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
   var Classifier = require('../classifier/app-classifier');
-  var GithubQueueTask = require('../queue-task/github-queue-task');
   var Logger = require('../module/logger');
 
   // Constants
@@ -74,27 +73,6 @@
     }
   };
 
-  exports.addUsersToEventQueue = function(eventQueue, logData) {
-    log.functionCall(SERVICE, 'addUsersToEventQueue', logData.parentProcess, logData.username);
-
-    GithubUser.getAllUsers(logData, function(users) {
-      if(users.length > 0) {
-        // Asynchronous method calls in loop - Using Recursion
-        (function myClojure(i) {
-          var user = users[i];
-          exports.getLatestCommitEventId(user.screenName, logData, function (eventId) {
-            var task = new GithubQueueTask(user.augeoUser, user.screenName, user.accessToken, eventId, logData);
-            eventQueue.addTask(task, logData);
-            i++;
-            if (i < users.length) {
-              myClojure(i);
-            }
-          });
-        })(0); // Pass i as 0 and myArray to myClojure
-      }
-    });
-  };
-
   exports.checkExistingScreenName = function(screenName, logData, callback) {
     log.functionCall(SERVICE, 'checkExistingScreenName', logData.parentProcess, logData.username, {'screenName': screenName});
 
@@ -116,6 +94,26 @@
         eventId = commit.eventId;
       }
       callback(eventId);
+    });
+  };
+
+  exports.loopThroughUsersQueueData = function(logData, callback) {
+    log.functionCall(SERVICE, 'loopThroughUsersQueueData', logData.parentProcess, logData.username);
+
+    GithubUser.getAllUsers(logData, function(users) {
+      if(users.length > 0) {
+        // Asynchronous method calls in loop - Using Recursion
+        (function myClojure(i) {
+          var user = users[i];
+          exports.getLatestCommitEventId(user.screenName, logData, function (eventId) {
+            callback({user:user, eventId: eventId});
+            i++;
+            if (i < users.length) {
+              myClojure(i);
+            }
+          });
+        })(0); // Pass i as 0 and myArray to myClojure
+      }
     });
   };
 

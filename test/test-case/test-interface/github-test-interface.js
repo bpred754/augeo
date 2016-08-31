@@ -78,7 +78,7 @@
       var json = JSON.parse(data);
       Assert.strictEqual(json.id, GithubData.USER_GITHUB.githubId);
       Assert.strictEqual(json.name, Common.USER.firstName);
-      Assert.strictEqual(json.avatarUrl, GithubData.USER_GITHUB.profileImageUrl);
+      Assert.strictEqual(json.avatar_url, GithubData.USER_GITHUB.profileImageUrl);
       Assert.strictEqual(json.login, GithubData.USER_GITHUB.screenName);
       done();
     });

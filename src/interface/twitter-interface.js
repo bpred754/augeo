@@ -178,7 +178,7 @@
     });
 
     stream.on('connected', function(response) {
-      log.functionCall(INTERFACE, 'openStream - connected', logData.parentProcess, logData.username, 'Connected to Twitter');
+      log.functionCall(INTERFACE, 'openStream - connected', logData.parentProcess, logData.username, {}, 'Connected to Twitter');
 
       isStreamConnected = true;
       connectedCallback();

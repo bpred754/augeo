@@ -66,6 +66,7 @@
 
   describe('Interface Service', function() {
     importTests('twitterInterfaceService', './test-case/interface-service/twitter-interface-service');
+    importTests('githubInterfaceService', './test-case/interface-service/github-interface-service');
   });
 
   describe('Service', function() {
@@ -138,4 +139,5 @@
 
   describe('Interface', function() {
     importTests('Twitter', './test-case/interface/twitter');
+    importTests('Github', './test-case/interface/github');
   });
