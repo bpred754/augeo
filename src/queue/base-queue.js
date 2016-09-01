@@ -30,38 +30,28 @@
   // Global variables
   var log = new Logger();
 
-  var $this = function(logData) {
-
+  var $this = function(logData, prepareTask, finishTask) {
     $this.base.constructor.call(this);
 
     // Public variables
-    this.QUEUE = 'abstract-queue'; // Override in child object
     this.currentTask = {};
     this.isQueueOpen = true;
     this.queue = null;
     this.waitTime = 0;
 
-    this.init(logData);
-
-    // Return abstract queue object so singleton queues can store reference
-    return this;
+    this.init(logData, prepareTask, finishTask);
   };
 
   AbstractObject.extend(AbstractObject.GenericObject, $this, {
 
-    addQueueTask: function(){}, // Override in child object
-
-    addTask: function(task, logData) {
-      log.functionCall(this.singleton.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName':(task)?task.screenName:'invalid'});
-
-      var self = this.singleton;
+    updateWaitTime: function(task, callback) {
 
       var isAddRequestValid = true;
-      if(task.userId == self.currentTask.userId) {
+      if(task.userId == this.currentTask.userId) {
         isAddRequestValid = false;
       } else {
 
-        var tasks = self.queue.tasks;
+        var tasks = this.queue.tasks;
         for(var i = 0; i < tasks.length; i++) {
           if(tasks[i].data.userId == task.userId) {
             isAddRequestValid = false;
@@ -70,31 +60,27 @@
       }
 
       if(isAddRequestValid) {
-        task.wait = self.waitTime;
-        self.addQueueTask(task);
+        task.wait = this.waitTime;
+        callback(task)
       } else {
-        log.functionCall(self.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName':(task)?task.screenName:'invalid'},
-          'User already on queue');
+        callback();
       }
     },
 
-    finishTask: function(){}, // Override in child object
-
-    init: function(logData) {
-      log.functionCall(this.QUEUE, 'init', logData.parentProcess, logData.username);
+    init: function(logData, prepareTask, finishTask) {
 
       var self = this;
-      self.queue = Async.queue(function(task, callback) {
-        log.functionCall(self.QUEUE, 'Async.queue', logData.parentProcess, logData.username, {}, 'Executing queue task');
+      this.queue = Async.queue(function(task, callback) {
+        log.functionCall(logData.queue, 'Async.queue', logData.parentProcess, logData.username, {}, 'Executing queue task');
 
         self.onRequestOpen(function() {
 
           self.currentTask = task;
-          self.prepareTask(task);
+          prepareTask(task);
           self.startQueueTimer();
 
           task.execute(logData, function(updatedTask) {
-            self.finishTask(updatedTask, logData);
+            finishTask(updatedTask, logData);
 
             // Reset current task
             self.currentTask = {};
@@ -106,20 +92,17 @@
     },
 
     onRequestOpen: function(callback) {
-      var self = this.singleton;
-      if(self.isQueueOpen == true) {
+      var self = this;
+      if(this.isQueueOpen == true) {
         callback();
       } else {
         setTimeout(function() {self.onRequestOpen(callback)}, 100);
       }
     },
 
-    prepareTask: function(){}, // Override in child object
-
     startQueueTimer: function() {
-      var self = this.singleton;
-
-      self.isQueueOpen = false;
+      var self = this;
+      this.isQueueOpen = false;
       setTimeout(function() {
         self.isQueueOpen = true;
       }, self.waitTime);

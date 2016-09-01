@@ -29,7 +29,7 @@
   var Logger = require('../module/logger');
 
   // Constants
-  var INTERFACE = 'twitter-interface';
+  var INTERFACE = 'github-interface';
 
   // Global variables
   var log = new Logger();

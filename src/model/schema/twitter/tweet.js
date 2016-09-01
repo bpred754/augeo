@@ -121,55 +121,6 @@
     })
   };
 
-  TWITTER_TWEET.statics.getSkillActivity = function(screenName, skill, limit, maxTweetId, logData, callback) {
-
-    if(!maxTweetId) {
-      maxTweetId = '9999999999999999999999999999999';
-    }
-
-    var query = {
-      $and:[
-        {
-          tweetId: {$lt: maxTweetId},
-          $or: [
-            {
-              mentions:{
-                $elemMatch:{
-                  $eq: screenName
-                }
-              }
-            }, {
-              screenName:screenName
-            }
-          ]
-        }
-      ]
-    };
-
-    if(skill && skill != 'Augeo') {
-      query.classification = skill;
-    }
-
-    var options = {
-      sort: {'tweetId': -1}
-    };
-
-    if(limit) {
-      options.limit = limit
-    }
-
-    this.find(query,{}, options, function(error, tweets) {
-       if(error) {
-         log.functionError(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
-           'Failed to retrieve ' + screenName + ' tweets for skill:' + skill + '. Error: ' + error);
-       } else {
-         log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
-             {'screenName':screenName, 'skill':skill,'maxTweetId':maxTweetId});
-         callback(tweets);
-       }
-     });
-  };
-
   TWITTER_TWEET.statics.getTweet = function(tweetId, logData, callback) {
     this.find({tweetId:tweetId},{},{}, function(error, tweet) {
       if(error) {
