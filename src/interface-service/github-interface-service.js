@@ -163,7 +163,7 @@
       }
 
       if(event.repo) {
-        commitJson.repo = event.repo.name.substring(commitJson.screenName.length+1);
+        commitJson.repo = event.repo.name;
       }
 
       if(event.payload) {

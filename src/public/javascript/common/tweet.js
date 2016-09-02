@@ -55,9 +55,8 @@
       this.twitterId = data.twitterId;
 
       // Client only attributes
-      this.date = this.formatDate();
       this.displayScreenName = '@' + data.screenName;
-      this.html = this.formatText(data.text);
+      this.html = this.formatText();
       this.interfaceProfileUrl = 'https://twitter.com/' + data.screenName;
       this.link = 'https://twitter.com/statuses/' + data.tweetId;
     }
@@ -65,27 +64,14 @@
 
   AbstractObject.extend(Activity, $this, {
 
-    formatDate: function () {
-      var monthNames = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-        "Aug", "Sep", "Oct", "Nov", "Dec"
-      ];
-
-      var date = new Date(this.timestamp);
-      var day = date.getDate();
-      var monthIndex = date.getMonth();
-      var year = date.getFullYear();
-
-      return day + ' ' + monthNames[monthIndex] + ' ' + year;
-    },
-
     formatThumbMedia: function() {
       if(this.media.url) {
         this.media.url = this.media.url.substring(0, this.media.url.length - 6) + ":thumb";
       }
     },
 
-    formatText: function(html) {
+    formatText: function() {
+      var html = this.text;
 
       // Check if tweet contains mentions
       if(this.mentions.length > 0) {

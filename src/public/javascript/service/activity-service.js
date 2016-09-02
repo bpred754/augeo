@@ -33,10 +33,10 @@
       var activity = rawActivity;
       switch(rawActivity.kind) {
         case 'TWITTER_TWEET':
-          activity = new Tweet(activity);
+          activity = new Tweet(rawActivity);
           break;
         case 'GITHUB_COMMIT':
-          activity = new Commit(activity);
+          activity = new Commit(rawActivity);
           break;
       }
 

@@ -29,6 +29,6 @@
       scope: {
         'activity': '=',
       },
-      template: 'html/directive/activity/card/common/footer.html'
+      templateUrl: 'html/directive/activity/card/common/footer.html'
     }
   };

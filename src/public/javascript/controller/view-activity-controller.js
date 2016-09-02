@@ -100,17 +100,15 @@
           var activity = data.activity;
           if(activity) {
             if (activity.length > 0) {
-
-              var activities = new Array();
               for(var i = 0; i < activity.length; i++) {
-                activities.push(ActivityService.getActivityObject(activity[i]));
+                $scope.activities.push(ActivityService.getActivityObject(activity[i]));
               }
-
-              $scope.activities = $scope.activities.concat(activities);
               maxTimestamp = data.activity[data.activity.length - 1].timestamp;
               $scope.activityLoaded = true;
-            } else {
-              $scope.finishedLoading = true;
+
+              if(activity.length < 20) {
+                $scope.finishedLoading = true;
+              }
             }
           } else {
             $scope.invalidUser = true;

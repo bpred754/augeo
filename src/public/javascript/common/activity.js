@@ -38,9 +38,28 @@
       this.kind = json.kind;
       this.timestamp = json.timestamp;
       this.user = json.user;
+
+      // Client only attributes
+      this.date = this.formatDate();
     }
   };
 
-  AbstractObject.extend(AbstractObject.GenericObject, $this, {});
+  AbstractObject.extend(AbstractObject.GenericObject, $this, {
+
+    formatDate: function () {
+      var monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+        "Aug", "Sep", "Oct", "Nov", "Dec"
+      ];
+
+      var date = new Date(this.timestamp);
+      var day = date.getDate();
+      var monthIndex = date.getMonth();
+      var year = date.getFullYear();
+
+      return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    }
+
+  });
 
   module.exports = $this;

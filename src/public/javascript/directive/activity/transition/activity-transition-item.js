@@ -34,9 +34,12 @@
       link: function(scope, element, attributes) {
         scope.getTemplateUrl = function () {
           switch(scope.activity.kind) {
+            // Only add cases where activity has custom html
             case 'TWITTER_TWEET':
-              return 'html/directive/activity/transition/twitter-tweet.html'
+              return 'html/directive/activity/transition/twitter-tweet.html';
               break;
+            default:
+              return 'html/directive/activity/transition/standard-activity.html';
           }
         };
       }

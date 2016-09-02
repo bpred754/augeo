@@ -73,7 +73,9 @@
             $scope.activities = new Array();
             for(var i = 0; i < data.recentActions.length; i++) {
               var activity = ActivityService.getActivityObject(data.recentActions[i]);
-              activity.formatThumbMedia();
+              if(activity.formatThumbMedia) {
+                activity.formatThumbMedia();
+              }
               $scope.activities.push(activity);
             }
           }

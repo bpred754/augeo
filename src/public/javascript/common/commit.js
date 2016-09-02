@@ -30,17 +30,42 @@
   var $this = function(json) {
     $this.base.constructor.call(this, json);
 
-    // public variables
-    this.avatarImageSrc = json.avatarImageSrc;
-    this.eventId = json.eventId;
-    this.githubId = json.githubId;
-    this.name = json.name;
-    this.repo = json.repo;
-    this.screenName = json.screenName;
-    this.sha = json.sha;
-    this.text = json.text;
+    if(json) {
+
+      var data;
+      if (json.data) {
+        data = json.data;
+      } else {
+        data = json;
+      }
+
+      // public variables
+      this.avatarImageSrc = data.avatarImageSrc;
+      this.eventId = data.eventId;
+      this.githubId = data.githubId;
+      this.name = data.name;
+      this.repo = data.repo;
+      this.screenName = data.screenName;
+      this.sha = data.sha;
+      this.text = data.text;
+
+      // Client only attributes
+      this.displayScreenName = this.screenName;
+      this.html = this.formatText();
+      this.interfaceLink = 'https://github.com';
+      this.interfaceLogo = 'image/github/logo-black-small.png';
+      this.interfaceProfileUrl = 'https://github.com/' + this.screenName;
+      this.link = 'https://github.com/' + this.repo  + '/commit/' + this.sha;
+    }
   };
 
-  AbstractObject.extend(Activity, $this, {});
+  AbstractObject.extend(Activity, $this, {
+
+    formatText: function() {
+      var html = 'Commit to <a href="https://github.com/' + this.repo + '" target="_blank">' +  this.repo + '</a>: ';
+      return html += this.text;
+    }
+
+  });
 
   module.exports = $this;

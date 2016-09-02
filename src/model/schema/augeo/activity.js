@@ -76,6 +76,7 @@
   };
 
   ACTIVITY.statics.getSkillActivity = function(userId, skill, limit, maxTimestamp, logData, callback) {
+    var model = this;
 
     if(!maxTimestamp) {
       maxTimestamp = new Date(8640000000000000);
@@ -94,20 +95,52 @@
       query.classification = skill;
     }
 
-    this.find(query)
+    // First grab the activity IDs
+    model.find(query)
+      .select('_id')
       .sort({'timestamp': -1})
       .limit(limit)
-      .populate('data')
-      .exec(function(error, activities) {
-      if(error) {
-        log.functionError(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
-          'Failed to retrieve ' + userId + ' activities for skill:' + skill + '. Error: ' + error);
-      } else {
-        log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
-          {'userId':userId, 'skill':skill,'maxTimestamp':maxTimestamp});
-        callback(activities);
-      }
-    });
+      //.populate('data') // Can't use populate & sort due to Mongoose issue: https://github.com/Automattic/mongoose/issues/2202
+      .exec(function(error, activityIds) {
+        if(error) {
+          log.functionError(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
+            'Failed to retrieve ' + userId + ' activity IDs for skill:' + skill + '. Error: ' + error);
+        } else {
+          log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
+            {'userId':userId, 'skill':skill,'maxTimestamp':maxTimestamp}, 'Retrieved activity IDs');
+
+          if(activityIds) {
+            var objectIds = new Array();
+            for (var i = 0; i < activityIds.length; i++) {
+              objectIds.push(new Mongoose.Types.ObjectId(activityIds[i]._id));
+            }
+            if (objectIds.length > 0) {
+
+              // Query DB to grab activities with IDs
+              model.find({
+                '_id': {
+                  $in: objectIds
+                }
+              }).populate('data')
+                .exec(error, function (error, activities) {
+                  if(error) {
+                    log.functionError(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
+                      'Failed to retrieve ' + userId + ' activities for skill:' + skill + '. Error: ' + error);
+                  } else {
+                    log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
+                      {'userId':userId, 'skill':skill,'maxTimestamp':maxTimestamp}, 'Retrieved activities');
+
+                    // Sort activities by timestamp in descending order
+                    var sortedActivities = activities.sort(function(a,b) {
+                      return new Date(b.timestamp) - new Date(a.timestamp);
+                    });
+                    callback(sortedActivities);
+                  }
+                });
+            }
+          }
+        }
+      });
   };
 
   ACTIVITY.statics.increaseExperience = function(userId, dataId, experience, logData, callback) {

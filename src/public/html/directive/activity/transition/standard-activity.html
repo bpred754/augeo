@@ -18,11 +18,8 @@
     <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
     <!-------------------------------------------------------------------------->
 
-    <div class="at-text-container">
-        <div class="standard-text text-align-center" ng-bind-html="activity.html | html"></div>
-        <div class="at-image-container" ng-if="activity.media.url">
-            <a href="{{activity.link}}" target="_blank" ng-if="activity.media.url">
-                <img src="{{activity.media.url}}" class="at-image"/>
-            </a>
-        </div>
+    <div>
+        <activity-transition-header activity="activity"></activity-transition-header>
+        <activity-transition-content activity="activity"></activity-transition-content>
+        <activity-transition-footer activity="activity"></activity-transition-footer>
     </div>
