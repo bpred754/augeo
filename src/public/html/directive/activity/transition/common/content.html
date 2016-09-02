@@ -19,10 +19,10 @@
     <!-------------------------------------------------------------------------->
 
     <div class="at-text-container">
-        <div class="standard-text text-align-center" ng-bind-html="activity.data.text | html"></div>
-        <div class="at-image-container" ng-if="activity.data.media">
-            <a href="{{activity.link}}" target="_blank" ng-if="activity.data.media.url">
-                <img src="{{activity.data.media.url}}" class="at-image"/>
+        <div class="standard-text text-align-center" ng-bind-html="activity.html | html"></div>
+        <div class="at-image-container" ng-if="activity.media">
+            <a href="{{activity.link}}" target="_blank" ng-if="activity.media.url">
+                <img src="{{activity.media.url}}" class="at-image"/>
             </a>
         </div>
     </div>

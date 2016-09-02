@@ -19,27 +19,11 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Abstract object to store logic and attributes for          */
-  /*   activities                                                            */
+  /* Description: Index file that requires all common components for         */
+  /*   browserify                                                            */
   /***************************************************************************/
 
-  // Required local modules
-  var AbstractObject = require('./abstract-object');
-
-  // Constructor
-  var $this = function(json) {
-    $this.base.constructor.call(this, json);
-
-    // public variables
-    this.classification = json.classification;
-    this.classificationGlyphicon = json.classificationGlyphicon;
-    this.data;
-    this.experience = json.experience;
-    this.kind = json.kind;
-    this.timestamp = json.timestamp;
-    this.user = json.user;
-  };
-
-  AbstractObject.extend(AbstractObject.GenericObject, $this, {});
-
-  module.exports = $this;
+  require('./abstract-object');
+  require('./activity');
+  require('./commit');
+  require('./tweet');

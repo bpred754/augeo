@@ -22,7 +22,7 @@
         <div class="activity-header">
             <div class="activity-avatar-container">
                 <a href="{{activity.interfaceProfileUrl}}" target="_blank">
-                    <img src="{{activity.data.avatarImageSrc}}" class="activity-avatar"/>
+                    <img src="{{activity.avatarImageSrc}}" class="activity-avatar"/>
                 </a>
             </div>
             <div class="activity-header-right">
@@ -32,9 +32,9 @@
                 </div>
             </div>
             <div class="activity-name-container">
-                <a href="{{activity.interfaceProfileUrl}}" target="_blank" ng-class="{'standard-text': screenSize == 'x-small', 'large-text': screenSize != 'x-small'}" class="text-primary activity-name">{{activity.data.name}}</a>
+                <a href="{{activity.interfaceProfileUrl}}" target="_blank" ng-class="{'standard-text': screenSize == 'x-small', 'large-text': screenSize != 'x-small'}" class="text-primary activity-name">{{activity.name}}</a>
                 <div>
-                    <a href="{{activity.interfaceProfileUrl}}" target="_blank" class="small-text text-primary">{{activity.data.displayScreenName}}</a>
+                    <a href="{{activity.interfaceProfileUrl}}" target="_blank" class="small-text text-primary">{{activity.displayScreenName}}</a>
                 </div>
             </div>
         </div>

@@ -25,7 +25,7 @@
   var githubInterfaceUrl = process.env.TEST === 'true' ? '../../test/test-interface/github-test-interface' : '../interface/github-interface';
 
   // Required local modules
-  var Commit = require('../module/common/commit');
+  var Commit = require('../public/javascript/common/commit');
   var GithubInterface = require(githubInterfaceUrl);
   var Logger = require('../module/logger');
 

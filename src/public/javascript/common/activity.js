@@ -19,9 +19,28 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all activity controllers          */
+  /* Description: Abstract object to store logic and attributes for          */
+  /*   activities                                                            */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Required local modules
+  var AbstractObject = require('./abstract-object');
 
-  augeo.controller('TwitterTweetController', ['$scope', require('./twitter-tweet-controller')]);
+  // Constructor
+  var $this = function(json) {
+    $this.base.constructor.call(this, json);
+
+    if(json) {
+      // public variables
+      this.classification = json.classification;
+      this.classificationGlyphicon = json.classificationGlyphicon;
+      this.experience = json.experience;
+      this.kind = json.kind;
+      this.timestamp = json.timestamp;
+      this.user = json.user;
+    }
+  };
+
+  AbstractObject.extend(AbstractObject.GenericObject, $this, {});
+
+  module.exports = $this;

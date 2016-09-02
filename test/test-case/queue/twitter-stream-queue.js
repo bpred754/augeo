@@ -24,6 +24,7 @@
 
   // Required libraries
   var Assert = require('assert');
+  var Should = require('should');
 
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
@@ -54,7 +55,7 @@
 
         // Verify tweet is in database
         Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
-          Assert.strictEqual(TwitterData.rawStandardTweet.id_str, rawStandardTweet[0].tweetId);
+          Assert.strictEqual(TwitterData.rawStandardTweet.id_str, rawStandardTweet.tweetId);
 
           // Verify experience gained
           User.getUserWithEmail(Common.USER.email, Common.logData, function(userAfter) {
@@ -93,11 +94,11 @@
 
           // Verify tweet is in database
           Tweet.getTweet(TwitterData.rawMentionOfTestUser.id_str, Common.logData, function(rawMentionOfTestUser) {
-            Assert.strictEqual(TwitterData.rawMentionOfTestUser.id_str, rawMentionOfTestUser[0].tweetId);
+            Assert.strictEqual(TwitterData.rawMentionOfTestUser.id_str, rawMentionOfTestUser.tweetId);
 
             // Verify mention is in database
             Tweet.getTweet(TwitterData.rawMentionOfTestUser.id_str, Common.logData, function(mention) {
-              mention[0].mentions.indexOf(TwitterData.USER_TWITTER.screenName).should.be.above(-1);
+              mention.mentions.indexOf(TwitterData.USER_TWITTER.screenName).should.be.above(-1);
 
               // Get after experience for User and Actionee
               User.getUserWithEmail(Common.USER.email, Common.logData, function(userAfter) {
@@ -150,7 +151,7 @@
           Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(originalTweet) {
 
             // Get original retweet count
-            var originalRetweetCount = originalTweet[0].retweetCount;
+            var originalRetweetCount = originalTweet.retweetCount;
 
             var queueData1 = {};
             queueData1.action = 'Add';
@@ -161,11 +162,11 @@
 
               // Verify tweet is in database
               Tweet.getTweet(TwitterData.rawRetweetOfUser.id_str, Common.logData, function(retweetOfUser) {
-                Assert.strictEqual(TwitterData.rawRetweetOfUser.id_str, retweetOfUser[0].tweetId);
+                Assert.strictEqual(TwitterData.rawRetweetOfUser.id_str, retweetOfUser.tweetId);
 
                 // Verify retweet count incremented
                 Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(originalTweetAfter) {
-                  Assert.strictEqual(originalRetweetCount+1, originalTweetAfter[0].retweetCount);
+                  Assert.strictEqual(originalRetweetCount+1, originalTweetAfter.retweetCount);
 
                   // Get after experience for User and Actionee
                   User.getUserWithEmail(Common.USER.email, Common.logData, function(userAfter) {
@@ -236,7 +237,7 @@
 
                 // Verify tweet is not in database
                 Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(rawStandardTweet) {
-                  Assert.strictEqual(0, rawStandardTweet.length);
+                  Should.not.exist(rawStandardTweet);
 
                   // Verify experience removed
                   User.getUserWithEmail(Common.USER.email, Common.logData, function(userAfter) {

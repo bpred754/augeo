@@ -24,6 +24,7 @@
 
   // Required libraries
   var Assert = require('assert');
+  var Should = require('should');
 
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
@@ -237,7 +238,7 @@
 
           // Verify tweet is in database
           Tweet.getTweet(tweet.tweetId, Common.logData, function(returnedTweet0) {
-            Assert.strictEqual(tweet.tweetId, returnedTweet0[0].tweetId);
+            Assert.strictEqual(tweet.tweetId, returnedTweet0.tweetId);
 
             // Add second to last mention to user's mentions
             var data1 = TwitterStreamData.getSecondMostRecentMention();
@@ -250,24 +251,24 @@
 
               // Verify mention is in database
               Tweet.getTweet(mentionTweet.tweetId, Common.logData, function(returnedTweet1) {
-                returnedTweet1[0].mentions.indexOf(user.twitter.screenName).should.be.above(-1);
+                returnedTweet1.mentions.indexOf(user.twitter.screenName).should.be.above(-1);
 
                 // Verify that the last raw tweet is not in the TWEET table
                 var latestTweet = TwitterStreamData.getOldestTweet();
                 Tweet.getTweet(latestTweet.id_str, Common.logData, function(returnedTweet2) {
-                  Assert.strictEqual(0, returnedTweet2.length);
+                  Should.not.exist(returnedTweet2);
 
                   twitterRestQueue.addAllUsersToQueues('TWEET', Common.logData, function() {
 
                     // Verify the last raw tweet is in the Tweet table
                     Tweet.getTweet(latestTweet.id_str, Common.logData, function(returnedTweet3) {
-                      Assert.strictEqual(latestTweet.id_str, returnedTweet3[0].tweetId);
+                      Assert.strictEqual(latestTweet.id_str, returnedTweet3.tweetId);
 
                       twitterRestQueue.addAllUsersToQueues('MENTION', Common.logData, function() {
                         // Verify the last raw mention is in the Mention table
                         var latestMention = TwitterStreamData.getOldestMention();
                         Tweet.getTweet(latestMention.id_str, Common.logData, function(returnedTweet4) {
-                          returnedTweet4[0].mentions.indexOf(user.twitter.screenName).should.be.above(-1);
+                          returnedTweet4.mentions.indexOf(user.twitter.screenName).should.be.above(-1);
                           done();
                         });
                       });

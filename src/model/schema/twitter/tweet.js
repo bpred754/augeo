@@ -122,7 +122,7 @@
   };
 
   TWITTER_TWEET.statics.getTweet = function(tweetId, logData, callback) {
-    this.find({tweetId:tweetId},{},{}, function(error, tweet) {
+    this.findOne({tweetId:tweetId},{},{}, function(error, tweet) {
       if(error) {
         log.functionError(COLLECTION, 'getTweet', logData.parentProcess, logData.username, 'Failed to get tweet with tweetID: ' + tweetId);
       } else {

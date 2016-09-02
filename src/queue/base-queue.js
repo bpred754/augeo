@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Required local modules
-  var AbstractObject = require('../module/common/abstract-object');
+  var AbstractObject = require('../public/javascript/common/abstract-object');
   var Async = require('../module/queue');
   var Logger = require('../module/logger');
 

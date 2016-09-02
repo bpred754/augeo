@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Required local modules
-  var AbstractObject = require('../module/common/abstract-object');
+  var AbstractObject = require('../public/javascript/common/abstract-object');
 
   // Constructor
   var $this = function(userId) {

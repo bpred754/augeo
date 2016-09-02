@@ -39,6 +39,7 @@
   angular.module('augeo', ['ui.router', 'angulartics', require('angulartics-google-analytics'), 'angularGrid', 'angular-progress-arc']);
 
   // Grab angular components from public directories that contain an index.js
+  require('./common');
   require('./config');
   require('./controller');
   require('./directive');

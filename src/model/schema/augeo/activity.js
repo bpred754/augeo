@@ -63,7 +63,7 @@
   };
 
   ACTIVITY.statics.getActivity = function(userId, dataId, logData, callback) {
-    this.find({$and:[{user:userId}, {data:dataId}]}, function(error, activity) {
+    this.findOne({$and:[{user:userId}, {data:dataId}]}, function(error, activity) {
       if(error) {
         log.functionError(COLLECTION, 'getActivity', logData.parentProcess, logData.username, 'Failed to get activity for user with ID: ' + userId +
           '. Error: ' + error);

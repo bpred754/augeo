@@ -21,13 +21,13 @@
     <div class="at-head-container">
         <div class="at-center">
             <div class="at-avatar-container">
-                <div ng-if="screenName != activity.data.screenName" class="at-avatar-image-container">
+                <div ng-if="screenName != activity.screenName" class="at-avatar-image-container">
                     <a href="{{activity.interfaceProfileUrl}}" target="_blank">
-                        <img src="{{activity.data.avatarImageSrc}}" class="at-avatar-image"/>
+                        <img src="{{activity.avatarImageSrc}}" class="at-avatar-image"/>
                     </a>
                 </div>
-                <a href="{{activity.interfaceProfileUrl}}" target="_blank" class="large-text at-avatar-text at-name">{{activity.data.name}}</a>
-                <a href="{{activity.interfaceProfileUrl}}" target="_blank" class="standard-text text-secondary at-avatar-text at-screen-name">{{activity.data.displayScreenName}}</a>
+                <a href="{{activity.interfaceProfileUrl}}" target="_blank" class="large-text at-avatar-text at-name">{{activity.name}}</a>
+                <a href="{{activity.interfaceProfileUrl}}" target="_blank" class="standard-text text-secondary at-avatar-text at-screen-name">{{activity.displayScreenName}}</a>
             </div>
             <div class="at-experience-container">
                 <div class="at-experience-inner-container">

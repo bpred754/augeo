@@ -52,7 +52,7 @@
     Tweet.getTweet(action.tweetId, logData, function(returnedTweet) {
 
       // Make sure tweet is unique
-      if(returnedTweet.length === 0) {
+      if(!returnedTweet) {
 
         // Find twitterId for actioner
         TwitterUser.getUserWithScreenName(action.actionerScreenName, logData, function(actioner) {
@@ -307,10 +307,10 @@
 
       // Get tweet to be removed from database
       Tweet.getTweet(tweetData.id_str, logData, function (tweet) {
-        Activity.getActivity(user._id, tweet[0]._id, logData, function(activity) {
+        Activity.getActivity(user._id, tweet._id, logData, function(activity) {
 
-          var tweetExperience = activity[0].experience * -1;
-          var classification = activity[0].classification;
+          var tweetExperience = activity.experience * -1;
+          var classification = activity.classification;
 
           // Remove tweet
           Tweet.removeTweet(tweetData.id_str, logData, function () {

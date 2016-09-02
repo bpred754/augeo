@@ -129,9 +129,9 @@
 
         // Verify activity was added
         Tweet.getTweet(tweet0.tweetId, Common.logData, function(returnedTweet0) {
-          Activity.getActivity(user0.id, returnedTweet0[0]._id, Common.logData, function(returnedActivity0) {
-            Assert.strictEqual(returnedActivity0[0].experience, TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
-            experience += returnedActivity0[0].experience;
+          Activity.getActivity(user0.id, returnedTweet0._id, Common.logData, function(returnedActivity0) {
+            Assert.strictEqual(returnedActivity0.experience, TwitterUtility.TWEET_EXPERIENCE + TwitterUtility.RETWEET_EXPERIENCE);
+            experience += returnedActivity0.experience;
 
             // Verify experience was added to twitter skill
             User.getUserWithUsername(Common.USER.username, Common.logData, function(user1) {
@@ -145,12 +145,12 @@
 
                 // Verify tweet was added for user doing the mentioning
                 Tweet.getTweet(tweet1.tweetId, Common.logData, function(returnedTweet1) {
-                  Activity.getActivity(user0._id, returnedTweet1[0]._id, Common.logData, function(returnedActivity1) {
+                  Activity.getActivity(user0._id, returnedTweet1._id, Common.logData, function(returnedActivity1) {
 
-                    Assert.strictEqual(returnedTweet1[0].screenName, TwitterData.ACTIONEE_TWITTER.screenName);
-                    returnedTweet1[0].mentions.indexOf(TwitterData.USER_TWITTER.screenName).should.be.above(-1);
-                    Assert.strictEqual(returnedActivity1[0].experience, TwitterUtility.TWEET_EXPERIENCE);
-                    experience += returnedActivity1[0].experience;
+                    Assert.strictEqual(returnedTweet1.screenName, TwitterData.ACTIONEE_TWITTER.screenName);
+                    returnedTweet1.mentions.indexOf(TwitterData.USER_TWITTER.screenName).should.be.above(-1);
+                    Assert.strictEqual(returnedActivity1.experience, TwitterUtility.TWEET_EXPERIENCE);
+                    experience += returnedActivity1.experience;
 
                     // Verify experience was added to twitter skill
                     User.getUserWithUsername(Common.USER.username, Common.logData, function(user2) {
@@ -162,25 +162,25 @@
 
                       // Get original experience and retweet count of tweet to be retweeted
                       Tweet.getTweet(action2.retweetId, Common.logData, function(returnedTweet2) {
-                        Activity.getActivity(user0._id, returnedTweet2[0]._id, Common.logData, function(returnedActivity2) {
-                          var originalTweetExperience = returnedActivity2[0].experience;
-                          var originalRetweetCount = returnedTweet2[0].retweetCount;
+                        Activity.getActivity(user0._id, returnedTweet2._id, Common.logData, function(returnedActivity2) {
+                          var originalTweetExperience = returnedActivity2.experience;
+                          var originalRetweetCount = returnedTweet2.retweetCount;
 
                           TwitterService.addAction(action2, tweet2, Common.logData, function(classification2) {
 
                             // Verify tweet was added for user doing retweeting
                             User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
                               Tweet.getTweet(tweet2.tweetId, Common.logData, function(returnedTweet3) {
-                                Activity.getActivity(user3._id, returnedTweet3[0]._id, Common.logData, function(returnedActivity3) {
-                                  Assert.strictEqual(returnedTweet3[0].screenName, TwitterData.ACTIONEE_TWITTER.screenName);
-                                  Assert.strictEqual(returnedActivity3[0].experience, TwitterUtility.TWEET_EXPERIENCE);
+                                Activity.getActivity(user3._id, returnedTweet3._id, Common.logData, function(returnedActivity3) {
+                                  Assert.strictEqual(returnedTweet3.screenName, TwitterData.ACTIONEE_TWITTER.screenName);
+                                  Assert.strictEqual(returnedActivity3.experience, TwitterUtility.TWEET_EXPERIENCE);
                                   experience += TwitterUtility.RETWEET_EXPERIENCE;
 
                                   // Verify original tweet's experience and retweet count increased
                                   Tweet.getTweet(action2.retweetId, Common.logData, function(returnedTweet4) {
-                                    Activity.getActivity(user0._id, returnedTweet4[0]._id, Common.logData, function(returnedActivity4) {
-                                      Assert.strictEqual(returnedActivity4[0].experience, originalTweetExperience + TwitterUtility.RETWEET_EXPERIENCE);
-                                      Assert.strictEqual(returnedTweet4[0].retweetCount, originalRetweetCount + 1);
+                                    Activity.getActivity(user0._id, returnedTweet4._id, Common.logData, function(returnedActivity4) {
+                                      Assert.strictEqual(returnedActivity4.experience, originalTweetExperience + TwitterUtility.RETWEET_EXPERIENCE);
+                                      Assert.strictEqual(returnedTweet4.retweetCount, originalRetweetCount + 1);
 
                                       // Verify user's skill experience
                                       User.getUserWithUsername(Common.USER.username, Common.logData, function(user3) {
@@ -235,7 +235,7 @@
             (function checkTweets(i) {
               Tweet.getTweet(tweetIDs[i], Common.logData, function(returnedTweet) {
                 Assert.ok(returnedTweet);
-                returnedTweet.length.should.be.above(0);
+                returnedTweet._id.should.be.ok();
                 i++;
                 if(i < tweetIDs.length) {
                   checkTweets(i);
@@ -295,7 +295,7 @@
             (function checkTweets(i) {
               Tweet.getTweet(tweetIDs[i], Common.logData, function(returnedTweet) {
                 Assert.ok(returnedTweet);
-                returnedTweet.length.should.be.above(0);
+                returnedTweet._id.should.be.ok();
                 i++;
                 if(i < tweetIDs.length) {
                   checkTweets(i);
@@ -466,9 +466,9 @@
 
       // Verify tweet exists
       Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(returnedTweet0) {
-        Activity.getActivity(user0._id, returnedTweet0[0]._id, Common.logData, function(returnedActivity0) {
-          Assert.strictEqual(returnedTweet0[0].tweetId, TwitterData.rawStandardTweet.id_str);
-          experience -= returnedActivity0[0].experience;
+        Activity.getActivity(user0._id, returnedTweet0._id, Common.logData, function(returnedActivity0) {
+          Assert.strictEqual(returnedTweet0.tweetId, TwitterData.rawStandardTweet.id_str);
+          experience -= returnedActivity0.experience;
 
           var tweetData = {
             id_str: TwitterData.rawStandardTweet.id_str,
@@ -480,10 +480,10 @@
 
             // Verify tweet was removed
             Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(returnedTweet1) {
-              Assert.strictEqual(0, returnedTweet1.length);
+              Should.not.exist(returnedTweet1);
 
               Activity.getActivity(user0._id, returnedTweet0._id, Common.logData, function(returnedActivity2) {
-                Assert.strictEqual(0, returnedActivity2.length);
+                Should.not.exist(returnedActivity2);
 
                 // Verify experience was removed from twitter skill
                 User.getUserWithUsername(Common.USER.username, Common.logData, function(user1) {

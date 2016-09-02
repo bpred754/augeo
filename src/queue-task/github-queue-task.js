@@ -23,7 +23,7 @@
   /***************************************************************************/
 
     // Required local modules
-  var AbstractObject = require('../module/common/abstract-object');
+  var AbstractObject = require('../public/javascript/common/abstract-object');
   var AbstractQueueTask = require('../queue-task/abstract-queue-task');
   var GithubInterfaceService = require('../interface-service/github-interface-service');
   var Logger = require('../module/logger');

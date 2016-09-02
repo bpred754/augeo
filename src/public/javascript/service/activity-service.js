@@ -18,16 +18,28 @@
   /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
   /***************************************************************************/
 
-  /***************************************************************************/
-  /* Description: Index file that requires all services for browserify       */
-  /***************************************************************************/
+  /****************************************************************************/
+  /* Description: Service that contains activity logic                        */
+  /****************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  var Commit = require('../common/commit');
+  var Tweet = require('../common/tweet');
 
-  augeo.service('ActivityService', require('./activity-service'));
-  augeo.service('AugeoClientService', ['$http', '$state', require('./augeo-client-service')]);
-  augeo.service('ClientValidator', require('./client-validator'));
-  augeo.service('GithubClientService', ['AugeoClientService', require('./github-client-service')]);
-  augeo.service('ProfileService', require('./profile-service'));
-  augeo.service('TwitterClientService', ['AugeoClientService', require('./twitter-client-service')]);
-  augeo.service('UserClientService', ['AugeoClientService', require('./user-client-service')]);
+  // Reminder: Update service/index.js when service params are modified
+  module.exports = function() {
+
+    this.getActivityObject = function(rawActivity) {
+
+      var activity = rawActivity;
+      switch(rawActivity.kind) {
+        case 'TWITTER_TWEET':
+          activity = new Tweet(activity);
+          break;
+        case 'GITHUB_COMMIT':
+          activity = new Commit(activity);
+          break;
+      }
+
+      return activity;
+    }
+  };
