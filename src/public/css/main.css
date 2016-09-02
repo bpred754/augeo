@@ -46,8 +46,10 @@
   @import url('./view-activity.css');
 
   /* Directives */
-  @import url('./directive/activity-card.css');
-  @import url('./directive/activity-transition.css');
+  @import url('./directive/activity/activity-card.css');
+  @import url('./directive/activity/activity-transition.css');
+  @import url('./directive/activity/twitter-tweet-card.css');
+  @import url('./directive/activity/twitter-tweet-transition.css');
   @import url('./directive/leaderboard-entry.css');
   @import url('./directive/paginate.css');
   @import url('./directive/skill-view.css');

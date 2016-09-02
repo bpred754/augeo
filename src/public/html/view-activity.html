@@ -27,9 +27,7 @@
         <div id="head-container" class="text-align-center">
           <div id="header-title" class="x-large-text">View Activity</div>
           <div id="skill-container">
-            <a href="https://www.twitter.com">
-              <img id="skill-icon" src="image/augeo-logo-medium.png">
-            </a>
+            <img id="skill-icon" src="image/augeo-logo-medium.png">
           </div>
           <select id="skill-select" class="form-control standard-text">
             <option>Augeo</option>
@@ -52,12 +50,12 @@
   <div id="activity-wrap" class="container" ng-if="!invalidUser">
     <ul ng-if="screenSize == 'large'" class="dynamic-grid" angular-grid="activities" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
       <li data-ng-repeat="activity in activities" class="w3-card-4 grid">
-        <twitter-activity-card ng-if="activity.kind == 'TWITTER_TWEET'" activity="activity" is-card="true" screen-size="screenSize"></twitter-activity-card>
+        <activity-card activity="activity" screen-size="screenSize"></activity-card>
       </li>
     </ul>
     <div ng-if="screenSize != 'large'" class="activity-list" infinite-scroll="getNewPage()" infinite-scroll-distance="0">
       <div ng-repeat="activity in activities" class="activity-list-card w3-card-4">
-        <twitter-activity-card activity="activity" is-card="true" screen-size="screenSize"></twitter-activity-card>
+        <activity-card activity="activity" screen-size="screenSize"></activity-card>
       </div>
     </div>
   </div>

@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Javascript for activity-transition directive               */
+  /* Description: Javascript for activity-card-content directive             */
   /***************************************************************************/
 
   // Reminder: Update directive/index.js when directive params are modified
@@ -27,21 +27,8 @@
     return {
       restrict: 'E',
       scope: {
-        'activity': '=',
-        'visible': '=',
-        'screenName': '='
+        'activity': '='
       },
-      templateUrl: 'html/directive/twitter/twitter-activity-transition.html',
-      controller: "TwitterActivityController",
-      link: function(scope, element, attributes) {
-
-        scope.tweet = scope.activity.data;
-
-        scope.$watch('visible', function(val, oldVal) {
-          if(val === oldVal) return; // Skip initial call
-          element.parent()[val ? 'fadeIn' : 'fadeOut'](1000);
-          scope.tweet = scope.activity.data;
-        });
-      }
+      templateUrl: 'html/directive/activity/card/common/content.html'
     }
   };

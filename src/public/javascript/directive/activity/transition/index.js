@@ -19,44 +19,12 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Javascript for Twitter activity directives                 */
+  /* Description: Index file that requires all directives for browserify     */
   /***************************************************************************/
 
-  // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, ActivityService) {
+  var augeo = require('angular').module('augeo');
 
-    // Check for transition
-    $scope.$watch(function() {
-      return $scope.tweet;
-    }, function() {
+  augeo.directive('activityTransition', ['$interval', '$timeout', require('./activity-transition')]);
+  augeo.directive('activityTransitionItem', require('./activity-transition-item'));
 
-      if($scope.activity) {
-
-        $scope.tweet.formatDate = function () {
-          var monthNames = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-            "Aug", "Sep", "Oct", "Nov", "Dec"
-          ];
-
-          var date = new Date($scope.activity.timestamp);
-          var day = date.getDate();
-          var monthIndex = date.getMonth();
-          var year = date.getFullYear();
-
-          $scope.tweet.date = day + ' ' + monthNames[monthIndex] + ' ' + year;
-          return $scope.tweet.date;
-        };
-
-        $scope.tweet.formatMedia = function () {
-          $scope.tweet.media[0].url = $scope.tweet.media[0].url.substring(0, $scope.tweet.media[0].url.length - 6) + ":thumb";
-          return $scope.tweet.media[0].url;
-        }
-
-        if($scope.isCard === true && !$scope.activity.isTextFormatted) {
-          $scope.tweet.text = ActivityService.formatActivity($scope.activity).data.text;
-          $scope.activity.isTextFormatted = true;
-        }
-      }
-    });
-  };
-
+  require('./common');

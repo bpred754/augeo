@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $timeout, $interval, $stateParams, UserClientService, ActivityService, ProfileService) {
+  module.exports = function($scope, $timeout, $interval, $stateParams, UserClientService, ProfileService) {
 
     // Internal functions
     var init = function() {
@@ -70,33 +70,7 @@
 
           // Set recent activity
           if (data.recentActions && data.recentActions.length > 0) {
-            var currentIndex = 0;
-            var formatActivity = true;
-
-            $scope.visible = true;
-            data.recentActions[0] = ActivityService.formatActivity(data.recentActions[0]);
-            $scope.currentActivity = data.recentActions[0];
-
-            // Transition logic
-            $interval(function () {
-              $scope.visible = false;
-              currentIndex++;
-
-              // Reset to first activity
-              if (currentIndex == data.recentActions.length) {
-                currentIndex = 0;
-                formatActivity = false;
-              }
-
-              $timeout(function () {
-                if (formatActivity === true) {
-                  data.recentActions[currentIndex] = ActivityService.formatActivity(data.recentActions[currentIndex]);
-                }
-                $scope.currentActivity = data.recentActions[currentIndex];
-
-                $scope.visible = true;
-              }, 1000);
-            }, 3500);
+            $scope.activities = data.recentActions;
           }
 
           if (data.errorImageUrl) {
@@ -120,7 +94,6 @@
 
       showProfileModal();
     };
-
 
     // If profile image changes, update profile image on dashboard
     $scope.$watch(function() {

@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: css for activity-card.html                                 */
+  /* Description: css for common activity html files                         */
   /***************************************************************************/
 
   .activity-avatar {
@@ -97,29 +97,6 @@
     height:100%;
     width:120px;
     float:right;
-  }
-
-  .activity-intent {
-    width:20px;
-    padding-top:5px;
-    float:left;
-  }
-
-  .activity-intent:hover {
-    cursor:pointer;
-  }
-
-  .activity-intent-container {
-    height:100%;
-    width:50px;
-    float:left;
-  }
-
-  .activity-intent-count {
-    float:left;width:30px;
-    margin-bottom:0px;
-    padding-top:6px;
-    padding-left:6px;
   }
 
   .activity-logo {

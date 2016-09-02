@@ -31,12 +31,12 @@
     $this.base.constructor.call(this, json);
 
     // public variables
-    this.avatarImageSrc = json.avatarImageSrc; // TODO: Move to activity? will need to change ACTIVITY and TWITTER_TWEET
+    this.avatarImageSrc = json.avatarImageSrc;
     this.eventId = json.eventId;
-    this.githubId = json.githubId; // TODO: Change to activityId and move to activity object
-    this.name = json.name; // TODO: Move to activity
+    this.githubId = json.githubId;
+    this.name = json.name;
     this.repo = json.repo;
-    this.screenName = json.screenName; // TODO: Move to activity
+    this.screenName = json.screenName;
     this.sha = json.sha;
     this.text = json.text;
   };

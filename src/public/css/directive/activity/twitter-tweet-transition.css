@@ -19,112 +19,14 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: css for twitter-activity-transition.html                   */
+  /* Description: css for twitter tweet specific transition html files       */
   /***************************************************************************/
 
-  .tat-avatar-container {
-    height:100%;
-    display:inline-block;
-  }
-
-  .tat-avatar-image {
-    max-height:100%;
-    max-width:100%;
-    border-radius:6px;
-  }
-
-  .tat-avatar-image-container {
-    height:100%;
-    width:35px;
-    float:left;
-  }
-
-  .tat-avatar-text {
-    float:left;
-    margin-bottom:0px;
-    padding-left:5px;
-  }
-
-  .tat-center {
-    text-align:center;
-    height:100%;
-  }
-
-  .tat-classification {
-    height:100%;
-    width:35px;
-    float:left;
-    font-size:2em;
-    padding-left:5px;
-  }
-
-  .tat-container {
-    max-height:250px;
-  }
-
-  .tat-date-container {
-    display:flex;
-    align-items:flex-end;
-    min-height:100%;
-    float:left;
-  }
-
-  .tat-date-container a:hover {
-    text-decoration: none;
-    color:#333;
-  }
-
-  .tat-experience {
-    height:100%;
-    width:75px;
-    float:left;
-    text-align:right;
-  }
-
-  .tat-experience-container {
-    height:35px;
-    width:120px;
-    display:inline-block;
-    position:absolute;
-    margin-top:-20px;
-  }
-
-  .tat-experience-inner-container {
-    height:100%;
-    padding:5px;
-  }
-
-  .tat-footer {
-    height:100%;
-    display:inline-block;
-  }
-
-  .tat-footer-container {
-    height:20px;
-  }
-
-  .tat-head-container {
-    height:35px;
-  }
-
-  .tat-image {
-    height:115px;
-    width:115px;
-    border-radius:5px;
-    margin-bottom: 10px;
-  }
-
-  .tat-image-container {
-    width:115px;
-    margin:0 auto;
-    padding-top:10px;
-  }
-
-  .tat-intent {
+  .ttt-intent {
     width:20px;
   }
 
-  .tat-intent-container {
+  .ttt-intent-container {
     height:100%;
     float:left;
     display:flex;
@@ -134,37 +36,15 @@
     width:40px;
   }
 
-  .tat-intent-count {
+  .ttt-intent-count {
     display:flex;
     align-items:flex-end;
     min-height:100%;
   }
 
-  .tat-intent-count-container {
+  .ttt-intent-count-container {
     height:100%;
     float:left;
     padding-left:5px;
   }
 
-  .tat-name {
-    color:#333;
-    margin-top:6px;
-  }
-
-  .tat-name:hover {
-    text-decoration: none;
-    color:#9d9d9d;
-  }
-
-  .tat-screen-name {
-    margin-top:11px;
-  }
-
-  .tat-screen-name:hover {
-    text-decoration: none;
-    color:#333;
-  }
-
-  .tat-text-container {
-    padding-top:10px;
-  }

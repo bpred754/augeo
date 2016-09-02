@@ -1,0 +1,56 @@
+
+    <!-------------------------------------------------------------------------->
+    <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+    <!-- to classify a user's internet activity into different 'skills'.      -->
+    <!-- Copyright (C) 2016 Brian Redd                                        -->
+    <!--                                                                      -->
+    <!-- This program is free software: you can redistribute it and/or modify -->
+    <!-- it under the terms of the GNU General Public License as published by -->
+    <!-- the Free Software Foundation, either version 3 of the License, or    -->
+    <!-- (at your option) any later version.                                  -->
+    <!--                                                                      -->
+    <!-- This program is distributed in the hope that it will be useful,      -->
+    <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+    <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+    <!-- GNU General Public License for more details.                         -->
+    <!--                                                                      -->
+    <!-- You should have received a copy of the GNU General Public License    -->
+    <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+    <!-------------------------------------------------------------------------->
+
+    <div class="at-container" ng-controller="TwitterTweetController">
+        <activity-transition-header activity="activity" screen-name="screenName"></activity-transition-header>
+        <activity-transition-content activity="activity"></activity-transition-content>
+
+        <div class="at-footer-container">
+            <div class="height-100 text-align-center">
+                <div class="at-footer">
+                    <div class="at-date-container">
+                        <a class="small-text text-secondary" href="{{activity.link}}" target="_blank">{{tweet.formatDate()}}</a>
+                    </div>
+                    <div class="ttt-intent-container" ng-init="replySrc='image/twitter/default-reply.png'">
+                        <a href="https://twitter.com/intent/tweet?in_reply_to={{tweet.tweetId}}" target="_blank">
+                            <img src="{{replySrc}}" class="ttt-intent" ng-mouseover="replySrc='image/twitter/reply-hover.png'" ng-mouseout="replySrc='image/twitter/default-reply.png'">
+                        </a>
+                    </div>
+                    <div class="ttt-intent-container" ng-init="retweetSrc='image/twitter/default-retweet.png'">
+                        <a href="https://twitter.com/intent/retweet?tweet_id={{tweet.tweetId}}" target="_blank">
+                            <img src="{{retweetSrc}}" class="ttt-intent" ng-mouseover="retweetSrc='image/twitter/retweet-hover.png'" ng-mouseout="retweetSrc='image/twitter/default-retweet.png'">
+                        </a>
+                    </div>
+                    <div class="ttt-intent-count-container" ng-if="tweet.retweetCount > 0">
+                        <p class="small-text text-secondary ttt-intent-count">{{tweet.retweetCount}}</p>
+                    </div>
+                    <div class="ttt-intent-container" ng-init="favoriteSrc='image/twitter/default-favorite.png'">
+                        <a href="https://twitter.com/intent/favorite?tweet_id={{tweet.tweetId}}" target="_blank">
+                            <img src="{{favoriteSrc}}" class="ttt-intent" ng-mouseover="favoriteSrc='image/twitter/favorite-hover.png'" ng-mouseout="favoriteSrc='image/twitter/default-favorite.png'">
+                        </a>
+                    </div>
+                    <div class="ttt-intent-count-container" ng-if="tweet.favoriteCount > 0">
+                        <p class="small-text text-secondary ttt-intent-count">{{tweet.favoriteCount}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+

@@ -19,23 +19,17 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton that contains logic for activity controllers     */
+  /* Description: Javascript for activity-transition-header directive        */
   /***************************************************************************/
 
-  // Reminder: Update service/index.js when service params are modified
-  module.exports = function(TwitterClientService) {
-
-    this.formatActivity = function(activity) {
-      switch(activity.kind) {
-        case TwitterClientService.ACTIVITY_KIND:
-          activity = TwitterClientService.formatTweet(activity);
-          break;
-      };
-      return activity;
-    };
-
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
+    return {
+      restrict: 'E',
+      scope: {
+        'activity': '=',
+        screenName: '='
+      },
+      templateUrl: 'html/directive/activity/transition/common/header.html'
+    }
   };
-
-
-
-

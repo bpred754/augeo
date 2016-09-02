@@ -19,14 +19,26 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all services for browserify       */
+  /* Description: Javascript for activity-card directive                     */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
-
-  augeo.service('AugeoClientService', ['$http', '$state', require('./augeo-client-service')]);
-  augeo.service('ClientValidator', require('./client-validator'));
-  augeo.service('GithubClientService', ['AugeoClientService', require('./github-client-service')]);
-  augeo.service('ProfileService', require('./profile-service'));
-  augeo.service('TwitterClientService', ['AugeoClientService', require('./twitter-client-service')]);
-  augeo.service('UserClientService', ['AugeoClientService', require('./user-client-service')]);
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
+    return {
+      restrict: 'E',
+      scope: {
+        'activity': '=',
+        'screenSize': '='
+      },
+      template: '<ng-include src="getTemplateUrl()"/>',
+      link: function(scope, element, attributes) {
+        scope.getTemplateUrl = function () {
+          switch(scope.activity.kind) {
+            case 'TWITTER_TWEET':
+              return 'html/directive/activity/card/twitter-tweet.html'
+              break;
+          }
+        };
+      }
+    }
+  };

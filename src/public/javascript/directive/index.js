@@ -30,5 +30,5 @@
   augeo.directive('passwordInput', require('./password-input'));
   augeo.directive('skillView', require('./skill-view'));
 
-  require('./twitter');
+  require('./activity');
 

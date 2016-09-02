@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Javascript for activity-card directive                     */
+  /* Description: Javascript for activity-transition-footer directive        */
   /***************************************************************************/
 
   // Reminder: Update directive/index.js when directive params are modified
@@ -28,14 +28,7 @@
       restrict: 'E',
       scope: {
         'activity': '=',
-        'isCard': '=',
-        'screenSize': '='
       },
-      templateUrl: 'html/directive/twitter/twitter-activity-card.html',
-      controller: 'TwitterActivityController',
-      link: function(scope, element, attributes) {
-
-        scope.tweet = scope.activity.data;
-      }
+      templateUrl: 'html/directive/activity/transition/common/footer.html'
     }
   };

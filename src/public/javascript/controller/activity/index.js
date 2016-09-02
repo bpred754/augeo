@@ -19,14 +19,9 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all services for browserify       */
+  /* Description: Index file that requires all activity controllers          */
   /***************************************************************************/
 
   var augeo = require('angular').module('augeo');
 
-  augeo.service('AugeoClientService', ['$http', '$state', require('./augeo-client-service')]);
-  augeo.service('ClientValidator', require('./client-validator'));
-  augeo.service('GithubClientService', ['AugeoClientService', require('./github-client-service')]);
-  augeo.service('ProfileService', require('./profile-service'));
-  augeo.service('TwitterClientService', ['AugeoClientService', require('./twitter-client-service')]);
-  augeo.service('UserClientService', ['AugeoClientService', require('./user-client-service')]);
+  augeo.controller('TwitterTweetController', ['$scope', require('./twitter-tweet-controller')]);

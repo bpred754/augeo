@@ -1,0 +1,144 @@
+
+    /***************************************************************************/
+    /* Augeo.io is a web application that uses Natural Language Processing to  */
+    /* classify a user's internet activity into different 'skills'.            */
+    /* Copyright (C) 2016 Brian Redd                                           */
+    /*                                                                         */
+    /* This program is free software: you can redistribute it and/or modify    */
+    /* it under the terms of the GNU General Public License as published by    */
+    /* the Free Software Foundation, either version 3 of the License, or       */
+    /* (at your option) any later version.                                     */
+    /*                                                                         */
+    /* This program is distributed in the hope that it will be useful,         */
+    /* but WITHOUT ANY WARRANTY; without even the implied warranty of          */
+    /* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           */
+    /* GNU General Public License for more details.                            */
+    /*                                                                         */
+    /* You should have received a copy of the GNU General Public License       */
+    /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
+    /***************************************************************************/
+
+    /***************************************************************************/
+    /* Description: css for common activity transition html files              */
+    /***************************************************************************/
+
+    .at-avatar-container {
+        height:100%;
+        display:inline-block;
+    }
+
+    .at-avatar-image {
+        max-height:100%;
+        max-width:100%;
+        border-radius:6px;
+    }
+
+    .at-avatar-image-container {
+        height:100%;
+        width:35px;
+        float:left;
+    }
+
+    .at-avatar-text {
+        float:left;
+        margin-bottom:0px;
+        padding-left:5px;
+    }
+
+    .at-center {
+        text-align:center;
+        height:100%;
+    }
+
+    .at-classification {
+        height:100%;
+        width:35px;
+        float:left;
+        font-size:2em;
+        padding-left:5px;
+    }
+
+    .at-container {
+        max-height:250px;
+    }
+
+    .at-date-container {
+        display:flex;
+        align-items:flex-end;
+        min-height:100%;
+        float:left;
+    }
+
+    .at-date-container a:hover {
+        text-decoration: none;
+        color:#333;
+    }
+
+    .at-experience {
+        height:100%;
+        width:75px;
+        float:left;
+        text-align:right;
+    }
+
+    .at-experience-container {
+        height:35px;
+        width:120px;
+        display:inline-block;
+        position:absolute;
+        margin-top:-20px;
+    }
+
+    .at-experience-inner-container {
+        height:100%;
+        padding:5px;
+    }
+
+    .at-footer {
+        height:100%;
+        display:inline-block;
+    }
+
+    .at-footer-container {
+        height:20px;
+    }
+
+    .at-head-container {
+        height:35px;
+    }
+
+    .at-image {
+        height:115px;
+        width:115px;
+        border-radius:5px;
+        margin-bottom: 10px;
+    }
+
+    .at-image-container {
+        width:115px;
+        margin:0 auto;
+        padding-top:10px;
+    }
+
+    .at-name {
+        color:#333;
+        margin-top:6px;
+    }
+
+    .at-name:hover {
+        text-decoration: none;
+        color:#9d9d9d;
+    }
+
+    .at-screen-name {
+        margin-top:11px;
+    }
+
+    .at-screen-name:hover {
+        text-decoration: none;
+        color:#333;
+    }
+
+    .at-text-container {
+        padding-top:10px;
+    }

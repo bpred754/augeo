@@ -19,14 +19,53 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all services for browserify       */
+  /* Description: Javascript for activity-transition directive               */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function($interval, $timeout) {
+    return {
+      restrict: 'E',
+      scope: {
+        'activities': '=',
+        'screenName': '='
+      },
+      templateUrl: 'html/directive/activity/transition/activity-transition.html',
+      link: function(scope, element, attributes) {
 
-  augeo.service('AugeoClientService', ['$http', '$state', require('./augeo-client-service')]);
-  augeo.service('ClientValidator', require('./client-validator'));
-  augeo.service('GithubClientService', ['AugeoClientService', require('./github-client-service')]);
-  augeo.service('ProfileService', require('./profile-service'));
-  augeo.service('TwitterClientService', ['AugeoClientService', require('./twitter-client-service')]);
-  augeo.service('UserClientService', ['AugeoClientService', require('./user-client-service')]);
+        var currentIndex = 0;
+        var prevIndex = 0;
+
+        // Show the first activity in transition items
+        scope.activities[currentIndex].showInTransition = true;
+
+        // Transition logic
+        $interval(function () {
+          scope.visible = false;
+
+          prevIndex = currentIndex;
+          currentIndex++;
+
+          // Reset to first activity
+          if (currentIndex == scope.activities.length) {
+            currentIndex = 0;
+          }
+
+          $timeout(function () {
+            scope.activities[prevIndex].showInTransition = false;
+            scope.activities[currentIndex].showInTransition = true;
+            scope.visible = true;
+          }, 1000);
+        }, 3500);
+
+        scope.$watch('visible', function(val, oldVal) {
+          if(val === oldVal) return; // Skip initial call
+          if(val === true) {
+            element['fadeIn'](1000);
+          } else {
+            element['fadeOut'](1000);
+          }
+        });
+      }
+    }
+  };

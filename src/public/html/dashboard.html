@@ -34,8 +34,8 @@
               </div>
           </div>
           <div id="db-recent-activity-container">
-            <div id="db-transition-container" ng-if="!invalidUser && currentActivity">
-              <twitter-activity-transition ng-if="currentActivity.kind == 'TWITTER_TWEET'" id= "db-transition" visible="visible" activity="currentActivity" screen-name="dashboardData.twitter.screenName"></twitter-activity-transition>
+            <div id="db-transition-container" ng-if="!invalidUser && activities">
+              <activity-transition id="db-transition" activities="activities" screen-name="dashboardData.twitter.screenName"></activity-transition>
             </div>
             <div id="db-auth-container" ng-if="!invalidUser && !User.hasAuthentications && dashboardData.username == User.username">
               <div>
