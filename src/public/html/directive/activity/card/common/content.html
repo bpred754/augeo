@@ -20,7 +20,7 @@
 
     <div ng-class="{'small-text': screenSize == 'x-small', 'standard-text': screenSize != 'x-small'}" class="activity-text" ng-bind-html="activity.data.text | html"></div>
 
-    <a ng-href="{{activity.link}}" target="_blank" ng-repeat="media in activity.data.media" ng-if="media.url">
-        <img src="{{media.url}}" ng-class="{'activity-grid-img': screenSize == 'large', 'activity-grid-img-ss': screenSize != 'large'}" data-actual-width="{{media.width}}"  data-actual-height="{{media.height}}"/>
+    <a ng-href="{{activity.link}}" target="_blank" ng-if="activity.data.media.url">
+        <img src="{{activity.data.media.url}}" ng-class="{'activity-grid-img': screenSize == 'large', 'activity-grid-img-ss': screenSize != 'large'}" data-actual-width="{{activity.data.media.width}}"  data-actual-height="{{activity.data.media.height}}"/>
     </a>
 

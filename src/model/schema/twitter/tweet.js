@@ -41,11 +41,11 @@
     favoriteCount: Number,
     hashtags: [String],
     links: [String],
-    media: [{
+    media: {
       url: String,
       width: Number,
       height: Number
-    }],
+    },
     mentions: [String], // Screen Name
     name: String,
     retweetCount: Number,

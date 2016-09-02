@@ -50,10 +50,10 @@
     }
 
     if($scope.screenName) {
-      if ($scope.tweet.media[0].url.length > 6) {
-        $scope.tweet.media[0].url = $scope.tweet.media[0].url.substring(0, $scope.tweet.media[0].url.length - 6) + ":thumb";
+      if ($scope.tweet.media.url.length > 6) {
+        $scope.tweet.media.url = $scope.tweet.media.url.substring(0, $scope.tweet.media.url.length - 6) + ":thumb";
       } else {
-        $scope.tweet.media[0].url = false;
+        $scope.tweet.media.url = false;
       }
     }
   };

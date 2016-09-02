@@ -21,8 +21,8 @@
     <div class="at-text-container">
         <div class="standard-text text-align-center" ng-bind-html="activity.data.text | html"></div>
         <div class="at-image-container" ng-if="activity.data.media">
-            <a href="{{activity.link}}" target="_blank" ng-repeat="media in activity.data.media" ng-if="media.url">
-                <img src="{{media.url}}" class="at-image"/>
+            <a href="{{activity.link}}" target="_blank" ng-if="activity.data.media.url">
+                <img src="{{activity.data.media.url}}" class="at-image"/>
             </a>
         </div>
     </div>
