@@ -94,6 +94,10 @@
     height:90px;
   }
 
+  #profile-github-warning {
+    margin-bottom: 15px;
+  }
+
   #profile-interface-container {
     height:50px;
     padding-top:10px;

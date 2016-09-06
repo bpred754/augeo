@@ -26,9 +26,9 @@
   var AbstractObject = require('../public/javascript/common/abstract-object');
 
   // Constructor
-  var $this = function(userId) {
-    $this.base.constructor.call(this, userId);
-    this.userId = userId;
+  var $this = function(user) {
+    $this.base.constructor.call(this, user);
+    this.user = user;
     this.wait = 0;
   };
 

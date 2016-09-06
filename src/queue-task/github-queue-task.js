@@ -35,12 +35,12 @@
   var MODULE = 'github_queue_task-module';
 
   // Constructor
-  var $this = function(userId, screenName, accessToken, lastEventId, logData) {
-    log.functionCall(MODULE, 'constructor', logData.parentProcess, logData.username, {'userId': userId, 'screenName': screenName,
+  var $this = function(user, screenName, accessToken, lastEventId, logData) {
+    log.functionCall(MODULE, 'constructor', logData.parentProcess, logData.username, {'userId': (user)?user._id:'invalid', 'screenName': screenName,
       'accessToken':(accessToken)?'valid':'invalid', 'lastEventId': lastEventId});
 
     // Call parent constructor
-    $this.base.constructor.call(this, userId);
+    $this.base.constructor.call(this, user);
 
     // public variables
     this.accessToken = accessToken;
@@ -58,7 +58,7 @@
       log.functionCall(MODULE, 'execute', logData.parentProcess, logData.username);
 
       var task = this;
-      GithubInterfaceService.getCommits(this.userId, this.accessToken, this.path, this.eTag, this.lastEventId, logData, function(result) {
+      GithubInterfaceService.getCommits(this.user, this.accessToken, this.path, this.eTag, this.lastEventId, logData, function(result) {
 
         task.commits = task.commits.concat(result.commits);
 

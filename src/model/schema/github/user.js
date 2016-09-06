@@ -78,7 +78,7 @@
   };
 
   GITHUB_USER.statics.getAllUsers = function(logData, callback) {
-    this.find({}, function(error, users) {
+    this.find({}).populate('augeoUser').exec(function(error, users) {
       if(error) {
         log.functionError(COLLECTION, 'getAllUsers', logData.parentProcess, logData.username, 'Failed to get Github users:' + error);
         callback();

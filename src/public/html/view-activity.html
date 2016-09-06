@@ -59,7 +59,7 @@
       </div>
     </div>
   </div>
-  <div ng-show='!finishedLoading && !activityLoaded && !invalidUser'>
+  <div ng-show='!finishedLoading && !activityLoaded && !invalidUser && User.hasAuthentications'>
     <img id="loader" src="image/ajax-loader.gif"/>
   </div>
 

@@ -51,8 +51,8 @@
           commits[i].data = insertedCommits[i]._id;
         }
 
-        Activity.addActivities(commits, logData, function() {
-          var skillsExperience = AugeoUtility.calculateSkillsExperience(commits, logData);
+        Activity.addActivities(commits, logData, function(insertedActivities) {
+          var skillsExperience = AugeoUtility.calculateSkillsExperience(insertedActivities, logData);
           User.updateSkillData(commits[0].user, skillsExperience, logData, function () {
             callback();
           });

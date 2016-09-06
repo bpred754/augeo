@@ -93,7 +93,7 @@
 
                       if (process.env.TEST != 'true') {
                         var eventQueue = new GithubEventQueue();
-                        var task = new GithubQueueTask(userId, userData.screenName, userData.accessToken, eventId, logData);
+                        var task = new GithubQueueTask(request.session.user, userData.screenName, userData.accessToken, eventId, logData);
                         eventQueue.addTask(task, logData);
                       }
 

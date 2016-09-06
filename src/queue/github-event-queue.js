@@ -64,7 +64,6 @@
     addTask: function(task, logData) {
       log.functionCall(QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName':(task)?task.screenName:'invalid'});
 
-      var self = this;
       baseQueue.updateWaitTime(task, function(updatedTask) {
         if(updatedTask) {
           var queue = baseQueue.queue;
@@ -83,7 +82,7 @@
             }
           }
         } else {
-          log.functionCall(self.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName': (task) ? task.screenName : 'invalid'}, 'User already on queue');
+          log.functionCall(QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName': (task) ? task.screenName : 'invalid'}, 'User already on queue');
         }
       });
     }

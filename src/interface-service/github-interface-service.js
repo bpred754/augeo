@@ -49,8 +49,8 @@
     });
   };
 
-  exports.getCommits = function(userId, accessToken, path, eTag, lastEventId, logData, callback) {
-    log.functionCall(SERVICE, 'getCommits', logData.parentProcess, logData.username, {'userId':userId, 'accessToken':(accessToken)?'valid':'invalid', 'path': path,
+  exports.getCommits = function(user, accessToken, path, eTag, lastEventId, logData, callback) {
+    log.functionCall(SERVICE, 'getCommits', logData.parentProcess, logData.username, {'userId':(user)?user._id:'invalid', 'accessToken':(accessToken)?'valid':'invalid', 'path': path,
       'eTag':eTag, 'lastEventId':lastEventId});
 
     GithubInterface.getPushEvents(accessToken, path, eTag, logData, function(data, headers) {
@@ -73,7 +73,7 @@
 
           // Add commits until last eventId is found
           if(!lastEventId || parseInt(events[i].id) > parseInt(lastEventId)) {
-            commits = commits.concat(extractPushCommits(userId, events[i]));
+            commits = commits.concat(extractPushCommits(user, events[i]));
           } else {
             // Set path to null if last eventId is found
             result.path = null;
@@ -140,7 +140,7 @@
     return path;
   };
 
-  var extractPushCommits = function(userId, event) {
+  var extractPushCommits = function(user, event) {
 
     var commits = new Array;
     var commitJson = {
@@ -148,7 +148,7 @@
       classificationGlyphicon: 'glyphicon-phone',
       experience: 100,
       kind: 'GITHUB_COMMIT',
-      user: userId
+      user: user._id
     };
     if(event.type == 'PushEvent' && event.public == true) {
 
@@ -171,13 +171,21 @@
           var rawCommits = event.payload.commits;
           for(var j = 0; j < rawCommits.length; j++) {
             var rawCommit = rawCommits[j];
-            if (rawCommit.author) {
-              commitJson.name = rawCommit.author.name
-            }
-            commitJson.text = rawCommit.message;
-            commitJson.sha = rawCommit.sha;
+            if(rawCommit.distinct == true) {
+              if (rawCommit.author) {
+                var authorName = rawCommit.author.name;
+                var authorEmail = rawCommit.author.email;
+                if((authorName.indexOf(user.firstName) > -1 && authorName.indexOf(user.lastName) > -1) || authorEmail.indexOf(user.email) > -1) {
+                  commitJson.name = rawCommit.author.name
+                }
+              }
+              commitJson.text = rawCommit.message;
+              commitJson.sha = rawCommit.sha;
 
-            commits.push(new Commit(commitJson));
+              if(commitJson.name) {
+                commits.push(new Commit(commitJson));
+              }
+            }
           }
         }
       }

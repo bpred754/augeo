@@ -47,13 +47,13 @@
     updateWaitTime: function(task, callback) {
 
       var isAddRequestValid = true;
-      if(task.userId == this.currentTask.userId) {
+      if(this.currentTask.user && this.currentTask.user._id == task.user._id) {
         isAddRequestValid = false;
       } else {
 
         var tasks = this.queue.tasks;
         for(var i = 0; i < tasks.length; i++) {
-          if(tasks[i].data.userId == task.userId) {
+          if(tasks[i].data.user._id == task.user._id) {
             isAddRequestValid = false;
           }
         }

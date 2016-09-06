@@ -137,6 +137,8 @@
                     callback(sortedActivities);
                   }
                 });
+            } else {
+              callback(activityIds);
             }
           }
         }
@@ -196,7 +198,6 @@
         callback(updatedActivity);
       }
     });
-
   };
 
   var upsertActivities = function(activityDocument, activities, logData, callback) {
