@@ -263,6 +263,12 @@
     }
   };
 
+  exports.getUserSecret = function(username, logData, callback) {
+    log.functionCall(SERVICE, 'getUserSecret', logData.parentProcess, logData.username, {'username': username});
+
+    User.getUserSecretWithUsername(username, logData, callback);
+  };
+
   exports.isAdmin = function(username, logData, callback) {
     log.functionCall(SERVICE, 'isAdmin', logData.parentProcess, logData.username, {'username':username});
 

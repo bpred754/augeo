@@ -55,7 +55,8 @@
   exports.event3.created_at = "2011-09-06T17:26:27Z";
   exports.event3.payload = {
     "commits": [{
-      "author": {"name": Common.USER.firstName},
+      "author": {"name": Common.USER.firstName, "email":Common.USER.email},
+      "distinct": true,
       "message": "Commit 3.0",
       "sha": "3"
     }]
@@ -66,7 +67,8 @@
   exports.event2.created_at = "2011-09-05T17:26:27Z";
   exports.event2.payload = {
     "commits": [{
-      "author": {"name": Common.USER.firstName},
+      "author": {"name": Common.USER.firstName, "email":Common.USER.email},
+      "distinct": true,
       "message": "Commit 2.0",
       "sha": "2"
     }]
@@ -77,7 +79,8 @@
   exports.event1.created_at = "2011-09-04T17:26:27Z";
   exports.event1.payload = {
     "commits": [{
-      "author": {"name": Common.USER.firstName},
+      "author": {"name": Common.USER.firstName, "email":Common.USER.email},
+      "distinct": true,
       "message": "Commit 1.0",
       "sha": "1"
     }]
@@ -88,7 +91,8 @@
   exports.event0.created_at = "2011-09-03T17:26:27Z";
   exports.event0.payload = {
     "commits": [{
-      "author": {"name": Common.USER.firstName},
+      "author": {"name": Common.USER.firstName, "email":Common.USER.email},
+      "distinct": true,
       "message": "Commit 0.0",
       "sha": "0"
     }]

@@ -91,26 +91,30 @@
 
                     GithubService.getLatestCommitEventId(userData.screenName, logData, function(eventId) {
 
-                      if (process.env.TEST != 'true') {
-                        var eventQueue = new GithubEventQueue();
-                        var task = new GithubQueueTask(request.session.user, userData.screenName, userData.accessToken, eventId, logData);
-                        eventQueue.addTask(task, logData);
-                      }
+                      // Get user with email address
+                      UserService.getUserSecret(username, logData, function(userSecret) {
 
-                      // Set user's session data
-                      request.session.user = addedUser.toJSON();
-                      delete userData.accessToken;
-                      request.session.user.github = userData;
+                        if (process.env.TEST != 'true') {
+                          var eventQueue = new GithubEventQueue();
+                          var task = new GithubQueueTask(userSecret, userData.screenName, userData.accessToken, eventId, logData);
+                          eventQueue.addTask(task, logData);
+                        }
 
-                      // Set profile image if none is set
-                      if (request.session.user.profileImg == 'image/avatar-medium.png') {
-                        UserService.setProfileImage('Github', request.session.user, logData, function (updatedUser) {
-                          request.session.user = updatedUser;
+                        // Set user's session data
+                        request.session.user = addedUser.toJSON();
+                        delete userData.accessToken;
+                        request.session.user.github = userData;
+
+                        // Set profile image if none is set
+                        if (request.session.user.profileImg == 'image/avatar-medium.png') {
+                          UserService.setProfileImage('Github', request.session.user, logData, function (updatedUser) {
+                            request.session.user = updatedUser;
+                            response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
+                          });
+                        } else {
                           response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
-                        });
-                      } else {
-                        response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
-                      }
+                        }
+                      });
                     });
                   }, function (message) {
                     rollback(400, message);

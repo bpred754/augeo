@@ -354,6 +354,20 @@
     });
   };
 
+  AUGEO_USER.statics.getUserSecretWithUsername = function(username, logData, callback) {
+    this.findOne({'username':{'$regex': username, $options: 'i'}})
+      .select('-password')
+      .exec(function(error, user) {
+        if(error) {
+          log.functionError(COLLECTION, 'getUserSecretWithUsername', logData.parentProcess, logData.username,
+            'Failed to retrieve user with secret info for username: ' + username);
+        } else {
+          log.functionCall(COLLECTION, 'getUserSecretWithUsername', logData.parentProcess, logData.username, {'username': username});
+          callback(user);
+        }
+      });
+  };
+
   AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': email, $options: 'i'}})
       .select(exports.PROJECTION_STRING)

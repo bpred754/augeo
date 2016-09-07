@@ -48,8 +48,8 @@
 
   it('should return extracted commits and other relevant information for concurrent getCommits requests -- getCommits()', function(done) {
 
-    // Request returns status 304 - not modified therefor the result contains no new commits
-    GithubInterfaceService.getCommits('userId', 'accessToken', 'path', '0', '00001', Common.logData, function(notModifiedResult) {
+    // Request returns status 304 - not modified therefore the result contains no new commits
+    GithubInterfaceService.getCommits(Common.USER, 'accessToken', 'path', '0', '00001', Common.logData, function(notModifiedResult) {
       Assert.strictEqual(notModifiedResult.commits.length, 0);
       Assert.strictEqual(notModifiedResult.eTag, '0');
       Assert.strictEqual(notModifiedResult.poll, 60000);
@@ -57,7 +57,7 @@
       Should.not.exist(notModifiedResult.path);
 
       // Request returns 200 with commits - does not use lastEventId
-      GithubInterfaceService.getCommits('userId', 'accessToken', 'path', '1', null, Common.logData, function(withNoEventId) {
+      GithubInterfaceService.getCommits(Common.USER, 'accessToken', 'path', '1', null, Common.logData, function(withNoEventId) {
         Assert.strictEqual(withNoEventId.commits.length, 4);
         Assert.strictEqual(withNoEventId.eTag, '1');
         Assert.strictEqual(withNoEventId.poll, 60000);
@@ -65,7 +65,7 @@
         Assert.strictEqual(withNoEventId.path, '/next');
 
         // Request returns 200 with commits - uses lastEventId
-        GithubInterfaceService.getCommits('userId', 'accessToken', 'path', '1', '1', Common.logData, function(withEventId) {
+        GithubInterfaceService.getCommits(Common.USER, 'accessToken', 'path', '1', '1', Common.logData, function(withEventId) {
           Assert.strictEqual(withEventId.commits.length, 2);
           Assert.strictEqual(withEventId.eTag, '1');
           Assert.strictEqual(withEventId.poll, 60000);

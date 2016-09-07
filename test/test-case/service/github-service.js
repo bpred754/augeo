@@ -53,11 +53,11 @@
           Assert.strictEqual(noneAddedCount, initialCommitCount);
 
           // Get augeo userId for USER and initial experience
-          User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
+          User.getUserSecretWithUsername(Common.USER.username, Common.logData, function(user) {
             var initialExperience = user.skill.experience;
 
             // Use interface service to get extracted commits
-            GithubInterfaceService.getCommits(user._id, 'accessToken', 'path', '1', null, Common.logData, function(result) {
+            GithubInterfaceService.getCommits(user, 'accessToken', 'path', '1', null, Common.logData, function(result) {
               Assert.strictEqual(result.commits.length, 4);
 
               // Add commits
@@ -169,9 +169,9 @@
     // Get latest Commit ID
     GithubService.getLatestCommitEventId(GithubData.USER_GITHUB.screenName, Common.logData, function(initialCommitId) {
 
-      User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
+      User.getUserSecretWithUsername(Common.USER.username, Common.logData, function(user) {
 
-        GithubInterfaceService.getCommits(user._id, 'accessToken', 'path', '1', null, Common.logData, function(result) {
+        GithubInterfaceService.getCommits(user, 'accessToken', 'path', '1', null, Common.logData, function(result) {
 
           var commits = new Array();
           var commit = result.commits[0];
