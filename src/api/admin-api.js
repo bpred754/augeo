@@ -94,6 +94,10 @@
             log.setLogService(request.query.logService);
           }
 
+          if(request.query.logTask) {
+            log.setLogTask(request.query.logTask);
+          }
+
           if(request.query.logUtility) {
             log.setLogUtility(request.query.logUtility);
           }

@@ -29,10 +29,10 @@
   var AugeoUtility = require('../utility/augeo-utility');
   var Logger = require('../module/logger');
   var AugeoValidator = require('../validator/augeo-validator');
-  var GithubEventQueue = require('../queue/github-event-queue');
   var GithubInterfaceService = require('../interface-service/github-interface-service');
-  var GithubQueueTask = require('../queue-task/github-queue-task');
+  var GithubQueueTask = require('../queue-task/github/github-event-task');
   var GithubService = require('../service/github-service');
+  var QueueService = require('../service/queue-service');
   var UserService = require('../service/user-service');
 
   // Constants
@@ -95,9 +95,8 @@
                       UserService.getUserSecret(username, logData, function(userSecret) {
 
                         if (process.env.TEST != 'true') {
-                          var eventQueue = new GithubEventQueue();
-                          var task = new GithubQueueTask(userSecret, userData.screenName, userData.accessToken, eventId, logData);
-                          eventQueue.addTask(task, logData);
+                          var task = new GithubQueueTask(userSecret, userData, eventId, logData);
+                          QueueService.githubEventQueue.addTask(task, logData);
                         }
 
                         // Set user's session data

@@ -161,42 +161,6 @@
     });
   };
 
-  exports.connectToTwitter = function(restQueue, streamQueue, logData, callback) {
-    log.functionCall(SERVICE, 'connectToTwitter', logData.parentProcess, logData.username, {'restQueue':(restQueue)?'valid':'invalid',
-      'streamQueue':(streamQueue)?'valid':'invalid'});
-
-    // Get all users twitterId's
-    exports.getUsers(logData, function(users) {
-
-      if(users.length > 0) {
-
-        var streamQueueData = {
-          action: 'Open',
-          data: users,
-          logData: logData,
-          callback: function(tweetData) {
-            var queueData = {};
-            queueData.action = 'Add';
-            queueData.data = tweetData;
-            streamQueue.addAction(queueData, logData, function(){});
-          },
-          removeCallback: function(tweetData) {
-            var queueData = {};
-            queueData.action = 'Remove';
-            queueData.data = tweetData;
-            streamQueue.addAction(queueData, logData, function() {});
-          },
-          connectedCallback: function() {
-            restQueue.addAllUsersToQueues('ALL', logData, function(){});
-          }
-        };
-
-        streamQueue.openStream(streamQueueData, function(){}); // End openStream
-      }
-      callback();
-    });
-  };
-
   exports.checkExistingAccessToken = function(accessToken, logData, callback, rollback) {
     log.functionCall(SERVICE, 'checkExistingAccessToken', logData.parentProcess, logData.username, {'accessToken':accessToken});
 
@@ -210,12 +174,6 @@
     });
   };
 
-  exports.getAllUsersQueueData = function(logData, callback) {
-    log.functionCall(SERVICE, 'getAllUsersQueueData', logData.parentProcess, logData.username);
-
-    TwitterUser.getAllQueueData(logData, callback);
-  };
-
   exports.getLatestMentionTweetId = function(screenName, logData, callback) {
     log.functionCall(SERVICE, 'getLatestMentionTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
 
@@ -226,52 +184,6 @@
     log.functionCall(SERVICE, 'getLatestTweetId', logData.parentProcess, logData.username, {'screenName':screenName});
 
     Tweet.getLatestTweetId(screenName, logData, callback);
-  };
-
-  exports.getQueueData = function(userId, screenName, logData, callback, rollback) {
-    log.functionCall(SERVICE, 'getQueueData', logData.parentProcess, logData.username, {'userId':userId, 'screenName':screenName});
-
-    if (AugeoValidator.isMongooseObjectIdValid(userId, logData) && TwitterValidator.isScreenNameValid(screenName, logData)) {
-
-      // Get user's access tokens
-      TwitterUser.getTokens(userId, logData, function(tokens) {
-
-        if(tokens) {
-          TwitterUser.doesUserExist(screenName, logData, function(userExists) {
-
-            if(userExists) {
-              var accessToken = tokens.accessToken;
-              var secretAccessToken = tokens.secretAccessToken;
-
-              var queueData = {
-                tweetQueueData: {
-                  userId: new Mongoose.Types.ObjectId(userId),
-                  screenName: screenName,
-                  accessToken: accessToken,
-                  secretAccessToken: secretAccessToken,
-                  isNewUser: true
-                },
-
-                mentionQueueData: {
-                  userId: new Mongoose.Types.ObjectId(userId),
-                  screenName: screenName,
-                  accessToken: accessToken,
-                  secretAccessToken: secretAccessToken,
-                  isNewUser: true
-                }
-              }
-              callback(queueData);
-            } else {
-              rollback('User does not exist');
-            }
-          });
-        } else {
-          rollback('User tokens do not exist');
-        }
-      });
-    } else {
-      rollback('Invalid input');
-    }
   };
 
   // Call DB to get all users Twitter Id's
@@ -289,6 +201,28 @@
         callback(tokens.secretToken);
       } else {
         rollback('Secret token retrieved is undefined');
+      }
+    });
+  };
+
+  exports.loopThroughUsersQueueData = function(logData, callback) {
+    log.functionCall(SERVICE, 'loopThroughUsersQueueData', logData.parentProcess, logData.username);
+
+    TwitterUser.getAllUsers(logData, function(users) {
+      if(users.length > 0) {
+        // Asynchronous method calls in loop - Using Recursion
+        (function myClojure(i) {
+          var user = users[i];
+          exports.getLatestTweetId(user.screenName, logData, function (tweetId) {
+            exports.getLatestMentionTweetId(user.screenName, logData, function (mentionId) {
+              callback({user: user, tweetId: tweetId, mentionId: mentionId});
+              i++;
+              if (i < users.length) {
+                myClojure(i);
+              }
+            });
+          });
+        })(0); // Pass i as 0 and myArray to myClojure
       }
     });
   };

@@ -19,52 +19,39 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Queue to handle tweets from Twitter's Streaming API        */
+  /* Description: Object to manage Twitter remove activity queue tasks       */
   /***************************************************************************/
 
   // Required local modules
-  var AbstractObject = require('../public/javascript/common/abstract-object');
-  var BaseQueue = require('./base-queue');
-  var Logger = require('../module/logger');
-  var UserService = require('../service/user-service');
+  var AbstractObject = require('../../../public/javascript/common/abstract-object');
+  var TwitterService = require('../../../service/twitter-service');
+  var Logger = require('../../../module/logger');
 
   // Global variables
   var log = new Logger();
 
-  var $this = function(logData) {
-    var queueType = 'twitter-stream-queue';
-    log.functionCall(queueType, 'init', logData.parentProcess, logData.username);
+  // Constants
+  var TASK = 'twitter-remove-activity-task';
 
-    // Call base-queue constructor
-    $this.base.constructor.call(this, logData);
+  // Constructor
+  var $this = function(data, logData) {
+    log.functionCall(TASK, 'constructor', logData.parentProcess, logData.username);
 
-    // Constants
-    this.QUEUE = queueType;
+    // Call parent constructor
+    $this.base.constructor.call(this);
+
+    // public variables
+    this.data = data;
+    this.wait = 0;
   };
 
-  AbstractObject.extend(BaseQueue, $this, {
+  AbstractObject.extend(AbstractObject.GenericObject, $this, {
 
-    addTask: function(task, logData) {
-      log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username);
+    execute: function(logData, callback) {
+      log.functionCall(TASK, 'execute', logData.parentProcess, logData.username);
 
-      this.queue.push(task, function(){});
-    },
-
-    finishTask: function(classification, logData) {
-      var self = this;
-      UserService.updateRanks(logData, function() {
-        UserService.updateSubSkillRanks(classification, logData, function() {
-          log.functionCall(self.QUEUE, 'finishTask', logData.parentProcess, logData.username, {}, 'Finished updating ranks');
-        });
-      });
-
-      return classification;
-    },
-
-    prepareTask: function() {
-      this.taskWaitTime = 0;
+      TwitterService.removeTweet(this.data.status, logData, callback);
     }
-
   });
 
   module.exports = $this;

@@ -19,20 +19,23 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Queue to handle tweets from Twitter's Streaming API        */
+  /* Description: Queue to handle Twitter's rate limit                       */
   /***************************************************************************/
 
   // Required local modules
   var AbstractObject = require('../public/javascript/common/abstract-object');
   var BaseQueue = require('./base-queue');
   var Logger = require('../module/logger');
+  var TwitterMentionTask = require('../queue-task/twitter/event/twitter-mention-task');
+  var TwitterService = require('../service/twitter-service');
+  var TwitterTweetTask = require('../queue-task/twitter/event/twitter-tweet-task');
   var UserService = require('../service/user-service');
 
   // Global variables
   var log = new Logger();
 
-  var $this = function(logData) {
-    var queueType = 'twitter-stream-queue';
+  var $this = function(logData, isMention) {
+    var queueType = (isMention)?'mention-event-queue':'tweet-event-queue';
     log.functionCall(queueType, 'init', logData.parentProcess, logData.username);
 
     // Call base-queue constructor
@@ -40,29 +43,57 @@
 
     // Constants
     this.QUEUE = queueType;
+
+    // Public variables
+    this.isMention = isMention;
+    this.maxTaskExecutionTime = (this.isMention)?TwitterMentionTask.MAX_EXECUTION_TIME:TwitterTweetTask.MAX_EXECUTION_TIME;
   };
 
   AbstractObject.extend(BaseQueue, $this, {
 
-    addTask: function(task, logData) {
-      log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username);
+    addAllUsers: function(logData){
+      log.functionCall(this.QUEUE, 'addAllUsers', logData.parentProcess, logData.username);
 
-      this.queue.push(task, function(){});
-    },
-
-    finishTask: function(classification, logData) {
       var self = this;
-      UserService.updateRanks(logData, function() {
-        UserService.updateSubSkillRanks(classification, logData, function() {
-          log.functionCall(self.QUEUE, 'finishTask', logData.parentProcess, logData.username, {}, 'Finished updating ranks');
-        });
-      });
+      TwitterService.loopThroughUsersQueueData(log, function(queueData) {
+        var user = queueData.user;
 
-      return classification;
+        var task;
+        if(self.isMention) {
+          task = new TwitterMentionTask(user.augeoUser, user, queueData.mentionId, logData);
+        } else {
+          task = new TwitterTweetTask(user.augeoUser, user, queueData.tweetId, logData);
+        }
+
+        self.addTask(task, logData)
+      });
     },
 
-    prepareTask: function() {
-      this.taskWaitTime = 0;
+    addTask: function(task, logData) {
+      log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName':(task)?task.screenName:'invalid'});
+
+      var self = this;
+      this.isAddRequestValid(task, function(isAddRequestValid) {
+        if(isAddRequestValid) {
+          self.queue.push(task, function() {});
+        } else {
+          log.functionCall(self.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName': (task) ? task.screenName : 'invalid'}, 'User already on queue');
+        }
+      });
+    },
+
+    finishTask: function(task, logData) {
+      var queue = this.queue;
+
+      if(!task.areAllTweetsRetrieved) {
+        queue.unshift(task);
+      } else {
+        if(task.tweets.length > 0) {
+          TwitterService.addTweets(task.user._id, task.screenName, task.tweets, this.isMention, logData, function() {
+            UserService.updateAllRanks(logData, function(){});
+          });
+        }
+      }
     }
 
   });

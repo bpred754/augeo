@@ -30,57 +30,89 @@
   // Global variables
   var log = new Logger();
 
-  var $this = function(logData, prepareTask, finishTask) {
+  var $this = function(logData) {
     $this.base.constructor.call(this);
 
     // Public variables
     this.currentTask = {};
+    this.isBusy = false;
     this.isQueueOpen = true;
     this.queue = null;
-    this.waitTime = 0;
 
-    this.init(logData, prepareTask, finishTask);
+    // Override in child objects
+    this.maxTaskExecutionTime = 0;
+    this.taskWaitTime = 0;
+    this.QUEUE = 'base-queue';
+
+    this.init(logData);
   };
 
   AbstractObject.extend(AbstractObject.GenericObject, $this, {
 
-    updateWaitTime: function(task, callback) {
+    getUserWaitTime: function(userId, logData) {
+      log.functionCall(this.QUEUE, 'getUserWaitTime', logData.parentProcess, logData.username, {'userId':userId});
+
+      var waitTime = -1;
+      if(this.currentTask && this.currentTask.user && this.currentTask.user._id == userId) {
+        waitTime = this.maxTaskExecutionTime;
+      } else {
+        var taskPosition = this.queue.getUserTaskPosition(userId);
+        if(taskPosition != -1) {
+          waitTime = this.maxTaskExecutionTime * (taskPosition + 1);
+        }
+      }
+      return waitTime;
+    },
+
+    getWaitTime: function(logData) {
+      log.functionCall(this.QUEUE, 'getWaitTime', logData.parentProcess, logData.username);
+
+      var queueNumber = this.queue.tasks.length;
+      if(this.currentTask) {
+        queueNumber++;
+      }
+
+      return this.maxTaskExecutionTime * queueNumber;
+    },
+
+    isAddRequestValid: function(task, callback) {
 
       var isAddRequestValid = true;
-      if(this.currentTask.user && this.currentTask.user._id == task.user._id) {
+      if(this.currentTask.user && this.currentTask.user._id.equals(task.user._id)) {
         isAddRequestValid = false;
       } else {
 
         var tasks = this.queue.tasks;
         for(var i = 0; i < tasks.length; i++) {
-          if(tasks[i].data.user._id == task.user._id) {
+          if(tasks[i].data.user._id.equals(task.user._id)) {
             isAddRequestValid = false;
           }
         }
       }
-
-      if(isAddRequestValid) {
-        task.wait = this.waitTime;
-        callback(task)
-      } else {
-        callback();
-      }
+      callback(isAddRequestValid);
     },
 
-    init: function(logData, prepareTask, finishTask) {
+    finishTask: function() {},
+
+    init: function(logData) {
 
       var self = this;
       this.queue = Async.queue(function(task, callback) {
-        log.functionCall(logData.queue, 'Async.queue', logData.parentProcess, logData.username, {}, 'Executing queue task');
+        log.functionCall(self.QUEUE, 'Async.queue', logData.parentProcess, logData.username, {}, 'Executing queue task');
+
+        self.currentTask = task;
+        self.prepareTask(task);
+        self.startQueueTimer(logData);
 
         self.onRequestOpen(function() {
 
-          self.currentTask = task;
-          prepareTask(task);
-          self.startQueueTimer();
+          self.isBusy = true;
+          task.execute(logData, function(executeData) {
+            self.finishTask(executeData, logData);
 
-          task.execute(logData, function(updatedTask) {
-            finishTask(updatedTask, logData);
+            if(self.queue.tasks.length == 0) {
+              self.isBusy = false;
+            }
 
             // Reset current task
             self.currentTask = {};
@@ -100,12 +132,22 @@
       }
     },
 
-    startQueueTimer: function() {
+    prepareTask: function(task) {
+      if(this.isBusy) {
+        this.taskWaitTime = task.wait;
+      } else {
+        this.taskWaitTime = 0;
+      }
+    },
+
+    startQueueTimer: function(logData) {
+      log.functionCall(this.QUEUE, 'startQueueTimer', logData.parentProcess, logData.username, {'taskWaitTime':this.taskWaitTime});
+
       var self = this;
       this.isQueueOpen = false;
       setTimeout(function() {
         self.isQueueOpen = true;
-      }, self.waitTime);
+      }, self.taskWaitTime);
     }
   });
 

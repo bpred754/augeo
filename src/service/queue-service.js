@@ -19,52 +19,29 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Queue to handle tweets from Twitter's Streaming API        */
+  /* Description: Singleton to manage app queues                             */
   /***************************************************************************/
 
-  // Required local modules
-  var AbstractObject = require('../public/javascript/common/abstract-object');
-  var BaseQueue = require('./base-queue');
-  var Logger = require('../module/logger');
-  var UserService = require('../service/user-service');
+  var GithubEventQueue = require('../queue/github-event-queue');
+  var TwitterConnectQueue = require('../queue/twitter-connect-queue');
+  var TwitterEventQueue = require('../queue/twitter-event-queue');
+  var TwitterStreamQueue = require('../queue/twitter-stream-queue');
 
-  // Global variables
-  var log = new Logger();
+  exports.githubEventQueue = null;
+  exports.twitterConnectQueue = null;
+  exports.twitterEventQueue = null;
+  exports.twitterStreamQueue = null;
 
-  var $this = function(logData) {
-    var queueType = 'twitter-stream-queue';
-    log.functionCall(queueType, 'init', logData.parentProcess, logData.username);
+  exports.initializeAppQueues = function(logData) {
 
-    // Call base-queue constructor
-    $this.base.constructor.call(this, logData);
+    // Github Queues
+    exports.githubEventQueue = new GithubEventQueue(logData);
+    exports.githubEventQueue.addAllUsers(logData);
 
-    // Constants
-    this.QUEUE = queueType;
+    // Twitter Queues
+    exports.mentionEventQueue = new TwitterEventQueue(logData, true);
+    exports.tweetEventQueue = new TwitterEventQueue(logData);
+    exports.twitterStreamQueue = new TwitterStreamQueue(logData);
+    exports.twitterConnectQueue = new TwitterConnectQueue(exports.tweetEventQueue, exports.mentionEventQueue, exports.twitterStreamQueue, logData);
+    exports.twitterConnectQueue.connectToTwitter(logData);
   };
-
-  AbstractObject.extend(BaseQueue, $this, {
-
-    addTask: function(task, logData) {
-      log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username);
-
-      this.queue.push(task, function(){});
-    },
-
-    finishTask: function(classification, logData) {
-      var self = this;
-      UserService.updateRanks(logData, function() {
-        UserService.updateSubSkillRanks(classification, logData, function() {
-          log.functionCall(self.QUEUE, 'finishTask', logData.parentProcess, logData.username, {}, 'Finished updating ranks');
-        });
-      });
-
-      return classification;
-    },
-
-    prepareTask: function() {
-      this.taskWaitTime = 0;
-    }
-
-  });
-
-  module.exports = $this;

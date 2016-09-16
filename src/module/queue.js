@@ -180,19 +180,33 @@
           q.paused = false;
           q.process();
         },
-        getTaskPosition: function(attribute, value, checkExists) {
+        doesValueExist: function(attribute) {
           var position = -1;
           for(var i = 0; i < q.tasks.length; i++) {
             var taskData = q.tasks[i].data;
-            if (taskData[attribute]) {
-              if(checkExists || taskData[attribute].equals(value)) {
+            if(taskData) {
+              if (taskData[attribute]) {
                 position = i;
-                break;
               }
             }
           }
           return position;
         },
+        getUserTaskPosition: function(userId) {
+          var position = -1;
+          for(var i = 0; i < q.tasks.length; i++) {
+            var taskData = q.tasks[i].data;
+            if(taskData) {
+              var user = taskData.user;
+              if (user) {
+                if (user._id == userId) {
+                  position = i;
+                }
+              }
+            }
+          }
+          return position;
+        }
       };
       return q;
     };

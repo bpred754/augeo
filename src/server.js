@@ -47,18 +47,12 @@
   // Required local modules
   var AugeoApi = require('./api/augeo-api');
   var AugeoUtility = require('./utility/augeo-utility');
-  var GithubEventQueue = require('./queue/github-event-queue');
-  var TwitterRestQueue = require('./queue/twitter-rest-queue');
-  var TwitterService = require('./service/twitter-service');
-  var TwitterStreamQueue = require('./queue/twitter-stream-queue');
+  var QueueService = require('./service/queue-service');
 
   // Global variables
   var logData = AugeoUtility.formatLogData('System')
   var app = Express();
-  var githubEventQueue = new GithubEventQueue(logData);
   var port = process.env.PORT || 8080;
-  var twitterRestQueue = new TwitterRestQueue();
-  var streamQueue = new TwitterStreamQueue();
 
   /***************************************************************************/
   /* App Configurations                                                      */
@@ -97,12 +91,7 @@
   log.info('Environment variable - PORT: ' + process.env.PORT);
   log.info('Running Augeo on port ' + port);
 
-  // Connect to Twitter if not in local environment
-  if(process.env.ENV != 'local') {
-    TwitterService.connectToTwitter(twitterRestQueue, streamQueue, logData, function(){});
-  }
-
-  // Add all Github users to Github event queue
-  githubEventQueue.addAllUsers(logData);
+  // Initialize queues
+  QueueService.initializeAppQueues(logData);
 
   module.exports = app;

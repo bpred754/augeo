@@ -38,6 +38,7 @@
   var logModule = (process.env.LOG_MODULE == 'true');
   var logQueue = (process.env.LOG_QUEUE == 'true');
   var logService = (process.env.LOG_SERVICE == 'true');
+  var logTask = (process.env.LOG_TASK == 'true');
   var logUtility = (process.env.LOG_UTILITY == 'true');
   var logValidator = (process.env.LOG_VALIDATOR == 'true');
 
@@ -108,47 +109,51 @@
             break;
           case 'classifier':
             if (logClassifier) {
-              writeLog = true
+              writeLog = true;
             }
             break;
           case 'collection':
             if (logCollection) {
-              writeLog = true
+              writeLog = true;
             }
             break;
           case 'interface':
             if (logInterface) {
-              writeLog = true
+              writeLog = true;
             }
             break;
           case 'interface_service':
             if (logInterfaceService) {
-              writeLog = true
+              writeLog = true;
             }
             break;
           case 'module':
             if (logModule) {
-              writeLog = true
+              writeLog = true;
             }
             break;
           case 'queue':
             if (logQueue) {
-              writeLog = true
+              writeLog = true;
             }
             break;
           case 'service':
             if (logService) {
-              writeLog = true
+              writeLog = true;
             }
             break;
+          case 'task':
+            if(logTask) {
+              writeLog = true;
+            }
           case 'utility':
             if (logUtility) {
-              writeLog = true
+              writeLog = true;
             }
             break;
           case 'validator':
             if (logValidator) {
-              writeLog = true
+              writeLog = true;
             }
             break;
           default:
@@ -243,6 +248,10 @@
 
       setLogService: function (setLogService) {
         logService = (setLogService === 'true');
+      },
+
+      setLogTask: function(setLogTask) {
+        logTask = (setLogTask === 'true');
       },
 
       setLogUtility: function(setLogUtility) {

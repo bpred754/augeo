@@ -109,37 +109,43 @@
           log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
             {'userId':userId, 'skill':skill,'maxTimestamp':maxTimestamp}, 'Retrieved activity IDs');
 
-          if(activityIds) {
-            var objectIds = new Array();
-            for (var i = 0; i < activityIds.length; i++) {
-              objectIds.push(new Mongoose.Types.ObjectId(activityIds[i]._id));
-            }
-            if (objectIds.length > 0) {
+          // Second, get all populated objects
+          // Can't use MongoDB's $in function because of issue with mongoose populate
+          var activities = new Array();
+          if(activityIds && activityIds.length > 0) {
 
-              // Query DB to grab activities with IDs
-              model.find({
-                '_id': {
-                  $in: objectIds
-                }
-              }).populate('data')
-                .exec(error, function (error, activities) {
+            // Asynchronous method calls in loop - Using Recursion
+            (function myClojure(i) {
+              model.findOne({'_id':activityIds[i]})
+                .populate('data')
+                .exec(function(error, activity) {
+
                   if(error) {
                     log.functionError(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
-                      'Failed to retrieve ' + userId + ' activities for skill:' + skill + '. Error: ' + error);
+                      'Failed to retrieve activity with id: ' + activityIds[i]);
+                    callback();
                   } else {
-                    log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username,
-                      {'userId':userId, 'skill':skill,'maxTimestamp':maxTimestamp}, 'Retrieved activities');
 
-                    // Sort activities by timestamp in descending order
-                    var sortedActivities = activities.sort(function(a,b) {
-                      return new Date(b.timestamp) - new Date(a.timestamp);
-                    });
-                    callback(sortedActivities);
+                    activities.push(activity);
+                    i++;
+                    if (i < activityIds.length) {
+                      myClojure(i);
+                    } else {
+                      log.functionCall(COLLECTION, 'getSkillActivity', logData.parentProcess, logData.username, {'activityId':activityIds[i]},
+                        'Retrieved populated activities');
+
+                      // Sort activities by timestamp in descending order
+                      var sortedActivities = activities.sort(function (a, b) {
+                        return new Date(b.timestamp) - new Date(a.timestamp);
+                      });
+
+                      callback(sortedActivities);
+                    }
                   }
-                });
-            } else {
-              callback(activityIds);
-            }
+              });
+            })(0); // Pass i as 0 and myArray to myClojure
+          } else {
+            callback(activities);
           }
         }
       });

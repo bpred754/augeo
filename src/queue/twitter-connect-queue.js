@@ -26,13 +26,16 @@
   var AbstractObject = require('../public/javascript/common/abstract-object');
   var BaseQueue = require('./base-queue');
   var Logger = require('../module/logger');
-  var UserService = require('../service/user-service');
+  var TwitterAddActivityTask = require('../queue-task/twitter/stream/twitter-add-activity-task');
+  var TwitterConnectTask = require('../queue-task/twitter/stream/twitter-connect-task');
+  var TwitterRemoveActivityTask = require('../queue-task/twitter/stream/twitter-remove-activity-task');
+  var TwitterService = require('../service/twitter-service');
 
   // Global variables
   var log = new Logger();
 
-  var $this = function(logData) {
-    var queueType = 'twitter-stream-queue';
+  var $this = function(tweetQueue, mentionQueue, streamQueue, logData) {
+    var queueType = 'twitter-connect-queue';
     log.functionCall(queueType, 'init', logData.parentProcess, logData.username);
 
     // Call base-queue constructor
@@ -40,31 +43,46 @@
 
     // Constants
     this.QUEUE = queueType;
+    this.mentionQueue = mentionQueue;
+    this.streamQueue = streamQueue;
+    this.tweetQueue = tweetQueue;
   };
 
   AbstractObject.extend(BaseQueue, $this, {
 
-    addTask: function(task, logData) {
-      log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username);
-
-      this.queue.push(task, function(){});
+    addUsersToEventQueues: function(logData) {
+      this.mentionQueue.addAllUsers(logData);
+      this.tweetQueue.addAllUsers(logData);
     },
 
-    finishTask: function(classification, logData) {
+    connectToTwitter: function(logData) {
       var self = this;
-      UserService.updateRanks(logData, function() {
-        UserService.updateSubSkillRanks(classification, logData, function() {
-          log.functionCall(self.QUEUE, 'finishTask', logData.parentProcess, logData.username, {}, 'Finished updating ranks');
-        });
+
+      TwitterService.getUsers(logData, function (users) {
+        if (users.length > 0) {
+          if (process.env.ENV != 'local') { // Only connect to Twitter's stream API if not in local environment
+            var connectTask = new TwitterConnectTask(users, logData,
+              function (tweetData) { // Callback function for adding activity task to stream queue
+                var addActivityTask = new TwitterAddActivityTask(tweetData, logData);
+                self.streamQueue.addTask(addActivityTask, logData);
+              },
+              function (tweetData) { // Callback function for adding remove activity task to stream queue
+                var removeActivityTask = new TwitterRemoveActivityTask(tweetData, logData);
+                self.streamQueue.addTask(removeActivityTask, logData);
+              },
+              function () { // Callback function for after the connection with Twitter has been made
+                self.addUsersToEventQueues(logData);
+              }
+            );
+            self.queue.push(connectTask);
+          } else {
+            self.addUsersToEventQueues(logData);
+          }
+        }
       });
-
-      return classification;
-    },
-
-    prepareTask: function() {
-      this.taskWaitTime = 0;
     }
 
   });
 
   module.exports = $this;
+

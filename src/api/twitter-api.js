@@ -27,12 +27,13 @@
 
   // Required local modules
   var AugeoUtility = require('../utility/augeo-utility');
-  var Logger = require('../module/logger');
   var AugeoValidator = require('../validator/augeo-validator');
+  var Logger = require('../module/logger');
+  var QueueService = require('../service/queue-service');
   var TwitterInterfaceService = require('../interface-service/twitter-interface-service');
-  var TwitterRestQueue = require('../queue/twitter-rest-queue');
+  var TwitterMentionTask = require('../queue-task/twitter/event/twitter-mention-task');
   var TwitterService = require('../service/twitter-service');
-  var TwitterStreamQueue = require('../queue/twitter-stream-queue');
+  var TwitterTweetTask = require('../queue-task/twitter/event/twitter-tweet-task');
   var UserService = require('../service/user-service');
 
   // Constants
@@ -44,8 +45,6 @@
 
   // Global variables
   var log = new Logger();
-  var restQueue = new TwitterRestQueue();
-  var streamQueue = new TwitterStreamQueue();
 
   /***************************************************************************/
   /* GET Requests                                                            */
@@ -96,31 +95,23 @@
                   // Update session user object
                   request.session.user = updatedUser;
 
-                  // Get queue data from user information
-                  TwitterService.getQueueData(userId, screenName, logData, function (queueData) {
+                  if (process.env.TEST != 'true') {
 
-                    if (process.env.TEST != 'true') {
+                    var tweetTask = new TwitterTweetTask(updatedUser, userData, null, logData);
+                    QueueService.tweetEventQueue.addTask(tweetTask, logData);
 
-                      // Place user on tweet queue
-                      restQueue.addUserToTweetQueue(queueData.tweetQueueData, logData);
+                    var mentionTask = new TwitterMentionTask(updatedUser, userData, null, logData);
+                    QueueService.mentionEventQueue.addTask(mentionTask, logData);
 
-                      // Place user on mention queue
-                      restQueue.addUserToMentionQueue(queueData.mentionQueueData, logData);
+                    QueueService.twitterConnectQueue.connectToTwitter(logData);
+                  }
 
-                      if (process.env.ENV != 'local') {
+                  // Set user's Twitter session data
+                  request.session.user.twitter = {
+                    screenName: screenName
+                  };
 
-                        // Connect to Twitter
-                        TwitterService.connectToTwitter(restQueue, streamQueue, logData, function () {});
-                      }
-                    }
-
-                    // Set user's Twitter session data
-                    request.session.user.twitter = {
-                      screenName: screenName
-                    };
-
-                    response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
-                  }, rollback);
+                  response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
                 }, rollback); // End updateTwitterInfo
 
               }, rollback); // End getTwitterUser
@@ -184,11 +175,11 @@
       };
 
       if(request.session.user.twitter) {
-        pageData.mentionWaitTime = restQueue.getUsersMentionWaitTime(userId, logData);
-        pageData.tweetWaitTime = restQueue.getUsersTweetWaitTime(userId, logData);
+        pageData.mentionWaitTime = QueueService.mentionEventQueue.getUserWaitTime(userId, logData);
+        pageData.tweetWaitTime = QueueService.tweetEventQueue.getUserWaitTime(userId, logData);
       } else {
-        pageData.mentionWaitTime = restQueue.getMentionsWaitTime(logData);
-        pageData.tweetWaitTime = restQueue.getTweetsWaitTime(logData);
+        pageData.mentionWaitTime = QueueService.mentionEventQueue.getWaitTime(logData);
+        pageData.tweetWaitTime = QueueService.tweetEventQueue.getWaitTime(logData);
       }
 
       response.status(200).json(pageData);

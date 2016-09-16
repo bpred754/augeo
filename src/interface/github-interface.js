@@ -103,8 +103,6 @@
     });
 
     response.on('end', function () {
-      log.functionCall(INTERFACE, 'requestCallback (private)', logData.parentProcess, logData.username, {}, 'Retrieved all data from Github request');
-
       callback(data, response.headers);
     });
 

@@ -30,7 +30,7 @@
   var Logger = require('../module/logger');
 
   // Constants
-  var SERVICE = 'github_interface-service';
+  var SERVICE = 'github-interface_service';
 
   // Global variables
   var log = new Logger();

@@ -25,96 +25,98 @@
   // Required local modules
   var AbstractObject = require('../public/javascript/common/abstract-object');
   var BaseQueue = require('./base-queue');
-  var GithubQueueTask = require('../queue-task/github-queue-task');
+  var GithubQueueTask = require('../queue-task/github/github-event-task');
   var GithubService = require('../service/github-service');
   var Logger = require('../module/logger');
-
-  // Constants
-  var QUEUE = 'github_event-queue';
+  var UserService = require('../service/user-service');
 
   // Global variables
   var log = new Logger();
   var pollTime = 0;
-  var baseQueue;
 
   var $this = function(logData) {
-    $this.base.constructor.call(this);
+    var queueType = 'github-event-queue';
+    log.functionCall(queueType, 'init', logData.parentProcess, logData.username);
 
-    if(!baseQueue) {
-      log.functionCall(QUEUE, 'init', logData.parentProcess, logData.username);
+    // Call base-queue constructor
+    $this.base.constructor.call(this, logData);
 
-      logData.queue = QUEUE;
-      baseQueue = new BaseQueue(logData, prepareTask, finishTask);
-    }
+    // Constants
+    this.QUEUE = queueType;
   };
 
-  AbstractObject.extend(AbstractObject.GenericObject, $this, {
+  AbstractObject.extend(BaseQueue, $this, {
 
     addAllUsers: function(logData){
-      log.functionCall(QUEUE, 'addAllUsers', logData.parentProcess, logData.username);
+      log.functionCall(this.QUEUE, 'addAllUsers', logData.parentProcess, logData.username);
 
       var self = this;
       GithubService.loopThroughUsersQueueData(logData, function(queueData) {
         var user = queueData.user;
-        var task = new GithubQueueTask(user.augeoUser, user.screenName, user.accessToken, queueData.eventId, logData);
+        var task = new GithubQueueTask(user.augeoUser, user, queueData.eventId, logData);
         self.addTask(task, logData)
       });
     },
 
     addTask: function(task, logData) {
-      log.functionCall(QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName':(task)?task.screenName:'invalid'});
+      log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName':(task)?task.screenName:'invalid'});
 
-      baseQueue.updateWaitTime(task, function(updatedTask) {
-        if(updatedTask) {
-          var queue = baseQueue.queue;
+      var self = this;
+      this.isAddRequestValid(task, function(isAddRequestValid) {
+        if(isAddRequestValid) {
+          var queue = self.queue;
 
-          // Push task onto the end of the queue if task has a lastEventId
-          if (updatedTask.lastEventId) {
-            queue.push(updatedTask, function () {});
+          // Get the index of the first task with the lastEventId attribute
+          var index = queue.doesValueExist('lastEventId');
+
+          // Push task onto the end of the queue if task has a lastEventId OR if no tasks in queue have lastEventId attribute
+          if (task.lastEventId || index == -1) {
+            queue.push(task, function () {});
           } else {
-            // Get the index of the first task with the lastEventId attribute
-            var index = queue.getTaskPosition('lastEventId', 0, true);
-            if (index > 0) {
-              queue.insert(index, updatedTask, function () {});
-            } else {
-              // If there are no tasks without lastEventId, place task on the front of the queue
-              queue.unshift(updatedTask, function () {});
-            }
+            queue.insert(index, task, function () {});
           }
         } else {
           log.functionCall(QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName': (task) ? task.screenName : 'invalid'}, 'User already on queue');
         }
       });
+    },
+
+    finishTask: function(task, logData) {
+
+      // Update poll time for next request
+      pollTime = task.poll;
+
+      // Update wait time for next request
+      this.taskWaitTime = task.wait;
+
+      var queue = this.queue;
+      var finalize = function() {
+        task.reset(logData);
+        queue.push(task);
+      };
+
+      if(task.path) {
+        queue.unshift(task);
+      } else {
+        if(task.commits.length > 0) {
+          GithubService.addCommits(task.screenName, task.commits, logData, function () {
+            UserService.updateAllRanks(logData, function () {
+              finalize();
+            });
+          });
+        } else {
+          finalize();
+        }
+      }
+    },
+
+    prepareTask: function(task) {
+      if(task.lastEventId) {
+        this.taskWaitTime = pollTime;
+      }
     }
+
   });
 
   module.exports = $this;
 
-  /***************************************************************************/
-  /* Private functions                                                       */
-  /***************************************************************************/
-
-  var finishTask = function(task, logData) {
-
-    // Update poll time for next request
-    pollTime = task.poll;
-
-    // Update wait time for next request
-    baseQueue.waitTime = task.wait;
-
-    var queue = baseQueue.queue;
-    if(task.path) {
-      queue.unshift(task);
-    } else {
-      GithubService.addCommits(task.screenName, task.commits, logData, function() {
-        task.reset(logData);
-        queue.push(task);
-      });
-    }
-  };
-
-  var prepareTask = function(task) {
-    if(task.lastEventId) {
-      baseQueue.waitTime = pollTime;
-    }
-  };

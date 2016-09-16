@@ -105,12 +105,13 @@
     });
   };
 
-  TWITTER_USER.statics.getAllQueueData = function(logData, callback) {
-    this.find({}, 'augeoUser screenName accessToken secretAccessToken', function(error, users) {
+  TWITTER_USER.statics.getAllUsers = function(logData, callback) {
+    this.find({}).populate('augeoUser').exec(function(error, users) {
       if(error) {
-        log.functionError(COLLECTION, 'getAllUsersTwitterQueueData', logData.parentProcess, logData.username, 'Failed to retrieve users queue data');
+        log.functionError(COLLECTION, 'getAllUsers', logData.parentProcess, logData.username, 'Failed to get Twitter users:' + error);
+        callback();
       } else {
-        log.functionCall(COLLECTION, 'getAllUsersTwitterQueueData', logData.parentProcess, logData.username);
+        log.functionCall(COLLECTION, 'getAllUsers', logData.parentProcess, logData.username);
         callback(users);
       }
     });

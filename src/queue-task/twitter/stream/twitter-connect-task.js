@@ -19,52 +19,54 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Queue to handle tweets from Twitter's Streaming API        */
+  /* Description: Object to manage Twitter connect queue tasks               */
   /***************************************************************************/
 
   // Required local modules
-  var AbstractObject = require('../public/javascript/common/abstract-object');
-  var BaseQueue = require('./base-queue');
-  var Logger = require('../module/logger');
-  var UserService = require('../service/user-service');
+  var AbstractObject = require('../../../public/javascript/common/abstract-object');
+  var Logger = require('../../../module/logger');
+  var TwitterInterfaceService = require('../../../interface-service/twitter-interface-service');
 
   // Global variables
   var log = new Logger();
 
-  var $this = function(logData) {
-    var queueType = 'twitter-stream-queue';
-    log.functionCall(queueType, 'init', logData.parentProcess, logData.username);
+  // Constants
+  var TASK = 'twitter-connect-task';
 
-    // Call base-queue constructor
-    $this.base.constructor.call(this, logData);
+  // Access with $this.variable inside of class and class.variable outside
+  function publicStaticVariables($this)
+  {
+    var window = 2;
+    var requestsPerWindow = process.env.TEST === 'true' ? 120 : 1;
 
-    // Constants
-    this.QUEUE = queueType;
+    $this.CONNECT_TIMEOUT = ((window*60)/requestsPerWindow)*1000;
+  }
+
+  // Constructor
+  var $this = function(users, logData, addCallback, removeCallback, connectCallback) {
+    log.functionCall(TASK, 'constructor', logData.parentProcess, logData.username);
+
+    // Call parent constructor
+    $this.base.constructor.call(this);
+
+    // public variables
+    this.addCallback = addCallback;
+    this.connectCallback = connectCallback;
+    this.removeCallback = removeCallback;
+    this.users = users;
+    this.wait = $this.CONNECT_TIMEOUT;
   };
 
-  AbstractObject.extend(BaseQueue, $this, {
+  publicStaticVariables($this);
 
-    addTask: function(task, logData) {
-      log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username);
+  AbstractObject.extend(AbstractObject.GenericObject, $this, {
 
-      this.queue.push(task, function(){});
-    },
+    execute: function(logData, callback) {
+      log.functionCall(TASK, 'execute', logData.parentProcess, logData.username);
 
-    finishTask: function(classification, logData) {
-      var self = this;
-      UserService.updateRanks(logData, function() {
-        UserService.updateSubSkillRanks(classification, logData, function() {
-          log.functionCall(self.QUEUE, 'finishTask', logData.parentProcess, logData.username, {}, 'Finished updating ranks');
-        });
-      });
-
-      return classification;
-    },
-
-    prepareTask: function() {
-      this.taskWaitTime = 0;
+      TwitterInterfaceService.openStream(this.users, logData, this.addCallback, this.removeCallback, this.connectCallback);
+      callback();
     }
-
   });
 
   module.exports = $this;

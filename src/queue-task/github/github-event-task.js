@@ -23,39 +23,39 @@
   /***************************************************************************/
 
     // Required local modules
-  var AbstractObject = require('../public/javascript/common/abstract-object');
-  var AbstractQueueTask = require('../queue-task/abstract-queue-task');
-  var GithubInterfaceService = require('../interface-service/github-interface-service');
-  var Logger = require('../module/logger');
+  var AbstractObject = require('../../public/javascript/common/abstract-object');
+  var AbstractQueueTask = require('../abstract-queue-task');
+  var GithubInterfaceService = require('../../interface-service/github-interface-service');
+  var Logger = require('../../module/logger');
 
   // Global variables
   var log = new Logger();
 
   // Constants
-  var MODULE = 'github_queue_task-module';
+  var TASK = 'github-queue-task';
 
   // Constructor
-  var $this = function(user, screenName, accessToken, lastEventId, logData) {
-    log.functionCall(MODULE, 'constructor', logData.parentProcess, logData.username, {'userId': (user)?user._id:'invalid', 'screenName': screenName,
-      'accessToken':(accessToken)?'valid':'invalid', 'lastEventId': lastEventId});
+  var $this = function(user, githubData, lastEventId, logData) {
+    log.functionCall(TASK, 'constructor', logData.parentProcess, logData.username, {'userId': (user)?user._id:'invalid',
+      'screenName': (githubData)?githubData.screenName:'invalid', 'lastEventId': lastEventId});
 
     // Call parent constructor
     $this.base.constructor.call(this, user);
 
     // public variables
-    this.accessToken = accessToken;
+    this.accessToken = githubData.accessToken;
     this.commits = new Array();
     this.eTag = null;
     this.lastEventId = lastEventId;
-    this.path = '/users/' + screenName + '/events';
+    this.path = '/users/' + githubData.screenName + '/events';
     this.poll = 60000;
-    this.screenName = screenName;
+    this.screenName = githubData.screenName;
   };
 
   AbstractObject.extend(AbstractQueueTask, $this, {
 
     execute: function(logData, callback) {
-      log.functionCall(MODULE, 'execute', logData.parentProcess, logData.username);
+      log.functionCall(TASK, 'execute', logData.parentProcess, logData.username);
 
       var task = this;
       GithubInterfaceService.getCommits(this.user, this.accessToken, this.path, this.eTag, this.lastEventId, logData, function(result) {
@@ -89,7 +89,7 @@
     },
 
     reset: function(logData) {
-      log.functionCall(MODULE, 'reset', logData.parentProcess, logData.username, {'screenName':this.screenName});
+      log.functionCall(TASK, 'reset', logData.parentProcess, logData.username, {'screenName':this.screenName});
 
       this.commits.length = 0;
       this.path = '/users/' + this.screenName + '/events';
