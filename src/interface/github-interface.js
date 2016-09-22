@@ -23,6 +23,7 @@
   /***************************************************************************/
 
   // Required libraries
+  var Dns = require('dns');
   var Https = require('https');
 
   // Required local modules
@@ -50,9 +51,10 @@
       }
     };
 
-    Https.request(options, function(response) {
-      requestCallback(response, logData, callback)
-    }).end();
+    submitRequest(options, callback, function(error) {
+      log.functionError(INTERFACE, 'getAccessToken', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
+      callback();
+    });
   };
 
   exports.getPushEvents = function(accessToken, path, eTag, logData, callback) {
@@ -62,6 +64,7 @@
       hostname: 'api.github.com',
       method: 'GET',
       path: path,
+      agent:false,
       headers: {
         'Authorization': 'token ' + accessToken,
         'If-None-Match': eTag,
@@ -69,9 +72,15 @@
       }
     };
 
-    Https.request(options, function(response) {
-      requestCallback(response, logData, callback)
-    }).end();
+    var dnsCheckCount = 0;
+    resolveDNS(dnsCheckCount, options, submitRequest, callback, function(error) {
+      log.functionError(INTERFACE, 'getPushEvents', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
+
+      var data = {};
+      var requestHeaders = {'status':'0'};
+
+      callback(data, requestHeaders);
+    });
   };
 
   exports.getUserData = function(accessToken, logData, callback) {
@@ -87,26 +96,53 @@
       }
     };
 
-    Https.request(options, function(response) {
-      requestCallback(response, logData, callback)
-    }).end();
+    submitRequest(options, callback, function(error) {
+      log.functionError(INTERFACE, 'getUserData', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
+      callback();
+    });
   };
 
   /***************************************************************************/
   /* Private functions                                                       */
   /***************************************************************************/
 
-  var requestCallback = function(response, logData, callback) {
-    var data = '';
-    response.on('data', function (chunk) {
-      data += chunk;
+  var resolveDNS = function(dnsCheckCount, options, requestToSubmit, callback, errorCallback) {
+
+    Dns.resolve4(options.hostname, function(error, addresses) {
+      if (error) {
+        dnsCheckCount++;
+        if(dnsCheckCount < 2) {
+          resolveDNS(dnsCheckCount, options, requestToSubmit, errorCallback);
+        } else {
+          errorCallback(error);
+        }
+      } else {
+        requestToSubmit(options, callback, errorCallback);
+      }
+    });
+  };
+
+  var submitRequest = function(options, callback, errorCallback) {
+    var request = Https.request(options, function(response) {
+
+      var data = '';
+      response.on('data', function (chunk) {
+        data += chunk;
+      });
+
+      response.on('end', function () {
+        callback(data, response.headers);
+      });
+
+      response.on('error', function(error) {
+        errorCallback(error);
+      });
+
     });
 
-    response.on('end', function () {
-      callback(data, response.headers);
+    request.on('error', function(error) {
+      errorCallback(error);
     });
 
-    response.on('error', function(error) {
-      log.functionError(INTERFACE, 'requestCallback (private)', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
-    });
+    request.end();
   };

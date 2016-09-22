@@ -105,10 +105,8 @@
               }
               maxTimestamp = data.activity[data.activity.length - 1].timestamp;
               $scope.activityLoaded = true;
-
-              if(activity.length < 20) {
-                $scope.finishedLoading = true;
-              }
+            } else {
+              $scope.finishedLoading = true;
             }
           } else {
             $scope.invalidUser = true;

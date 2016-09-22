@@ -59,7 +59,7 @@
       var commits = new Array();
       var result = {
         commits: commits,
-        eTag: headers['etag'],
+        eTag: (headers['etag'])?headers['etag']:eTag,
         poll: (headers['x-poll-interval'])?headers['x-poll-interval']*1000:60000,
         wait: calculateNextRequestWaitTime(headers)
       };
@@ -82,7 +82,7 @@
         }
 
         result.commits = commits;
-      } else { // No changes
+      } else if (status.indexOf('304') > -1) { // No changes
         log.functionCall(SERVICE, 'getCommits', logData.parentProcess, logData.username, {}, '304 - Not Modified');
       }
 
@@ -116,14 +116,18 @@
 
   var calculateNextRequestWaitTime = function(headers) {
 
-    var wait = 1000;
-    var resetTime = headers['x-ratelimit-reset']*1000;
-    var currentTime = (new Date).getTime();
-    var remainingTime = resetTime - currentTime;
+    var wait = 600000; // 10 min
+    if(headers['x-ratelimit-reset'] && headers['x-ratelimit-remaining']) {
+      var resetTime = headers['x-ratelimit-reset'] * 1000;
+      var currentTime = (new Date).getTime();
+      var remainingTime = resetTime - currentTime;
 
-    var remainingRequests = headers['x-ratelimit-remaining'];
-    if(remainingTime >= 0) {
-      wait = (remainingTime/remainingRequests) + 100;
+      var remainingRequests = headers['x-ratelimit-remaining'];
+      if (remainingTime >= 0) {
+        wait = (remainingTime / remainingRequests) + 100;
+      } else {
+        wait = 1000;
+      }
     }
 
     return wait;
