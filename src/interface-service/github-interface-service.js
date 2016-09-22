@@ -135,10 +135,12 @@
 
   var extractNextRequestPath = function(linkHeader) {
     var path = null;
-    var links = linkHeader.split(',');
-    for(var i = 0; i < links.length; i++) {
-      if(links[i].indexOf('rel="next"') > -1) {
-        path = links[i].substring(links[i].indexOf('.com') + 4, links[i].indexOf('>'))
+    if(linkHeader) {
+      var links = linkHeader.split(',');
+      for (var i = 0; i < links.length; i++) {
+        if (links[i].indexOf('rel="next"') > -1) {
+          path = links[i].substring(links[i].indexOf('.com') + 4, links[i].indexOf('>'))
+        }
       }
     }
     return path;
