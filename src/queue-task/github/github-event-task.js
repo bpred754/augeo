@@ -75,6 +75,7 @@
 
         task.path = result.path;
 
+        // Note the lastEventId if it's the last request
         if(!task.path) {
           if(task.commits.length > 0) {
             task.lastEventId = task.commits[0].eventId;

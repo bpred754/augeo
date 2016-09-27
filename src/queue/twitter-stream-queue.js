@@ -50,15 +50,14 @@
       this.queue.push(task, function(){});
     },
 
-    finishTask: function(classification, logData) {
+    finishTask: function(classification, logData, callback) {
       var self = this;
       UserService.updateRanks(logData, function() {
         UserService.updateSubSkillRanks(classification, logData, function() {
           log.functionCall(self.QUEUE, 'finishTask', logData.parentProcess, logData.username, {}, 'Finished updating ranks');
+          callback();
         });
       });
-
-      return classification;
     },
 
     prepareTask: function() {

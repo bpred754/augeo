@@ -50,17 +50,21 @@
 
   AbstractObject.extend(BaseQueue, $this, {
 
-    addUsersToEventQueues: function(logData) {
-      this.mentionQueue.addAllUsers(logData);
-      this.tweetQueue.addAllUsers(logData);
+    addUsersToEventQueues: function(logData, callback) {
+      var self = this;
+      this.mentionQueue.addAllUsers(logData, function() {
+        self.tweetQueue.addAllUsers(logData, function() {
+          callback();
+        });
+      });
     },
 
-    connectToTwitter: function(logData) {
+    connectToTwitter: function(logData, callback) {
       var self = this;
 
       TwitterService.getUsers(logData, function (users) {
         if (users.length > 0) {
-          if (process.env.ENV != 'local') { // Only connect to Twitter's stream API if not in local environment
+          if (process.env.ENV != 'local' || process.env.TEST == 'true') { // Only connect to Twitter's stream API if not in local environment
             var connectTask = new TwitterConnectTask(users, logData,
               function (tweetData) { // Callback function for adding activity task to stream queue
                 var addActivityTask = new TwitterAddActivityTask(tweetData, logData);
@@ -71,13 +75,17 @@
                 self.streamQueue.addTask(removeActivityTask, logData);
               },
               function () { // Callback function for after the connection with Twitter has been made
-                self.addUsersToEventQueues(logData);
+                self.addUsersToEventQueues(logData, function(){});
               }
             );
             self.queue.push(connectTask);
+            callback();
           } else {
-            self.addUsersToEventQueues(logData);
+            self.addUsersToEventQueues(logData, function(){});
+            callback();
           }
+        } else {
+          callback();
         }
       });
     }

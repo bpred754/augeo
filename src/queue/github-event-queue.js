@@ -47,7 +47,7 @@
 
   AbstractObject.extend(BaseQueue, $this, {
 
-    addAllUsers: function(logData){
+    addAllUsers: function(logData, callback){
       log.functionCall(this.QUEUE, 'addAllUsers', logData.parentProcess, logData.username);
 
       var self = this;
@@ -55,7 +55,7 @@
         var user = queueData.user;
         var task = new GithubQueueTask(user.augeoUser, user, queueData.eventId, logData);
         self.addTask(task, logData)
-      });
+      }, callback);
     },
 
     addTask: function(task, logData) {
@@ -76,12 +76,12 @@
             queue.insert(index, task, function () {});
           }
         } else {
-          log.functionCall(QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName': (task) ? task.screenName : 'invalid'}, 'User already on queue');
+          log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName': (task) ? task.screenName : 'invalid'}, 'User already on queue');
         }
       });
     },
 
-    finishTask: function(task, logData) {
+    finishTask: function(task, logData, callback) {
 
       // Update poll time for next request
       pollTime = task.poll;
@@ -93,10 +93,12 @@
       var finalize = function() {
         task.reset(logData);
         queue.push(task);
+        callback();
       };
 
       if(task.path) {
         queue.unshift(task);
+        callback();
       } else {
         if(task.commits.length > 0) {
           GithubService.addCommits(task.screenName, task.commits, logData, function () {
@@ -110,10 +112,18 @@
       }
     },
 
+    getPollTime: function() {
+      return pollTime;
+    },
+
     prepareTask: function(task) {
       if(task.lastEventId) {
         this.taskWaitTime = pollTime;
       }
+    },
+
+    reset: function() {
+     this.queue.tasks.length = 0;
     }
 
   });

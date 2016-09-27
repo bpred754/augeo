@@ -49,38 +49,56 @@
   var TwitterUser = AugeoDB.model('TWITTER_USER');
 
   exports.addTestUsers = function(callback) {
-    exports.addUser(Common.USER, TwitterData.USER_TWITTER, function() {
-      exports.addUser(Common.ACTIONEE, TwitterData.ACTIONEE_TWITTER, function() {
-        callback();
-      });
-    });
-  };
-
-  exports.addUser = function(user, twitter, callback) {
-
-    UserService.addUser(user, {}, function(retrievedUser) {
-
-      TwitterUser.add(retrievedUser._id, twitter.secretToken, Common.logData, function() {
-
-        var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData), Common.logData);
-
-        var twitterData = {
-          twitterId: twitter.twitterId,
-          name: user.fullName,
-          screenName: twitter.screenName,
-          profileImageUrl: twitter.profileImageUrl,
-          accessToken: twitter.accessToken,
-          secretAccessToken: twitter.secretAccessToken,
-          skill: AugeoUtility.getMainSkill(0, Common.logData),
-          subSkills: newUserSubSkills
-        };
-
-        // Update twitter information
-        TwitterService.updateTwitterInfo(retrievedUser._id, user, twitterData, Common.logData, function(updatedUser) {
-          callback();
+    UserService.addUser(Common.USER, {}, function(retrievedUser0) {
+      exports.addTwitterUser(retrievedUser0._id, Common.USER, TwitterData.USER_TWITTER, function() {
+        exports.addGithubUser(retrievedUser0, function() {
+          UserService.addUser(Common.ACTIONEE, {}, function(retrievedUser1) {
+            exports.addTwitterUser(retrievedUser1._id, Common.ACTIONEE, TwitterData.ACTIONEE_TWITTER, function() {
+              callback();
+            });
+          }, function(){console.log('Twitter Helper -- Failed to add user')});
         });
       });
     }, function(){console.log('Twitter Helper -- Failed to add user')});
+  };
+
+  exports.addGithubUser = function(user, callback) {
+
+    var githubUser = {
+      augeoUser: user._id,
+      githubId: GithubData.USER_GITHUB.githubId,
+      accessToken: GithubData.USER_GITHUB.accessToken,
+      screenName: GithubData.USER_GITHUB.screenName,
+      profileImageUrl: GithubData.USER_GITHUB.profileImageUrl
+    };
+
+    GithubUser.add(Common.USER.username, githubUser, Common.logData, function() {
+     callback();
+    })
+  };
+
+  exports.addTwitterUser = function(userId, user, twitter, callback) {
+
+    TwitterUser.add(userId, twitter.secretToken, Common.logData, function() {
+
+      var newUserSubSkills = AugeoUtility.createSubSkills(AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData), Common.logData);
+
+      var twitterData = {
+        twitterId: twitter.twitterId,
+        name: user.fullName,
+        screenName: twitter.screenName,
+        profileImageUrl: twitter.profileImageUrl,
+        accessToken: twitter.accessToken,
+        secretAccessToken: twitter.secretAccessToken,
+        skill: AugeoUtility.getMainSkill(0, Common.logData),
+        subSkills: newUserSubSkills
+      };
+
+      // Update twitter information
+      TwitterService.updateTwitterInfo(userId, user, twitterData, Common.logData, function(updatedUser) {
+        callback();
+      });
+    });
   };
 
   exports.cleanActivities = function(callback) {

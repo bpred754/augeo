@@ -103,7 +103,7 @@
                     var mentionTask = new TwitterMentionTask(updatedUser, userData, null, logData);
                     QueueService.mentionEventQueue.addTask(mentionTask, logData);
 
-                    QueueService.twitterConnectQueue.connectToTwitter(logData);
+                    QueueService.twitterConnectQueue.connectToTwitter(logData, function(){});
                   }
 
                   // Set user's Twitter session data

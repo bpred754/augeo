@@ -19,29 +19,22 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton to manage app queues                             */
+  /* Description: Unit test cases for common object activity                 */
   /***************************************************************************/
 
-  var GithubEventQueue = require('../queue/github-event-queue');
-  var TwitterConnectQueue = require('../queue/twitter-connect-queue');
-  var TwitterEventQueue = require('../queue/twitter-event-queue');
-  var TwitterStreamQueue = require('../queue/twitter-stream-queue');
+  // Required libraries
+  var Assert = require('assert');
 
-  exports.githubEventQueue = null;
-  exports.twitterConnectQueue = null;
-  exports.twitterEventQueue = null;
-  exports.twitterStreamQueue = null;
+  // Local modules
+  var Activity = require('../../../src/public/javascript/common/activity');
 
-  exports.initializeAppQueues = function(logData) {
+  it('should correctly format a timestamp into a user friendly date -- formatDate()', function(done) {
 
-    // Github Queues
-    exports.githubEventQueue = new GithubEventQueue(logData);
-    exports.githubEventQueue.addAllUsers(logData, function(){});
+    var actvityJson = {
+      timestamp: new Date("2016-04-12T19:29:41-0700")
+    };
+    var actvitiy = new Activity(actvityJson);
+    Assert.strictEqual(actvitiy.date, '12 Apr 2016');
 
-    // Twitter Queues
-    exports.mentionEventQueue = new TwitterEventQueue(logData, true);
-    exports.tweetEventQueue = new TwitterEventQueue(logData);
-    exports.twitterStreamQueue = new TwitterStreamQueue(logData);
-    exports.twitterConnectQueue = new TwitterConnectQueue(exports.tweetEventQueue, exports.mentionEventQueue, exports.twitterStreamQueue, logData);
-    exports.twitterConnectQueue.connectToTwitter(logData, function(){});
-  };
+    done();
+  });

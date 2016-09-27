@@ -50,7 +50,7 @@
     execute: function(logData, callback) {
       log.functionCall(TASK, 'execute', logData.parentProcess, logData.username);
 
-      TwitterService.removeTweet(this.data.status, logData, callback);
+      TwitterService.removeTweet(this.data, logData, callback);
     }
   });
 

@@ -54,8 +54,6 @@
     $this.base.constructor.call(this, user, twitterData, lastEventId, logData);
 
     // public variables
-    this.lastEventId = lastEventId;
-    this.twitterMessenger = TwitterInterfaceService.createTwitterMessenger(twitterData.accessToken, twitterData.secretAccessToken, logData);
     this.wait = $this.TWEET_TIMEOUT;
   };
 

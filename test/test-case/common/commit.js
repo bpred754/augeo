@@ -19,29 +19,24 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton to manage app queues                             */
+  /* Description: Unit test cases for common object commit                   */
   /***************************************************************************/
 
-  var GithubEventQueue = require('../queue/github-event-queue');
-  var TwitterConnectQueue = require('../queue/twitter-connect-queue');
-  var TwitterEventQueue = require('../queue/twitter-event-queue');
-  var TwitterStreamQueue = require('../queue/twitter-stream-queue');
+  // Required libraries
+  var Assert = require('assert');
 
-  exports.githubEventQueue = null;
-  exports.twitterConnectQueue = null;
-  exports.twitterEventQueue = null;
-  exports.twitterStreamQueue = null;
+  // Local modules
+  var Commit = require('../../../src/public/javascript/common/commit');
 
-  exports.initializeAppQueues = function(logData) {
+  it('should format a commits data into html -- formatText()', function(done) {
 
-    // Github Queues
-    exports.githubEventQueue = new GithubEventQueue(logData);
-    exports.githubEventQueue.addAllUsers(logData, function(){});
+    var commitJson = {
+      repo: 'test-repo',
+      text: 'commit text'
+    };
 
-    // Twitter Queues
-    exports.mentionEventQueue = new TwitterEventQueue(logData, true);
-    exports.tweetEventQueue = new TwitterEventQueue(logData);
-    exports.twitterStreamQueue = new TwitterStreamQueue(logData);
-    exports.twitterConnectQueue = new TwitterConnectQueue(exports.tweetEventQueue, exports.mentionEventQueue, exports.twitterStreamQueue, logData);
-    exports.twitterConnectQueue.connectToTwitter(logData, function(){});
-  };
+    var commit = new Commit(commitJson);
+    Assert.strictEqual(commit.html, 'Commit to <a href="https://github.com/test-repo" target="_blank">test-repo</a>: commit text');
+
+    done();
+  });

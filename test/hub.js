@@ -45,6 +45,12 @@
     });
   };
 
+  describe('Common', function() {
+    importTests('activity', './test-case/common/activity');
+    importTests('commit', './test-case/common/commit');
+    importTests('tweet', './test-case/common/tweet');
+  });
+
   describe('Module', function() {
     importTests('logger', './test-case/module/logger');
   });
@@ -83,6 +89,32 @@
     });
   });
 
+  describe('Queue Task', function() {
+
+    before(function(done) {
+      this.timeout(Common.TIMEOUT);
+      Helper.addTestUsers(function() {
+        done();
+      });
+    });
+
+    importTests('githubEventTask', './test-case/queue-task/github/github-event-task.js');
+    importTests('twitterEventTask', './test-case/queue-task/twitter/event/twitter-event-task.js');
+    importTests('twitterMentionTask', './test-case/queue-task/twitter/event/twitter-mention-task.js');
+    importTests('twitterTweetTask', './test-case/queue-task/twitter/event/twitter-tweet-task.js');
+    importTests('twitterAddActivityTask', './test-case/queue-task/twitter/stream/twitter-add-activity-task.js');
+    importTests('twitterConnectTask', './test-case/queue-task/twitter/stream/twitter-connect-task.js', App);
+    //importTests('twitterRemoveActivityTask', './test-case/queue-task/twitter/stream/twitter-remove-activity-task.js');
+
+    // Clean database
+    after(function(done) {
+      this.timeout(Common.TIMEOUT);
+      Helper.cleanAugeoDB(function(){
+        done();
+      });
+    });
+  });
+
   describe('Queue', function() {
 
     // Add Twitter users to database
@@ -93,8 +125,11 @@
       });
     });
 
-    importTests('twitterRestQueue', './test-case/queue/twitter-rest-queue.js');
-    importTests('twitterStreamQueue', './test-case/queue/twitter-stream-queue.js');
+    importTests('githubEventQueue', './test-case/queue/github-event-queue');
+    importTests('twitterEventQueue', './test-case/queue/twitter-event-queue');
+    importTests('twitterStreamQueue', './test-case/queue/twitter-stream-queue');
+    importTests('twitterConnectQueue', './test-case/queue/twitter-connect-queue');
+    importTests('baseEventQueue', './test-case/queue/base-queue');
 
     // Clean database
     afterEach(function(done) {

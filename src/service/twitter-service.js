@@ -205,7 +205,7 @@
     });
   };
 
-  exports.loopThroughUsersQueueData = function(logData, callback) {
+  exports.loopThroughUsersQueueData = function(logData, callback, finalCallback) {
     log.functionCall(SERVICE, 'loopThroughUsersQueueData', logData.parentProcess, logData.username);
 
     TwitterUser.getAllUsers(logData, function(users) {
@@ -219,6 +219,8 @@
               i++;
               if (i < users.length) {
                 myClojure(i);
+              } else {
+                finalCallback();
               }
             });
           });

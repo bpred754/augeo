@@ -58,7 +58,7 @@
       } else {
         var taskPosition = this.queue.getUserTaskPosition(userId);
         if(taskPosition != -1) {
-          waitTime = this.maxTaskExecutionTime * (taskPosition + 1);
+          waitTime = this.maxTaskExecutionTime * (taskPosition + 2);
         }
       }
       return waitTime;
@@ -68,7 +68,7 @@
       log.functionCall(this.QUEUE, 'getWaitTime', logData.parentProcess, logData.username);
 
       var queueNumber = this.queue.tasks.length;
-      if(this.currentTask) {
+      if(this.currentTask && this.currentTask.user) {
         queueNumber++;
       }
 
@@ -108,16 +108,17 @@
 
           self.isBusy = true;
           task.execute(logData, function(executeData) {
-            self.finishTask(executeData, logData);
+            self.finishTask(executeData, logData, function() {
 
-            if(self.queue.tasks.length == 0) {
-              self.isBusy = false;
-            }
+              if(self.queue.tasks.length == 0) {
+                self.isBusy = false;
+              }
 
-            // Reset current task
-            self.currentTask = {};
+              // Reset current task
+              self.currentTask = {};
 
-            callback();
+              callback();
+            });
           });
         });
       });

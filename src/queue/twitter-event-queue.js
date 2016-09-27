@@ -51,7 +51,7 @@
 
   AbstractObject.extend(BaseQueue, $this, {
 
-    addAllUsers: function(logData){
+    addAllUsers: function(logData, callback){
       log.functionCall(this.QUEUE, 'addAllUsers', logData.parentProcess, logData.username);
 
       var self = this;
@@ -66,7 +66,7 @@
         }
 
         self.addTask(task, logData)
-      });
+      }, callback);
     },
 
     addTask: function(task, logData) {
@@ -82,16 +82,19 @@
       });
     },
 
-    finishTask: function(task, logData) {
+    finishTask: function(task, logData, callback) {
       var queue = this.queue;
 
       if(!task.areAllTweetsRetrieved) {
         queue.unshift(task);
+        callback();
       } else {
         if(task.tweets.length > 0) {
           TwitterService.addTweets(task.user._id, task.screenName, task.tweets, this.isMention, logData, function() {
-            UserService.updateAllRanks(logData, function(){});
+            UserService.updateAllRanks(logData, callback);
           });
+        } else {
+          callback();
         }
       }
     }

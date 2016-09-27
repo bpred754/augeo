@@ -19,29 +19,36 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton to manage app queues                             */
+  /* Description: Unit test cases for queue-task/twitter-add-activity-task   */
   /***************************************************************************/
 
-  var GithubEventQueue = require('../queue/github-event-queue');
-  var TwitterConnectQueue = require('../queue/twitter-connect-queue');
-  var TwitterEventQueue = require('../queue/twitter-event-queue');
-  var TwitterStreamQueue = require('../queue/twitter-stream-queue');
+  // Required local modules
+  var AugeoDB = require('../../../../../src/model/database');
+  var Common = require('../../../../data/common');
+  var TwitterAddActivityTask = require('../../../../../src/queue-task/twitter/stream/twitter-add-activity-task');
+  var TwitterData = require('../../../../data/twitter-data');
 
-  exports.githubEventQueue = null;
-  exports.twitterConnectQueue = null;
-  exports.twitterEventQueue = null;
-  exports.twitterStreamQueue = null;
+  // Global variables
+  var User = AugeoDB.model('AUGEO_USER');
 
-  exports.initializeAppQueues = function(logData) {
+  it('should add a tweet and action to the their respective collections -- execute()', function(done) {
 
-    // Github Queues
-    exports.githubEventQueue = new GithubEventQueue(logData);
-    exports.githubEventQueue.addAllUsers(logData, function(){});
+    // Get user baseline experience
+    User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
 
-    // Twitter Queues
-    exports.mentionEventQueue = new TwitterEventQueue(logData, true);
-    exports.tweetEventQueue = new TwitterEventQueue(logData);
-    exports.twitterStreamQueue = new TwitterStreamQueue(logData);
-    exports.twitterConnectQueue = new TwitterConnectQueue(exports.tweetEventQueue, exports.mentionEventQueue, exports.twitterStreamQueue, logData);
-    exports.twitterConnectQueue.connectToTwitter(logData, function(){});
-  };
+      var baselineExperience = user.skill.experience;
+
+      var task = new TwitterAddActivityTask(TwitterData.rawStandardTweet, Common.logData);
+      task.execute(Common.logData, function() {
+
+        // Get user after executing task
+        User.getUserWithUsername(Common.USER.username, Common.logData, function(userAfter) {
+
+          var experience = userAfter.skill.experience;
+
+          baselineExperience.should.be.below(experience);
+          done();
+        });
+      });
+    });
+  });

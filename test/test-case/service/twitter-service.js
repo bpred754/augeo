@@ -333,59 +333,6 @@
     }, function(){});
   });
 
-  // getQueueData
-  it('should return queue data for a given a user id and screenName -- getQueueData()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Invalid userId
-    TwitterService.getQueueData('', TwitterData.USER_TWITTER.screenName, Common.logData, function(){}, function() {
-
-      // Get user's id
-      User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
-
-        TwitterUser.getTokens(user._id, Common.logData, function(tokens) {
-
-          // Invalid screenName
-          TwitterService.getQueueData(user._id.toString(), '', Common.logData, function(){}, function(){
-
-            // Create user id that doesnt exist
-            var changedID = user._id.toString();
-            for(var i = 0; i < changedID.length; i++) {
-              if(changedID[i] != '1') {
-                changedID = changedID.substring(0, i) + '1' + changedID.substring(i+1);
-                break;
-              }
-            }
-
-            // Invalid tokens - userId doesnt exists
-            TwitterService.getQueueData(changedID, TwitterData.USER_TWITTER.screenName, Common.logData, function(){}, function() {
-
-              // UserId exists && screenName doesnt exist
-              TwitterService.getQueueData(user._id.toString(), 'screenName', Common.logData, function(){}, function() {
-
-                // UserId exists && screeName exists
-                TwitterService.getQueueData(user._id.toString(), TwitterData.USER_TWITTER.screenName, Common.logData, function(queueData) {
-                  Assert.ok(queueData.tweetQueueData);
-                  Assert.strictEqual(queueData.tweetQueueData.userId.toString(), user._id.toString());
-                  Assert.strictEqual(queueData.tweetQueueData.screenName, user.twitter.screenName);
-                  Assert.strictEqual(queueData.tweetQueueData.accessToken, tokens.accessToken);
-                  Assert.strictEqual(queueData.tweetQueueData.secretAccessToken, tokens.secretAccessToken);
-
-                  Assert.ok(queueData.mentionQueueData);
-                  Assert.strictEqual(queueData.mentionQueueData.userId.toString(), user._id.toString());
-                  Assert.strictEqual(queueData.mentionQueueData.screenName, user.twitter.screenName);
-                  Assert.strictEqual(queueData.mentionQueueData.accessToken, tokens.accessToken);
-                  Assert.strictEqual(queueData.mentionQueueData.secretAccessToken, tokens.secretAccessToken);
-                  done();
-                }, function(){})
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-
   // getUsers
   it('should return all users twitter IDs from Augeo DB -- getUsers()', function(done) {
     this.timeout(Common.TIMEOUT);

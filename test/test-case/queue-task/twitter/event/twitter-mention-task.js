@@ -19,29 +19,31 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton to manage app queues                             */
+  /* Description: Unit test cases for queue-task/twitter-mention-task        */
   /***************************************************************************/
 
-  var GithubEventQueue = require('../queue/github-event-queue');
-  var TwitterConnectQueue = require('../queue/twitter-connect-queue');
-  var TwitterEventQueue = require('../queue/twitter-event-queue');
-  var TwitterStreamQueue = require('../queue/twitter-stream-queue');
+  // Required libraries
+  var Assert = require('assert');
 
-  exports.githubEventQueue = null;
-  exports.twitterConnectQueue = null;
-  exports.twitterEventQueue = null;
-  exports.twitterStreamQueue = null;
+  // Required local modules
+  var AugeoDB = require('../../../../../src/model/database');
+  var Common = require('../../../../data/common');
+  var TwitterData = require('../../../../data/twitter-data');
+  var TwitterMentionTask = require('../../../../../src/queue-task/twitter/event/twitter-mention-task');
 
-  exports.initializeAppQueues = function(logData) {
+  // Global variables
+  var User = AugeoDB.model('AUGEO_USER');
 
-    // Github Queues
-    exports.githubEventQueue = new GithubEventQueue(logData);
-    exports.githubEventQueue.addAllUsers(logData, function(){});
+  it('should retrieve mentions from TwitterTestInterface -- execute()', function(done) {
 
-    // Twitter Queues
-    exports.mentionEventQueue = new TwitterEventQueue(logData, true);
-    exports.tweetEventQueue = new TwitterEventQueue(logData);
-    exports.twitterStreamQueue = new TwitterStreamQueue(logData);
-    exports.twitterConnectQueue = new TwitterConnectQueue(exports.tweetEventQueue, exports.mentionEventQueue, exports.twitterStreamQueue, logData);
-    exports.twitterConnectQueue.connectToTwitter(logData, function(){});
-  };
+    User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
+      var task = new TwitterMentionTask(user, TwitterData.USER_TWITTER, null, Common.logData);
+      task.execute(Common.logData, function(updatedTask) {
+
+        updatedTask.tweets.length.should.be.above(0);
+        Assert.notEqual(updatedTask.tweets[0].screenName, TwitterData.USER_TWITTER.screenName);
+
+        done();
+      });
+    });
+  });

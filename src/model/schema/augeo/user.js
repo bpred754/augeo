@@ -503,27 +503,33 @@
 
       if(error) {
         log.functionError(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
-          'Failed to find user with ID: ' + id + '. Error: ' + error);
+          'Error when trying to find user with ID: ' + id + '. Error: ' + error);
       } else {
         log.functionCall(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username, {'id':id});
 
-        doc.skill.experience += experience.mainSkillExperience;
-        doc.skill.level = AugeoUtility.calculateLevel(doc.skill.experience, logData);
-        doc.subSkills.forEach(function(subSkill){
-          subSkill.experience += experience.subSkillsExperience[subSkill.name];
-          subSkill.level = AugeoUtility.calculateLevel(subSkill.experience, logData);
-        });
-        doc.save(function(error) {
-          if(error) {
-            log.functionError(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
-              'Failed to save experience. Error: ' + error);
-          } else {
-            log.functionCall(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
-              {'mainSkillExperience':(experience)?experience.mainSkillExperience:'invalid',
-               'subSkillExperience':(experience && experience.subSkillsExperience)?'defined':'invalid'});
-            callback();
-          }
-        });
+        if(doc) {
+          doc.skill.experience += experience.mainSkillExperience;
+          doc.skill.level = AugeoUtility.calculateLevel(doc.skill.experience, logData);
+          doc.subSkills.forEach(function(subSkill){
+            subSkill.experience += experience.subSkillsExperience[subSkill.name];
+            subSkill.level = AugeoUtility.calculateLevel(subSkill.experience, logData);
+          });
+          doc.save(function(error) {
+            if(error) {
+              log.functionError(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
+                'Failed to save experience. Error: ' + error);
+            } else {
+              log.functionCall(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
+                {'mainSkillExperience':(experience)?experience.mainSkillExperience:'invalid',
+                  'subSkillExperience':(experience && experience.subSkillsExperience)?'defined':'invalid'});
+              callback();
+            }
+          });
+        } else {
+          log.functionError(COLLECTION, 'updateSkillData', logData.parentProcess, logData.username,
+            'Failed to find user with ID: ' + id + '.');
+          callback();
+        }
       }
     });
   };
