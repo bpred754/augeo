@@ -53,12 +53,18 @@
       log.functionCall(this.QUEUE, 'getUserWaitTime', logData.parentProcess, logData.username, {'userId':userId});
 
       var waitTime = -1;
-      if(this.currentTask && this.currentTask.user && this.currentTask.user._id == userId) {
-        waitTime = this.maxTaskExecutionTime;
-      } else {
-        var taskPosition = this.queue.getUserTaskPosition(userId);
-        if(taskPosition != -1) {
-          waitTime = this.maxTaskExecutionTime * (taskPosition + 2);
+
+      // Don't set wait time for polling tasks (only possible for revolving queues)
+      if(!this.isRevolvingQueue || (this.isRevolvingQueue && !this.currentTask.isPoll)) {
+
+        // Check if the current task is for the userId passed in
+        if (this.currentTask && this.currentTask.user && this.currentTask.user._id == userId) {
+          waitTime = this.maxTaskExecutionTime;
+        } else { // If the current task is not for the userId then find the userId in the queue
+          var taskPosition = this.queue.getUserTaskPosition(userId);
+          if (taskPosition != -1) {
+            waitTime = this.maxTaskExecutionTime * (taskPosition + 2);
+          }
         }
       }
       return waitTime;

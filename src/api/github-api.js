@@ -39,6 +39,7 @@
   var API = 'github-api';
   var CALLBACK = '/callback';
   var GET_AUTHENTICATION_DATA = '/getAuthenticationData';
+  var GET_QUEUE_WAIT_TIMES = '/getQueueWaitTimes';
   var INVALID_SESSION = 'Invalid session';
 
   // Global variables
@@ -108,10 +109,10 @@
                         if (request.session.user.profileImg == 'image/avatar-medium.png') {
                           UserService.setProfileImage('Github', request.session.user, logData, function (updatedUser) {
                             request.session.user = updatedUser;
-                            response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
+                            response.redirect(process.env.AUGEO_HOME + '/interfaceHistory');
                           });
                         } else {
-                          response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
+                          response.redirect(process.env.AUGEO_HOME + '/interfaceHistory');
                         }
                       });
                     });
@@ -159,6 +160,33 @@
       response.status(200).send(data);
     } else {
       rollback(401, INVALID_SESSION);
+    }
+  });
+
+  GithubRouter.get(GET_QUEUE_WAIT_TIMES, function(request, response) {
+   var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+
+    var rollback = function(message) {
+      log.functionError(API, GET_QUEUE_WAIT_TIMES, username, message);
+      response.sendStatus(401);
+    };
+
+    if(username) {
+      log.functionCall(API, GET_QUEUE_WAIT_TIMES, null, username);
+      var logData = AugeoUtility.formatLogData(API+GET_QUEUE_WAIT_TIMES, username);
+
+      var userId = request.session.user._id;
+
+      var waitTimes = new Array();
+      if(request.session.user.github) {
+        waitTimes.push(QueueService.githubEventQueue.getUserWaitTime(userId, logData));
+      } else {
+        waitTimes.push(QueueService.githubEventQueue.getWaitTime(logData));
+      }
+
+      response.status(200).json({waitTimes:waitTimes});
+    } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
+      rollback(INVALID_SESSION);
     }
   });
 

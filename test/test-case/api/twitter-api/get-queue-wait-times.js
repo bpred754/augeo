@@ -19,41 +19,57 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Binds data to twitter-history.html                          */
+  /* Description: Unit test cases for api/twitter-api                        */
+  /*              'getQueueWaitTimes' requests                               */
   /***************************************************************************/
 
-  // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, TwitterClientService) {
+  // Required libraries
+  var Assert = require('assert');
+  var Request = require('supertest');
+  var Should = require('should');
 
-    $scope.setTwitterHistoryPageData = function() {
-      TwitterClientService.getTwitterHistoryPageData(function(pageData) {
+  // Required local modules
+  var Common = require('../../../data/common');
 
-        if(pageData != 'Unauthorized') {
+  module.exports = function(app) {
 
-          $scope.tweetDTO = {
-            isComplete: false,
-            waitTime: pageData.tweetWaitTime
-          };
+    var agent = Request.agent(app);
 
-          $scope.mentionDTO = {
-            isComplete: false,
-            waitTime: pageData.mentionWaitTime
-          };
+    // Username does not exist in session
+    it('should return status 401 - invalid username in session - getQueueWaitTimes()', function(done) {
+      this.timeout(Common.TIMEOUT);
 
-          if (pageData.tweetWaitTime == -1) {
-            $scope.tweetDTO.isComplete = true;
-          }
+      agent
+        .get('/twitter-api/getQueueWaitTimes')
+        .expect(401)
+        .end(function(error, response) {
+          Should.not.exist(error);
+          done();
+        });
+    });
 
-          if (pageData.mentionWaitTime == -1) {
-            $scope.mentionDTO.isComplete = true;
-          }
+    // Valid
+    it('should return status 200 - getQueueWaitTimes()', function(done) {
+      this.timeout(Common.TIMEOUT);
 
-          $scope.isLoaded = true;
-        }
-      });
-    };
+      agent
+        .post('/user-api/login')
+        .send(Common.LOGIN_USER)
+        .expect(200)
+        .end(function(error, response) {
+          Should.not.exist(error);
 
-    // Initialize Twitter History page
-    $scope.setTwitterHistoryPageData();
-
+          agent
+            .get('/twitter-api/getQueueWaitTimes')
+            .expect(200)
+            .end(function(error, response) {
+              Should.not.exist(error);
+              Should.exist(response.body.waitTimes);
+              Assert.strictEqual(response.body.waitTimes.length, 2);
+              Assert.strictEqual(response.body.waitTimes[0], -1);
+              Assert.strictEqual(response.body.waitTimes[1], -1);
+              done();
+            });
+        });
+    });
   };

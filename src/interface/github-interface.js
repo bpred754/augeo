@@ -112,7 +112,7 @@
       if (error) {
         dnsCheckCount++;
         if(dnsCheckCount < 2) {
-          resolveDNS(dnsCheckCount, options, requestToSubmit, errorCallback);
+          resolveDNS(dnsCheckCount, options, requestToSubmit, callback, errorCallback);
         } else {
           errorCallback(error);
         }

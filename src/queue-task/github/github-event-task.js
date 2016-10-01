@@ -34,6 +34,16 @@
   // Constants
   var TASK = 'github-queue-task';
 
+  // Access with $this.variable inside of class and class.variable outside
+  function publicStaticVariables($this)
+  {
+    var maxRequests = 10;
+    var window = 60;
+    var requestsPerWindow = 5000;
+
+    $this.MAX_EXECUTION_TIME = (window / requestsPerWindow) * maxRequests * 60;
+  }
+
   // Constructor
   var $this = function(user, githubData, lastEventId, logData) {
     log.functionCall(TASK, 'constructor', logData.parentProcess, logData.username, {'userId': (user)?user._id:'invalid',
@@ -46,11 +56,14 @@
     this.accessToken = githubData.accessToken;
     this.commits = new Array();
     this.eTag = null;
+    this.isPoll = false; // Required field for revolving queues
     this.lastEventId = lastEventId;
     this.path = '/users/' + githubData.screenName + '/events';
     this.poll = 60000;
     this.screenName = githubData.screenName;
   };
+
+  publicStaticVariables($this);
 
   AbstractObject.extend(AbstractQueueTask, $this, {
 
@@ -75,11 +88,15 @@
 
         task.path = result.path;
 
-        // Note the lastEventId if it's the last request
+        // Last request
         if(!task.path) {
+
+          // Capture lastEventId
           if(task.commits.length > 0) {
             task.lastEventId = task.commits[0].eventId;
           }
+
+          task.isPoll = true;
         }
 
         task.poll = result.poll;

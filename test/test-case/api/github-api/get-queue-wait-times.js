@@ -19,28 +19,27 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/twitter-api                        */
-  /*              'getTwitterHistoryPageData' requests                       */
+  /* Description: Unit test cases for api/github-api                         */
+  /*              'getQueueWaitTimes' requests                               */
   /***************************************************************************/
 
   // Required libraries
+  var Assert = require('assert');
   var Request = require('supertest');
   var Should = require('should');
 
   // Required local modules
   var Common = require('../../../data/common');
-  var AugeoDB = require('../../../../src/model/database');
 
   module.exports = function(app) {
 
     var agent = Request.agent(app);
 
     // Username does not exist in session
-    it('should return status 401 - invalid username in session - getTwitterHistoryPageData', function(done) {
-      this.timeout(Common.TIMEOUT);
+    it('should return status 401 - invalid username in session - getQueueWaitTimes()', function (done) {
 
       agent
-        .get('/twitter-api/getTwitterHistoryPageData')
+        .get('/github-api/getQueueWaitTimes')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -49,7 +48,7 @@
     });
 
     // Valid
-    it('should return status 200 - getTwitterHistoryPageData', function(done) {
+    it('should return status 200 - getQueueWaitTimes()', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
@@ -60,12 +59,13 @@
           Should.not.exist(error);
 
           agent
-            .get('/twitter-api/getTwitterHistoryPageData')
+            .get('/github-api/getQueueWaitTimes')
             .expect(200)
             .end(function(error, response) {
               Should.not.exist(error);
-              Should.exist(response.body.tweetWaitTime);
-              Should.exist(response.body.mentionWaitTime);
+              Should.exist(response.body.waitTimes);
+              Assert.strictEqual(response.body.waitTimes.length, 1);
+              Assert.strictEqual(response.body.waitTimes[0], -1);
               done();
             });
         });

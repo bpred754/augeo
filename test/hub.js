@@ -159,12 +159,13 @@
   describe('Github API', function() {
     importTests('callback', './test-case/api/github-api/callback', App);
     importTests('getAuthenticationData', './test-case/api/github-api/get-authentication-data', App);
+    importTests('getQueueWaitTimes', './test-case/api/github-api/get-queue-wait-times', App);
   });
 
   describe('Twitter API', function() {
     importTests('getAuthenticationData', './test-case/api/twitter-api/get-authentication-data', App);
     importTests('callback', './test-case/api/twitter-api/callback', App);
-    importTests('getTwitterHistoryPageData', './test-case/api/twitter-api/get-twitter-history-page-data', App);
+    importTests('getQueueWaitTimes', './test-case/api/twitter-api/get-queue-wait-times', App);
   });
 
    describe('Twitter Dependent User API', function() {

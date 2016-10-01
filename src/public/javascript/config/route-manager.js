@@ -98,12 +98,12 @@
         }
       })
 
-      .state('twitterHistory', {
-        url:'/twitterHistory',
+      .state('interfaceHistory', {
+        url:'/interfaceHistory',
         views: {
           'mainContent': {
-            templateUrl:'html/twitter-history.html',
-            controller: 'TwitterHistoryController'
+            templateUrl:'html/interface-history.html',
+            controller: 'InterfaceHistoryController'
           }
         }
       })

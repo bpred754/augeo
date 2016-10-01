@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $state, UserClientService, TwitterClientService, ClientValidator) {
+  module.exports = function($scope, $state, UserClientService, ClientValidator) {
 
     // Constants
     var INVALID_LOGIN = 'Invalid email address or password'

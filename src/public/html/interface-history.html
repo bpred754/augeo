@@ -1,0 +1,131 @@
+
+  <!-------------------------------------------------------------------------->
+  <!-- Augeo.io is a web application that uses Natural Language Processing  -->
+  <!-- to classify a user's internet activity into different 'skills'.      -->
+  <!-- Copyright (C) 2016 Brian Redd                                        -->
+  <!--                                                                      -->
+  <!-- This program is free software: you can redistribute it and/or modify -->
+  <!-- it under the terms of the GNU General Public License as published by -->
+  <!-- the Free Software Foundation, either version 3 of the License, or    -->
+  <!-- (at your option) any later version.                                  -->
+  <!--                                                                      -->
+  <!-- This program is distributed in the hope that it will be useful,      -->
+  <!-- but WITHOUT ANY WARRANTY; without even the implied warranty of       -->
+  <!-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        -->
+  <!-- GNU General Public License for more details.                         -->
+  <!--                                                                      -->
+  <!-- You should have received a copy of the GNU General Public License    -->
+  <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
+  <!-------------------------------------------------------------------------->
+
+  <!-- Header -->
+  <div class="container" ng-show="isLoaded">
+    <div class="row">
+      <div class="jumbotron ih-jumbotron">
+        <div id="ih-head-container" class="text-align-center">
+          <div id="ih-title" class="x-large-text">Interface History</div>
+          <div class="large-text history-text">Due to API restrictions, requests can only be made periodically.
+            When you authenticate with an interface you are placed onto a queue that will gather your past activity. Below
+            you can see the estimated wait times.
+          </div>
+        </div>
+        </div>
+      </div>
+    </div> <!-- end header row -->
+  </div> <!-- end header container -->
+
+  <!-- Authenticate -->
+  <div id="ih-auth-container" ng-if="!User.hasAuthentications" ng-show="isLoaded">
+    <div>
+      <p class="standard-text text-primary text-align-center">Authenticate with an interface to start tracking your experience!</p>
+      <div class="horizontal-center">
+        <button type="button" class="btn btn-primary small-text" ng-click="showProfile()">Authenticate</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row remove-margin" ng-show="isLoaded">
+    <div class="col-sm-2 col-xs-1 ih-spacer"></div>
+    <div class="col-sm-8 col-xs-10 ih-description">
+      <div class="row x-large-text">
+        Github
+      </div>
+      <div class="row large-text history-text">
+        Github only records your last 90 days of commits. Therefore, it is possible that we may not retrieve all your Github
+        activity if you have surpassed this limit. After authentication, Augeo establishes a polling system to retrieve future
+        commits. Since Augeo can only poll Github once per minute, the time to retrieve future commits will increase proportionally
+        to the amount of Augeo users that have authenticated with Github.
+      </div>
+    </div>
+    <div class="col-sm-2 col-xs-1"></div>
+  </div>
+
+  <div class="row remove-margin ih-activity" ng-show="isLoaded">
+    <div class="col-xs-1 col-sm-2 ih-spacer"></div>
+    <div class="col-xs-3 ih-icon-container">
+      <img src="../image/github/logo-black-large.png" class="ih-icon"/>
+    </div>
+    <div class="col-xs-7 col-sm-5 type-description">
+      <div class="row subheading-text">Commits</div>
+      <div  class="row large-text history-text">
+        A commit is a snapshot of a project. Committing is the process of making a set of tentative changes permanent.
+      </div>
+      <div class="row status-container standard-text">
+        <p ng-if="commitDTO.isComplete == true" class="text-success">All Commits Received</p>
+        <p ng-if="commitDTO.isComplete == false">{{commitDTO.waitTime}}</p>
+      </div>
+    </div>
+    <div class="col-xs-1 col-sm-2"></div>
+  </div>
+
+  <div class="row remove-margin" ng-show="isLoaded">
+    <div class="col-sm-2 col-xs-1 ih-spacer"></div>
+    <div class="col-sm-8 col-xs-10 ih-description">
+      <div class="row x-large-text">
+        Twitter
+      </div>
+      <div class="row large-text history-text">
+        Twitter only records your last 3,200 tweets and 800 tweets that you were mentioned in. Therefore, it is possible that
+        we may not retrieve all your Twitter activity if you have surpassed these limits. After authentication, Augeo establishes
+        a stream with Twitter that retrieves all future activity in real time.
+      </div>
+    </div>
+    <div class="col-sm-2 col-xs-1"></div>
+  </div>
+
+  <div class="row remove-margin ih-activity" ng-show="isLoaded">
+    <div class="col-xs-1 col-sm-2 ih-spacer"></div>
+    <div class="col-xs-7 col-sm-5 type-description">
+      <div class="row subheading-text">Tweets</div>
+      <div  class="row large-text history-text">
+        A Tweet is any message posted to Twitter which may contain photos, videos, links and up to 140 characters of text.
+      </div>
+      <div class="row status-container standard-text">
+        <p ng-if="tweetDTO.isComplete == true" class="text-success">All Tweets Received</p>
+        <p ng-if="tweetDTO.isComplete == false">{{tweetDTO.waitTime}}</p>
+      </div>
+    </div>
+    <div class="col-xs-3 ih-icon-container ih-icon-right">
+      <img src="../image/twitter/logo-blue-medium.png" class="ih-icon"/>
+    </div>
+    <div class="col-xs-1 col-sm-2"></div>
+  </div>
+
+  <div class="row remove-margin ih-activity" ng-show="isLoaded">
+    <div class="col-xs-1 col-sm-2 ih-spacer"></div>
+    <div class="col-xs-3 ih-icon-container">
+      <img src="../image/twitter/mention.png" class="ih-icon"/>
+    </div>
+    <div class="col-xs-7 col-sm-5 type-description">
+      <div class="row subheading-text">Mentions</div>
+      <div  class="row large-text history-text">
+        A Mention is any Twitter update that contains "@username" anywhere in the body of the Tweet.
+      </div>
+      <div class="row status-container standard-text">
+        <p ng-if="mentionDTO.isComplete == true" class="text-success">All Mentions Received</p>
+        <p ng-if="mentionDTO.isComplete == false">{{mentionDTO.waitTime}}</p>
+      </div>
+    </div>
+    <div class="col-xs-1 col-sm-2"></div>
+  </div>
+

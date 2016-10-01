@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton that fetches data for Augeo's twitter-api.       */
+  /* Description: Singleton that contains functions for interface services   */
   /***************************************************************************/
 
   // Reminder: Update service/index.js when service params are modified
@@ -33,7 +33,7 @@
       var minutes = Math.floor(seconds/60);
       var hours = Math.floor(minutes/60);
       var days = Math.floor(hours/24);
-      seconds = seconds%60;
+      seconds = Math.floor(seconds%60);
 
       var timeString = '';
       if(days < 1) {
@@ -45,35 +45,32 @@
     };
 
     /***************************************************************************/
-    /* Static Variables                                                        */
-    /***************************************************************************/
-
-    this.ACTIVITY_KIND = 'TWITTER_TWEET';
-
-    /***************************************************************************/
     /* Service starts                                                          */
     /***************************************************************************/
 
-    this.getAuthenticationData = function(callback) {
+    this.getAuthenticationData = function(api, callback) {
       var parameters = null;
-      AugeoClientService.getAugeoApi('twitter-api/getAuthenticationData', parameters, function(data, status) {
+      AugeoClientService.getAugeoApi(api+'/getAuthenticationData', parameters, function(data, status) {
         callback(data, status);
       });
     };
 
-    this.getTwitterHistoryPageData = function(callback) {
+    this.getQueueWaitTimes = function(api, callback) {
       var parameters = null;
-      AugeoClientService.getAugeoApi('twitter-api/getTwitterHistoryPageData', parameters, function(data) {
+      AugeoClientService.getAugeoApi(api+'/getQueueWaitTimes', parameters, function(data) {
 
-        if(data.tweetWaitTime != -1) {
-          data.tweetWaitTime = formatTime(data.tweetWaitTime);
+        var waitTimes = data
+        if(data && data.waitTimes) {
+          waitTimes = new Array();
+          for(var i = 0; i < data.waitTimes.length; i++) {
+            var waitTime = data.waitTimes[i];
+            if(waitTime != -1) {
+              waitTime = formatTime(data.waitTimes[i]);
+            }
+            waitTimes.push(waitTime);
+          }
         }
-
-        if(data.mentionWaitTime != -1) {
-          data.mentionWaitTime = formatTime(data.mentionWaitTime);
-        }
-
-        callback(data);
+        callback(waitTimes);
       });
     };
   };

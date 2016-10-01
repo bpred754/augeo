@@ -19,17 +19,41 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Singleton that fetches data for Augeo's github-api.        */
+  /* Description: Binds data to twitter-history.html                          */
   /***************************************************************************/
 
-  // Reminder: Update service/index.js when service params are modified
-  module.exports = function(AugeoClientService) {
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($scope, InterfaceClientService) {
 
-    this.getAuthenticationData = function(callback) {
-      var parameters = null;
-      AugeoClientService.getAugeoApi('github-api/getAuthenticationData', parameters, function(data, status) {
-        callback(data, status);
+    InterfaceClientService.getQueueWaitTimes('github-api', function(githubWaitTimes) {
+      InterfaceClientService.getQueueWaitTimes('twitter-api', function(twitterWaitTimes) {
+
+        if(githubWaitTimes != 'Unauthorized' || twitterWaitTimes != 'Unauthorized') {
+
+          if (githubWaitTimes && githubWaitTimes.length == 1) {
+            $scope.commitDTO = {
+              isComplete: (githubWaitTimes[0] == -1) ? true : false,
+              waitTime: githubWaitTimes[0]
+            };
+          }
+
+          if (twitterWaitTimes && twitterWaitTimes.length == 2) {
+
+            // Tweets are the first entry in the twitterWaitTimes array
+            $scope.tweetDTO = {
+              isComplete: (twitterWaitTimes[0] == -1) ? true : false,
+              waitTime: twitterWaitTimes[0]
+            };
+
+            // Mentions are the second entry in the twitterWaitTimes array
+            $scope.mentionDTO = {
+              isComplete: (twitterWaitTimes[1] == -1) ? true : false,
+              waitTime: twitterWaitTimes[1]
+            };
+          }
+
+          $scope.isLoaded = true;
+        }
       });
-    };
+    });
   };
-

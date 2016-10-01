@@ -40,7 +40,7 @@
   var API = 'twitter-api';
   var CALLBACK = '/callback';
   var GET_AUTHENTICATION_DATA = '/getAuthenticationData';
-  var GET_TWITTER_HISTORY_PAGE_DATA = '/getTwitterHistoryPageData';
+  var GET_QUEUE_WAIT_TIMES = '/getQueueWaitTimes';
   var INVALID_SESSION = 'Invalid session';
 
   // Global variables
@@ -111,7 +111,7 @@
                     screenName: screenName
                   };
 
-                  response.redirect(process.env.AUGEO_HOME + '/twitterHistory');
+                  response.redirect(process.env.AUGEO_HOME + '/interfaceHistory');
                 }, rollback); // End updateTwitterInfo
 
               }, rollback); // End getTwitterUser
@@ -154,35 +154,31 @@
     }
   });
 
-  TwitterRouter.get(GET_TWITTER_HISTORY_PAGE_DATA, function(request, response) {
+  TwitterRouter.get(GET_QUEUE_WAIT_TIMES, function(request, response) {
     var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
 
     var rollback = function(message) {
-      log.functionError(API, GET_TWITTER_HISTORY_PAGE_DATA, username, message);
+      log.functionError(API, GET_QUEUE_WAIT_TIMES, username, message);
       response.sendStatus(401);
     };
 
     // If user exists in session get profile data
     if(username) {
-      log.functionCall(API, GET_TWITTER_HISTORY_PAGE_DATA, null, username);
-      var logData = AugeoUtility.formatLogData(API+GET_TWITTER_HISTORY_PAGE_DATA, username);
+      log.functionCall(API, GET_QUEUE_WAIT_TIMES, null, username);
+      var logData = AugeoUtility.formatLogData(API+GET_QUEUE_WAIT_TIMES, username);
 
       var userId = request.session.user._id;
 
-      var pageData = {
-        mentionWaitTime: '',
-        tweetWaitTime: ''
-      };
-
+      var waitTimes = new Array();
       if(request.session.user.twitter) {
-        pageData.mentionWaitTime = QueueService.mentionEventQueue.getUserWaitTime(userId, logData);
-        pageData.tweetWaitTime = QueueService.tweetEventQueue.getUserWaitTime(userId, logData);
+        waitTimes.push(QueueService.tweetEventQueue.getUserWaitTime(userId, logData));
+        waitTimes.push(QueueService.mentionEventQueue.getUserWaitTime(userId, logData));
       } else {
-        pageData.mentionWaitTime = QueueService.mentionEventQueue.getWaitTime(logData);
-        pageData.tweetWaitTime = QueueService.tweetEventQueue.getWaitTime(logData);
+        waitTimes.push(QueueService.tweetEventQueue.getWaitTime(logData));
+        waitTimes.push(QueueService.mentionEventQueue.getWaitTime(logData));
       }
 
-      response.status(200).json(pageData);
+      response.status(200).json({waitTimes:waitTimes});
     } else { // If the user doesn't exist in session respond with "Unauthorized" HTTP code
       rollback(INVALID_SESSION);
     }

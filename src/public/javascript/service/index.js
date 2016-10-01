@@ -27,7 +27,6 @@
   augeo.service('ActivityService', require('./activity-service'));
   augeo.service('AugeoClientService', ['$http', '$state', require('./augeo-client-service')]);
   augeo.service('ClientValidator', require('./client-validator'));
-  augeo.service('GithubClientService', ['AugeoClientService', require('./github-client-service')]);
+  augeo.service('InterfaceClientService', ['AugeoClientService', require('./interface-client-service')]);
   augeo.service('ProfileService', require('./profile-service'));
-  augeo.service('TwitterClientService', ['AugeoClientService', require('./twitter-client-service')]);
   augeo.service('UserClientService', ['AugeoClientService', require('./user-client-service')]);

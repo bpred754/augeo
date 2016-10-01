@@ -19,10 +19,10 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: css for twitter-history.html                               */
+  /* Description: css for interface-history.html                             */
   /***************************************************************************/
 
-  #th-auth-container {
+  #ih-auth-container {
     height:100%;
     display:flex;
     justify-content:center;
@@ -30,11 +30,42 @@
     margin-bottom:15px;
   }
 
-  #th-auth-inner-container {
+  #ih-head-container {
+    height:250px;
+  }
+
+  .ih-activity {
+    display:flex;
+    padding-top:15px;
+    padding-bottom:15px;
+  }
+
+  .ih-description {
+    margin-bottom: 30px;
+    margin-top:30px;
+  }
+
+  .ih-glyphicon {
+    display:inline-block;
+  }
+
+  .ih-icon {
+    width:100%;
+    max-height:200px;
+    max-width:200px;
+  }
+
+  .ih-icon-container {
     height:100%;
-    border-style:solid;
-    border-color: #333;
-    padding:15px;
+    margin:auto;
+  }
+
+  .ih-icon-right {
+    text-align: right;
+  }
+
+  .ih-spacer {
+    height:inherit;
   }
 
   .status-container {
@@ -46,17 +77,6 @@
     margin-top:-3%;
   }
 
-  .twitter-history-glyphicon {
-    display:inline-block;
-  }
-
-  .twitter-history-icon {
-    text-align:center;
-  }
-
-  .twitter-history-spacer {
-    height:inherit;
-  }
 
   /***************************************************************************/
   /* Screen Size: less than custom small                                     */
@@ -64,18 +84,8 @@
 
   @media(max-width:599px) {
 
-    #th-head-container {
-      height:250px;
-      margin-left:0px;
-    }
-
-    #header-description {
-      font-size:1em;
-      margin-left:5%;
-      margin-right:0%;
-    }
-
-    #th-title {
+    #ih-title {
+      margin-bottom:15px;
       font-size:3em;
     }
 
@@ -89,19 +99,9 @@
       margin-top:0px;
     }
 
-    .tweet-description {
-      margin-left:80px;
-    }
-
-    .twitter-history-icon {
-      text-align:center;
-      font-size: 9em;
-      margin-top: 30px;
-    }
-
     .type-description {
       text-align:center;
-      margin-top:43px;
+      margin:auto;
       line-height: 1.4;
     }
   }
@@ -112,14 +112,8 @@
 
   @media(min-width:600px) {
 
-    #th-head-container {
-      height:250px;
-      margin-left:0px;
-    }
-
-    #header-description {
-      margin-left:5%;
-      margin-right:0%;
+    #ih-title {
+      margin-bottom:15px;
     }
 
     .text-icon {
@@ -128,36 +122,10 @@
       margin-top:0px;
     }
 
-    .tweet-description {
-      margin-left:80px;
-    }
-
-    .twitter-history-icon {
-      text-align:center;
-      font-size: 12em;
-      margin-top: 30px;
-    }
-
     .type-description {
       text-align:center;
-      margin-top:43px;
+      margin:auto;
       line-height: 1.4;
-    }
-  }
-
-  /***************************************************************************/
-  /* Screen Size: small                                                      */
-  /***************************************************************************/
-
-  @media(min-width:767px) {
-
-    #header-description {
-      margin-left:5%;
-      margin-right:0%;
-    }
-
-    .tweet-description {
-      margin-left:80px;
     }
   }
 
@@ -167,54 +135,8 @@
 
   @media(min-width:850px) {
 
-    #header-description {
-      margin-left:5%;
-      margin-right:0%;
-    }
-
-    .tweet-description {
-      margin-left:55px;
-    }
-
-    .twitter-history-jumbotron {
+    .ih-jumbotron {
       padding-left:0px;
       padding-right:0px;
-    }
-  }
-
-  /***************************************************************************/
-  /* Screen Size: medium                                                     */
-  /***************************************************************************/
-
-  @media(min-width:992px) {
-
-    #header-description {
-      margin-left:5%;
-      margin-right:0%;
-    }
-
-    .tweet-description {
-      margin-left:50px;
-    }
-  }
-
-  /***************************************************************************/
-  /* Screen Size: large                                                      */
-  /***************************************************************************/
-
-  @media(min-width:1200px) {
-
-    #th-head-container {
-      height:250px;
-      margin-left:125px;
-    }
-
-    #header-description {
-      margin-left:5%;
-      margin-right:15%;
-    }
-
-    .tweet-description {
-      margin-left:0px;
     }
   }

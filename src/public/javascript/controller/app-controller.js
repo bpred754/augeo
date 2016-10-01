@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $state, $window, UserClientService, ProfileController, TwitterClientService, GithubClientService) {
+  module.exports = function($scope, $state, $window, UserClientService, ProfileController, InterfaceClientService) {
 
     $scope.layoutNavbar = 'hidden';
     $scope.isWelcomeModalViewed = false;
@@ -82,7 +82,7 @@
     $scope.submitGithubAuthentication = function() {
 
       // Authenticate user with Github
-      GithubClientService.getAuthenticationData(function(authData) {
+      InterfaceClientService.getAuthenticationData('github-api',function(authData) {
 
         if(authData.clientId) {
           $window.location.href = 'https://github.com/login/oauth/authorize?client_id=' + authData.clientId +
@@ -96,7 +96,7 @@
 
     $scope.submitTwitterAuthentication = function() {
       // Authenticate user with twitter
-      TwitterClientService.getAuthenticationData(function(authData, authStatus) {
+      InterfaceClientService.getAuthenticationData('twitter-api',function(authData, authStatus) {
 
         if(authStatus == 200) {
           // Go to Twitter Authentication page

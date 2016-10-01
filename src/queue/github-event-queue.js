@@ -43,6 +43,10 @@
 
     // Constants
     this.QUEUE = queueType;
+
+    // Public variables
+    this.isRevolvingQueue = true;
+    this.maxTaskExecutionTime = GithubQueueTask.MAX_EXECUTION_TIME;
   };
 
   AbstractObject.extend(BaseQueue, $this, {
