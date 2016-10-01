@@ -132,13 +132,7 @@
 
     var rollback = function(message) {
       log.functionError(API, GET_AUTHENTICATION_DATA, username, message);
-
-      if(username) {
-        logData = AugeoUtility.formatLogData(API+GET_AUTHENTICATION_DATA, username);
-        UserService.removeUser(username, logData, function(){}); // Remove user from DB
-        request.session.destroy(); // Destroy the session
-      }
-      response.status(401).send('Signup Failed. Please try again.');
+      response.status(401).send('Twitter authentication failed. Please try again.');
     };
 
     if(username) {

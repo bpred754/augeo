@@ -160,7 +160,7 @@
                     <div class="profile-auth-inner-container">
                       <p class="standard-text text-primary text-align-center profile-auth-text">Authenticate with Twitter to start tracking your experience</p>
                       <div class="horizontal-center">
-                        <button type="button" class="btn btn-primary small-text" ng-click="submitTwitterAuthentication()">Authenticate</button>
+                        <button type="button" class="btn btn-primary small-text" data-dismiss="modal" ng-click="submitTwitterAuthentication()">Authenticate</button>
                       </div>
                     </div>
                   </div>
@@ -186,7 +186,7 @@
                       <p class="standard-text text-primary text-align-center profile-auth-text">Authenticate with Github to start tracking your experience.</p>
                       <p id="profile-github-warning" class="small-text text-primary text-align-center profile-auth-text">Warning: Your local git config settings must match your Augeo name OR email.</p>
                       <div class="horizontal-center">
-                        <button type="button" class="btn btn-primary small-text" ng-click="submitGithubAuthentication()">Authenticate</button>
+                        <button type="button" class="btn btn-primary small-text" data-dismiss="modal" ng-click="submitGithubAuthentication()">Authenticate</button>
                       </div>
                     </div>
                   </div>
