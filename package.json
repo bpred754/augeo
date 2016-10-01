@@ -78,6 +78,7 @@
     "scripts",
     "src",
     "test",
+    ".gitattributes",
     ".gitignore",
     "CONTRIBUTING.md",
     "LICENSE",
