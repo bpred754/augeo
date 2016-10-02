@@ -70,8 +70,8 @@
                 var addActivityTask = new TwitterAddActivityTask(tweetData, logData);
                 self.streamQueue.addTask(addActivityTask, logData);
               },
-              function (tweetData) { // Callback function for adding remove activity task to stream queue
-                var removeActivityTask = new TwitterRemoveActivityTask(tweetData, logData);
+              function (tweetId) { // Callback function for adding remove activity task to stream queue
+                var removeActivityTask = new TwitterRemoveActivityTask(tweetId, logData);
                 self.streamQueue.addTask(removeActivityTask, logData);
               },
               function () { // Callback function for after the connection with Twitter has been made

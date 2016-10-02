@@ -24,8 +24,9 @@
 
   // Required local modules
   var AbstractObject = require('../../../public/javascript/common/abstract-object');
-  var TwitterService = require('../../../service/twitter-service');
   var Logger = require('../../../module/logger');
+  var TwitterService = require('../../../service/twitter-service');
+  var UserService = require('../../../service/user-service');
 
   // Global variables
   var log = new Logger();
@@ -34,14 +35,14 @@
   var TASK = 'twitter-remove-activity-task';
 
   // Constructor
-  var $this = function(data, logData) {
+  var $this = function(tweetId, logData) {
     log.functionCall(TASK, 'constructor', logData.parentProcess, logData.username);
 
     // Call parent constructor
     $this.base.constructor.call(this);
 
     // public variables
-    this.data = data;
+    this.tweetId = tweetId;
     this.wait = 0;
   };
 
@@ -50,7 +51,11 @@
     execute: function(logData, callback) {
       log.functionCall(TASK, 'execute', logData.parentProcess, logData.username);
 
-      TwitterService.removeTweet(this.data, logData, callback);
+      TwitterService.removeTweet(this.tweetId, logData, function() {
+        UserService.updateAllRanks(logData, function() {
+          callback();
+        })
+      });
     }
   });
 

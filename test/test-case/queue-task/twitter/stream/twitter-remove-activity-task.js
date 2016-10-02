@@ -37,7 +37,7 @@
     User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
       var baselineExperience = user.skill.experience;
 
-      var task = new TwitterRemoveActivityTask(TwitterData.rawStandardTweet, Common.logData);
+      var task = new TwitterRemoveActivityTask(TwitterData.rawStandardTweet.id_str, Common.logData);
       task.execute(Common.logData, function() {
 
         // Get user experience after the removal

@@ -417,13 +417,8 @@
           Assert.strictEqual(returnedTweet0.tweetId, TwitterData.rawStandardTweet.id_str);
           experience -= returnedActivity0.experience;
 
-          var tweetData = {
-            id_str: TwitterData.rawStandardTweet.id_str,
-            user_id_str: TwitterData.rawStandardTweet.user.id_str
-          };
-
           // Remove tweet
-          TwitterService.removeTweet(tweetData, Common.logData, function(classification0) {
+          TwitterService.removeTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(classification0) {
 
             // Verify tweet was removed
             Tweet.getTweet(TwitterData.rawStandardTweet.id_str, Common.logData, function(returnedTweet1) {

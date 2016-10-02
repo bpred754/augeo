@@ -62,6 +62,19 @@
     upsertActivity(this, activity, logData, callback);
   };
 
+  ACTIVITY.statics.getActivities = function(dataId, logData, callback) {
+    this.find({data:dataId}, function(error, activities) {
+      if(error) {
+        log.functionError(COLLECTION, 'getActivities', logData.parentProcess, logData.username, 'Failed to get activities with dataId: ' + dataId
+          + '. Error: ' + error);
+        callback();
+      } else {
+        log.functionCall(COLLECTION, 'getActivities', logData.parentProcess, logData.username, {"dataId":dataId});
+        callback(activities);
+      }
+    });
+  };
+
   ACTIVITY.statics.getActivity = function(userId, dataId, logData, callback) {
     this.findOne({$and:[{user:userId}, {data:dataId}]}, function(error, activity) {
       if(error) {

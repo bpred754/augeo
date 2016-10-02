@@ -165,8 +165,9 @@
     stream.on('delete', function(deleteMessage) {
       log.functionCall(INTERFACE, 'openStream - delete', logData.parentProcess, logData.username, {}, 'Received delete request from Twitter');
 
-      // TODO: Complete remove logic
-      // removeCallback(deleteMessage);
+      if(deleteMessage && deleteMessage.delete && deleteMessage.delete.status) {
+        removeCallback(deleteMessage.delete.status.id_str);
+      }
     });
 
     stream.on('limit', function(limitMessage) {

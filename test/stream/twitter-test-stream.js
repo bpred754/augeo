@@ -55,15 +55,12 @@
 
   EventEmitter.on('delete', function() {
 
-    // TODO: Create logic in Data.js to simulate a delete
-    // TODO: Place tweet in callback
-
     var deleteMessage = {
       id_str: 'delete_id_str',
       user_id_str: 'delete_user_id_str'
     }
 
-    deleteCallback(deleteMessage);
+    deleteCallback(deleteMessage.id_str);
   });
 
   exports.emitter = EventEmitter;

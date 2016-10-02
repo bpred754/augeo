@@ -231,46 +231,56 @@
     });
   };
 
-  // TODO: Complete this
-  // Current logic deletes tweet and updates user experience
-  // Need to loop through mentionees of tweet and remove mentions from Mention table and update mentionees experience
-  // Since stream logic can only detect replies, need to only update experience for deleted entries for replies or any
-  // mention before the date of signing up with Augeo.
-  // Need to update tests for TwitterTestInterface
-  exports.removeTweet = function(tweetData, logData, callback) {
-    log.functionCall(SERVICE, 'removeTweet', logData.parentProcess, logData.username, {'tweetData.id_str':(tweetData)?tweetData.id_str:'invalid'});
+  exports.removeTweet = function(tweetId, logData, callback) {
+    log.functionCall(SERVICE, 'removeTweet', logData.parentProcess, logData.username, {'tweetId':tweetId});
 
-    // Get User's ID
-    TwitterUser.getUserWithTwitterId(tweetData.user_id_str, logData, function(user) {
+    // Get tweet with Id
+    Tweet.getTweet(tweetId, logData, function(tweet) {
 
-      // Get tweet to be removed from database
-      Tweet.getTweet(tweetData.id_str, logData, function (tweet) {
-        Activity.getActivity(user._id, tweet._id, logData, function(activity) {
+      if(tweet) {
 
-          var tweetExperience = activity.experience * -1;
-          var classification = activity.classification;
+        // Get all activities with tweet._id
+        Activity.getActivities(tweet._id, logData, function (activities) {
 
-          // Remove tweet
-          Tweet.removeTweet(tweetData.id_str, logData, function () {
-            Activity.removeActivity(user._id, tweet._id, logData, function() {
+          if (activities && activities.length > 0) {
+            // Asynchronous method calls in loop - Using Recursion
+            (function myClojure(i) {
+              var activity = activities[i];
 
               // Set subskills experience
               var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData);
-              subSkillsExperience[classification] += tweetExperience;
+              subSkillsExperience[activity.classification] += (activity.experience * -1);
 
               var experience = {
-                mainSkillExperience: tweetExperience,
+                mainSkillExperience: (activity.experience * -1),
                 subSkillsExperience: subSkillsExperience
               };
 
               // Update users experience
-              User.updateSkillData(user._id, experience, logData, function () {
-                callback(classification);
+              User.updateSkillData(activity.user, experience, logData, function () {
+
+                // Remove the activity
+                Activity.removeActivity(activity.user, tweet._id, logData, function () {
+                  i++;
+                  if (i < activities.length) {
+                    myClojure(i);
+                  } else {
+
+                    // Remove tweet
+                    Tweet.removeTweet(tweetId, logData, function () {
+                      callback();
+                    });
+                  }
+                });
               });
-            });
-          });
+            })(0); // Pass i as 0 and myArray to myClojure
+          } else {
+            callback();
+          }
         });
-      });
+      } else {
+        callback();
+      }
     });
   };
 

@@ -99,12 +99,12 @@
     });
 
     importTests('githubEventTask', './test-case/queue-task/github/github-event-task.js');
-    importTests('twitterEventTask', './test-case/queue-task/twitter/event/twitter-event-task.js');
-    importTests('twitterMentionTask', './test-case/queue-task/twitter/event/twitter-mention-task.js');
-    importTests('twitterTweetTask', './test-case/queue-task/twitter/event/twitter-tweet-task.js');
     importTests('twitterAddActivityTask', './test-case/queue-task/twitter/stream/twitter-add-activity-task.js');
     importTests('twitterConnectTask', './test-case/queue-task/twitter/stream/twitter-connect-task.js', App);
-    //importTests('twitterRemoveActivityTask', './test-case/queue-task/twitter/stream/twitter-remove-activity-task.js');
+    importTests('twitterEventTask', './test-case/queue-task/twitter/event/twitter-event-task.js');
+    importTests('twitterMentionTask', './test-case/queue-task/twitter/event/twitter-mention-task.js');
+    importTests('twitterRemoveActivityTask', './test-case/queue-task/twitter/stream/twitter-remove-activity-task.js');
+    importTests('twitterTweetTask', './test-case/queue-task/twitter/event/twitter-tweet-task.js');
 
     // Clean database
     after(function(done) {
