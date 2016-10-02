@@ -38,6 +38,7 @@
     this.isBusy = false;
     this.isQueueOpen = true;
     this.queue = null;
+    this.removeCurrentTask = false;
 
     // Override in child objects
     this.maxTaskExecutionTime = 0;
@@ -58,7 +59,7 @@
       if(!this.isRevolvingQueue || (this.isRevolvingQueue && !this.currentTask.isPoll)) {
 
         // Check if the current task is for the userId passed in
-        if (this.currentTask && this.currentTask.user && this.currentTask.user._id == userId) {
+        if (this.currentTask && this.currentTask.user && this.currentTask.user._id.equals(userId)) {
           waitTime = this.maxTaskExecutionTime;
         } else { // If the current task is not for the userId then find the userId in the queue
           var taskPosition = this.queue.getUserTaskPosition(userId);
@@ -114,9 +115,9 @@
 
           self.isBusy = true;
           task.execute(logData, function(executeData) {
-            self.finishTask(executeData, logData, function() {
 
-              if(self.queue.tasks.length == 0) {
+            var finalize = function(callback) {
+              if (self.queue.tasks.length == 0) {
                 self.isBusy = false;
               }
 
@@ -124,7 +125,16 @@
               self.currentTask = {};
 
               callback();
-            });
+            };
+
+            if(!self.removeCurrentTask) {
+              self.finishTask(executeData, logData, function () {
+                finalize(callback);
+              });
+            } else {
+              self.removeCurrentTask = false;
+              finalize(callback);
+            }
           });
         });
       });
@@ -144,6 +154,19 @@
         this.taskWaitTime = task.wait;
       } else {
         this.taskWaitTime = 0;
+      }
+    },
+
+    removeUserTask: function(userId) {
+
+      // Check if the current task is for the userId passed in
+      if (this.currentTask && this.currentTask.user && this.currentTask.user._id.equals(userId)) {
+        this.removeCurrentTask = true;
+      } else { // If the current task is not for the userId then find the userId in the queue
+        var taskPosition = this.queue.getUserTaskPosition(userId);
+        if (taskPosition > -1) {
+          this.queue.tasks.splice(taskPosition, 1);
+        }
       }
     },
 

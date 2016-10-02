@@ -199,7 +199,7 @@
             if(taskData) {
               var user = taskData.user;
               if (user) {
-                if (user._id == userId) {
+                if (user._id.equals(userId)) {
                   position = i;
                 }
               }

@@ -23,6 +23,7 @@
   /***************************************************************************/
 
   // Required libraries
+  var Mongoose = require('mongoose');
   var TwitterRouter = require('express').Router();
 
   // Required local modules
@@ -59,7 +60,7 @@
       // Remove invalid entry from TWITTER_USER
       if(username && request.session.user._id) {
         var logData = AugeoUtility.formatLogData(API+CALLBACK, username);
-        TwitterService.removeUser(request.session.user._id, logData, function(){});
+        TwitterService.removeUser(request.session.user._id, logData, function(){}, function(){});
       }
       response.redirect(301, process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
     };
@@ -161,10 +162,9 @@
       log.functionCall(API, GET_QUEUE_WAIT_TIMES, null, username);
       var logData = AugeoUtility.formatLogData(API+GET_QUEUE_WAIT_TIMES, username);
 
-      var userId = request.session.user._id;
-
       var waitTimes = new Array();
       if(request.session.user.twitter) {
+        var userId = Mongoose.Types.ObjectId(request.session.user._id);
         waitTimes.push(QueueService.tweetEventQueue.getUserWaitTime(userId, logData));
         waitTimes.push(QueueService.mentionEventQueue.getUserWaitTime(userId, logData));
       } else {

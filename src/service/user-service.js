@@ -228,7 +228,7 @@
         callback(user);
       });
     } else {
-      rollback();
+      rollback(400, 'Failed to retrieve session user object - Invalid username');
     }
   };
 
@@ -283,6 +283,28 @@
     });
   };
 
+  exports.isPasswordValid = function(username, password, logData, callback) {
+    log.functionCall(SERVICE, 'isPasswordValid', logData.parentProcess, logData.username, {'username':username});
+
+    if(AugeoValidator.isUsernameValid(username, logData) && AugeoValidator.isPasswordValid(password, logData)) {
+      User.getPasswordWithUsername(username, logData, function(hash) {
+        if(hash) {
+          Bcrypt.compare(password, hash, function(err, isMatch) {
+            if(isMatch) {
+              callback(true)
+            } else {
+              callback(false);
+            }
+          });
+        } else {
+          callback(false);
+        }
+      });
+    } else {
+      callback(false);
+    }
+  };
+
   exports.login = function(email, password, logData, callback, rollback) {
     log.functionCall(SERVICE, 'login', logData.parentProcess, logData.username, {'email':email});
 
@@ -310,46 +332,23 @@
     }
   };
 
-  exports.removeUser = function(username, logData, callback) {
+  exports.removeActivities = function(userId, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'removeActivities', logData.parentProcess, logData.username, {'userId': userId});
+
+    if(AugeoValidator.isMongooseObjectIdValid(userId, logData)){
+      Activity.removeActivities(userId, logData, callback);
+    } else {
+      rollback(400, 'Failed to remove activities - userId is invalid');
+    }
+  };
+
+  exports.removeUser = function(username, logData, callback, rollback) {
     log.functionCall(SERVICE, 'removeUser', logData.parentProcess, logData.username, {'username':username});
 
     if(AugeoValidator.isUsernameValid(username, logData)) {
       User.remove(username, logData, callback);
-    }
-  };
-
-  exports.removeUserWithPassword = function(username, password, logData, callback, rollback) {
-    log.functionCall(SERVICE, 'removeUserWithPassword', logData.parentProcess, logData.username, {'username':username});
-
-    if(AugeoValidator.isUsernameValid(username, logData)) {
-      if(AugeoValidator.isPasswordValid(password, logData)) {
-        User.getPasswordWithUsername(username, logData, function(hash) {
-          if(hash) {
-            Bcrypt.compare(password, hash, function(err, isMatch) {
-              if(isMatch) {
-                // Remove user
-                exports.removeUser(username, logData, function(removedUser) {
-                  // Update ranks
-                  exports.updateAllRanks(logData, function() {
-                    // Remove password attribute from object
-                    removedUser = removedUser.toObject();
-                    delete removedUser.password;
-                    callback(false, removedUser);
-                  });
-                });
-              } else {
-                callback(true);
-              }
-            });
-          } else {
-            rollback(400, exports.REMOVE_USER_FAILURE);
-          }
-        });
-      } else {
-        callback(true);
-      }
     } else {
-      rollback(400, exports.REMOVE_USER_FAILURE);
+      rollback(400, 'Failed to remove Augeo User - Invalid username');
     }
   };
 

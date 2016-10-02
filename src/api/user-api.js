@@ -29,7 +29,10 @@
   var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
   var EmailProvider = require('../module/email-provider');
+  var GithubService = require('../service/github-service');
   var Logger = require('../module/logger');
+  var QueueService = require('../service/queue-service');
+  var TwitterService = require('../service/twitter-service');
   var UserService = require('../service/user-service');
 
   // Constants
@@ -308,25 +311,50 @@
       log.functionCall(API, REMOVE, null, username);
       var logData = AugeoUtility.formatLogData(API+REMOVE, username);
 
-      UserService.removeUserWithPassword(username, request.body.password, logData, function(error, user) {
-        if(error) {
-          rollback(401, 'Incorrect password');
-        } else if(user) {
+      UserService.isPasswordValid(username, request.body.password, logData, function(isPasswordValid) {
 
-          if(process.env.ENV == 'prod') {
-            // Remove user from SendGrid contacts
-            EmailProvider.removeRecipient(user.sendGridId, logData);
-          }
+        if(isPasswordValid) {
 
-          // Destroy the session
-          request.session.destroy();
-          response.sendStatus(200);
+          UserService.getSessionUser(username, logData, function(augeoUser) {
+            var userId = augeoUser._id;
+
+            // Remove user's task from Twitter Tweet Queue
+            QueueService.tweetEventQueue.removeUserTask(userId);
+
+            // Remove user's task from Twitter Mention Queue
+            QueueService.mentionEventQueue.removeUserTask(userId);
+
+            // Remove user's task from Github Event Queue
+            QueueService.githubEventQueue.removeUserTask(userId);
+
+            UserService.removeUser(username, logData, function() {
+              UserService.updateAllRanks(logData, function() {
+                GithubService.removeUser(userId, logData, function(githubUser) {
+                  TwitterService.removeUser(userId, logData, function(twitterUser) {
+
+                    // Remove user activities
+                    UserService.removeActivities(userId, logData, function() {
+
+                      if(process.env.ENV == 'prod') {
+                        // Remove user from SendGrid contacts
+                        EmailProvider.removeRecipient(augeoUser.sendGridId, logData);
+                      }
+
+                      // Destroy the session
+                      request.session.destroy();
+                      response.sendStatus(200);
+                    });
+                  }, rollback);
+                }, rollback);
+              });
+            }, rollback);
+          }, rollback);
         } else {
-          rollback(400, UserService.REMOVE_USER_FAILURE);
+          rollback(401, 'Incorrect password')
         }
-      }, rollback);
+      });
     } else {
-      rollback(400, UserService.REMOVE_USER_FAILURE);
+      rollback(401, INVALID_SESSION);
     }
   });
 

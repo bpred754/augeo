@@ -466,7 +466,7 @@
               Should.not.exist(retrievedUser1);
               done();
             });
-          });
+          }, function(){});
         });
       });
     });

@@ -55,7 +55,7 @@
         .send({password:Common.ACTIONEE.password})
         .expect(400)
         .end(function(error, response) {
-          Assert.strictEqual(response.error.text, 'Failed to delete user');
+          Assert.strictEqual(response.error.text, 'Invalid session');
           done();
         })
     });

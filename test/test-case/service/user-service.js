@@ -24,19 +24,21 @@
 
   // Required libraries
   var Assert = require('assert');
+  var Mongoose = require('mongoose');
   var Should = require('should');
 
   // Required local modules
   var AugeoUtility = require('../../../src/utility/augeo-utility');
   var Common = require('../../data/common');
-  var Mongoose = require('../../../src/model/database');
+  var AugeoDB = require('../../../src/model/database');
   var TwitterData = require('../../data/twitter-data')
   var TwitterService = require('../../../src/service/twitter-service');
   var UserService = require('../../../src/service/user-service');
 
   // Global variables
-  var User = Mongoose.model('AUGEO_USER');
-  var TwitterUser = Mongoose.model('TWITTER_USER');
+  var Activity = AugeoDB.model('ACTIVITY');
+  var User = AugeoDB.model('AUGEO_USER');
+  var TwitterUser = AugeoDB.model('TWITTER_USER');
 
   // addUser
   it('should add new Augeo user to AugeoDB -- addUser()', function(done) {
@@ -255,6 +257,41 @@
     });
   });
 
+  // isPasswordValid
+  it('should return a boolean determining if the password is valid or not - isPasswordValid()', function(done) {
+    this.timeout(Common.TIMEOUT);
+
+    // Add Twitter Actionee entry to USER table so it can be removed
+    UserService.addUser(Common.ACTIONEE, Common.logData, function() {
+
+      // Invalid email
+      UserService.isPasswordValid('!!!', Common.ACTIONEE.password, Common.logData, function(isValid0) {
+        Assert.strictEqual(isValid0, false);
+
+        // Invalid password
+        UserService.isPasswordValid(Common.ACTIONEE.username, null, Common.logData, function(isValid1) {
+          Assert.strictEqual(isValid1, false);
+
+          // User does not exist for given username
+          UserService.isPasswordValid('blah', Common.ACTIONEE.password, Common.logData, function(isValid2) {
+            Assert.strictEqual(isValid2, false);
+
+            // Password does not match password in database
+            UserService.isPasswordValid(Common.ACTIONEE.username, 'password', Common.logData, function(isValid3) {
+              Assert.strictEqual(isValid3, false);
+
+              // Success
+              UserService.isPasswordValid(Common.ACTIONEE.username, Common.ACTIONEE.password, Common.logData, function(isValid4) {
+                Assert.strictEqual(isValid4, true);
+                done();
+              });
+            });
+          });
+        });
+      });
+    }, function() {});
+  });
+
   // login
   it('should login Augeo user -- login()', function(done) {
     this.timeout(Common.TIMEOUT);
@@ -285,8 +322,54 @@
     });
   });
 
-  // removeInvalidUser
-  it('should remove user from database with a specified username -- removeInvalidUser()', function(done) {
+  // removeActivities
+  it('should remove a users activities from the ACTIVITY collection', function(done) {
+
+    User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
+
+      // Add activity to ACTIVITY collection
+      var activity = {
+        "data": Mongoose.Types.ObjectId("57f0472466afca92698d6e19"),
+        "user": user._id,
+        "timestamp": new Date("2014-08-13T17:55:11-0700"),
+        "kind": "TWITTER_TWEET",
+        "experience": 30,
+        "classificationGlyphicon": "glyphicon-globe",
+        "classification": "General"
+      };
+
+      Activity.addActivity(activity, Common.logData, function() {
+
+        // Verify user has activities in ACTIVITY collection
+        Activity.getUserActivities(user._id, Common.logData, function(beforeActivities0) {
+          beforeActivities0.length.should.be.above(0);
+
+          // Invalid userId
+          UserService.removeActivities('!!!', Common.logData, function() {}, function(code, message) {
+            Assert.strictEqual(code, 400);
+
+            // Verify activities are still there
+            Activity.getUserActivities(user._id, Common.logData, function(beforeActivities1) {
+              beforeActivities1.length.should.be.above(0);
+
+              // Success
+              UserService.removeActivities(user._id, Common.logData, function() {
+
+                Activity.getUserActivities(user._id, Common.logData, function(afterActivities) {
+                  Assert.strictEqual(afterActivities.length, 0);
+
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  // removeUser
+  it('should remove user from database with a specified username -- removeUser()', function(done) {
     this.timeout(Common.TIMEOUT);
 
     var invalidUser = {
@@ -295,7 +378,7 @@
       lastName: 'blah blah',
       username: 'blahblahblah',
       password: 'blahblah'
-    }
+    };
 
     var request = {
       session: {
@@ -327,58 +410,6 @@
         })
       });
     });
-  });
-
-  // removeUserWithPassword
-  it('should remove user from USER table - removeUserWithPassword()', function(done) {
-    this.timeout(Common.TIMEOUT);
-    var logData = {};
-
-    var callbackFailure = function() {
-      console.log('** UserService.removeUserWithPassword -- in callback, test failed **');
-    };
-
-    var rollbackFailure = function() {
-      console.log('** UserService.removeUserWithPassword -- in rollback, test failed **');
-    };
-
-    // Add Twitter Actionee entry to USER table so it can be removed
-    UserService.addUser(Common.ACTIONEE, Common.logData, function() {
-
-      // Invalid email - execute rollback
-      UserService.removeUserWithPassword('!!!', Common.ACTIONEE.password, Common.logData, callbackFailure, function() {
-
-        // Invalid password - execute callback with error
-        UserService.removeUserWithPassword(Common.ACTIONEE.username, null, Common.logData, function(error0, user0) {
-          Assert.strictEqual(error0, true);
-          Should.not.exist(user0);
-
-          // User does not exist for given username - execute rollback
-          UserService.removeUserWithPassword('blah', Common.ACTIONEE.password, Common.logData, callbackFailure, function() {
-
-            // Password does not match password in database - execute callback with error
-            UserService.removeUserWithPassword(Common.ACTIONEE.username, 'password', Common.logData, function(error1, user1) {
-              Assert.strictEqual(error1, true);
-              Should.not.exist(user1);
-
-              // Success
-              UserService.removeUserWithPassword(Common.ACTIONEE.username, Common.ACTIONEE.password, Common.logData, function(error2, user2) {
-                Assert.strictEqual(error2, false);
-
-                // Validate that returned user does not have password
-                Should.not.exist(user2.password);
-
-                // Validate that returned user is not in USER table
-                User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
-                  Should.not.exist(user3);
-                  done();
-                });
-              });
-            });
-          });
-        });
-      });
-    }, rollbackFailure);
   });
 
   // saveProfileData
@@ -462,86 +493,90 @@
           newUserSubSkills[i].rank = numUsers;
         }
 
-        var newUser = {
-          firstName: Common.ACTIONEE.firstName,
-          lastName: Common.ACTIONEE.lastName,
-          username: Common.ACTIONEE.username,
-          password: Common.ACTIONEE.password,
-          skill: newUserSkill,
-          subSkills: newUserSubSkills
-        };
+        // Remove ACTIONEE from DB - start from scratch
+        User.remove(Common.ACTIONEE.username, Common.logData, function() {
 
-        // Verify new user is not in database
-        User.getUserWithUsername(newUser.username, Common.logData, function(user1) {
-          Should.not.exist(user1);
+          var newUser = {
+            firstName: Common.ACTIONEE.firstName,
+            lastName: Common.ACTIONEE.lastName,
+            username: Common.ACTIONEE.username,
+            password: Common.ACTIONEE.password,
+            skill: newUserSkill,
+            subSkills: newUserSubSkills
+          };
 
-          // Add new user to database
-          User.add(newUser, Common.logData, function(user2) {
+          // Verify new user is not in database
+          User.getUserWithUsername(newUser.username, Common.logData, function(user1) {
+            Should.not.exist(user1);
 
-            // Add Twitter user to database
-            TwitterUser.add(user2._id, TwitterData.USER_TWITTER.secretToken, Common.logData, function(isSuccessful) {
+            // Add new user to database
+            User.add(newUser, Common.logData, function(user2) {
 
-              var twitterData = {
-                twitterId: TwitterData.ACTIONEE_TWITTER.twitterId,
-                name: Common.ACTIONEE.fullName,
-                screenName: TwitterData.ACTIONEE_TWITTER.screenName,
-                profileImageUrl: TwitterData.ACTIONEE_TWITTER.profileImageUrl,
-                accessToken: TwitterData.ACTIONEE_TWITTER.accessToken,
-                secretAccessToken: TwitterData.ACTIONEE_TWITTER.secretAccessToken,
-              };
+              // Add Twitter user to database
+              TwitterUser.add(user2._id, TwitterData.USER_TWITTER.secretToken, Common.logData, function(isSuccessful) {
 
-              var sessionUser = {
-                username: Common.ACTIONEE.username,
-                profileImg: 'image/avatar-medium.png',
-                profileIcon: 'image/avatar-small.png'
-              };
+                var twitterData = {
+                  twitterId: TwitterData.ACTIONEE_TWITTER.twitterId,
+                  name: Common.ACTIONEE.fullName,
+                  screenName: TwitterData.ACTIONEE_TWITTER.screenName,
+                  profileImageUrl: TwitterData.ACTIONEE_TWITTER.profileImageUrl,
+                  accessToken: TwitterData.ACTIONEE_TWITTER.accessToken,
+                  secretAccessToken: TwitterData.ACTIONEE_TWITTER.secretAccessToken,
+                };
 
-              // Update new user's twitter information
-              TwitterService.updateTwitterInfo(user2._id, sessionUser, twitterData, Common.logData, function() {
+                var sessionUser = {
+                  username: Common.ACTIONEE.username,
+                  profileImg: 'image/avatar-medium.png',
+                  profileIcon: 'image/avatar-small.png'
+                };
 
-                // Verify new user's skill and subSkill rank is higher than Common.USER
-                User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
+                // Update new user's twitter information
+                TwitterService.updateTwitterInfo(user2._id, sessionUser, twitterData, Common.logData, function() {
 
-                  var newUserSkillRank = user3.skill.rank;
-                  var newUserSubSkillRank = user3.subSkills[baseIndex].rank;
+                  // Verify new user's skill and subSkill rank is higher than Common.USER
+                  User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user3) {
 
-                  newUserSkillRank.should.be.above(baseSkillRank);
-                  newUserSubSkillRank.should.be.above(baseSubSkillRank);
+                    var newUserSkillRank = user3.skill.rank;
+                    var newUserSubSkillRank = user3.subSkills[baseIndex].rank;
 
-                  var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData);
-                  updateSubSkillExperiences[AugeoUtility.SUB_SKILLS[baseIndex].name] = (baseExperience+1)*100;
-                  var updateExperience = {
-                    mainSkillExperience: (baseExperience+1)*100,
-                    subSkillsExperience: updateSubSkillExperiences
-                  }
+                    newUserSkillRank.should.be.above(baseSkillRank);
+                    newUserSubSkillRank.should.be.above(baseSubSkillRank);
 
-                  // Update new user's subSkill experience to be more than Common.USER - use User.updateSkillData
-                  User.updateSkillData(user3._id, updateExperience, Common.logData, function() {
+                    var updateSubSkillExperiences = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, Common.logData);
+                    updateSubSkillExperiences[AugeoUtility.SUB_SKILLS[baseIndex].name] = (baseExperience+1)*100;
+                    var updateExperience = {
+                      mainSkillExperience: (baseExperience+1)*100,
+                      subSkillsExperience: updateSubSkillExperiences
+                    }
 
-                    // Update ranks
-                    UserService.updateRanks(Common.logData, function() {
+                    // Update new user's subSkill experience to be more than Common.USER - use User.updateSkillData
+                    User.updateSkillData(user3._id, updateExperience, Common.logData, function() {
 
-                      // Update sub skill ranks
-                      UserService.updateSubSkillRanks(general.name, Common.logData, function() {
+                      // Update ranks
+                      UserService.updateRanks(Common.logData, function() {
 
-                        User.getUserWithUsername(Common.USER.username, Common.logData, function(user4) {
+                        // Update sub skill ranks
+                        UserService.updateSubSkillRanks(general.name, Common.logData, function() {
 
-                          // Update baseline variables
-                          baseSkillRank = user4.skill.rank;
-                          baseSubSkillRank = user4.subSkills[baseIndex].rank;
+                          User.getUserWithUsername(Common.USER.username, Common.logData, function(user4) {
 
-                          // Verify new user's subSkill rank is lower than Common.USER
-                          User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user5) {
-                            user5.skill.rank.should.be.below(baseSkillRank);
-                            user5.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
-                            done();
+                            // Update baseline variables
+                            baseSkillRank = user4.skill.rank;
+                            baseSubSkillRank = user4.subSkills[baseIndex].rank;
+
+                            // Verify new user's subSkill rank is lower than Common.USER
+                            User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(user5) {
+                              user5.skill.rank.should.be.below(baseSkillRank);
+                              user5.subSkills[baseIndex].rank.should.be.below(baseSubSkillRank);
+                              done();
+                            });
                           });
                         });
                       });
                     });
                   });
-                });
-              }, function(){});
+                }, function(){});
+              });
             });
           });
         });

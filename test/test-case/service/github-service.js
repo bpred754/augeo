@@ -213,7 +213,7 @@
 
     // Invalid AugeoUser ID
     GithubService.removeUser(undefined, Common.logData, function () {
-    }, function (message) {
+    }, function (code, message) {
       Assert.strictEqual(message, 'Invalid AugeoUser ID');
 
       GithubUser.getUserWithScreenName(GithubData.USER_GITHUB.screenName, Common.logData, function (user0) {

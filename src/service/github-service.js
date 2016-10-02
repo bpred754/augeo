@@ -125,6 +125,6 @@
     if(AugeoValidator.isMongooseObjectIdValid(augeoId, logData)) {
       GithubUser.remove(augeoId, logData,  callback);
     } else {
-      rollback('Invalid AugeoUser ID');
+      rollback(400, 'Invalid AugeoUser ID');
     }
   };

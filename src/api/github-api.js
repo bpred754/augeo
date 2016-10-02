@@ -24,6 +24,7 @@
 
   // Required libraries
   var GithubRouter = require('express').Router();
+  var Mongoose = require('mongoose');
 
   // Required local modules
   var AugeoUtility = require('../utility/augeo-utility');
@@ -175,10 +176,9 @@
       log.functionCall(API, GET_QUEUE_WAIT_TIMES, null, username);
       var logData = AugeoUtility.formatLogData(API+GET_QUEUE_WAIT_TIMES, username);
 
-      var userId = request.session.user._id;
-
       var waitTimes = new Array();
       if(request.session.user.github) {
+        var userId = Mongoose.Types.ObjectId(request.session.user._id);
         waitTimes.push(QueueService.githubEventQueue.getUserWaitTime(userId, logData));
       } else {
         waitTimes.push(QueueService.githubEventQueue.getWaitTime(logData));

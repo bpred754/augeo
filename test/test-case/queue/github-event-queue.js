@@ -237,12 +237,12 @@
       var queue = new GithubEventQueue(Common.logData);
       queue.taskWaitTime = 10;
 
-      // Test 1 - if task.lastEventId is null then don't set taskWaitTime to pollTime
+      // Test 1 - if task.isPoll is false then don't set taskWaitTime to pollTime
       queue.prepareTask(task);
       Assert.strictEqual(10, queue.taskWaitTime);
 
-      // Test 2 - if task.lastEventId is defined then set taskWaitTime to pollTime
-      task.lastEventId = 10;
+      // Test 2 - if task.isPoll is true then set taskWaitTime to pollTime
+      task.isPoll = true;
       queue.prepareTask(task);
       Assert.strictEqual(queue.taskWaitTime, queue.getPollTime());
 

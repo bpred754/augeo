@@ -82,6 +82,7 @@
 
           // Set lastEventId to null, it will be updated when all new commits are retrieved
           if(task.commits.length > 0) {
+            task.isPoll = false;
             task.lastEventId = null;
           }
         }

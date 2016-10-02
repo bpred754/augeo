@@ -151,6 +151,18 @@
       });
   };
 
+  ACTIVITY.statics.getUserActivities = function(userId, logData, callback) {
+    this.find({user:userId}, function(error, activities) {
+      if(error) {
+        log.functionError(COLLECTION, 'getUserActivities', logData.parentProcess, logData.username, {'userId':userId});
+        callback();
+      } else {
+        log.functionCall(COLLECTION, 'getUserActivities', logData.parentProcess, logData.username, {'userId':userId});
+        callback(activities);
+      }
+    });
+  };
+
   ACTIVITY.statics.increaseExperience = function(userId, dataId, experience, logData, callback) {
     this.findOneAndUpdate({$and:[{user:userId}, {data:dataId}]}, {$inc:{experience:experience}}, {'new':true}, function(error, activity) {
       if(error) {
@@ -166,7 +178,7 @@
   ACTIVITY.statics.removeActivities = function(userId, logData, callback) {
     this.remove({user:userId}, function(error) {
       if(error) {
-        log.functionError(COLLECTION, 'removeActivities', logData.parentProcess, logData.username, 'Failed to remove activity with userId: ' + userId
+        log.functionError(COLLECTION, 'removeActivities', logData.parentProcess, logData.username, 'Failed to remove activities with userId: ' + userId
           + '. Error: ' + error);
         callback();
       } else {

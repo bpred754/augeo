@@ -121,7 +121,7 @@
     },
 
     prepareTask: function(task) {
-      if(task.lastEventId) {
+      if(task.isPoll) {
         this.taskWaitTime = pollTime;
       }
     },

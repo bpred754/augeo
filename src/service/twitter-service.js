@@ -23,7 +23,6 @@
   /***************************************************************************/
 
   // Required files
-  var Mongoose = require('mongoose');
   var AugeoDB = require('../model/database');
 
   // Required local modules
@@ -32,7 +31,6 @@
   var Classifier = require('../classifier/app-classifier');
   var Logger = require('../module/logger');
   var TwitterUtility = require('../utility/twitter-utility');
-  var TwitterValidator = require('../validator/twitter-validator');
 
   // Constants
   var SERVICE = 'twitter-service';
@@ -109,9 +107,13 @@
                   actioneeSubmitted = true;
                 }
               });
+            } else {
+              callback();
             }
           }); // End getUserWithScreenName for actionee
         }); // End getUserWithScreenName for actioner
+      } else {
+        callback();
       }
     }); // End findTweet
   };
@@ -272,9 +274,14 @@
     });
   };
 
-  exports.removeUser = function(augeoId, logData, callback) {
+  exports.removeUser = function(augeoId, logData, callback, rollback) {
     log.functionCall(SERVICE, 'removeUser', logData.parentProcess, logData.username, {'augeoId': augeoId});
-    TwitterUser.remove(augeoId, logData, callback);
+
+    if(AugeoValidator.isMongooseObjectIdValid(augeoId, logData)) {
+      TwitterUser.remove(augeoId, logData, callback);
+    } else {
+      rollback(400, 'Invalid AugeoUser ID');
+    }
   };
 
   // Call DB to update user's twitter information
