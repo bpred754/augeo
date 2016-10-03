@@ -82,7 +82,7 @@
     Assert.strictEqual(extractedtweet.classification, 'General');
     Assert.strictEqual(extractedtweet.classificationGlyphicon, 'glyphicon-globe');
     Assert.strictEqual(extractedtweet.date, 'Mon Mar 30 21:54:28 +0000 2015');
-    Assert.strictEqual(extractedtweet.experience, 20);
+    Assert.strictEqual(extractedtweet.experience, 10);
     Assert.strictEqual(extractedtweet.retweetCount, 1);
     Assert.strictEqual(extractedtweet.favoriteCount, 0);
     Assert.strictEqual(extractedtweet.mentions.length, 0);

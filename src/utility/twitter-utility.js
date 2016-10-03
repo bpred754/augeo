@@ -31,8 +31,8 @@
   // Public Constants
   exports.TWEET_EXPERIENCE = 10;
   exports.MENTION_EXPERIENCE = 10;
-  exports.RETWEET_EXPERIENCE = 10;
-  exports.FAVORITE_EXPERIENCE = 10;
+  exports.RETWEET_EXPERIENCE = 0;
+  exports.FAVORITE_EXPERIENCE = 0;
   exports.HASH_TAGS = ["augeoBooks","augeoBusiness","augeoFilm","augeoFood&Drink","augeoGeneral","augeoMusic","augeoPhotography","augeoSports","augeoTechnology"];
 
   // Global variables
