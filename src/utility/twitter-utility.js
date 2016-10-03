@@ -29,10 +29,10 @@
   var UTILITY = 'twitter-utility';
 
   // Public Constants
-  exports.TWEET_EXPERIENCE = 30;
-  exports.MENTION_EXPERIENCE = 30;
-  exports.RETWEET_EXPERIENCE = 50;
-  exports.FAVORITE_EXPERIENCE = 50;
+  exports.TWEET_EXPERIENCE = 10;
+  exports.MENTION_EXPERIENCE = 10;
+  exports.RETWEET_EXPERIENCE = 10;
+  exports.FAVORITE_EXPERIENCE = 10;
   exports.HASH_TAGS = ["augeoBooks","augeoBusiness","augeoFilm","augeoFood&Drink","augeoGeneral","augeoMusic","augeoPhotography","augeoSports","augeoTechnology"];
 
   // Global variables

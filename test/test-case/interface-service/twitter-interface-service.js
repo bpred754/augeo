@@ -82,7 +82,7 @@
     Assert.strictEqual(extractedtweet.classification, 'General');
     Assert.strictEqual(extractedtweet.classificationGlyphicon, 'glyphicon-globe');
     Assert.strictEqual(extractedtweet.date, 'Mon Mar 30 21:54:28 +0000 2015');
-    Assert.strictEqual(extractedtweet.experience, 80);
+    Assert.strictEqual(extractedtweet.experience, 20);
     Assert.strictEqual(extractedtweet.retweetCount, 1);
     Assert.strictEqual(extractedtweet.favoriteCount, 0);
     Assert.strictEqual(extractedtweet.mentions.length, 0);
@@ -102,7 +102,7 @@
     Assert.strictEqual(extractedTweetWithMention.classification, 'General');
     Assert.strictEqual(extractedTweetWithMention.classificationGlyphicon, 'glyphicon-globe');
     Assert.strictEqual(extractedTweetWithMention.date, 'Sat Jun 20 23:24:29 +0000 2015');
-    Assert.strictEqual(extractedTweetWithMention.experience, 30);
+    Assert.strictEqual(extractedTweetWithMention.experience, 10);
     Assert.strictEqual(extractedTweetWithMention.retweetCount, 0);
     Assert.strictEqual(extractedTweetWithMention.favoriteCount, 0);
     Assert.strictEqual(extractedTweetWithMention.mentions.length, 1);
@@ -123,7 +123,7 @@
     Assert.strictEqual(extractedTweetWithHashtag.classification, 'Business');
     Assert.strictEqual(extractedTweetWithHashtag.classificationGlyphicon, 'glyphicon-briefcase');
     Assert.strictEqual(extractedTweetWithHashtag.date, 'Thu Dec 31 23:24:29 +0000 2015');
-    Assert.strictEqual(extractedTweetWithHashtag.experience, 30);
+    Assert.strictEqual(extractedTweetWithHashtag.experience, 10);
     Assert.strictEqual(extractedTweetWithHashtag.retweetCount, 0);
     Assert.strictEqual(extractedTweetWithHashtag.favoriteCount, 0);
     Assert.strictEqual(extractedTweetWithHashtag.mentions.length, 0);
@@ -144,7 +144,7 @@
     Assert.strictEqual(extractedRetweet.classification, 'General');
     Assert.strictEqual(extractedRetweet.classificationGlyphicon, 'glyphicon-globe');
     Assert.strictEqual(extractedRetweet.date, 'Sat Mar 28 20:15:48 +0000 2015');
-    Assert.strictEqual(extractedRetweet.experience, 30);
+    Assert.strictEqual(extractedRetweet.experience, 10);
     Assert.strictEqual(extractedRetweet.retweetCount, 0);
     Assert.strictEqual(extractedRetweet.favoriteCount, 0);
     Assert.strictEqual(extractedRetweet.mentions.length, 1);

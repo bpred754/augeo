@@ -30,14 +30,14 @@
   var TwitterUtility = require('../../../src/utility/twitter-utility');
 
   it("should return the correct experience for a given tweet's retweet and favorite counts -- calculateTweetExperience()", function(done) {
-    Assert.strictEqual(TwitterUtility.calculateTweetExperience(2,3, Common.logData), 280);
-    Assert.strictEqual(TwitterUtility.calculateTweetExperience(3,2, Common.logData), 280);
-    Assert.strictEqual(TwitterUtility.calculateTweetExperience(0,0, Common.logData), 30);
-    Assert.strictEqual(TwitterUtility.calculateTweetExperience(-1,-1, Common.logData), 30);
-    Assert.strictEqual(TwitterUtility.calculateTweetExperience('test',2, Common.logData), 130);
-    Assert.strictEqual(TwitterUtility.calculateTweetExperience(2,'test', Common.logData), 130);
-    Assert.strictEqual(TwitterUtility.calculateTweetExperience(undefined,2, Common.logData), 130);
-    Assert.strictEqual(TwitterUtility.calculateTweetExperience(2,undefined, Common.logData), 130);
+    Assert.strictEqual(TwitterUtility.calculateTweetExperience(2,3, Common.logData), 60);
+    Assert.strictEqual(TwitterUtility.calculateTweetExperience(3,2, Common.logData), 60);
+    Assert.strictEqual(TwitterUtility.calculateTweetExperience(0,0, Common.logData), 10);
+    Assert.strictEqual(TwitterUtility.calculateTweetExperience(-1,-1, Common.logData), 10);
+    Assert.strictEqual(TwitterUtility.calculateTweetExperience('test',2, Common.logData), 30);
+    Assert.strictEqual(TwitterUtility.calculateTweetExperience(2,'test', Common.logData), 30);
+    Assert.strictEqual(TwitterUtility.calculateTweetExperience(undefined,2, Common.logData), 30);
+    Assert.strictEqual(TwitterUtility.calculateTweetExperience(2,undefined, Common.logData), 30);
     done();
   });
 
@@ -71,15 +71,15 @@
       experience: 1000
     };
 
-    Assert.strictEqual(TwitterUtility.getExperience(tweet, 'testScreenName', true, Common.logData), 50);
+    Assert.strictEqual(TwitterUtility.getExperience(tweet, 'testScreenName', true, Common.logData), 10);
     Assert.strictEqual(TwitterUtility.getExperience(tweet, 'testScreenName', false, Common.logData), 1000);
-    Assert.strictEqual(TwitterUtility.getExperience(tweet, 'screenName', false, Common.logData), 30);
+    Assert.strictEqual(TwitterUtility.getExperience(tweet, 'screenName', false, Common.logData), 10);
 
     Assert.strictEqual(TwitterUtility.getExperience('tweet', 'testScreenName', false, Common.logData), 0);
     Assert.strictEqual(TwitterUtility.getExperience(tweet, 'testScreenName', 'true', Common.logData), 0);
 
     Assert.strictEqual(TwitterUtility.getExperience(undefined, 'testScreenName', false, Common.logData), 0);
-    Assert.strictEqual(TwitterUtility.getExperience(tweet, undefined, false, Common.logData), 30);
+    Assert.strictEqual(TwitterUtility.getExperience(tweet, undefined, false, Common.logData), 10);
     Assert.strictEqual(TwitterUtility.getExperience(tweet, 'testScreenName', undefined, Common.logData), 1000);
 
     done();
