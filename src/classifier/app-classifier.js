@@ -69,7 +69,7 @@
     addGeneralDocuments();
     addBookDocuments();
     addBusinessDocuments();
-    addFilmDocuments();
+    addEntertainmentDocuments();
     addFoodDocuments();
     addMusicDocuments();
     addPhotographyDocuments();
@@ -137,28 +137,28 @@
     };
 
   /***************************************************************************/
-  /* Film                                                                    */
+  /* Entertainment                                                           */
   /***************************************************************************/
 
-    var addFilmDocuments = function() {
+    var addEntertainmentDocuments = function() {
       /* TODO:
       1. TV Show/Movie Titles
       2. Actors/Actresses/Directors/Producers
       3. Movie Company Names
       4. TV Show Compay Names
       */
-      var filmTier1 = "film show director direct producer oscars actor actress emmy dvd movie cast sitcom hollywood episode";
+      var entertainmentTier1 = "film show director direct producer oscars actor actress emmy dvd movie cast sitcom hollywood episode";
 
-      var filmTier2 = "tv television sequel media finale cinema backstage season drama comedy crew dvr";
+      var entertainmentTier2 = "tv television sequel media finale cinema backstage season drama comedy crew dvr";
 
-      var filmTier3 = "direct produce watch nominate airs performance fans tune";
+      var entertainmentTier3 = "direct produce watch nominate airs performance fans tune";
 
-      classifier.addDocument(filmTier1,"Film");
-      classifier.addDocument(filmTier1,"Film");
-      classifier.addDocument(filmTier1,"Film");
-      classifier.addDocument(filmTier2,"Film");
-      classifier.addDocument(filmTier2,"Film");
-      classifier.addDocument(filmTier3,"Film");
+      classifier.addDocument(entertainmentTier1,"Entertainment");
+      classifier.addDocument(entertainmentTier1,"Entertainment");
+      classifier.addDocument(entertainmentTier1,"Entertainment");
+      classifier.addDocument(entertainmentTier2,"Entertainment");
+      classifier.addDocument(entertainmentTier2,"Entertainment");
+      classifier.addDocument(entertainmentTier3,"Entertainment");
     };
 
   /***************************************************************************/

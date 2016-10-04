@@ -22,7 +22,8 @@
         <progress-arc size="{{skillViewSize}}" stroke="#333" stroke-width="10" complete="skill.levelProgress" background="#eee"></progress-arc>
         <div class="sv-inner-circle-container" ng-class="{'svs-inner-circle-container': isSubSkill, 'svm-inner-circle-container': isMainSkill}">
             <div ng-class="{'svs-glyphicon-container': isSubSkill, 'svm-glyphicon-container': isMainSkill}" class="text-align-center">
-                <span ng-if="skill.glyphicon != null" class="glyphicon {{skill.glyphicon}} sv-glyphicon" ng-class="{'svs-glyphicon': isSubSkill, 'svm-glyphicon': isMainSkill}"></span>
+                <span ng-if="skill.glyphicon != null" class="glyphicon {{skill.glyphicon}} sv-glyphicon" ng-class="{'svs-glyphicon': isSubSkill,
+                'svm-glyphicon': isMainSkill, 'sv-entertainment':(skill.name == 'Entertainment'), 'sv-food-and-drink':(skill.name == 'Food & Drink')}"></span>
                 <div ng-if="skill.glyphicon == null" class="sv-image-container">
                     <img src="{{skill.imageSrc}}" class="sv-image"/>
                 </div>

@@ -33,7 +33,7 @@
   exports.MENTION_EXPERIENCE = 10;
   exports.RETWEET_EXPERIENCE = 0;
   exports.FAVORITE_EXPERIENCE = 0;
-  exports.HASH_TAGS = ["augeoBooks","augeoBusiness","augeoFilm","augeoFood&Drink","augeoGeneral","augeoMusic","augeoPhotography","augeoSports","augeoTechnology"];
+  exports.HASH_TAGS = ["augeoBooks","augeoBusiness","augeoEntertainment","augeoFood&Drink","augeoGeneral","augeoMusic","augeoPhotography","augeoSports","augeoTechnology"];
 
   // Global variables
   var log = new Logger();

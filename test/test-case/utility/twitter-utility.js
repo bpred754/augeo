@@ -44,7 +44,7 @@
   it('should return true when string contains a augeo hashtag -- containsAugeoHashtag()', function(done) {
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoBooks', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoBusiness', Common.logData), true);
-    Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoFilm', Common.logData), true);
+    Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoEntertainment', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoFood&Drink', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoGeneral', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoMusic', Common.logData), true);

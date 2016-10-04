@@ -89,7 +89,7 @@
     var subSkillExperiences = new Array();
     subSkillExperiences['Books'] = 0;
     subSkillExperiences['Business'] = 90;
-    subSkillExperiences['Film'] = 100;
+    subSkillExperiences['Entertainment'] = 100;
     subSkillExperiences['Food & Drink'] = 180;
     subSkillExperiences['General'] = 2670;
     subSkillExperiences['test'] = 10000;
@@ -115,8 +115,8 @@
     Assert.strictEqual(skill1.rank, 0);
 
     var skill2 = subSkills[2];
-    Assert.strictEqual(skill2.name, 'Film');
-    Assert.strictEqual(skill2.glyphicon, 'glyphicon-film');
+    Assert.strictEqual(skill2.name, 'Entertainment');
+    Assert.strictEqual(skill2.glyphicon, 'glyphicon-star');
     Assert.strictEqual(skill2.experience, 100);
     Assert.strictEqual(skill2.level, 2);
     Assert.strictEqual(skill2.rank, 0);
@@ -189,7 +189,7 @@
   it('should return glyphicon for a given skill name -- getGlyphicon()', function(done) {
     Assert.strictEqual(AugeoUtility.getGlyphicon('Books', Common.logData), 'glyphicon-book');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Business', Common.logData), 'glyphicon-briefcase');
-    Assert.strictEqual(AugeoUtility.getGlyphicon('Film', Common.logData), 'glyphicon-film');
+    Assert.strictEqual(AugeoUtility.getGlyphicon('Entertainment', Common.logData), 'glyphicon-star');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Food & Drink', Common.logData), 'glyphicon-cutlery');
     Assert.strictEqual(AugeoUtility.getGlyphicon('General', Common.logData), 'glyphicon-globe');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Music', Common.logData), 'glyphicon-headphones');
@@ -260,7 +260,7 @@
   it('should return the index of the given skill name -- getSKillIndex()', function(done) {
     Assert.strictEqual(AugeoUtility.getSkillIndex('Books', Common.logData), 0);
     Assert.strictEqual(AugeoUtility.getSkillIndex('Business', Common.logData), 1);
-    Assert.strictEqual(AugeoUtility.getSkillIndex('Film', Common.logData), 2);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Entertainment', Common.logData), 2);
     Assert.strictEqual(AugeoUtility.getSkillIndex('Food & Drink', Common.logData), 3);
     Assert.strictEqual(AugeoUtility.getSkillIndex('General', Common.logData), 4);
     Assert.strictEqual(AugeoUtility.getSkillIndex('Music', Common.logData), 5);

@@ -37,6 +37,14 @@
     position:relative;
   }
 
+  .sv-entertainment {
+    margin-left:5px;
+  }
+
+  .sv-food-and-drink {
+    margin-right:7px;
+  }
+
   .sv-glyphicon {
     font-size:6em;
   }
