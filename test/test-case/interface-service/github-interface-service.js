@@ -64,14 +64,21 @@
         withNoEventId.wait.should.be.belowOrEqual(60100);
         Assert.strictEqual(withNoEventId.path, '/next');
 
-        // Request returns 200 with commits - uses lastEventId
-        GithubInterfaceService.getCommits(Common.USER, 'accessToken', 'path', '1', '1', Common.logData, function(withEventId) {
-          Assert.strictEqual(withEventId.commits.length, 2);
-          Assert.strictEqual(withEventId.eTag, '1');
-          Assert.strictEqual(withEventId.poll, 60000);
-          withEventId.wait.should.be.belowOrEqual(60100);
-          Assert.strictEqual(withEventId.path, null);
-          done();
+        // Request returns 200 with no commits since commit stats could not be retrieved
+        GithubInterfaceService.getCommits(Common.USER, 'invalid', 'path', '1', '1', Common.logData, function(withInvalidCommitRequest) {
+          Assert.strictEqual(withInvalidCommitRequest.commits.length, 0);
+
+          // Request returns 200 with commits - uses lastEventId
+          GithubInterfaceService.getCommits(Common.USER, 'accessToken', 'path', '1', '1', Common.logData, function(withEventId) {
+            Assert.strictEqual(withEventId.commits.length, 2);
+            Assert.strictEqual(withEventId.eTag, '1');
+            Assert.strictEqual(withEventId.poll, 60000);
+            withEventId.wait.should.be.belowOrEqual(60100);
+            Assert.strictEqual(withEventId.path, null);
+            Assert.strictEqual(parseInt(withEventId.commits[0].additions), 20);
+            Assert.strictEqual(parseInt(withEventId.commits[0].deletions), 10);
+            done();
+          });
         });
       });
     });

@@ -75,9 +75,15 @@
                     Activity.getActivity(user._id, latestCommit._id, Common.logData, function(activity) {
                       Should.exist(activity);
 
+                      // Sum up new commits experience
+                      var sum = 0;
+                      for(var i = 0; i < result.commits.length; i++) {
+                        sum += parseInt(result.commits[i].experience);
+                      }
+
                       // Verify user's overall experience and technology experience were increased
                       User.getUserWithUsername(Common.USER.username, Common.logData, function(userAfter) {
-                        Assert.strictEqual(userAfter.skill.experience, initialExperience + result.commits.length*100);
+                        Assert.strictEqual(userAfter.skill.experience, initialExperience + sum);
                         done();
                       });
                     });

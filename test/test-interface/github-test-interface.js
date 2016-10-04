@@ -38,6 +38,15 @@
     }
   };
 
+  exports.getCommit = function(accessToken, commit, logData, callback) {
+
+    if(accessToken != 'invalid') {
+      callback('{"stats": {"additions": "20", "deletions": "10"}}');
+    } else {
+      callback('{"data":"Invalid Request"}');
+    }
+  };
+
   exports.getPushEvents = function(accessToken, path, eTag, logData, callback) {
 
     var headers = {

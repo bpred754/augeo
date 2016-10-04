@@ -81,12 +81,40 @@
           }
         }
 
-        result.commits = commits;
+        if(commits.length > 0) {
+          var updatedCommits = new Array();
+
+          // Retrieve detailed commit data
+          (function myClojure(i) {
+            var commit = commits[i];
+
+            GithubInterface.getCommit(accessToken, commit, logData, function (detailedCommit) {
+              detailedCommit = JSON.parse(detailedCommit);
+
+              if (detailedCommit && detailedCommit.stats) {
+                commit.additions = detailedCommit.stats.additions;
+                commit.deletions = detailedCommit.stats.deletions;
+                commit.experience = (commit.additions > 0)?commit.additions:1;
+
+                updatedCommits.push(commit);
+              }
+
+              i++;
+              if (i < commits.length) {
+                myClojure(i);
+              } else {
+                result.commits = updatedCommits;
+                callback(result);
+              }
+            });
+          })(0); // Pass i as 0 and myArray to myClojure
+        } else {
+          callback(result);
+        }
       } else if (status.indexOf('304') > -1) { // No changes
         log.functionCall(SERVICE, 'getCommits', logData.parentProcess, logData.username, {}, '304 - Not Modified');
+        callback(result);
       }
-
-      callback(result);
     });
   };
 
@@ -152,7 +180,6 @@
     var commitJson = {
       classification: 'Technology',
       classificationGlyphicon: 'glyphicon-phone',
-      experience: 100,
       kind: 'GITHUB_COMMIT',
       user: user._id
     };

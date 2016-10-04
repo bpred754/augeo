@@ -57,6 +57,27 @@
     });
   };
 
+  exports.getCommit = function(accessToken, commit, logData, callback) {
+    log.functionCall(INTERFACE, 'getCommit', logData.parentProcess, logData.username, {'commit.sha': (commit)?commit.sha:'invalid'});
+
+    var options = {
+      hostname: 'api.github.com',
+      method: 'GET',
+      path: '/repos/' + commit.repo + '/commits/' + commit.sha,
+      agent: false,
+      headers: {
+        'Authorization': 'token ' + accessToken,
+        'User-Agent': process.env.GITHUB_SCREEN_NAME
+      }
+    };
+
+    var dnsCheckCount = 0;
+    resolveDNS(dnsCheckCount, options, submitRequest, callback, function(error) {
+      log.functionError(INTERFACE, 'getCommit', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
+      callback();
+    });
+  };
+
   exports.getPushEvents = function(accessToken, path, eTag, logData, callback) {
     log.functionCall(INTERFACE, 'getPushEvents', logData.parentProcess, logData.username, {'accessToken':(accessToken)?'valid':'invalid','path':path,'eTag':eTag});
 

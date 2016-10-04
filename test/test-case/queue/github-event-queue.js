@@ -209,7 +209,14 @@
 
       GithubInterfaceService.getCommits(user, GithubData.USER_GITHUB.accessToken, null, 1, null, Common.logData, function (result) {
         task.commits = task.commits.concat(result.commits);
-        var newExperience = baselineExperience + result.commits.length * 100;
+
+        // Sum up commits experience
+        var sum = 0;
+        for(var i = 0; i < task.commits.length; i++) {
+          sum += parseInt(task.commits[i].experience);
+        }
+
+        var newExperience = baselineExperience + sum;
 
         queue.finishTask(task, Common.logData, function() {
           User.getUserWithUsername(Common.USER.username, Common.logData, function (updatedUser) {

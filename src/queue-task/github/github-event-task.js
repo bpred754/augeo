@@ -41,7 +41,7 @@
     var window = 60;
     var requestsPerWindow = 5000;
 
-    $this.MAX_EXECUTION_TIME = (window / requestsPerWindow) * maxRequests * 60;
+    $this.MAX_EXECUTION_TIME = ((window / requestsPerWindow) * maxRequests * 60) + 300/2; // 2 commit requests per second for 300 requests
   }
 
   // Constructor

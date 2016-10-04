@@ -37,7 +37,9 @@
 
   // Schema declaration
   var GITHUB_COMMIT = Mongoose.Schema({
+    additions: Number,
     avatarImageSrc: String,
+    deletions: Number,
     eventId: String,
     githubId: String,
     name: String,

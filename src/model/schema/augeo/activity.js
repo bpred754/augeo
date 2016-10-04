@@ -223,6 +223,7 @@
       if (error) {
         log.functionError(COLLECTION, 'upsertActivity (private)', logData.parentProcess, logData.username,
           'Failed to upsert activity with data ID: ' + (activity)?activity.data:'invalid' + '. Error: ' + error);
+        callback();
       } else {
         log.functionCall(COLLECTION, 'upsertActivity (private)', logData.parentProcess, logData.username, {'activityDocument':(activityDocument)?'defined':'invalid',
           'activity.data':(activity)?activity.data:'invalid'});
@@ -238,7 +239,9 @@
       // Asynchronous method calls in loop - Using Recursion
       (function myClojure(i) {
         upsertActivity(activityDocument, activities[i], logData, function (updatedActivity) {
-          updatedActivities.push(updatedActivity);
+          if(updatedActivity) {
+            updatedActivities.push(updatedActivity);
+          }
           i++;
           if (i < activities.length) {
             myClojure(i);
