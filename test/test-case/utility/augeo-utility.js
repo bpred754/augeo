@@ -89,8 +89,11 @@
     var subSkillExperiences = new Array();
     subSkillExperiences['Books'] = 0;
     subSkillExperiences['Business'] = 90;
+    subSkillExperiences['Community'] = 100;
     subSkillExperiences['Entertainment'] = 100;
+    subSkillExperiences['Fitness'] = 100;
     subSkillExperiences['Food & Drink'] = 180;
+    subSkillExperiences['Games'] = 180;
     subSkillExperiences['General'] = 2670;
     subSkillExperiences['test'] = 10000;
     subSkillExperiences['Photography'] = -1;
@@ -98,7 +101,7 @@
     subSkillExperiences['Technology'] = undefined;
 
     var subSkills = AugeoUtility.createSubSkills(subSkillExperiences, Common.logData);
-    Assert.strictEqual(subSkills.length, 9);
+    Assert.strictEqual(subSkills.length, 12);
 
     var skill0 = subSkills[0];
     Assert.strictEqual(skill0.name, 'Books');
@@ -115,56 +118,77 @@
     Assert.strictEqual(skill1.rank, 0);
 
     var skill2 = subSkills[2];
-    Assert.strictEqual(skill2.name, 'Entertainment');
-    Assert.strictEqual(skill2.glyphicon, 'glyphicon-star');
+    Assert.strictEqual(skill2.name, 'Community');
+    Assert.strictEqual(skill2.glyphicon, 'glyphicon-tree-deciduous');
     Assert.strictEqual(skill2.experience, 100);
     Assert.strictEqual(skill2.level, 2);
     Assert.strictEqual(skill2.rank, 0);
 
     var skill3 = subSkills[3];
-    Assert.strictEqual(skill3.name, 'Food & Drink');
-    Assert.strictEqual(skill3.glyphicon, 'glyphicon-cutlery');
-    Assert.strictEqual(skill3.experience, 180);
-    Assert.strictEqual(skill3.level, 3);
+    Assert.strictEqual(skill3.name, 'Entertainment');
+    Assert.strictEqual(skill3.glyphicon, 'glyphicon-star');
+    Assert.strictEqual(skill3.experience, 100);
+    Assert.strictEqual(skill3.level, 2);
     Assert.strictEqual(skill3.rank, 0);
 
     var skill4 = subSkills[4];
-    Assert.strictEqual(skill4.name, 'General');
-    Assert.strictEqual(skill4.glyphicon, 'glyphicon-globe');
-    Assert.strictEqual(skill4.experience, 2670);
-    Assert.strictEqual(skill4.level, 9);
+    Assert.strictEqual(skill4.name, 'Fitness');
+    Assert.strictEqual(skill4.glyphicon, 'glyphicon-heart');
+    Assert.strictEqual(skill4.experience, 100);
+    Assert.strictEqual(skill4.level, 2);
     Assert.strictEqual(skill4.rank, 0);
 
     var skill5 = subSkills[5];
-    Assert.strictEqual(skill5.name, 'Music');
-    Assert.strictEqual(skill5.glyphicon, 'glyphicon-headphones');
-    Assert.strictEqual(skill5.experience, 0);
-    Assert.strictEqual(skill5.level, 1);
+    Assert.strictEqual(skill5.name, 'Food & Drink');
+    Assert.strictEqual(skill5.glyphicon, 'glyphicon-cutlery');
+    Assert.strictEqual(skill5.experience, 180);
+    Assert.strictEqual(skill5.level, 3);
     Assert.strictEqual(skill5.rank, 0);
 
     var skill6 = subSkills[6];
-    Assert.strictEqual(skill6.name, 'Photography');
-    Assert.strictEqual(skill6.glyphicon, 'glyphicon-camera');
-    Assert.strictEqual(skill6.experience, 0);
-    Assert.strictEqual(skill6.level, 1);
+    Assert.strictEqual(skill6.name, 'Games');
+    Assert.strictEqual(skill6.glyphicon, 'glyphicon-tower');
+    Assert.strictEqual(skill6.experience, 180);
+    Assert.strictEqual(skill6.level, 3);
     Assert.strictEqual(skill6.rank, 0);
 
     var skill7 = subSkills[7];
-    Assert.strictEqual(skill7.name, 'Sports');
-    Assert.strictEqual(skill7.glyphicon, 'glyphicon-bullhorn');
-    Assert.strictEqual(skill7.experience, 0);
-    Assert.strictEqual(skill7.level, 1);
+    Assert.strictEqual(skill7.name, 'General');
+    Assert.strictEqual(skill7.glyphicon, 'glyphicon-globe');
+    Assert.strictEqual(skill7.experience, 2670);
+    Assert.strictEqual(skill7.level, 9);
     Assert.strictEqual(skill7.rank, 0);
 
     var skill8 = subSkills[8];
-    Assert.strictEqual(skill8.name, 'Technology');
-    Assert.strictEqual(skill8.glyphicon, 'glyphicon-phone');
+    Assert.strictEqual(skill8.name, 'Music');
+    Assert.strictEqual(skill8.glyphicon, 'glyphicon-headphones');
     Assert.strictEqual(skill8.experience, 0);
     Assert.strictEqual(skill8.level, 1);
     Assert.strictEqual(skill8.rank, 0);
 
+    var skill9 = subSkills[9];
+    Assert.strictEqual(skill9.name, 'Photography');
+    Assert.strictEqual(skill9.glyphicon, 'glyphicon-camera');
+    Assert.strictEqual(skill9.experience, 0);
+    Assert.strictEqual(skill9.level, 1);
+    Assert.strictEqual(skill9.rank, 0);
+
+    var skill10 = subSkills[10];
+    Assert.strictEqual(skill10.name, 'Sports');
+    Assert.strictEqual(skill10.glyphicon, 'glyphicon-bullhorn');
+    Assert.strictEqual(skill10.experience, 0);
+    Assert.strictEqual(skill10.level, 1);
+    Assert.strictEqual(skill10.rank, 0);
+
+    var skill11 = subSkills[11];
+    Assert.strictEqual(skill11.name, 'Technology');
+    Assert.strictEqual(skill11.glyphicon, 'glyphicon-phone');
+    Assert.strictEqual(skill11.experience, 0);
+    Assert.strictEqual(skill11.level, 1);
+    Assert.strictEqual(skill11.rank, 0);
+
     var negativeString = AugeoUtility.createSubSkills('test', Common.logData);
-    Assert.strictEqual(negativeString.length, 9);
+    Assert.strictEqual(negativeString.length, 12);
 
     var negativeSkill1 = negativeString[1];
     Assert.strictEqual(negativeSkill1.name, 'Business');
@@ -174,7 +198,7 @@
     Assert.strictEqual(negativeSkill1.rank, 0);
 
     var negativeUndefined= AugeoUtility.createSubSkills(undefined, Common.logData);
-    Assert.strictEqual(negativeUndefined.length, 9);
+    Assert.strictEqual(negativeUndefined.length, 12);
 
     var negativeSkill2 = negativeUndefined[1];
     Assert.strictEqual(negativeSkill2.name, 'Business');
@@ -189,8 +213,11 @@
   it('should return glyphicon for a given skill name -- getGlyphicon()', function(done) {
     Assert.strictEqual(AugeoUtility.getGlyphicon('Books', Common.logData), 'glyphicon-book');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Business', Common.logData), 'glyphicon-briefcase');
+    Assert.strictEqual(AugeoUtility.getGlyphicon('Community', Common.logData), 'glyphicon-tree-deciduous');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Entertainment', Common.logData), 'glyphicon-star');
+    Assert.strictEqual(AugeoUtility.getGlyphicon('Fitness', Common.logData), 'glyphicon-heart');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Food & Drink', Common.logData), 'glyphicon-cutlery');
+    Assert.strictEqual(AugeoUtility.getGlyphicon('Games', Common.logData), 'glyphicon-tower');
     Assert.strictEqual(AugeoUtility.getGlyphicon('General', Common.logData), 'glyphicon-globe');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Music', Common.logData), 'glyphicon-headphones');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Photography', Common.logData), 'glyphicon-camera');
@@ -260,13 +287,16 @@
   it('should return the index of the given skill name -- getSKillIndex()', function(done) {
     Assert.strictEqual(AugeoUtility.getSkillIndex('Books', Common.logData), 0);
     Assert.strictEqual(AugeoUtility.getSkillIndex('Business', Common.logData), 1);
-    Assert.strictEqual(AugeoUtility.getSkillIndex('Entertainment', Common.logData), 2);
-    Assert.strictEqual(AugeoUtility.getSkillIndex('Food & Drink', Common.logData), 3);
-    Assert.strictEqual(AugeoUtility.getSkillIndex('General', Common.logData), 4);
-    Assert.strictEqual(AugeoUtility.getSkillIndex('Music', Common.logData), 5);
-    Assert.strictEqual(AugeoUtility.getSkillIndex('Photography', Common.logData), 6);
-    Assert.strictEqual(AugeoUtility.getSkillIndex('Sports', Common.logData), 7);
-    Assert.strictEqual(AugeoUtility.getSkillIndex('Technology', Common.logData), 8);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Community', Common.logData), 2);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Entertainment', Common.logData), 3);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Fitness', Common.logData), 4);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Food & Drink', Common.logData), 5);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Games', Common.logData), 6);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('General', Common.logData), 7);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Music', Common.logData), 8);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Photography', Common.logData), 9);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Sports', Common.logData), 10);
+    Assert.strictEqual(AugeoUtility.getSkillIndex('Technology', Common.logData), 11);
 
     Assert.strictEqual(AugeoUtility.getSkillIndex('test', Common.logData), -1);
     Assert.strictEqual(AugeoUtility.getSkillIndex('', Common.logData), -1);

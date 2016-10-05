@@ -71,6 +71,7 @@
     addBusinessDocuments();
     addEntertainmentDocuments();
     addFoodDocuments();
+    addGamesDocuments();
     addMusicDocuments();
     addPhotographyDocuments();
     addSportsDocuments();
@@ -187,7 +188,29 @@
     };
 
   /***************************************************************************/
-  /* Food                                                                    */
+  /* Games                                                                   */
+  /***************************************************************************/
+
+  var addGamesDocuments = function() {
+    /* TODO:
+     1. Game titles
+     */
+    var gamesTier1 = "game xbox playstation wii nintendo strategy";
+
+    var gamesTier2 = "pc online rank";
+
+    var gamesTier3 = "board card";
+
+    classifier.addDocument(gamesTier1,"Games");
+    classifier.addDocument(gamesTier1,"Games");
+    classifier.addDocument(gamesTier1,"Games");
+    classifier.addDocument(gamesTier2,"Games");
+    classifier.addDocument(gamesTier2,"Games");
+    classifier.addDocument(gamesTier3,"Games");
+  };
+
+  /***************************************************************************/
+  /* General                                                                 */
   /***************************************************************************/
 
   var addGeneralDocuments = function() {

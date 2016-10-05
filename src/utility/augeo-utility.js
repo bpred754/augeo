@@ -32,8 +32,9 @@
   // Global variables
   var log = new Logger();
 
-  exports.SUB_SKILLS = [{name:"Books", glyphicon:"glyphicon-book"}, {name:"Business", glyphicon:"glyphicon-briefcase"}, {name:"Entertainment", glyphicon:"glyphicon-star"},
-    {name:"Food & Drink", glyphicon:"glyphicon-cutlery"}, {name:"General", glyphicon:"glyphicon-globe"}, {name:"Music", glyphicon:"glyphicon-headphones"},
+  exports.SUB_SKILLS = [{name:"Books", glyphicon:"glyphicon-book"}, {name:"Business", glyphicon:"glyphicon-briefcase"}, {name:"Community", glyphicon:"glyphicon-tree-deciduous"},
+    {name:"Entertainment", glyphicon:"glyphicon-star"}, {name:"Fitness", glyphicon:"glyphicon-heart"}, {name:"Food & Drink", glyphicon:"glyphicon-cutlery"},
+    {name:"Games", glyphicon:"glyphicon-tower"}, {name:"General", glyphicon:"glyphicon-globe"}, {name:"Music", glyphicon:"glyphicon-headphones"},
     {name:"Photography", glyphicon:"glyphicon-camera"}, {name:"Sports", glyphicon:"glyphicon-bullhorn"}, {name:"Technology", glyphicon:"glyphicon-phone"}];
 
   // Calculate level depending on the amount of experience

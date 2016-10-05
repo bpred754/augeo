@@ -27,6 +27,7 @@
 
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
+  var AugeoUtility = require('../../../src/utility/augeo-utility');
   var Common = require('../../data/common');
   var GithubData = require('../../data/github-data');
   var GithubEventQueue = require('../../../src/queue/github-event-queue');
@@ -221,7 +222,8 @@
         queue.finishTask(task, Common.logData, function() {
           User.getUserWithUsername(Common.USER.username, Common.logData, function (updatedUser) {
 
-            Assert.strictEqual(updatedUser.subSkills[8].experience, newExperience);
+            var technologyIndex = AugeoUtility.getSkillIndex('Technology', Common.logData);
+            Assert.strictEqual(updatedUser.subSkills[technologyIndex].experience, newExperience);
             Assert.strictEqual(task.wait, 0); // task.wait is to reset to 0
             Assert.strictEqual(queue.taskWaitTime, 1000000);
             Assert.strictEqual(queue.currentTask.user._id, '111');

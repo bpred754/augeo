@@ -45,7 +45,7 @@
 
             var mediumScreenArray = new Array();
             var mediumCount = 0;
-            for (var i = 0; i < 3; i++) {
+            for (var i = 0; i < 4; i++) {
               var innerArray = new Array();
               for (var j = 0; j < 3; j++) {
                 innerArray.push($scope.skills[mediumCount]);
@@ -57,7 +57,7 @@
 
             var smallScreenArray = new Array();
             var smallCount = 0;
-            for (var i = 0; i < 5; i++) {
+            for (var i = 0; i < 6; i++) {
               var innerArray = new Array();
               for (var j = 0; j < 2; j++) {
                 innerArray.push($scope.skills[smallCount]);

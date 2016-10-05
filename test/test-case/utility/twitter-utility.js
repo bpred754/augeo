@@ -46,6 +46,7 @@
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoBusiness', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoEntertainment', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoFood&Drink', Common.logData), true);
+    Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoGames', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoGeneral', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoMusic', Common.logData), true);
     Assert.strictEqual(TwitterUtility.containsAugeoHashtag('augeoPhotography', Common.logData), true);
