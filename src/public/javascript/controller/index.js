@@ -24,13 +24,13 @@
 
   var augeo = require('angular').module('augeo');
 
-  augeo.controller('AppController', ['$scope', '$state', '$window', 'UserClientService', 'ProfileService', 'InterfaceClientService', require('./app-controller')]);
+  augeo.controller('AppController', ['$scope', '$state', 'UserClientService', 'ProfileService', require('./app-controller')]);
   augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'UserClientService', 'ProfileService', 'ActivityService',require('./dashboard-controller')]);
   augeo.controller('InterfaceHistoryController', ['$scope', 'InterfaceClientService', require('./interface-history-controller')]);
   augeo.controller('LeaderboardController', ['$scope', 'UserClientService', require('./leaderboard-controller')]);
   augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'ClientValidator',require('./login-controller')]);
   augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope', '$timeout', 'ProfileService', 'UserClientService', require('./profile-controller')]);
+  augeo.controller('ProfileController', ['$scope','ProfileService', 'UserClientService', require('./profile-controller')]);
   augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', 'ActivityService', require('./view-activity-controller')]);
 
   require('./error');

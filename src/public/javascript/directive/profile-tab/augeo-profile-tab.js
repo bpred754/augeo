@@ -19,17 +19,27 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all directives for browserify     */
+  /* Description: Javascript for augeo-profile-tab directive                 */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function() {
+    return {
+      restrict: 'E',
+      scope: {
+        'hasAnyAuthentications':'=',
+        'isGlobalUser': '=',
+        'isEditMode': '=',
+        'setProfileImage': '=',
+        'user': '='
+      },
+      templateUrl: 'html/directive/profile-tab/augeo-profile-tab.html',
+      link: function(scope, element, attributes) {
+        scope.interfaceIndex = 0;
 
-  augeo.directive('infiniteScroll', ['$rootScope', '$window', '$timeout', require('./angular-infinite-scroll')]);
-  augeo.directive('leaderboardEntry', require('./leaderboard-entry'));
-  augeo.directive('paginate', require('./paginate'));
-  augeo.directive('passwordInput', require('./password-input'));
-  augeo.directive('skillView', require('./skill-view'));
-
-  require('./activity');
-  require('./profile-tab');
-
+        scope.viewAsOther = function() {
+          scope.$parent.isEditMode = false;
+        };
+      }
+    }
+  };

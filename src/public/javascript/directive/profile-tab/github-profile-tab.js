@@ -19,17 +19,36 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all directives for browserify     */
+  /* Description: Javascript for github-profile-tab directive                */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Reminder: Update directive/index.js when directive params are modified
+  module.exports = function($state, $window, InterfaceClientService) {
+    return {
+      restrict: 'E',
+      scope: {
+        'isGlobalUser': '=',
+        'setProfileImage': '=',
+        'user': '='
+      },
+      templateUrl: 'html/directive/profile-tab/github-profile-tab.html',
+      link: function(scope, element, attributes) {
+        scope.interfaceIndex = 2;
 
-  augeo.directive('infiniteScroll', ['$rootScope', '$window', '$timeout', require('./angular-infinite-scroll')]);
-  augeo.directive('leaderboardEntry', require('./leaderboard-entry'));
-  augeo.directive('paginate', require('./paginate'));
-  augeo.directive('passwordInput', require('./password-input'));
-  augeo.directive('skillView', require('./skill-view'));
+        scope.submitGithubAuthentication = function() {
 
-  require('./activity');
-  require('./profile-tab');
+          // Authenticate user with Github
+          InterfaceClientService.getAuthenticationData('github-api',function(authData) {
 
+            if(authData.clientId) {
+              $window.location.href = 'https://github.com/login/oauth/authorize?client_id=' + authData.clientId +
+                '&redirect_url=' + authData.redirectUrl + '&scope=' + authData.scope + '&state=' + authData.state;
+            } else {
+              $state.go('login');
+              scope.loginMessage = 'Failed to Authenticate with Github'
+            }
+          });
+        };
+      }
+    }
+  };

@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $timeout, ProfileService, UserClientService) {
+  module.exports = function($scope, ProfileService, UserClientService) {
 
     $scope.isGlobalUser = false;
     $scope.isEditMode = true;
@@ -55,27 +55,20 @@
 
     $scope.setProfileImage = function(interface) {
 
-      switch(interface) {
-        case 'Twitter':
-          $scope.isTwitterProfileImage = !$scope.isTwitterProfileImage;
-          $scope.isGithubProfileImage = false
-          if(!$scope.isTwitterProfileImage) {
-            interface = null;
+      for(var i = 0; i < $scope.targetUser.interfaces.length; i++) {
+        if(interface.toLowerCase() == $scope.targetUser.interfaces[i].name.toLowerCase()) {
+          if($scope.targetUser.interfaces[i].usingProfileImage == false) {
+            interface = 'Unselect';
           }
-          break;
-        case 'Github':
-          $scope.isGithubProfileImage = !$scope.isGithubProfileImage;
-          $scope.isTwitterProfileImage = false;
-          if(!$scope.isGithubProfileImage) {
-            interface = null;
-          }
-          break;
-      };
+        } else {
+          $scope.targetUser.interfaces[i].usingProfileImage = false;
+        }
+      }
 
       UserClientService.setProfileImage(interface,  function(user) {
 
         ProfileService.setProfileImage(user.profileImg);
-        
+
         // Update profile icon
         if($scope.isGlobalUser) {
           $scope.User.profileIcon = user.profileIcon;
@@ -97,25 +90,11 @@
 
       if($scope.profileView != 'Augeo') {
         $scope.isEditMode = false;
-
-        if($scope.profileView == 'Twitter' && $scope.targetUser.hasTwitterAuthentication ) {
-          // Load Twitter follow button
-          $scope.targetUser.twitterFollowUrl = 'https://twitter.com/' + $scope.targetUser.twitter.screenName;
-          $timeout(function() {
-            if(twttr.widgets) {
-              twttr.widgets.load();
-            }
-          }, 500);
-        }
       } else {
         if($scope.isGlobalUser) {
           $scope.isEditMode = true;
         }
       }
-    };
-
-    $scope.viewAsOther = function() {
-      $scope.isEditMode = false;
     };
 
     // If profile image changes, update profile target user and global user profile images
@@ -139,31 +118,7 @@
 
         $scope.targetUser = newValue;
         $scope.targetUser.name = newValue.firstName + ' ' + newValue.lastName;
-        $scope.isTwitterProfileImage = false;
-
-        // Check Twitter authentication
-        if(newValue.twitter && newValue.twitter.screenName) {
-          $scope.targetUser.hasTwitterAuthentication = true;
-
-          // Check if Twitter profile image is being used as Augeo profile image
-          if(newValue.profileImg == newValue.twitter.profileImageUrl) {
-            $scope.isTwitterProfileImage = true;
-          }
-        } else {
-          $scope.targetUser.hasTwitterAuthentication = false;
-        }
-
-        // Check Github authentication
-        if(newValue.github && newValue.github.screenName) {
-          $scope.targetUser.hasGithubAuthentication = true;
-
-          // Check if Github profile image is being used as Augeo profile image
-          if(newValue.profileImg == newValue.github.profileImageUrl) {
-            $scope.isGithubProfileImage = true;
-          }
-        } else {
-          $scope.targetUser.hasGithubAuthentication = false;
-        }
+        $scope.targetUser.interfaces = buildUserInterfaces($scope.targetUser);
 
         if($scope.targetUser.username != $scope.User.username) {
           $scope.isGlobalUser = false;
@@ -172,8 +127,6 @@
           $scope.isGlobalUser = true;
           $scope.isEditMode = true;
         }
-
-        $scope.targetUser.interfaces = buildUserInterfaces($scope.targetUser, $scope.isGlobalUser);
      }
     });
   };
@@ -182,37 +135,41 @@
   /* Private functions                                                       */
   /***************************************************************************/
 
-  var buildUserInterfaces = function(targetUser, isGlobalUser) {
+  var buildUserInterfaces = function(targetUser) {
 
-      var interfaces = new Array();
+    var interfaces = new Array();
 
-      interfaces.push({
-        name:'Augeo',
-        active: 'image/augeo-logo-black-small.png',
-        passive: 'image/augeo-logo-gray-small.png',
-        current: 'image/augeo-logo-black-small.png',
-        hasAuthentication: true
-      });
+    // AUGEO_INDEX = 0
+    interfaces.push({
+      name:'Augeo',
+      active: 'image/augeo-logo-black-small.png',
+      passive: 'image/augeo-logo-gray-small.png',
+      current: 'image/augeo-logo-black-small.png',
+      hasAuthentication: true
+    });
 
-      if(targetUser.hasTwitterAuthentication || isGlobalUser) {
-        interfaces.push({
-          name: 'Twitter',
-          active: 'image/twitter/logo-blue-small.png',
-          passive: 'image/twitter/logo-gray-small.png',
-          current: 'image/twitter/logo-gray-small.png',
-          hasAuthentication: targetUser.hasTwitterAuthentication
-        });
-      }
+    // TWITTER_INDEX = 1
+    interfaces.push({
+      name: 'Twitter',
+      active: 'image/twitter/logo-blue-small.png',
+      passive: 'image/twitter/logo-gray-small.png',
+      current: 'image/twitter/logo-gray-small.png',
+      hasAuthentication: (targetUser.twitter && targetUser.twitter.screenName),
+      usingProfileImage: (targetUser.twitter && targetUser.profileImg == targetUser.twitter.profileImageUrl)
+    });
 
-      if(targetUser.hasGithubAuthentication || isGlobalUser) {
-        interfaces.push({
-          name:'Github',
-          active: 'image/github/logo-black-small.png',
-          passive: 'image/github/logo-gray-small.png',
-          current:'image/github/logo-gray-small.png',
-          hasAuthentication: targetUser.hasGithubAuthentication
-        });
-      }
-      return interfaces;
-    };
+    // GITHUB_INDEX = 2
+    interfaces.push({
+      name:'Github',
+      active: 'image/github/logo-black-small.png',
+      passive: 'image/github/logo-gray-small.png',
+      current:'image/github/logo-gray-small.png',
+      hasAuthentication: (targetUser.github && targetUser.github.screenName),
+      usingProfileImage: (targetUser.github && targetUser.profileImg == targetUser.github.profileImageUrl)
+    });
+
+    return interfaces;
+  };
+
+
 

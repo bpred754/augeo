@@ -24,12 +24,6 @@
 
   var augeo = require('angular').module('augeo');
 
-  augeo.directive('infiniteScroll', ['$rootScope', '$window', '$timeout', require('./angular-infinite-scroll')]);
-  augeo.directive('leaderboardEntry', require('./leaderboard-entry'));
-  augeo.directive('paginate', require('./paginate'));
-  augeo.directive('passwordInput', require('./password-input'));
-  augeo.directive('skillView', require('./skill-view'));
-
-  require('./activity');
-  require('./profile-tab');
-
+  augeo.directive('augeoProfileTab', require('./augeo-profile-tab'));
+  augeo.directive('githubProfileTab', ['$state', '$window', 'InterfaceClientService', require('./github-profile-tab')]);
+  augeo.directive('twitterProfileTab', ['$state', '$timeout', '$window', 'InterfaceClientService', require('./twitter-profile-tab')]);
