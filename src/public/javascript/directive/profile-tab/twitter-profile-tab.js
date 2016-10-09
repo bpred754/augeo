@@ -54,7 +54,7 @@
               $(newFollowButton).attr('href', 'https://twitter.com/' + scope.user.twitter.screenName);
               $(newFollowButton).attr('data-show-count', 'false');
               $(newFollowButton).attr('data-lang', 'en');
-              $(newFollowButton).attr('data-show-screen-name', 'true');
+              $(newFollowButton).attr('data-show-screen-name', 'false');
               $(parent).append(newFollowButton);
 
               if(twttr.widgets) {
