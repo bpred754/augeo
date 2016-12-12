@@ -26,6 +26,8 @@
   // Schemas
   require('../../src/model/schema/augeo/user');
   require('../../src/model/schema/augeo/activity');
+  require('../../src/model/schema/fitbit/day-steps');
+  require('../../src/model/schema/fitbit/user');
   require('../../src/model/schema/github/commit');
   require('../../src/model/schema/github/user');
   require('../../src/model/schema/twitter/tweet');
@@ -35,6 +37,7 @@
   var AugeoDB = require('../../src/model/database');
   var AugeoUtility = require('../../src/utility/augeo-utility');
   var Common = require('../data/common');
+  var FitbitData = require('../data/fitbit-data');
   var GithubData = require('../data/github-data');
   var TwitterData = require('../data/twitter-data');
   var TwitterService = require('../../src/service/twitter-service');
@@ -44,22 +47,25 @@
   var Activity = AugeoDB.model('ACTIVITY');
   var AugeoUser = AugeoDB.model('AUGEO_USER');
   var Commit = AugeoDB.model('GITHUB_COMMIT');
+  var DaySteps = AugeoDB.model('FITBIT_DAY_STEPS');
+  var FitbitUser = AugeoDB.model('FITBIT_USER');
   var GithubUser = AugeoDB.model('GITHUB_USER');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
 
-  exports.addTestUsers = function(callback) {
-    UserService.addUser(Common.USER, {}, function(retrievedUser0) {
-      exports.addTwitterUser(retrievedUser0._id, Common.USER, TwitterData.USER_TWITTER, function() {
-        exports.addGithubUser(retrievedUser0, function() {
-          UserService.addUser(Common.ACTIONEE, {}, function(retrievedUser1) {
-            exports.addTwitterUser(retrievedUser1._id, Common.ACTIONEE, TwitterData.ACTIONEE_TWITTER, function() {
-              callback();
-            });
-          }, function(){console.log('Twitter Helper -- Failed to add user')});
-        });
-      });
-    }, function(){console.log('Twitter Helper -- Failed to add user')});
+  exports.addFitbitUser = function(user, callback) {
+
+    var fitbitUser = {
+      augeoUser: user._id,
+      fitbitId: FitbitData.USER_FITBIT.fitbitId,
+      accessToken: FitbitData.USER_FITBIT.accessToken,
+      screenName: FitbitData.USER_FITBIT.screenName,
+      profileImageUrl: FitbitData.USER_FITBIT.profileImageUrl
+    };
+
+    FitbitUser.add(Common.USER.username, fitbitUser, Common.logData, function() {
+      callback();
+    });
   };
 
   exports.addGithubUser = function(user, callback) {
@@ -75,6 +81,22 @@
     GithubUser.add(Common.USER.username, githubUser, Common.logData, function() {
      callback();
     })
+  };
+
+  exports.addTestUsers = function(callback) {
+    UserService.addUser(Common.USER, {}, function(retrievedUser0) {
+      exports.addFitbitUser(retrievedUser0, function() {
+        exports.addGithubUser(retrievedUser0, function() {
+          exports.addTwitterUser(retrievedUser0._id, Common.USER, TwitterData.USER_TWITTER, function() {
+            UserService.addUser(Common.ACTIONEE, {}, function(retrievedUser1) {
+              exports.addTwitterUser(retrievedUser1._id, Common.ACTIONEE, TwitterData.ACTIONEE_TWITTER, function() {
+                callback();
+              });
+            }, function(){console.log('db-helper -- Failed to add user')});
+          });
+        });
+      });
+    }, function(){console.log('db-helper -- Failed to add user')});
   };
 
   exports.addTwitterUser = function(userId, user, twitter, callback) {
@@ -114,11 +136,13 @@
   };
 
   exports.cleanAugeoDB = function(callback) {
-    exports.cleanTweets(function() {
-      exports.cleanCommits(function() {
-        exports.cleanActivities(function() {
-          exports.cleanUsers(function() {
-            callback();
+    exports.cleanDaySteps(function() {
+      exports.cleanTweets(function() {
+        exports.cleanCommits(function() {
+          exports.cleanActivities(function() {
+            exports.cleanUsers(function() {
+              callback();
+            });
           });
         });
       });
@@ -127,6 +151,12 @@
 
   exports.cleanCommits = function(callback) {
     Commit.removeCommits(GithubData.USER_GITHUB.screenName, Common.logData, function() {
+      callback();
+    });
+  };
+
+  exports.cleanDaySteps = function(callback) {
+    DaySteps.removeDailySteps(FitbitData.USER_FITBIT.fitbitId,  Common.logData, function() {
       callback();
     });
   };
@@ -146,12 +176,16 @@
   exports.cleanUsers = function(callback) {
     AugeoUser.remove(Common.USER.lastName, Common.logData, function(user1) {
       AugeoUser.remove(Common.ACTIONEE.lastName, Common.logData, function(user2) {
-        TwitterUser.remove((user1)?user1._id:'', Common.logData, function(removedUser1) {
-          TwitterUser.remove((user2)?user2._id:'', Common.logData, function(removedUser2) {
-            TwitterUser.removeInvalid(Common.logData, function() {
-              GithubUser.remove((user1)?user1._id:'', Common.logData, function(removedUser3) {
-                GithubUser.remove((user2)?user2._id:'', Common.logData, function(removedUser4) {
-                  callback();
+        FitbitUser.remove((user1)?user1._id:'', Common.logData, function(removedUser1) {
+          FitbitUser.remove((user2)?user2._id:'', Common.logData, function(removedUser2) {
+            GithubUser.remove((user1)?user1._id:'', Common.logData, function(removedUser3) {
+              GithubUser.remove((user2)?user2._id:'', Common.logData, function(removedUser4) {
+                TwitterUser.remove((user1)?user1._id:'', Common.logData, function(removedUser5) {
+                  TwitterUser.remove((user2)?user2._id:'', Common.logData, function(removedUser6) {
+                    TwitterUser.removeInvalid(Common.logData, function() {
+                      callback();
+                    });
+                  });
                 });
               });
             });

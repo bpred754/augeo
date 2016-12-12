@@ -27,7 +27,7 @@
               <a id="db-img" ng-click="showProfile()">
                   <img id="db-avatar" class="db-max-size" src="{{dashboardData.profileImg}}">
               </a>
-              <div id="db-links" ng-if="!invalidUser">
+              <div ng-class="{'db-links-top':(dashboardData.profileImg.indexOf('profile_150_square') > -1), 'db-links-bottom': (dashboardData.profileImg.indexOf('profile_150_square') == -1)}" ng-if="!invalidUser">
                 <span class="small-text augeo-link" ng-click="showProfile()">Profile</span>
                 <span class="small-text">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
                 <span><a class="small-text augeo-link" ui-sref="viewActivity({username:dashboardData.username})">Activity</a></span>
@@ -35,7 +35,7 @@
           </div>
           <div id="db-recent-activity-container">
             <div id="db-transition-container" ng-if="!invalidUser && activities">
-              <activity-transition id="db-transition" activities="activities" screen-name="dashboardData.twitter.screenName"></activity-transition>
+              <activity-transition id="db-transition" activities="activities" user="dashboardData"></activity-transition>
             </div>
             <div id="db-auth-container" ng-if="!invalidUser && !User.hasAuthentications && dashboardData.username == User.username">
               <div>

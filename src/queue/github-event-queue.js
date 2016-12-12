@@ -80,7 +80,7 @@
             queue.insert(index, task, function () {});
           }
         } else {
-          log.functionCall(this.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName': (task) ? task.screenName : 'invalid'}, 'User already on queue');
+          log.functionCall(self.QUEUE, 'addTask', logData.parentProcess, logData.username, {'task.screenName': (task) ? task.screenName : 'invalid'}, 'User already on queue');
         }
       });
     },

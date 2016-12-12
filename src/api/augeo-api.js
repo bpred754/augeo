@@ -52,6 +52,9 @@
     // Route all admin requests to admin-api.js
     app.use('/admin-api', require('./admin-api'));
 
+    // Route all fitbit-api requests to fitbit-api.js
+    app.use('/fitbit-api', require('./fitbit-api'));
+
     // Router all github-api requests to github-api.js
     app.use('/github-api', require('./github-api'));
 

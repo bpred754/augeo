@@ -26,6 +26,7 @@
   // Schemas
   require('../src/model/schema/augeo/activity');
   require('../src/model/schema/augeo/user');
+  require('../src/model/schema/fitbit/user');
   require('../src/model/schema/github/user');
   require('../src/model/schema/twitter/tweet');
   require('../src/model/schema/twitter/user');
@@ -62,21 +63,25 @@
 
   describe('Utility', function() {
     importTests('augeoUtility', './test-case/utility/augeo-utility');
+    importTests('requestUtility', './test-case/utility/request-utility');
     importTests('twitterUtility', './test-case/utility/twitter-utility');
   });
 
   describe('Test Interface', function() {
+    importTests('fitbitTestInterface', './test-case/test-interface/fitbit-test-interface');
     importTests('githubTestInterface', './test-case/test-interface/github-test-interface');
     importTests('twitterTestInterface', './test-case/test-interface/twitter-test-interface');
   });
 
   describe('Interface Service', function() {
-    importTests('twitterInterfaceService', './test-case/interface-service/twitter-interface-service');
+    importTests('fitbitInterfaceService', './test-case/interface-service/fitbit-interface-service');
     importTests('githubInterfaceService', './test-case/interface-service/github-interface-service');
+    importTests('twitterInterfaceService', './test-case/interface-service/twitter-interface-service');
   });
 
   describe('Service', function() {
     importTests('userService', './test-case/service/user-service.js');
+    importTests('fitbitService', './test-case/service/fitbit-service.js');
     importTests('githubService', './test-case/service/github-service.js');
     importTests('twitterService', './test-case/service/twitter-service.js');
     importTests('userServiceDependent', './test-case/service/user-service-dependent.js');
@@ -98,6 +103,7 @@
       });
     });
 
+    importTests('fitbitEventTask', './test-case/queue-task/fitbit/fitbit-event-task.js');
     importTests('githubEventTask', './test-case/queue-task/github/github-event-task.js');
     importTests('twitterAddActivityTask', './test-case/queue-task/twitter/stream/twitter-add-activity-task.js');
     importTests('twitterConnectTask', './test-case/queue-task/twitter/stream/twitter-connect-task.js', App);
@@ -125,6 +131,7 @@
       });
     });
 
+    importTests('fitbitEventQueue', './test-case/queue/fitbit-event-queue');
     importTests('githubEventQueue', './test-case/queue/github-event-queue');
     importTests('twitterEventQueue', './test-case/queue/twitter-event-queue');
     importTests('twitterStreamQueue', './test-case/queue/twitter-stream-queue');
@@ -154,6 +161,12 @@
 
   describe('Admin API', function() {
     importTests('Set Log Level', './test-case/api/admin-api/set-log-level', App);
+  });
+
+  describe('Fitbit API', function() {
+    importTests('callback', './test-case/api/fitbit-api/callback', App);
+    importTests('getAuthenticationData', './test-case/api/fitbit-api/get-authentication-data', App);
+    importTests('getQueueWaitTimes', './test-case/api/fitbit-api/get-queue-wait-times', App);
   });
 
   describe('Github API', function() {

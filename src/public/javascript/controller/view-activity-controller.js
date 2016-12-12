@@ -101,7 +101,7 @@
           if(activity) {
             if (activity.length > 0) {
               for(var i = 0; i < activity.length; i++) {
-                $scope.activities.push(ActivityService.getActivityObject(activity[i]));
+                $scope.activities.push(ActivityService.getActivityObject(activity[i], data.user));
               }
               maxTimestamp = data.activity[data.activity.length - 1].timestamp;
               $scope.activityLoaded = true;

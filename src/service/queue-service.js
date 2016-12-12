@@ -22,17 +22,23 @@
   /* Description: Singleton to manage app queues                             */
   /***************************************************************************/
 
+  var FitbitEventQueue = require('../queue/fitbit-event-queue');
   var GithubEventQueue = require('../queue/github-event-queue');
   var TwitterConnectQueue = require('../queue/twitter-connect-queue');
   var TwitterEventQueue = require('../queue/twitter-event-queue');
   var TwitterStreamQueue = require('../queue/twitter-stream-queue');
 
+  exports.fitbitEventQueue = null;
   exports.githubEventQueue = null;
   exports.twitterConnectQueue = null;
   exports.twitterEventQueue = null;
   exports.twitterStreamQueue = null;
 
   exports.initializeAppQueues = function(logData) {
+
+    // Fitbit Queues
+    exports.fitbitEventQueue = new FitbitEventQueue(logData);
+    exports.fitbitEventQueue.addAllUsers(logData, function(){});
 
     // Github Queues
     exports.githubEventQueue = new GithubEventQueue(logData);

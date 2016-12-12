@@ -62,7 +62,7 @@
         var logData = AugeoUtility.formatLogData(API+CALLBACK, username);
         TwitterService.removeUser(request.session.user._id, logData, function(){}, function(){});
       }
-      response.redirect(301, process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
+      response.redirect(process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
     };
 
     if(username) {
@@ -106,11 +106,6 @@
 
                     QueueService.twitterConnectQueue.connectToTwitter(logData, function(){});
                   }
-
-                  // Set user's Twitter session data
-                  request.session.user.twitter = {
-                    screenName: screenName
-                  };
 
                   response.redirect(process.env.AUGEO_HOME + '/interfaceHistory');
                 }, rollback); // End updateTwitterInfo

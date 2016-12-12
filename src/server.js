@@ -39,6 +39,8 @@
   // Schemas
   require('./model/schema/augeo/activity');
   require('./model/schema/augeo/user');
+  require('./model/schema/fitbit/day-steps');
+  require('./model/schema/fitbit/user');
   require('./model/schema/github/commit');
   require('./model/schema/github/user');
   require('./model/schema/twitter/tweet');

@@ -24,6 +24,7 @@
 
   // Required libraries
   var Assert = require('assert');
+  var Should = require('should');
 
   // Required local modules
   var AugeoUtility = require('../../../src/utility/augeo-utility');
@@ -321,11 +322,11 @@
 
     var negativeString = AugeoUtility.initializeSubSkillsExperienceArray('test', Common.logData);
     Assert.strictEqual(negativeString.constructor, Object);
-    negativeString.should.eql({});
+    negativeString.should.be.eql({});
 
     var negativeUndefined = AugeoUtility.initializeSubSkillsExperienceArray(undefined, Common.logData);
     Assert.strictEqual(negativeUndefined.constructor, Object);
-    negativeUndefined.should.eql({});
+    negativeUndefined.should.be.eql({});
 
     done();
   });

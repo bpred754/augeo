@@ -61,7 +61,7 @@
         var logData = AugeoUtility.formatLogData(API+CALLBACK, username);
         GithubService.removeUser(request.session.user._id, logData, function(){}, function(){});
       }
-      response.redirect(errorCode, process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
+      response.redirect(process.env.AUGEO_HOME + '/signup/error'); // Redirect to signup error page
     };
 
     if(username) {
@@ -72,7 +72,7 @@
       var code = request.query.code;
       var state = request.query.state;
 
-      if(code && state == process.env.GITHUB_STATE) {
+      if(code && state == process.env.AUTH_STATE) {
 
         GithubInterfaceService.getAccessToken(code, logData, function(accessToken) {
 
@@ -155,7 +155,7 @@
         clientId: process.env.GITHUB_CLIENT_ID,
         redirectUrl: process.env.AUGEO_HOME + '/github-api/callback',
         scope: 'public_repo',
-        state: process.env.GITHUB_STATE
+        state: process.env.AUTH_STATE
       };
 
       response.status(200).send(data);

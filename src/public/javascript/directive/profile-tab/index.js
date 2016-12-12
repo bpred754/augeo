@@ -25,5 +25,6 @@
   var augeo = require('angular').module('augeo');
 
   augeo.directive('augeoProfileTab', require('./augeo-profile-tab'));
+  augeo.directive('fitbitProfileTab', ['$state', '$window', 'InterfaceClientService', require('./fitbit-profile-tab')]);
   augeo.directive('githubProfileTab', ['$state', '$window', 'InterfaceClientService', require('./github-profile-tab')]);
   augeo.directive('twitterProfileTab', ['$state', '$timeout', '$window', 'InterfaceClientService', require('./twitter-profile-tab')]);

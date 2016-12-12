@@ -168,6 +168,16 @@
       usingProfileImage: (targetUser.github && targetUser.profileImg == targetUser.github.profileImageUrl)
     });
 
+    // FITBIT_INDEX = 3
+    interfaces.push({
+      name:'Fitbit',
+      active: 'image/fitbit/logo-blue-small.png',
+      passive: 'image/fitbit/logo-gray-small.png',
+      current:'image/fitbit/logo-gray-small.png',
+      hasAuthentication: (targetUser.fitbit && targetUser.fitbit.fitbitId),
+      usingProfileImage: (targetUser.fitbit && targetUser.profileImg == targetUser.fitbit.profileImageUrl)
+    });
+
     return interfaces;
   };
 

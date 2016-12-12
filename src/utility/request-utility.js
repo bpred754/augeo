@@ -22,12 +22,51 @@
   /* Description: Singleton that makes requests on behalf of Augeo           */
   /***************************************************************************/
 
-  // Required local modules
-  var Logger = require('../module/logger');
+  // Required libraries
+  var Dns = require('dns');
+  var Https = require('https');
 
-  // Constants
-  var LEVEL_MULTIPLIER = 30;
-  var UTILITY = 'augeo-utility';
+  exports.request = function(dnsCheckCount, options, callback, errorCallback) {
 
-  // Global variables
-  var log = new Logger();
+    Dns.resolve4(options.hostname, function(error, addresses) {
+      if (error) {
+        dnsCheckCount++;
+        if(dnsCheckCount < 2) {
+          exports.request(dnsCheckCount, options, callback, errorCallback);
+        } else {
+          errorCallback(error);
+        }
+      } else {
+        submitRequest(options, callback, errorCallback);
+      }
+    });
+  };
+
+  /***************************************************************************/
+  /* Private functions                                                       */
+  /***************************************************************************/
+
+  var submitRequest = function(options, callback, errorCallback) {
+    var request = Https.request(options, function(response) {
+
+      var data = '';
+      response.on('data', function (chunk) {
+        data += chunk;
+      });
+
+      response.on('end', function () {
+        callback(data, response.headers);
+      });
+
+      response.on('error', function(error) {
+        errorCallback(error);
+      });
+
+    });
+
+    request.on('error', function(error) {
+      errorCallback(error);
+    });
+
+    request.end();
+  };

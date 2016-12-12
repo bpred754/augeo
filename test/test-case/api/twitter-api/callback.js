@@ -35,12 +35,12 @@
     var agent = Request.agent(app);
 
     // Fails on twitterService.getUserSecretToken
-    it('should return status 301 - invalid user in session', function(done) {
+    it('should return status 302 - invalid user in session', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
         .get('/twitter-api/callback')
-        .expect(301)
+        .expect(302)
         .end(function(error, response) {
           Should.not.exist(error);
           Assert.strictEqual(response.headers.location, process.env.AUGEO_HOME + '/signup/error');
@@ -49,7 +49,7 @@
     });
 
     // Fails on twitterInterfaceService.getOAuthAccessToken
-    it('should return status 301 - request does not contain query', function(done) {
+    it('should return status 302 - request does not contain query', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
@@ -71,7 +71,7 @@
               // Hit callback with no query params
               agent
                 .get('/twitter-api/callback')
-                .expect(301)
+                .expect(302)
                 .end(function(error2, response2) {
                   Should.not.exist(error2);
                   Assert.strictEqual(response2.headers.location, process.env.AUGEO_HOME + '/signup/error');

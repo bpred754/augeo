@@ -252,7 +252,7 @@
               callback(data);
             });
           } else {
-            rollback(404, 'Invalid skill or timestamp');
+            rollback(400, 'Invalid skill or timestamp');
           }
         } else {
           callback();
@@ -261,6 +261,12 @@
     } else {
       rollback(404, 'Invalid username');
     }
+  };
+
+  exports.getUser = function(username, logData, callback) {
+    log.functionCall(SERVICE, 'getUser', logData.parentProcess, logData.username, {'username': username});
+
+    User.getUserWithUsername(username, logData, callback);
   };
 
   exports.getUserSecret = function(username, logData, callback) {
@@ -382,6 +388,11 @@
       case 'Github':
         profileImageUrl = user.github.profileImageUrl;
         profileIcon = user.github.profileImageUrl;
+        break;
+      case 'Fitbit':
+        profileImageUrl = user.fitbit.profileImageUrl;
+        profileIcon = user.fitbit.profileImageUrl;
+        break;
     };
 
     User.setProfileImage(user.username, profileImageUrl, profileIcon, logData, function(saveSuccessful) {

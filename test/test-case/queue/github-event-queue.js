@@ -82,7 +82,7 @@
     });
   });
 
-  it('should insert task onto queue, not push. Add request is value and a task in the queue has a last event ID -- addTask()', function(done) {
+  it('should insert task onto queue, not push. Add request is valid and a task in the queue has a last event ID -- addTask()', function(done) {
 
     User.getUserWithUsername(Common.USER.username, Common.logData, function(userInQueue) {
 

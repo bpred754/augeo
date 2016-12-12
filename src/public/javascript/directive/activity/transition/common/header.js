@@ -28,8 +28,22 @@
       restrict: 'E',
       scope: {
         'activity': '=',
-        screenName: '='
+        'user': '='
       },
-      templateUrl: 'html/directive/activity/transition/common/header.html'
+      templateUrl: 'html/directive/activity/transition/common/header.html',
+      link: function(scope, element, attributes) {
+
+        switch(scope.activity.kind) {
+          case 'FITBIT_DAY_STEPS':
+            scope.screenName = scope.user.fitbit.fitbitId;
+            break;
+          case 'GITHUB_COMMIT':
+            scope.screenName = scope.user.github.screenName;
+            break;
+          case 'TWITTER_TWEET':
+            scope.screenName = scope.user.twitter.screenName;
+            break;
+        }
+      }
     }
   };

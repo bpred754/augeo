@@ -48,6 +48,39 @@
     <div class="col-sm-2 col-xs-1 ih-spacer"></div>
     <div class="col-sm-8 col-xs-10 ih-description">
       <div class="row x-large-text">
+        Fitbit
+      </div>
+      <div class="row large-text history-text">
+        Fitbit's API enables Augeo to grab all your previous history in one request. Therefore, if you are authenticated with
+        Fitbit then Augeo has all your past step history. After authentication, Augeo establishes a polling system to retrieve your
+        current step counts.
+      </div>
+    </div>
+    <div class="col-sm-2 col-xs-1"></div>
+  </div>
+
+  <div class="row remove-margin ih-activity" ng-show="isLoaded">
+    <div class="col-xs-1 col-sm-2 ih-spacer"></div>
+    <div class="col-xs-7 col-sm-5 type-description">
+      <div class="row subheading-text">Steps</div>
+      <div  class="row large-text history-text">
+        Fitbit counts your steps while wearing one of their many devices.
+      </div>
+      <div class="row status-container standard-text">
+        <p ng-if="stepsDTO.isComplete == true" class="text-success">All Steps Received</p>
+        <p ng-if="stepsDTO.isComplete == false">{{stepsDTO.waitTime}}</p>
+      </div>
+    </div>
+    <div class="col-xs-3 ih-icon-container ih-icon-right">
+      <img src="../image/fitbit/foot-steps.png" class="ih-icon"/>
+    </div>
+    <div class="col-xs-1 col-sm-2"></div>
+  </div>
+
+  <div class="row remove-margin" ng-show="isLoaded">
+    <div class="col-sm-2 col-xs-1 ih-spacer"></div>
+    <div class="col-sm-8 col-xs-10 ih-description">
+      <div class="row x-large-text">
         Github
       </div>
       <div class="row large-text history-text">

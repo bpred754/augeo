@@ -46,19 +46,17 @@
   }
 
   #db-img {
-    background-color:gray;
     height:100%;
-    width:180px;
+    width:100%;
     cursor:pointer;
+    display:flex;
+    justify-content: center;
+    align-items: center;
   }
 
   #db-img-container {
     text-align:center;
     height:100%;
-  }
-
-  #db-links {
-    margin-top:10px;
   }
 
   #db-recent-activity-container {
@@ -79,6 +77,14 @@
   #db-transition-container {
     width:100%;
     display:flex;
+  }
+
+  .db-links-bottom {
+    margin-top: 10px;
+  }
+
+  .db-links-top {
+    margin-top:-20px;
   }
 
   .db-max-size {

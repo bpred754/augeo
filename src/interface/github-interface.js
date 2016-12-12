@@ -22,12 +22,9 @@
   /* Description: Handles all interfaces with the Github API                 */
   /***************************************************************************/
 
-  // Required libraries
-  var Dns = require('dns');
-  var Https = require('https');
-
   // Required local modules
   var Logger = require('../module/logger');
+  var RequestUtility = require('../utility/request-utility');
 
   // Constants
   var INTERFACE = 'github-interface';
@@ -51,7 +48,8 @@
       }
     };
 
-    submitRequest(options, callback, function(error) {
+    var dnsCheckCount = 0;
+    RequestUtility.request(dnsCheckCount, options, callback, function(error) {
       log.functionError(INTERFACE, 'getAccessToken', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
       callback();
     });
@@ -72,7 +70,7 @@
     };
 
     var dnsCheckCount = 0;
-    resolveDNS(dnsCheckCount, options, submitRequest, callback, function(error) {
+    RequestUtility.request(dnsCheckCount, options, callback, function(error) {
       log.functionError(INTERFACE, 'getCommit', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
       callback();
     });
@@ -94,7 +92,7 @@
     };
 
     var dnsCheckCount = 0;
-    resolveDNS(dnsCheckCount, options, submitRequest, callback, function(error) {
+    RequestUtility.request(dnsCheckCount, options, callback, function(error) {
       log.functionError(INTERFACE, 'getPushEvents', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
 
       var data = {};
@@ -117,53 +115,9 @@
       }
     };
 
-    submitRequest(options, callback, function(error) {
+    var dnsCheckCount = 0;
+    RequestUtility.request(dnsCheckCount, options, callback, function(error) {
       log.functionError(INTERFACE, 'getUserData', logData.parentProcess, logData.username, 'Error with Github request: ' + error);
       callback();
     });
-  };
-
-  /***************************************************************************/
-  /* Private functions                                                       */
-  /***************************************************************************/
-
-  var resolveDNS = function(dnsCheckCount, options, requestToSubmit, callback, errorCallback) {
-
-    Dns.resolve4(options.hostname, function(error, addresses) {
-      if (error) {
-        dnsCheckCount++;
-        if(dnsCheckCount < 2) {
-          resolveDNS(dnsCheckCount, options, requestToSubmit, callback, errorCallback);
-        } else {
-          errorCallback(error);
-        }
-      } else {
-        requestToSubmit(options, callback, errorCallback);
-      }
-    });
-  };
-
-  var submitRequest = function(options, callback, errorCallback) {
-    var request = Https.request(options, function(response) {
-
-      var data = '';
-      response.on('data', function (chunk) {
-        data += chunk;
-      });
-
-      response.on('end', function () {
-        callback(data, response.headers);
-      });
-
-      response.on('error', function(error) {
-        errorCallback(error);
-      });
-
-    });
-
-    request.on('error', function(error) {
-      errorCallback(error);
-    });
-
-    request.end();
   };

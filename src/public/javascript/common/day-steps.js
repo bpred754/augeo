@@ -28,7 +28,7 @@
   var Activity = require('./activity');
 
   // Constructor
-  var $this = function(json) {
+  var $this = function(json, user) {
     $this.base.constructor.call(this, json);
 
     if(json) {
@@ -40,20 +40,21 @@
         data = json;
       }
 
-      // TODO: Review what attributes are needed
-
       // public variables
-      this.avatarImageSrc = data.avatarImageSrc;
-      this.fitbitId = data.githubId;
-      this.name = data.name;
-      this.screenName = data.screenName;
+      this.dateTime = data.dateTime;
+      this.fitbitId = user.fitbitId;
+      this.name = user.name;
+      this.screenName = user.screenName;
       this.steps = data.steps;
 
       // Client only attributes
-      this.displayScreenName = this.screenName;
+      this.avatarImageSrc = user.profileImageUrl;
       this.interfaceLink = 'https://fitbit.com';
       this.interfaceLogo = 'image/fitbit/logo-blue-small.png';
       this.interfaceProfileUrl = 'https://fitbit.com/user/' + this.fitbitId;
+      this.html = this.steps + ' steps with Fitbit';
+      this.link = this.interfaceProfileUrl;
+      this.screenName = this.fitbitId;
     }
   };
 

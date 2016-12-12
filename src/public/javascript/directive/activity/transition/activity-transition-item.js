@@ -28,7 +28,7 @@
       restrict: 'E',
       scope: {
         'activity': '=',
-        'screenName': '='
+        'user': '='
       },
       template: '<ng-include src="getTemplateUrl()"/>',
       link: function(scope, element, attributes) {

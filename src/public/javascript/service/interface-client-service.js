@@ -59,7 +59,7 @@
       var parameters = null;
       AugeoClientService.getAugeoApi(api+'/getQueueWaitTimes', parameters, function(data) {
 
-        var waitTimes = data
+        var waitTimes = data;
         if(data && data.waitTimes) {
           waitTimes = new Array();
           for(var i = 0; i < data.waitTimes.length; i++) {

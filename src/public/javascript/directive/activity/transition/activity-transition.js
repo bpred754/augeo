@@ -28,7 +28,7 @@
       restrict: 'E',
       scope: {
         'activities': '=',
-        'screenName': '='
+        'user': '='
       },
       templateUrl: 'html/directive/activity/transition/activity-transition.html',
       link: function(scope, element, attributes) {

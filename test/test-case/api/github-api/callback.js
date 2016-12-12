@@ -41,12 +41,12 @@
     var agent = Request.agent(app);
 
     // Invalid session
-    it('should return status 401 due to invalid session -- callback()', function(done) {
+    it('should return status 302 due to invalid session -- callback()', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
         .get('/github-api/callback')
-        .expect(401)
+        .expect(302)
         .end(function(error, response) {
           Should.not.exist(error);
           Assert.strictEqual(response.headers.location, process.env.AUGEO_HOME + '/signup/error');
@@ -55,7 +55,7 @@
     });
 
     // Missing code attribute
-    it('should return status 400 due to missing code attribute -- callback()', function(done) {
+    it('should return status 302 due to missing code attribute -- callback()', function(done) {
 
       // Login in user
       agent
@@ -66,8 +66,8 @@
           Should.not.exist(error0);
 
           agent
-            .get('/github-api/callback?state=' + process.env.GITHUB_STATE)
-            .expect(400)
+            .get('/github-api/callback?state=' + process.env.AUTH_STATE)
+            .expect(302)
             .end(function(error1, response1) {
               Should.not.exist(error1);
               Assert.strictEqual(response1.headers.location, process.env.AUGEO_HOME + '/signup/error');
@@ -77,11 +77,11 @@
     });
 
     // Missing state attribute
-    it('should return status 400 due to missing state attribute -- callback()', function(done) {
+    it('should return status 302 due to missing state attribute -- callback()', function(done) {
 
       agent
         .get('/github-api/callback?code=1001')
-        .expect(400)
+        .expect(302)
         .end(function(error1, response1) {
           Should.not.exist(error1);
           Assert.strictEqual(response1.headers.location, process.env.AUGEO_HOME + '/signup/error');
@@ -90,11 +90,11 @@
     });
 
     // Failed to retrieve access token
-    it('should return status 400 failed to retrieve access token -- callback()', function(done) {
+    it('should return status 302 failed to retrieve access token -- callback()', function(done) {
 
       agent
-        .get('/github-api/callback?code=failAccessToken&state=' + process.env.GITHUB_STATE)
-        .expect(400)
+        .get('/github-api/callback?code=failAccessToken&state=' + process.env.AUTH_STATE)
+        .expect(302)
         .end(function(error1, response1) {
           Should.not.exist(error1);
           Assert.strictEqual(response1.headers.location, process.env.AUGEO_HOME + '/signup/error');
@@ -103,11 +103,11 @@
     });
 
     // Failed to retrieve Github user data
-    it('should return status 400 failed to retrieve Github user data -- callback()', function(done) {
+    it('should return status 302 failed to retrieve Github user data -- callback()', function(done) {
 
       agent
-        .get('/github-api/callback?code=failUserData&state=' + process.env.GITHUB_STATE)
-        .expect(400)
+        .get('/github-api/callback?code=failUserData&state=' + process.env.AUTH_STATE)
+        .expect(302)
         .end(function(error1, response1) {
           Should.not.exist(error1);
           Assert.strictEqual(response1.headers.location, process.env.AUGEO_HOME + '/signup/error');
@@ -116,7 +116,7 @@
     });
 
     // Github screen name already exists
-    it('should return status 400 screen name already exists -- callback()', function(done) {
+    it('should return status 302 screen name already exists -- callback()', function(done) {
 
       User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
 
@@ -136,8 +136,8 @@
             Assert.strictEqual(addedUser.githubId, githubUser.githubId);
 
             agent
-              .get('/github-api/callback?code=1001&state=' + process.env.GITHUB_STATE)
-              .expect(400)
+              .get('/github-api/callback?code=1001&state=' + process.env.AUTH_STATE)
+              .expect(302)
               .end(function(error1, response1) {
                 Should.not.exist(error1);
                 Assert.strictEqual(response1.headers.location, process.env.AUGEO_HOME + '/signup/error');
@@ -162,7 +162,7 @@
     it('should return status 200 successful callback from Github -- callback()', function(done) {
 
       agent
-        .get('/github-api/callback?code=1001&state=' + process.env.GITHUB_STATE)
+        .get('/github-api/callback?code=1001&state=' + process.env.AUTH_STATE)
         .expect(302)
         .end(function(error1, response1) {
           Should.not.exist(error1);

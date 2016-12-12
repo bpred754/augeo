@@ -23,20 +23,24 @@
   /****************************************************************************/
 
   var Commit = require('../common/commit');
+  var DaySteps = require('../common/day-steps');
   var Tweet = require('../common/tweet');
 
   // Reminder: Update service/index.js when service params are modified
   module.exports = function() {
 
-    this.getActivityObject = function(rawActivity) {
+    this.getActivityObject = function(rawActivity, user) {
 
       var activity = rawActivity;
       switch(rawActivity.kind) {
-        case 'TWITTER_TWEET':
-          activity = new Tweet(rawActivity);
+        case 'FITBIT_DAY_STEPS':
+          activity = new DaySteps(rawActivity, user.fitbit);
           break;
         case 'GITHUB_COMMIT':
           activity = new Commit(rawActivity);
+          break;
+        case 'TWITTER_TWEET':
+          activity = new Tweet(rawActivity);
           break;
       }
 

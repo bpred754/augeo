@@ -181,10 +181,17 @@
       log.functionCall(API, GET_SKILL_ACTIVITY, null, sessionUsername, {'username':username,'skill':skill,'timestamp':timestamp});
       var logData = AugeoUtility.formatLogData(API+GET_SKILL_ACTIVITY, sessionUsername);
       UserService.getSkillActivity(username, skill, timestamp, logData, function (newData) {
-        response.status(200).json(newData);
+        if(newData) {
+          UserService.getUser(username, logData, function (targetUser) {
+            newData.user = targetUser;
+            response.status(200).json(newData);
+          });
+        } else {
+          rollback(400, 'Invalid username');
+        }
       }, rollback);
     } else {
-      rollback(401)
+      rollback(401, INVALID_SESSION)
     }
   });
 

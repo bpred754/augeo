@@ -72,7 +72,7 @@
           if (data.recentActions && data.recentActions.length > 0) {
             $scope.activities = new Array();
             for(var i = 0; i < data.recentActions.length; i++) {
-              var activity = ActivityService.getActivityObject(data.recentActions[i]);
+              var activity = ActivityService.getActivityObject(data.recentActions[i], data.user);
               if(activity.formatThumbMedia) {
                 activity.formatThumbMedia();
               }

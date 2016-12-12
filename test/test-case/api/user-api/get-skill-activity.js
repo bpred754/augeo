@@ -29,10 +29,15 @@
   var Should = require('should');
 
   // Required local modules
+  var AugeoDB = require('../../../../src/model/database');
   var Common = require('../../../data/common');
   var TwitterData = require('../../../data/twitter-data');
   var TwitterInterfaceService = require('../../../../src/interface-service/twitter-interface-service');
   var TwitterService = require('../../../../src/service/twitter-service');
+
+  // Global variables
+  var Activity = AugeoDB.model('ACTIVITY');
+  var User = AugeoDB.model('AUGEO_USER');
 
   module.exports = function(app) {
 
@@ -52,7 +57,7 @@
     });
 
     // Missing skill parameter
-    it('should return status 404 - missing skill parameter', function(done) {
+    it('should return status 400 - missing skill parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
@@ -65,7 +70,7 @@
 
         agent
           .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&tweetID=9999999999999999999999999999999')
-          .expect(404)
+          .expect(400)
           .end(function(error1, response1) {
             Should.not.exist(error1);
             done();
@@ -74,12 +79,12 @@
     });
 
     // Missing tweetId parameter
-    it('should return status 404 - missing tweetId parameter', function(done) {
+    it('should return status 400 - missing tweetId parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
         .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo')
-        .expect(404)
+        .expect(400)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
@@ -87,12 +92,12 @@
     });
 
     // Non existent username parameter
-    it('should return status 404 - non existent username parameter', function(done) {
+    it('should return status 400 - non existent username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
         .get('/user-api/getSkillActivity?username=invalid&skill=Augeo&tweetId=9999999999999999999999999999999')
-        .expect(200)
+        .expect(400)
         .end(function(error, response) {
           Should.not.exist(error);
           done();
@@ -103,24 +108,30 @@
     it('should return status 200 - valid', function(done) {
       this.timeout(Common.TIMEOUT);
 
-      // Add activity to be retrieved
-      var action0 = TwitterInterfaceService.extractAction(TwitterData.rawStandardTweet, Common.logData);
-      var tweet0 = TwitterInterfaceService.extractTweet(TwitterData.rawStandardTweet, false, Common.logData);
+      User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
+        Activity.getUserActivities(user._id, Common.logData, function(activities) {
+          var initialActivityCount = activities.length;
 
-      TwitterService.addAction(action0, tweet0, Common.logData, function(classification0) {
+          // Add activity to be retrieved
+          var action0 = TwitterInterfaceService.extractAction(TwitterData.rawStandardTweet, Common.logData);
+          var tweet0 = TwitterInterfaceService.extractTweet(TwitterData.rawStandardTweet, false, Common.logData);
 
-        var timestamp = new Date(8640000000000000);
+          TwitterService.addAction(action0, tweet0, Common.logData, function(classification0) {
 
-        agent
-          .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo&timestamp=' + timestamp)
-          .expect(200)
-          .end(function(error, response) {
-            Should.not.exist(error);
-            Should.exist(response.body.activity);
-            Assert.strictEqual(response.body.activity.length, 1);
-            Assert.strictEqual(response.body.activity[0].data.tweetId, TwitterData.rawStandardTweet.id_str);
-            done();
+            var timestamp = new Date(8640000000000000);
+
+            agent
+              .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo&timestamp=' + timestamp)
+              .expect(200)
+              .end(function(error, response) {
+                Should.not.exist(error);
+                Should.exist(response.body.activity);
+                Assert.strictEqual(response.body.activity.length, initialActivityCount + 1);
+                Assert.strictEqual(response.body.activity[response.body.activity.length-1].data.tweetId, TwitterData.rawStandardTweet.id_str);
+                done();
+              });
           });
+        })
       });
     });
 

@@ -32,10 +32,11 @@
 
   // Constants
   var COLLECTION = 'augeo_user-collection';
-  exports.PROJECTION_STRING = 'firstName github lastName username admin profileImg profileIcon profession location website description skill subSkills twitter';
+  exports.PROJECTION_STRING = 'firstName fitbit github lastName username admin profileImg profileIcon profession location website description skill subSkills twitter';
 
   // Global variables
-  var githubProjection = 'githubId name profileImageUrl screenName'
+  var fitbitProjection = 'fitbitId name profileImageUrl screenName';
+  var githubProjection = 'githubId name profileImageUrl screenName';
   var log = new Logger();
   var twitterProjection = 'augeoUser name profileIcon profileImageUrl screenName twitterId';
 
@@ -45,6 +46,7 @@
     description: String,
     email: String,
     firstName: String,
+    fitbit: {type: Mongoose.Schema.Types.ObjectId, ref: 'FITBIT_USER'},
     github: {type: Mongoose.Schema.Types.ObjectId, ref: 'GITHUB_USER'},
     lastName: String,
     location: String,
@@ -371,7 +373,7 @@
   AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': email, $options: 'i'}})
       .select(exports.PROJECTION_STRING)
-      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}])
+      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}])
       .exec(function(error, user) {
         if(error) {
           log.functionError(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username,
@@ -386,7 +388,7 @@
   AUGEO_USER.statics.getUserWithUsername = function(username, logData, callback) {
     this.findOne({'username':{'$regex': username, $options: 'i'}})
       .select(exports.PROJECTION_STRING)
-      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}])
+      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}])
       .exec(function(error, user) {
         if(error) {
           log.functionError(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username,
