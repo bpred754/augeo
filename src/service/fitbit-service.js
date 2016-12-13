@@ -23,20 +23,20 @@
   /***************************************************************************/
 
   // Required local modules
-  var Activity = require('../model/schema/augeo/activity');
   var AugeoDB = require('../model/database');
   var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
   var Classifier = require('../classifier/app-classifier');
-  var FitbitDaySteps = require('../model/schema/fitbit/day-steps');
   var Logger = require('../module/logger');
-  var User = require('../model/schema/augeo/user');
 
   // Constants
   var SERVICE = 'fitbit-service';
 
   // Global variables
+  var Activity = AugeoDB.model('ACTIVITY');
+  var FitbitDaySteps = AugeoDB.model('FITBIT_DAY_STEPS');
   var FitbitUser = AugeoDB.model('FITBIT_USER');
+  var User = AugeoDB.model('AUGEO_USER');
   var classifier = new Classifier();
   var log = new Logger();
 

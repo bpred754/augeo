@@ -141,7 +141,7 @@
 
         task.reset();
         Assert.strictEqual(task.dailySteps.length, 0);
-        Assert.strictEqual(task.lastDateTime, 'Sat Dec 10 2016 17:38:19 GMT-0700 (MST)');
+        Assert.strictEqual(task.lastDateTime, new Date('Sat Dec 10 2016 17:38:19 GMT-0700 (MST)').setHours(0,0,0,0));
 
         done();
       });

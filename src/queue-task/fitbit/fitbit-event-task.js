@@ -25,11 +25,12 @@
   // Required local modules
   var AbstractObject = require('../../public/javascript/common/abstract-object');
   var AbstractQueueTask = require('../abstract-queue-task');
+  var AugeoDB = require('../../model/database');
   var FitbitInterfaceService = require('../../interface-service/fitbit-interface-service');
-  var FitbitUser = require('../../model/schema/fitbit/user');
   var Logger = require('../../module/logger');
 
   // Global variables
+  var FitbitUser = AugeoDB.model('FITBIT_USER');
   var log = new Logger();
 
   // Constants
@@ -90,7 +91,7 @@
       }
 
       var task = this;
-      FitbitInterfaceService.getSteps(this.fitbitData, period, logData, function(data) {
+      FitbitInterfaceService.getSteps(task.fitbitData, period, logData, function(data) {
 
         var newSteps = new Array();
 
@@ -112,6 +113,13 @@
 
           FitbitInterfaceService.refreshAccessToken(task.fitbitData.refreshToken, logData, function(tokens) {
             FitbitUser.updateAccessTokens(task.fitbitData.fitbitId, tokens, logData, function(updatedUser) {
+
+              // Reset this task's Fitbit data
+              if(updatedUser) {
+                task.fitbitData.accessToken = updatedUser.accessToken;
+                task.fitbitData.refreshToken = updatedUser.refreshToken;
+              }
+
               task.dailySteps = newSteps;
               callback(task);
             });
@@ -126,7 +134,7 @@
     reset: function(logData) {
 
       if (this.dailySteps.length > 0) {
-        this.lastDateTime = this.dailySteps[this.dailySteps.length - 1].dateTime;
+        this.lastDateTime = new Date(this.dailySteps[this.dailySteps.length - 1].dateTime).setHours(0, 0, 0, 0);
         this.dailySteps.length = 0;
       }
     }
