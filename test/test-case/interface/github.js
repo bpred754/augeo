@@ -89,7 +89,10 @@
           var payload = event.payload;
           Should.exist(payload);
 
-          if(event.type == 'PushEvent') {
+          // If a PushEvent has no size, there are no commits to be read.
+          // This can happen if a file was added directly through Github,
+          // e.g. adding License.md
+          if(event.type == 'PushEvent' && payload.size !== 0) {
             var commits = payload.commits;
             commits.length.should.be.above(0);
           }
