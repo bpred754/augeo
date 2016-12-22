@@ -219,15 +219,38 @@
   /***************************************************************************/
 
   var upsertActivity = function(activityDocument, activity, logData, callback) {
-    activityDocument.findOneAndUpdate({$and:[{user:activity.user},{data:activity.data}]}, activity, {upsert:true, 'new':true}, function(error, updatedActivity) {
-      if (error) {
+    activityDocument.findOne({$and:[{user:activity.user},{data:activity.data}]}, function(error, foundActivity) {
+
+      if(error) {
         log.functionError(COLLECTION, 'upsertActivity (private)', logData.parentProcess, logData.username,
-          'Failed to upsert activity with data ID: ' + (activity)?activity.data:'invalid' + '. Error: ' + error);
+          'Failed to find activity with data ID: ' + (activity) ? activity.data : 'invalid');
         callback();
       } else {
-        log.functionCall(COLLECTION, 'upsertActivity (private)', logData.parentProcess, logData.username, {'activityDocument':(activityDocument)?'defined':'invalid',
-          'activity.data':(activity)?activity.data:'invalid'});
-        callback(updatedActivity);
+
+        var duplicateExperience = 0;
+        if (foundActivity && typeof foundActivity.experience == 'number') {
+          // Grab current experience so it's not duplicated in user's experience
+          duplicateExperience = foundActivity.experience;
+        }
+
+        activityDocument.findOneAndUpdate({$and: [{user: activity.user}, {data: activity.data}]}, activity, { upsert: true, 'new': true},
+          function (error, updatedActivity) {
+          if (error) {
+            log.functionError(COLLECTION, 'upsertActivity (private)', logData.parentProcess, logData.username,
+              'Failed to upsert activity with data ID: ' + (activity) ? activity.data : 'invalid' + '. Error: ' + error);
+            callback();
+          } else {
+            log.functionCall(COLLECTION, 'upsertActivity (private)', logData.parentProcess, logData.username, {
+              'activityDocument': (activityDocument) ? 'defined' : 'invalid',
+              'activity.data': (activity) ? activity.data : 'invalid'
+            });
+
+            // Add attribute for duplicate experience
+            updatedActivity.duplicateExperience = duplicateExperience;
+
+            callback(updatedActivity);
+          }
+        });
       }
     });
   };

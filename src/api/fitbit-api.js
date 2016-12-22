@@ -92,7 +92,7 @@
                         FitbitService.getLastDateTime(userData.fitbitId, logData, function (lastDateTime) {
 
                           if (process.env.TEST != 'true') {
-                            var task = new FitbitQueueTask(addedUser, JSON.parse(JSON.stringify(userData)), lastDateTime, logData);
+                            var task = new FitbitQueueTask(addedUser, JSON.parse(JSON.stringify(userData)), lastDateTime.getTime(), logData);
                             QueueService.fitbitEventQueue.addTask(task, logData);
                           }
 

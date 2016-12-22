@@ -135,10 +135,10 @@
         }
 
         // Add activities to ACTIVITY collection
-        Activity.addActivities(activities, logData, function () {
+        Activity.addActivities(activities, logData, function (insertedActivities) {
 
           // Determine experience from tweets
-          var skillsExperience = AugeoUtility.calculateSkillsExperience(activities, logData);
+          var skillsExperience = AugeoUtility.calculateSkillsExperience(insertedActivities, logData);
 
           // Update user's experience
           User.updateSkillData(userId, skillsExperience, logData, function () {

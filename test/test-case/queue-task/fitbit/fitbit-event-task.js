@@ -68,7 +68,7 @@
       fitbitData.augeoUser = userData._id;
 
       var dateTime = new Date(2016, 10, 1, 0, 0, 0, 0);
-      var task = new FitbitEventTask(userData, fitbitData, dateTime, Common.logData);
+      var task = new FitbitEventTask(userData, fitbitData, dateTime.getTime(), Common.logData);
       task.execute(Common.logData, function(data) {
         Assert.strictEqual(data.dailySteps.length, 2);
         done();

@@ -25,6 +25,7 @@
   var fitbitInterfaceUrl = process.env.TEST === 'true' ? '../../test/test-interface/fitbit-test-interface' : '../interface/fitbit-interface';
 
   // Required local modules
+  var AugeoUtility = require('../utility/augeo-utility');
   var DaySteps = require('../public/javascript/common/day-steps');
   var FitbitInterface = require(fitbitInterfaceUrl);
   var Logger = require('../module/logger');
@@ -59,7 +60,7 @@
     FitbitInterface.getSteps(fitbitUser.accessToken, period, logData, function(history) {
       var dailySteps;
       if(history && typeof history == 'string') {
-        dailySteps = extractDailySteps(history, fitbitUser);
+        dailySteps = extractDailySteps(history, fitbitUser, logData);
       }
       callback(dailySteps);
     });
@@ -101,7 +102,7 @@
   /* Private functions                                                       */
   /***************************************************************************/
 
-  var extractDailySteps = function(history, fitbitUser) {
+  var extractDailySteps = function(history, fitbitUser, logData) {
     var json = JSON.parse(history);
 
     var dailySteps = new Array();
@@ -113,6 +114,7 @@
 
         for (var i = 0; i < dailyStepsJson.length; i++) {
           var dayStepsJson = dailyStepsJson[i];
+          var dateParts = AugeoUtility.getDateParts(dayStepsJson.dateTime, logData);
 
           var daySteps = {
             classification: 'Fitness',
@@ -120,7 +122,7 @@
             dateTime: dayStepsJson.dateTime,
             kind: 'FITBIT_DAY_STEPS',
             steps: dayStepsJson.value,
-            timestamp: dayStepsJson.dateTime,
+            timestamp: new Date(dateParts.year, dateParts.month, dateParts.day).getTime(),
             user: fitbitUser.augeoUser
           };
 

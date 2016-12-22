@@ -56,7 +56,8 @@
       var self = this;
       FitbitService.loopThroughUsersQueueData(logData, function(queueData) {
         var user = queueData.user;
-        var task = new FitbitQueueTask(user.augeoUser, user, queueData.lastDateTime, logData);
+        var lastDateTime = (queueData.lastDateTime) ? queueData.lastDateTime.getTime() : null;
+        var task = new FitbitQueueTask(user.augeoUser, user, lastDateTime, logData);
         self.addTask(task, logData)
       }, callback);
     },

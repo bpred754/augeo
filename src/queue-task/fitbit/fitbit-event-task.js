@@ -67,16 +67,13 @@
 
       // Determine the period for the amount of dates to retrieve
       var diffDays = 999;
-      if(this.lastDateTime && this.lastDateTime instanceof Date) {
+      if(this.lastDateTime && typeof this.lastDateTime == 'number') {
         var currentDate = new Date();
-        var timeDiff = Math.abs(currentDate.getTime() - this.lastDateTime.getTime());
+        var timeDiff = Math.abs(currentDate.getTime() - this.lastDateTime);
         diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
       }
 
-      var period = '1d';
-      if(diffDays > 1) {
-        period = '7d'
-      }
+      var period = '7d';
       if(diffDays > 6) {
         period = '30d';
       }
@@ -92,22 +89,8 @@
 
       var task = this;
       FitbitInterfaceService.getSteps(task.fitbitData, period, logData, function(data) {
-
-        var newSteps = new Array();
-
         if(data instanceof Array) {
-          var dailySteps = data;
-          var lastDayStepsDate = new Date(task.lastDateTime).setHours(0, 0, 0, 0);
-
-          for (var i = 0; i < dailySteps.length; i++) {
-
-            var dayStepDate = new Date(dailySteps[i].dateTime).setHours(0, 0, 0, 0);
-            if (dayStepDate > lastDayStepsDate) {
-              newSteps.push(dailySteps[i])
-            }
-          }
-
-          task.dailySteps = newSteps;
+          task.dailySteps = data;
           callback(task);
         } else if (data == 'expired_token') {
 
@@ -120,12 +103,12 @@
                 task.fitbitData.refreshToken = updatedUser.refreshToken;
               }
 
-              task.dailySteps = newSteps;
+              task.dailySteps = new Array();
               callback(task);
             });
           });
         } else {
-          task.dailySteps = newSteps;
+          task.dailySteps = new Array();
           callback(task);
         }
       });

@@ -211,6 +211,36 @@
     done();
   });
 
+  it('should return date parts for epoch given null dateString argument - getDateParts()', function(done) {
+
+    var dateParts = AugeoUtility.getDateParts(null, Common.logData);
+    Assert.strictEqual(dateParts.year, 1970);
+    Assert.strictEqual(dateParts.month, 0);
+    Assert.strictEqual(dateParts.day, 1);
+
+    done();
+  });
+
+  it('should return date parts for epoch given invalid dateString argument - getDateParts()', function(done) {
+
+      var dateParts = AugeoUtility.getDateParts('2016-12', Common.logData);
+      Assert.strictEqual(dateParts.year, 1970);
+      Assert.strictEqual(dateParts.month, 0);
+      Assert.strictEqual(dateParts.day, 1);
+
+      done();
+  });
+
+  it('should return date parts for given dateString argument - getDateParts()', function(done) {
+
+      var dateParts = AugeoUtility.getDateParts('2016-12-22', Common.logData);
+      Assert.strictEqual(dateParts.year, 2016);
+      Assert.strictEqual(dateParts.month, 11);
+      Assert.strictEqual(dateParts.day, 22);
+
+      done();
+  });
+
   it('should return glyphicon for a given skill name -- getGlyphicon()', function(done) {
     Assert.strictEqual(AugeoUtility.getGlyphicon('Books', Common.logData), 'glyphicon-book');
     Assert.strictEqual(AugeoUtility.getGlyphicon('Business', Common.logData), 'glyphicon-briefcase');

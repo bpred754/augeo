@@ -27,6 +27,7 @@
 
   // Required local modules
   var AugeoDB = require('../../../src/model/database');
+  var AugeoUtility = require('../../../src/utility/augeo-utility');
   var Common = require('../../data/common');
   var TwitterAddActivityTask = require('../../../src/queue-task/twitter/stream/twitter-add-activity-task');
   var TwitterData = require('../../data/twitter-data');
@@ -51,13 +52,15 @@
 
   it('should update users skill ranks -- finishTask()', function(done) {
 
+    var skillIndex = AugeoUtility.getSkillIndex('General', Common.logData);
+
     // Get rank for USER
     User.getUserWithUsername(Common.USER.username, Common.logData, function(userBefore) {
-      var userBeforeRank = userBefore.skill.rank;
+      var userBeforeRank = userBefore.subSkills[skillIndex].rank;
 
       // Get rank for ACTIONEE
       User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(actioneeBefore) {
-        var actioneeBeforeRank = actioneeBefore.skill.rank;
+        var actioneeBeforeRank = actioneeBefore.subSkills[skillIndex].rank;
 
         // Verify user has a better rank than actionee
         userBeforeRank.should.be.below(actioneeBeforeRank);
@@ -73,10 +76,10 @@
           queue.finishTask('General', Common.logData, function() {
 
             User.getUserWithUsername(Common.USER.username, Common.logData, function(userAfter) {
-              var userAfterRank = userAfter.skill.rank;
+              var userAfterRank = userAfter.subSkills[skillIndex].rank;
 
               User.getUserWithUsername(Common.ACTIONEE.username, Common.logData, function(actioneeAfter) {
-                var actioneeAfterRank = actioneeAfter.skill.rank;
+                var actioneeAfterRank = actioneeAfter.subSkills[skillIndex].rank;
 
                 // Verify users ranks swapped
                 actioneeAfterRank.should.be.below(userAfterRank);

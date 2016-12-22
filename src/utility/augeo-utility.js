@@ -82,12 +82,13 @@
     var subSkillsExperience = exports.initializeSubSkillsExperienceArray(exports.SUB_SKILLS, logData);
     for(var i = 0; i < activities.length; i++) {
       var activity = activities[i];
+      var duplicateExperience = (activity.duplicateExperience) ? activity.duplicateExperience : 0;
 
       // Add tweet experience to mainSkill
-      mainSkillExperience += activity.experience;
+      mainSkillExperience += (activity.experience - duplicateExperience);
 
       // Add experience to subSkill
-      subSkillsExperience[activity.classification] += activity.experience;
+      subSkillsExperience[activity.classification] += (activity.experience - duplicateExperience);
     }
 
     var experience = {
@@ -133,6 +134,24 @@
       'parentProcess': parentProcess,
       'username': username
     };
+  };
+
+  exports.getDateParts = function(dateString, logData) {
+      log.functionCall(UTILITY, 'getDateParams', logData.parentProcess, logData.username, {'dateString':dateString});
+
+      var dateParts;
+      if(typeof dateString == 'string') {
+          var dateArray = dateString.split(/-/);
+          if(dateArray.length == 3) {
+            dateParts = dateArray;
+          }
+      }
+
+      return {
+        year: (dateParts) ? parseInt(dateParts[0]) : 1970,
+        month: (dateParts) ? parseInt(dateParts[1], 10) -1 : 0,
+        day: (dateParts) ? parseInt(dateParts[2]) : 1
+      };
   };
 
   // Return the glyphicon for the given skill

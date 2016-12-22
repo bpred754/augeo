@@ -110,7 +110,13 @@
 
       User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
         Activity.getUserActivities(user._id, Common.logData, function(activities) {
-          var initialActivityCount = activities.length;
+
+            var initialActivityCount = 0;
+            for(var i = 0; i < activities.length; i++) {
+              if(activities[i].classification == 'General') {
+                initialActivityCount++;
+              }
+            }
 
           // Add activity to be retrieved
           var action0 = TwitterInterfaceService.extractAction(TwitterData.rawStandardTweet, Common.logData);
@@ -121,7 +127,7 @@
             var timestamp = new Date(8640000000000000);
 
             agent
-              .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo&timestamp=' + timestamp)
+              .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=General&timestamp=' + timestamp)
               .expect(200)
               .end(function(error, response) {
                 Should.not.exist(error);
