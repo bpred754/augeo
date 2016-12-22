@@ -37,6 +37,25 @@
     {name:"Games", glyphicon:"glyphicon-tower"}, {name:"General", glyphicon:"glyphicon-globe"}, {name:"Music", glyphicon:"glyphicon-headphones"},
     {name:"Photography", glyphicon:"glyphicon-camera"}, {name:"Sports", glyphicon:"glyphicon-bullhorn"}, {name:"Technology", glyphicon:"glyphicon-phone"}];
 
+  exports.buildRegex = function(before, logData) {
+    log.functionCall(UTILITY, 'buildRegex', logData.parentProcess, logData.username, {'before':before});
+
+    var escapeCharacters = ['-','.','/','[',']','*','+','?',')','{','}','|'];
+    var after = '';
+
+    if(before && typeof before === 'string') {
+      for (var i = 0; i < before.length; i++) {
+        var currentChar = before.charAt(i);
+        if (escapeCharacters.indexOf(currentChar) > -1) {
+          after += '\\' + currentChar;
+        } else {
+          after += currentChar;
+        }
+      }
+    }
+    return after;
+  };
+
   // Calculate level depending on the amount of experience
   exports.calculateLevel = function(experience, logData) {
     log.functionCall(UTILITY, 'calculateLevel', logData.parentProcess, logData.username, {'experience':experience});

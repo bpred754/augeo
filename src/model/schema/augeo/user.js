@@ -108,7 +108,7 @@
 
   AUGEO_USER.statics.doesEmailExist = function(email, logData, callback) {
     var emailExists = false;
-    this.count({email:{'$regex': email, $options: 'i'}}, function(error, count) {
+    this.count({email:{'$regex': AugeoUtility.buildRegex(email, logData), $options: 'i'}}, function(error, count) {
       if(error) {
         log.functionError(COLLECTION, 'doesEmailExist', logData.parentProcess, logData.username,
           'Failed to find count for ' + email + '. Error: ' + error);
@@ -124,7 +124,7 @@
 
   AUGEO_USER.statics.doesUsernameExist = function(username, logData, callback) {
     var usernameExists = false;
-    this.count({'username':{'$regex': username, $options: 'i'}}, function(error, count) {
+    this.count({'username':{'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}}, function(error, count) {
       if(error) {
         log.functionError(COLLECTION, 'doesUsernameExist', logData.parentProcess, logData.username,
           'Failed to check if username: ' + username + ' exists. Error: ' + error);
@@ -254,7 +254,7 @@
   };
 
   AUGEO_USER.statics.getPasswordWithEmail = function(email, logData, callback) {
-    this.findOne({email:{'$regex': email, $options: 'i'}}, {password:1}, function(error, data) {
+    this.findOne({email:{'$regex': AugeoUtility.buildRegex(email, logData), $options: 'i'}}, {password:1}, function(error, data) {
       if(error) {
         log.functionError(COLLECTION, 'getPasswordWithEmail', logData.parentProcess, logData.username,
           'Failed to find password for email: ' + email + '. Error:' + error);
@@ -271,7 +271,7 @@
   };
 
   AUGEO_USER.statics.getPasswordWithUsername = function(username, logData, callback) {
-    this.findOne({username:{'$regex': username, $options: 'i'}}, {password:1}, function(error, data) {
+    this.findOne({username:{'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}}, {password:1}, function(error, data) {
       if(error) {
         log.functionError(COLLECTION, 'getPasswordWithUsername', logData.parentProcess, logData.username,
           'Failed to find password for username: ' + username + '. Error:' + error);
@@ -291,7 +291,7 @@
 
     if(skill === 'Augeo') {
 
-      this.findOne({'username':{'$regex': username, $options: 'i'}}, {'skill.rank':1}, function(error, data) {
+      this.findOne({'username':{'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}}, {'skill.rank':1}, function(error, data) {
 
         if(error) {
           log.functionError(COLLECTION, 'getSkillRank', logData.parentProcess, logData.username,
@@ -310,7 +310,7 @@
         {
           "$match":
           {
-            "username": {'$regex': username, $options: 'i'}
+            "username": {'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}
           }
         },
         getSubSkillQuery(skill)
@@ -357,7 +357,7 @@
   };
 
   AUGEO_USER.statics.getUserSecretWithUsername = function(username, logData, callback) {
-    this.findOne({'username':{'$regex': username, $options: 'i'}})
+    this.findOne({'username':{'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}})
       .select('-password')
       .exec(function(error, user) {
         if(error) {
@@ -371,7 +371,7 @@
   };
 
   AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
-    this.findOne({email:{'$regex': email, $options: 'i'}})
+    this.findOne({email:{'$regex': AugeoUtility.buildRegex(email, logData), $options: 'i'}})
       .select(exports.PROJECTION_STRING)
       .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}])
       .exec(function(error, user) {
@@ -386,7 +386,7 @@
   };
 
   AUGEO_USER.statics.getUserWithUsername = function(username, logData, callback) {
-    this.findOne({'username':{'$regex': username, $options: 'i'}})
+    this.findOne({'username':{'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}})
       .select(exports.PROJECTION_STRING)
       .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}])
       .exec(function(error, user) {
@@ -402,7 +402,7 @@
   };
 
   AUGEO_USER.statics.remove = function(username, logData, callback) {
-    this.findOneAndRemove({'username':{'$regex': username, $options: 'i'}}, function(error, user) {
+    this.findOneAndRemove({'username':{'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}}, function(error, user) {
       if(error) {
         log.functionError(COLLECTION, 'remove', logData.parentProcess, logData.username, 'Failed to remove ' + username + '. Error: ' + error);
       } else {

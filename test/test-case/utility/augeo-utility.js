@@ -30,6 +30,16 @@
   var AugeoUtility = require('../../../src/utility/augeo-utility');
   var Common = require('../../data/common');
 
+  it('should return empty object when given null as input argument -- buildRegex()', function(done) {
+    Assert.strictEqual('', AugeoUtility.buildRegex(null, Common.logData));
+    done();
+  });
+
+  it('should return new string with escape characters -- buildRegex()', function(done) {
+    Assert.strictEqual('test\\+augeo@gmail\\.com', AugeoUtility.buildRegex('test+augeo@gmail.com', Common.logData));
+    done();
+  });
+
   it('should return correct levels for given experiences -- calculateLevel()', function(done) {
     Assert.strictEqual(AugeoUtility.calculateLevel(0, Common.logData), 1);
     Assert.strictEqual(AugeoUtility.calculateLevel(90, Common.logData), 2);
