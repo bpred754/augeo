@@ -107,13 +107,12 @@
       this.queue = Async.queue(function(task, callback) {
         log.functionCall(self.QUEUE, 'Async.queue', logData.parentProcess, logData.username, {}, 'Executing queue task');
 
+        self.isBusy = true;
         self.currentTask = task;
         self.prepareTask(task);
         self.startQueueTimer(logData);
 
         self.onRequestOpen(function() {
-
-          self.isBusy = true;
           task.execute(logData, function(executeData) {
 
             var finalize = function(callback) {

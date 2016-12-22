@@ -71,7 +71,7 @@
           var queue = self.queue;
 
           // Check if it's the first task in the queue
-          if(queue.tasks.length == 0 && !this.isBusy) {
+          if(queue.tasks.length == 0 && !self.isBusy) {
             task.isFirstRequestInQueue = true;
           }
 
@@ -107,6 +107,8 @@
     prepareTask: function(task) {
       if(task.isFirstRequestInQueue == true) {
         this.taskWaitTime = 300000;
+      } else {
+        this.taskWaitTime = 0;
       }
     }
 
