@@ -122,7 +122,7 @@
             dateTime: dayStepsJson.dateTime,
             kind: 'FITBIT_DAY_STEPS',
             steps: dayStepsJson.value,
-            timestamp: new Date(dateParts.year, dateParts.month, dateParts.day).getTime(),
+            timestamp: new Date(dateParts.year, dateParts.month, dateParts.day, 7).getTime(),
             user: fitbitUser.augeoUser
           };
 
