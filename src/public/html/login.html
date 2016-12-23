@@ -93,7 +93,7 @@
         <form class="front-page-form" role="form">
           <div class="inline-form-container">
             <label class="control-label subheading-text">Login</label>
-            <input class="form-control input-lg" type="email" placeholder="Email Address" ng-model="loginEmail">
+            <input class="form-control input-lg" type="email" placeholder="Email Address" ng-model="loginEmail" autofocus>
           </div>
           <table>
             <tbody>
@@ -163,37 +163,39 @@
   <div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="confirmation-modal-label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title x-large-text" id="confirmation-modal-label">Confirmation</h4>
-        </div>
-        <div class="modal-body">
-          <div id="confirm-message" class="standard-text">
-            Hi {{signupFirstName}}, thanks for signing up with Augeo! Before continuing please confirm your email address and password:
+        <form role="form">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title x-large-text" id="confirmation-modal-label">Confirmation</h4>
           </div>
-          <div>
-            <p class="text-align-center text-error" ng-show="confirmationError">{{confirmationError}}</p>
-          </div>
-          <div class="row">
-            <div id="confirm-email" class="col-xs-6 col-xs-offset-3">
-              <input class="form-control input-lg standard-text" type="email" placeholder="Confirm Email" ng-model="confirmEmail">
+          <div class="modal-body">
+            <div id="confirm-message" class="standard-text">
+              Hi {{signupFirstName}}, thanks for signing up with Augeo! Before continuing please confirm your email address and password:
+            </div>
+            <div>
+              <p class="text-align-center text-error" ng-show="confirmationError">{{confirmationError}}</p>
+            </div>
+            <div class="row">
+              <div id="confirm-email" class="col-xs-6 col-xs-offset-3">
+                <input id="confirm-email-input" class="form-control input-lg standard-text" type="email" placeholder="Confirm Email" ng-model="confirmEmail">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-6 col-xs-offset-3">
+                <input class="form-control input-lg standard-text password-input" type="password" placeholder="Confirm Password" ng-model="confirmPassword">'
+              </div>
+            </div>
+            <div >
+              Disclaimer - this site is currently in Alpha and is Open Source. Due to these reasons this site is more susceptible to an attack
+              and a breach of your data. If you accept this risk, please continue. We hope you enjoy the site!
             </div>
           </div>
-          <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">
-              <input class="form-control input-lg standard-text password-input" type="password" placeholder="Confirm Password" ng-model="confirmPassword">'
-            </div>
-          </div>
-          <div >
-            Disclaimer - this site is currently in Alpha and is Open Source. Due to these reasons this site is more susceptible to an attack
-            and a breach of your data. If you accept this risk, please continue. We hope you enjoy the site!
-          </div>
-        </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" ng-click="submitSignup()">Continue</button>
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-        </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" ng-click="submitSignup()">Continue</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -210,6 +212,10 @@
         scope.confirmEmail = '';
         scope.confirmPassword = '';
       });
-    })
+    });
+
+    $('#confirmation-modal').on('shown.bs.modal', function() {
+      $('#confirm-email-input').focus();
+    });
 
   </script>

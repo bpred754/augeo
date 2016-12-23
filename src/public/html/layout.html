@@ -168,7 +168,7 @@
               <img id="about-logo-image" src="image/augeo-logo-medium.png">
             </div>
             <div class="modal-footer" ng-if="aboutModalHeading != 'About'">
-              <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="showProfile()">Authenticate with Interface</button>
+              <button id="authenticate-submit" type="button" class="btn btn-primary" data-dismiss="modal" ng-click="showProfile()">Authenticate with Interface</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Later</button>
             </div>
           </div>
@@ -207,8 +207,16 @@
             enableBodyScrolling();
           });
 
-          // Disable scrolling on body element
           $('#about-modal').on('shown.bs.modal', function() {
+
+            // Select 'Authenticate with Interface' button on 'Enter' press
+            $(this).keypress(function(e) {
+              if(e.which == 13) {
+                $('#authenticate-submit').click();
+              }
+            });
+
+            // Disable scrolling on body element
             disableBodyScrolling();
           });
 
