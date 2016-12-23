@@ -96,7 +96,7 @@
       </div>
 
       <!-- Profile Modal -->
-      <div class="modal fade" id="profile-modal" tabindex="-1" role="dialog" aria-labelledby="profile-modal-label" aria-hidden="true" ng-controller="ProfileController">
+      <div class="modal fade chained-modal" id="profile-modal" tabindex="-1" role="dialog" aria-labelledby="profile-modal-label" aria-hidden="true" ng-controller="ProfileController">
         <div class="modal-dialog" id="profile-modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -149,7 +149,7 @@
       </div>
 
       <!-- About Modal -->
-      <div class="modal fade" id="about-modal" tabindex="-1" role="dialog" aria-labelledby="about-modal-label" aria-hidden="true">
+      <div class="modal fade chained-modal" id="about-modal" tabindex="-1" role="dialog" aria-labelledby="about-modal-label" aria-hidden="true">
         <div class="modal-dialog">
           <div id="about-modal-content" class="modal-content">
             <div class="modal-header">
@@ -180,6 +180,14 @@
 
       <script>
 
+        var disableBodyScrolling = function() {
+          $('body').css('overflow', 'hidden');
+        };
+
+        var enableBodyScrolling = function() {
+          $('body').css('overflow', 'initial');
+        };
+
         var showAboutModal = function() {
           $('#about-modal').modal();
         };
@@ -193,6 +201,16 @@
         };
 
         $(document).ready(function() {
+
+          // Enable body scrolling
+          $('#about-modal').on('hidden.bs.modal', function() {
+            enableBodyScrolling();
+          });
+
+          // Disable scrolling on body element
+          $('#about-modal').on('shown.bs.modal', function() {
+            disableBodyScrolling();
+          });
 
           // Remove entered data in delete modal inputs
           $('#delete-modal').on('hidden.bs.modal', function () {
@@ -209,6 +227,13 @@
             scope.$apply(function() {
                 scope.setView({name:'Augeo'});
             });
+
+            enableBodyScrolling();
+          });
+
+          // Disable scrolling on body element
+          $('#profile-modal').on('shown.bs.modal', function() {
+            disableBodyScrolling();
           });
 
           // Enable profile-tooltip

@@ -108,6 +108,11 @@
     padding-bottom:0px;
   }
 
+  .chained-modal {
+    overflow-x:hidden;
+    overflow-y:auto;
+  }
+
   .lyt-footer {
     padding-top:15px;
     width:100%;
