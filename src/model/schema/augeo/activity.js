@@ -41,6 +41,7 @@
     classificationGlyphicon: String,
     data: {type: Mongoose.Schema.Types.ObjectId, 'refPath':'kind'},
     experience: Number,
+    isFlaggable: {type:Boolean, default: true},
     kind: String,
     timestamp: Date,
     user: {type: Mongoose.Schema.Types.ObjectId, ref:'AUGEO_USER'}
@@ -229,8 +230,16 @@
 
         var duplicateExperience = 0;
         if (foundActivity && typeof foundActivity.experience == 'number') {
+
           // Grab current experience so it's not duplicated in user's experience
           duplicateExperience = foundActivity.experience;
+
+          // Use the current isFlaggable value
+          activity.isFlaggable = foundActivity.isFlaggable;
+        } else {
+
+          // If the activity is new then set it to be flaggable
+          activity.isFlaggable = true;
         }
 
         activityDocument.findOneAndUpdate({$and: [{user: activity.user}, {data: activity.data}]}, activity, { upsert: true, 'new': true},

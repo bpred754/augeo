@@ -141,3 +141,8 @@
     width: 100%;
     vertical-align: middle;
   }
+
+  .activity-red-flag {
+    color:#a94442;
+    cursor:pointer;
+  }
