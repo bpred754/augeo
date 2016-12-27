@@ -4,7 +4,7 @@ Interested in contributing to the Augeo web application? Great! We could definit
 
 Not only do you get the satisfaction of building something awesome, but working on open source projects are great for building your resume. Need an idea on what to tackle first? Visit [Feature Ideas](https://github.com/bpred754/augeo/issues/1), [Interface Ideas](https://github.com/bpred754/augeo/issues/2), or the general list of [Issues](https://github.com/bpred754/augeo/issues).
 
-Before starting your contribution, <a href="https://www.clahub.com/agreements/bpred754/augeo">sign the Contributor License Agreement</a>. It also might be a good idea to familiarize yourself with the process defined below and the application [design](https://github.com/bpred754/augeo/wiki).
+Before starting your contribution, <a href="https://www.clahub.com/agreements/bpred754/augeo">sign the Contributor License Agreement</a>. It also might be a good idea to familiarize yourself with the process defined below and the application [design](https://github.com/bpred754/augeo/wiki). If you're interested in adding an interface, check out this [wiki page](https://github.com/bpred754/augeo/wiki/How-to-Add-an-Interface).
 
 ##### Step 1 - Install Augeo
 * Follow the instructions at this wiki [page](https://github.com/bpred754/augeo/wiki/Installation)
