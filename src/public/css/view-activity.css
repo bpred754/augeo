@@ -99,6 +99,26 @@
     font-size:125px;
   }
 
+  .va-popup-container {
+    height:175px;
+  }
+
+  .va-popup-container-title {
+    margin-bottom:15px
+  }
+  .va-popup-glyphicon {
+    font-size:75px;
+  }
+
+  .va-popup-glyphicon-container {
+    padding-bottom:10px;
+  }
+
+  .va-popup-select {
+    width:25%;
+    margin:0 auto;
+  }
+
   /***************************************************************************/
   /* Screen Size: less than custom small                                     */
   /***************************************************************************/

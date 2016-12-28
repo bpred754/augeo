@@ -80,12 +80,23 @@
       }
     });
 
+    $scope.flagActivity = function(activity, suggestedClassification) {
+      UserClientService.flagActivity(activity.id, activity.classification, suggestedClassification);
+    };
+
     $scope.getGlyphicon = function(name) {
-      var glyphicon = '';
-      for(var i = 0; i < $scope.skills.length; i++) {
-        if($scope.skills[i].name == name) {
-          glyphicon = $scope.skills[i].glyphicon;
-          break;
+      var glyphicon = 'glyphicon-books';
+
+      if ($scope.skills) { // Make sure View Activity data has loaded
+        if (name == 'Delete Activity') {
+          glyphicon = 'glyphicon-trash'
+        } else {
+          for (var i = 0; i < $scope.skills.length; i++) {
+            if ($scope.skills[i].name == name) {
+              glyphicon = $scope.skills[i].glyphicon;
+              break;
+            }
+          }
         }
       }
       return glyphicon;

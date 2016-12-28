@@ -29,6 +29,15 @@
       AugeoClientService.postAugeoApi('user-api/add', user, callback);
     };
 
+    this.flagActivity = function(activityId, classification, suggestedClassification) {
+      var parameters = {
+        activityId: activityId,
+        classification: classification,
+        suggestedClassification: suggestedClassification
+      };
+      AugeoClientService.postAugeoApi('user-api/flagActivity', parameters, function() {});
+    };
+
     this.getActivityDisplayData = function(callback) {
       var parameters = null;
       AugeoClientService.getAugeoApi('user-api/getActivityDisplayData', parameters, function(data) {

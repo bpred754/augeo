@@ -25,6 +25,13 @@
   // Reminder: Update directive/index.js when directive params are modified
   module.exports = function() {
     return {
+      link: function(scope) {
+        scope.showFlagActivityModal = function() {
+          if(scope.activity.isFlaggable) {
+            showFlagActivityModal(scope.activity);
+          }
+        };
+      },
       restrict: 'E',
       scope: {
         'activity': '='
