@@ -23,6 +23,7 @@
   /****************************************************************************/
 
   var Commit = require('../common/commit');
+  var Flag = require('../common/flag');
   var DaySteps = require('../common/day-steps');
   var Tweet = require('../common/tweet');
 
@@ -33,6 +34,9 @@
 
       var activity = rawActivity;
       switch(rawActivity.kind) {
+        case 'AUGEO_FLAG':
+          activity = new Flag(rawActivity, user);
+          break;
         case 'FITBIT_DAY_STEPS':
           activity = new DaySteps(rawActivity, user.fitbit);
           break;

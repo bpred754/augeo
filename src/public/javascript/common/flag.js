@@ -19,12 +19,46 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all common components for         */
-  /*   browserify                                                            */
+  /* Description: Object to store Augeo's flag logic and attributes          */
   /***************************************************************************/
 
-  require('./abstract-object');
-  require('./activity');
-  require('./flag');
-  require('./commit');
-  require('./tweet');
+  // Required local modules
+  var AbstractObject = require('./abstract-object');
+  var Activity = require('./activity');
+
+  // Constructor
+  var $this = function(json, user) {
+    $this.base.constructor.call(this, json);
+
+    if(json) {
+
+      var data;
+      if (json.data) {
+        data = json.data;
+      } else {
+        data = json;
+      }
+
+      // public variables
+      this.flaggedActivityId = data.activity;
+      this.flaggee = data.flaggee;
+      this.newClassification = data.newClassification;
+      this.previousClassification = data.previousClassification;
+      this.reclassifiedDate = data.reclassifiedDate;
+
+      // Client only attributes
+      this.avatarImageSrc = user.profileImg;
+      this.displayScreenName = user.username;
+      this.interfaceLink = 'https://www.augeo.io';
+      this.interfaceLogo = 'image/augeo-logo-small.png';
+      this.interfaceProfileUrl = 'https://www.augeo.io/dashboard/' + user.username;
+      this.html = 'Correctly flagged <a href="https://www.augeo.io/dashboard/'+this.flaggee+'" target="_blank">'+this.flaggee+'\'s</a> <a class="clickable" onclick="console.log(\''+this.flaggedActivityId+'\')">activity</a> with an original classification of ' + this.previousClassification + ' as ' + this.newClassification;
+      this.link = this.interfaceLink;
+      this.name = user.firstName + ' ' + user.lastName;
+      this.screenName = user.username;
+    }
+  };
+
+  AbstractObject.extend(Activity, $this, {});
+
+  module.exports = $this;

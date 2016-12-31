@@ -152,28 +152,33 @@
                     // Determine if the activity's staged flag had the correct vote
                     if (activityStagedFlag.suggestedClassification === newClassification) {
 
-                      // Add the staged flag to the AUGEO_FLAG collection
-                      var flag = {
-                        activity: stagedFlag.activity,
-                        newClassification: newClassification,
-                        previousClassification: oldClassification,
-                        reclassifiedDate: stagedFlag.reclassifyDate
-                      };
+                      // Get the flaggee's username
+                      User.getUserWithId(updatedActivity.user, logData, function(flaggee) {
 
-                      Flag.addFlag(flag, logData, function (addedFlag) {
+                        // Add the staged flag to the AUGEO_FLAG collection
+                        var flag = {
+                          activity: stagedFlag.activityId,
+                          flaggee: flaggee.username,
+                          newClassification: newClassification,
+                          previousClassification: oldClassification,
+                          reclassifiedDate: stagedFlag.reclassifyDate
+                        };
 
-                        // Create a new activity for the successful flag
-                        var activity = flag;
-                        activity.classification = 'Community';
-                        activity.classificationGlyphicon = AugeoUtility.getGlyphicon('Community', logData);
-                        activity.data = addedFlag._id;
-                        activity.experience = AugeoUtility.FLAG_EXPERIENCE;
-                        activity.kind = 'AUGEO_FLAG';
-                        activity.timestamp = stagedFlag.timestamp;
-                        activity.user = updatedActivity.user;
+                        Flag.addFlag(flag, logData, function (addedFlag) {
 
-                        Activity.addActivity(activity, logData, function (addedActivity) {
-                          nextStagedActivityIteration();
+                          // Create a new activity for the successful flag
+                          var activity = flag;
+                          activity.classification = 'Community';
+                          activity.classificationGlyphicon = AugeoUtility.getGlyphicon('Community', logData);
+                          activity.data = addedFlag._id;
+                          activity.experience = AugeoUtility.FLAG_EXPERIENCE;
+                          activity.kind = 'AUGEO_FLAG';
+                          activity.timestamp = stagedFlag.timestamp;
+                          activity.user = updatedActivity.user;
+
+                          Activity.addActivity(activity, logData, function (addedActivity) {
+                            nextStagedActivityIteration();
+                          });
                         });
                       });
                     } else { // Activity did not have the correct vote

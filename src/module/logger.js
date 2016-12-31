@@ -186,7 +186,7 @@
         }
       },
 
-      functionError: function (file, functionName, identifier, message) {
+      functionError: function (file, functionName, parentProcess, identifier, message) {
         if (process.env.TEST != 'true') {
           log.warn(this.buildLogString(file, functionName, null, identifier, null, message));
         }

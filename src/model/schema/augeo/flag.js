@@ -38,6 +38,7 @@
   // Schema declaration
   var AUGEO_FLAG = Mongoose.Schema({
     activity: {type: Mongoose.Schema.Types.ObjectId, ref: 'ACTIVITY'},
+    flaggee: String,
     newClassification: String,
     previousClassification: String,
     reclassifiedDate: Date

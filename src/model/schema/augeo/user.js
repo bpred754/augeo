@@ -370,6 +370,18 @@
       });
   };
 
+  AUGEO_USER.statics.getUserWithId = function(id, logData, callback) {
+    this.findOne({_id: id}, function(error, user) {
+      if(error) {
+        log.functionError(COLLECTION, 'getUserWithId', logData.parentProcess, logData.username, 'Failed to find user with id: ' + id);
+        callback();
+      } else {
+        log.functionError(COLLECTION, 'getUserWithId', logData.parentProcess, logData.username, {'id': id});
+        callback(user);
+      }
+    });
+  };
+
   AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': AugeoUtility.buildRegex(email, logData), $options: 'i'}})
       .select(exports.PROJECTION_STRING)
