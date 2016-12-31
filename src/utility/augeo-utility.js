@@ -32,6 +32,10 @@
   // Global variables
   var log = new Logger();
 
+  exports.ADMIN_RECLASSIFY_VOTES = 100;
+
+  exports.FLAG_EXPERIENCE = 10;
+
   exports.SUB_SKILLS = [{name:"Books", glyphicon:"glyphicon-book"}, {name:"Business", glyphicon:"glyphicon-briefcase"}, {name:"Community", glyphicon:"glyphicon-tree-deciduous"},
     {name:"Entertainment", glyphicon:"glyphicon-star"}, {name:"Fitness", glyphicon:"glyphicon-heart"}, {name:"Food & Drink", glyphicon:"glyphicon-cutlery"},
     {name:"Games", glyphicon:"glyphicon-tower"}, {name:"General", glyphicon:"glyphicon-globe"}, {name:"Music", glyphicon:"glyphicon-headphones"},
@@ -91,6 +95,19 @@
     }
 
     return levelProgress;
+  };
+
+  exports.calculateReclassifyDate = function(inTimestamp, inWaitHours, logData) {
+    log.functionCall(UTILITY, 'calculateReclassifyDate', logData.parentProcess, logData.username, {'timestamp':inTimestamp});
+
+    var waitHours = (inWaitHours) ? inWaitHours : 0;
+    var timestamp = (inTimestamp) ? inTimestamp : Date.now();
+
+    var numberDays = 1000 * 60 * 60 * waitHours;
+    var reclassifyDate = new Date(timestamp + numberDays);
+    reclassifyDate.setHours(0,0,0,0);
+    reclassifyDate.setUTCDate(reclassifyDate.getDate());
+    return reclassifyDate;
   };
 
   // Calculate skills experience

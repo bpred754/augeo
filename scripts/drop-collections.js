@@ -18,6 +18,13 @@
   /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
   /***************************************************************************/
 
-  db.mentions.drop()
-  db.tweets.drop()
-  db.users.drop()
+  db.activities.drop()
+  db.augeo_flags.drop()
+  db.augeo_staged_flags.drop()
+  db.augeo_users.drop()
+  db.fitbit_day_steps.drop()
+  db.fitbit_users.drop()
+  db.github_commits.drop()
+  db.github_users.drop()
+  db.twitter_tweets.drop()
+  db.twitter_users.drop()

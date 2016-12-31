@@ -109,7 +109,7 @@
 
         self.isBusy = true;
         self.currentTask = task;
-        self.prepareTask(task);
+        self.prepareTask(task, logData);
         self.startQueueTimer(logData);
 
         self.onRequestOpen(function() {
@@ -137,6 +137,10 @@
           });
         });
       });
+    },
+
+    kill: function() {
+      this.queue.kill();
     },
 
     onRequestOpen: function(callback) {

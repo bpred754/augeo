@@ -81,7 +81,13 @@
     });
 
     $scope.flagActivity = function(activity, suggestedClassification) {
-      UserClientService.flagActivity(activity.id, activity.classification, suggestedClassification);
+      UserClientService.flagActivity(activity.id, activity.classification, suggestedClassification, function(data, status) {
+        if(status == 200) {
+          closeFlagActivityModal();
+        } else {
+          $scope.flagActivityError = data;
+        }
+      });
     };
 
     $scope.getGlyphicon = function(name) {

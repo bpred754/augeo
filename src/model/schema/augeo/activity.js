@@ -215,6 +215,18 @@
     });
   };
 
+  ACTIVITY.statics.updateClassification = function(activityId, classification, classificationGlyphicon, logData, callback) {
+    this.findOneAndUpdate({_id: activityId}, {$set:{classification: classification, classificationGlyphicon:classificationGlyphicon}}, {new: true}, function(error, activity) {
+      if(error) {
+        log.functionError(COLLECTION, 'updateClassification', logData.parentProcess, logData.username, 'Failed to update activitys classification with activityId: ' + activityId);
+        callback();
+      } else {
+        log.functionCall(COLLECTION, 'updateClassification', logData.parentProcess, logData.username, {'activity':activityId, 'classification':classification});
+        callback(activity);
+      }
+    });
+  };
+
   /***************************************************************************/
   /* Private Methods                                                         */
   /***************************************************************************/
@@ -236,6 +248,10 @@
 
           // Use the current isFlaggable value
           activity.isFlaggable = foundActivity.isFlaggable;
+
+          // Use the current classification and glyphicon
+          activity.classification = foundActivity.classification;
+          activity.classificationGlyphicon = foundActivity.classificationGlyphicon;
         } else {
 
           // If the activity is new then set it to be flaggable

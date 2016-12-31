@@ -53,7 +53,7 @@
         Activity.addActivities(dailySteps, logData, function(insertedActivities) {
           var skillsExperience = AugeoUtility.calculateSkillsExperience(insertedActivities, logData);
           User.updateSkillData(dailySteps[0].user, skillsExperience, logData, function () {
-            callback();
+            callback(insertedActivities);
           });
         });
       });

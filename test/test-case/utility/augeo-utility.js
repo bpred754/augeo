@@ -72,6 +72,15 @@
     done();
   });
 
+  it('should return the reclassify date given the number of hours -- calculateReclassifyDate()', function(done) {
+
+    AugeoUtility.calculateReclassifyDate(null, 0, Common.logData).getTime().should.be.above(1482994800000);
+    Assert.strictEqual(AugeoUtility.calculateReclassifyDate(1483135830800, 0, Common.logData).getTime(), 1483081200000);
+    Assert.strictEqual(AugeoUtility.calculateReclassifyDate(1483135830800, 24, Common.logData).getTime(), 1483167600000);
+    Assert.strictEqual(AugeoUtility.calculateReclassifyDate(1483135830800, 48, Common.logData).getTime(), 1483254000000);
+    done();
+  });
+
   it('should return an object with main skill and sub skill experiences -- calculateSkillsExperience()', function(done) {
 
     var activities = new Array();

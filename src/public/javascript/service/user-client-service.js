@@ -29,13 +29,13 @@
       AugeoClientService.postAugeoApi('user-api/add', user, callback);
     };
 
-    this.flagActivity = function(activityId, classification, suggestedClassification) {
+    this.flagActivity = function(activityId, classification, suggestedClassification, callback) {
       var parameters = {
         activityId: activityId,
         classification: classification,
         suggestedClassification: suggestedClassification
       };
-      AugeoClientService.postAugeoApi('user-api/flagActivity', parameters, function() {});
+      AugeoClientService.postAugeoApi('user-api/flagActivity', parameters, callback);
     };
 
     this.getActivityDisplayData = function(callback) {

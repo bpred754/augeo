@@ -31,14 +31,15 @@
   var AugeoUtility = require('../../../src/utility/augeo-utility');
   var Common = require('../../data/common');
   var AugeoDB = require('../../../src/model/database');
-  var TwitterData = require('../../data/twitter-data')
+  var TwitterData = require('../../data/twitter-data');
   var TwitterService = require('../../../src/service/twitter-service');
   var UserService = require('../../../src/service/user-service');
 
   // Global variables
   var Activity = AugeoDB.model('ACTIVITY');
-  var User = AugeoDB.model('AUGEO_USER');
+  var StagedFlag = AugeoDB.model('AUGEO_STAGED_FLAG');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
+  var User = AugeoDB.model('AUGEO_USER');
 
   // addUser
   it('should add new Augeo user to AugeoDB -- addUser()', function(done) {
@@ -118,6 +119,82 @@
                   done();
                 });
               }, rollbackFailure);
+            });
+          });
+        });
+      });
+    });
+  });
+
+  // addStagedFlag
+  it('should add a staged flag to AugeoDB -- addStagedUser()', function(done) {
+
+    var reclassifyDate = AugeoUtility.calculateReclassifyDate(Date.now(), 48, Common.logData);
+
+    // Verify no entries are in the AUGEO_STAGED_FLAG collection
+    StagedFlag.getStagedFlags(reclassifyDate, Common.logData, function(stagedFlags) {
+      Assert.strictEqual(stagedFlags.length, 0);
+
+      // Invalid activityId
+      var invalidActivityId = {
+        activityId: null,
+        currentClassification: 'General',
+        suggestedClassification: 'Fitness',
+        username: Common.USER.username
+      };
+
+      UserService.addStagedFlag(invalidActivityId, Common.logData, function(){}, function() {
+
+        // Invalid currentClassification
+        var invalidClassification = {
+          activityId: '5866ceaf982a882e2e3eaee8',
+          currentClassification: 'invalid',
+          suggestedClassification: 'Fitness',
+          username: Common.USER.username
+        };
+
+        UserService.addStagedFlag(invalidClassification, Common.logData, function() {}, function() {
+
+          // Invalid username
+          var invalidUsername = {
+            activityId: '5866ceaf982a882e2e3eaee8',
+            currentClassification: 'General',
+            suggestedClassification: 'Fitness',
+            username: null
+          };
+
+          UserService.addStagedFlag(invalidUsername, Common.logData, function(){}, function() {
+
+            // Invalid suggestedClassification
+            var invalidSuggestedClassification = {
+              activityId: '5866ceaf982a882e2e3eaee8',
+              currentClassification: 'General',
+              suggestedClassification: 'Invalid',
+              username: Common.USER.username
+            };
+
+            UserService.addStagedFlag(invalidSuggestedClassification, Common.logData, function(){}, function() {
+
+              // Valid
+              var valid = {
+                activityId: '5866ceaf982a882e2e3eaee8',
+                currentClassification: 'General',
+                suggestedClassification: 'Fitness',
+                username: Common.USER.username
+              };
+
+              UserService.addStagedFlag(valid, Common.logData, function() {
+
+                StagedFlag.getStagedFlags(reclassifyDate, Common.logData, function(stagedFlagsAfter) {
+                  Assert.strictEqual(stagedFlagsAfter.length, 1);
+                  Assert.strictEqual(stagedFlagsAfter[0].votes, 1);
+
+                  var dateDifference = stagedFlagsAfter[0].reclassifyDate - Date.now();
+                  dateDifference.should.be.above(1000*60*60*24);
+
+                  done();
+                });
+              }, function(){});
             });
           });
         });

@@ -38,6 +38,7 @@
   // Constants
   var ADD = '/add';
   var API = 'user-api';
+  var FLAG_ACTIVITY = '/flagActivity';
   var GET_ACTIVITY_DISPLAY_DATA = '/getActivityDisplayData';
   var GET_COMPETITORS = '/getCompetitors';
   var GET_CURRENT_USER = '/getCurrentUser';
@@ -255,12 +256,39 @@
               }
             }
           });
-        }
-        ;
+        };
       });
     } else {
       log.functionError(API, ADD, null, 'Session exists');
       response.status(400).send('Cannot signup when logged in');
+    }
+  });
+
+  UserRouter.post(FLAG_ACTIVITY, function(request, response) {
+    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+
+    var rollback = function(message) {
+      log.functionError(API, FLAG_ACTIVITY, request.body.activityId, message);
+      response.status(400).send(message);
+    };
+
+    if(username) {
+      log.functionCall(API, FLAG_ACTIVITY, null, request.session.user.username, {'activityId': request.body.activityId, 'classification':request.body.classification,
+        'suggestedClassification': request.body.suggestedClassification});
+      var logData = AugeoUtility.formatLogData(API+FLAG_ACTIVITY, username);
+
+      var stagedFlag = {
+        activityId: request.body.activityId,
+        currentClassification: request.body.classification,
+        username: username,
+        suggestedClassification: request.body.suggestedClassification
+      };
+
+      UserService.addStagedFlag(stagedFlag, logData, function() {
+        response.sendStatus(200);
+      }, rollback);
+    } else {
+      rollback(INVALID_SESSION);
     }
   });
 

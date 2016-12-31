@@ -22,12 +22,15 @@
   /* Description: Singleton to manage app queues                             */
   /***************************************************************************/
 
+  var AugeoReclassifyQueue = require('../queue/augeo-reclassify-queue');
+  var AugeoReclassifyTask = require('../queue-task/augeo/reclassify-task');
   var FitbitEventQueue = require('../queue/fitbit-event-queue');
   var GithubEventQueue = require('../queue/github-event-queue');
   var TwitterConnectQueue = require('../queue/twitter-connect-queue');
   var TwitterEventQueue = require('../queue/twitter-event-queue');
   var TwitterStreamQueue = require('../queue/twitter-stream-queue');
 
+  exports.augeoReclassifyQueue = null;
   exports.fitbitEventQueue = null;
   exports.githubEventQueue = null;
   exports.twitterConnectQueue = null;
@@ -35,6 +38,11 @@
   exports.twitterStreamQueue = null;
 
   exports.initializeAppQueues = function(logData) {
+
+    // Augeo Queues
+    exports.augeoReclassifyQueue = new AugeoReclassifyQueue(logData);
+    var reclassifyTask = new AugeoReclassifyTask(logData);
+    exports.augeoReclassifyQueue.addTask(reclassifyTask, logData);
 
     // Fitbit Queues
     exports.fitbitEventQueue = new FitbitEventQueue(logData);

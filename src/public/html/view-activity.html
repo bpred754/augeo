@@ -74,9 +74,10 @@
     <div class="modal-content" ng-init="suggestedClassification = 'Books'">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="large-text">Flag Activity Classification</h4>
+        <h4 class="large-text">Vote for Activity Re-Classification</h4>
       </div>
       <div class="modal-body">
+        <p class="standard-text text-error text-align-center">{{flagActivityError}}</p>
         <div class="va-popup-container">
           <p class="row large-text text-align-center va-popup-container-title">Current Classification</p>
           <div class="horizontal-center va-popup-glyphicon-container">
@@ -96,7 +97,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="flagActivity(selectedActivity, suggestedClassification)">Submit</button>
+        <button type="button" class="btn btn-primary" ng-click="flagActivity(selectedActivity, suggestedClassification)">Submit</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
@@ -129,6 +130,10 @@
     });
 
   });
+
+  var closeFlagActivityModal = function(activity) {
+    $('#flag-activity-modal').modal('hide');
+  };
 
   var showFlagActivityModal = function(activity) {
 

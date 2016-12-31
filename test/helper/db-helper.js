@@ -26,6 +26,8 @@
   // Schemas
   require('../../src/model/schema/augeo/user');
   require('../../src/model/schema/augeo/activity');
+  require('../../src/model/schema/augeo/flag');
+  require('../../src/model/schema/augeo/staged-flag');
   require('../../src/model/schema/fitbit/day-steps');
   require('../../src/model/schema/fitbit/user');
   require('../../src/model/schema/github/commit');
@@ -49,7 +51,9 @@
   var Commit = AugeoDB.model('GITHUB_COMMIT');
   var DaySteps = AugeoDB.model('FITBIT_DAY_STEPS');
   var FitbitUser = AugeoDB.model('FITBIT_USER');
+  var Flag = AugeoDB.model('AUGEO_FLAG');
   var GithubUser = AugeoDB.model('GITHUB_USER');
+  var StagedFlag = AugeoDB.model('AUGEO_STAGED_FLAG');
   var Tweet = AugeoDB.model('TWITTER_TWEET');
   var TwitterUser = AugeoDB.model('TWITTER_USER');
 
@@ -137,15 +141,19 @@
 
   exports.cleanAugeoDB = function(callback) {
     exports.cleanDaySteps(function() {
-      exports.cleanTweets(function() {
-        exports.cleanCommits(function() {
-          exports.cleanActivities(function() {
-            exports.cleanUsers(function() {
-              callback();
+      exports.cleanFlags(function() {
+        exports.cleanStagedFlags(function() {
+          exports.cleanTweets(function() {
+            exports.cleanCommits(function() {
+              exports.cleanActivities(function() {
+                exports.cleanUsers(function() {
+                  callback();
+                });
+              });
             });
           });
         });
-      });
+      })
     });
   };
 
@@ -157,6 +165,20 @@
 
   exports.cleanDaySteps = function(callback) {
     DaySteps.removeDailySteps(FitbitData.USER_FITBIT.fitbitId,  Common.logData, function() {
+      callback();
+    });
+  };
+
+  exports.cleanFlags = function(callback) {
+    var todayDate = AugeoUtility.calculateReclassifyDate(Date.now(), 0, Common.logData);
+    Flag.removeFlags(todayDate, Common.logData, function() {
+      callback();
+    });
+  };
+
+  exports.cleanStagedFlags = function(callback) {
+    var todayDate = AugeoUtility.calculateReclassifyDate(Date.now(), 0, Common.logData);
+    StagedFlag.removeStagedFlags(todayDate, Common.logData, function() {
       callback();
     });
   };

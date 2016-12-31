@@ -25,6 +25,8 @@
 
   // Schemas
   require('../src/model/schema/augeo/activity');
+  require('../src/model/schema/augeo/flag');
+  require('../src/model/schema/augeo/staged-flag');
   require('../src/model/schema/augeo/user');
   require('../src/model/schema/fitbit/user');
   require('../src/model/schema/github/user');
@@ -103,6 +105,7 @@
       });
     });
 
+    importTests('augeoReclassifyTask', './test-case/queue-task/augeo/reclassify-task.js');
     importTests('fitbitEventTask', './test-case/queue-task/fitbit/fitbit-event-task.js');
     importTests('githubEventTask', './test-case/queue-task/github/github-event-task.js');
     importTests('twitterAddActivityTask', './test-case/queue-task/twitter/stream/twitter-add-activity-task.js');
@@ -131,6 +134,7 @@
       });
     });
 
+    importTests('augeoReclassifyQueue', './test-case/queue/augeo-reclassify-queue');
     importTests('fitbitEventQueue', './test-case/queue/fitbit-event-queue');
     importTests('githubEventQueue', './test-case/queue/github-event-queue');
     importTests('twitterEventQueue', './test-case/queue/twitter-event-queue');
@@ -149,6 +153,7 @@
 
   describe('User API', function() {
     importTests('Add User', './test-case/api/user-api/add-user');
+    importTests('flagActivity', './test-case/api/user-api/flag-activity', App);
     importTests('getActivityDisplayData', './test-case/api/user-api/get-activity-display-data', App);
     importTests('getCompetitors', './test-case/api/user-api/get-competitors', App);
     importTests('getDashboardDisplayData', './test-case/api/user-api/get-dashboard-display-data', App);

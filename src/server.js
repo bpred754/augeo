@@ -38,6 +38,8 @@
 
   // Schemas
   require('./model/schema/augeo/activity');
+  require('./model/schema/augeo/flag');
+  require('./model/schema/augeo/staged-flag');
   require('./model/schema/augeo/user');
   require('./model/schema/fitbit/day-steps');
   require('./model/schema/fitbit/user');

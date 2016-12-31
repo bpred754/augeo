@@ -42,8 +42,34 @@
 
   // Global variables
   var Activity = AugeoDB.model('ACTIVITY');
+  var StagedFlag= AugeoDB.model('AUGEO_STAGED_FLAG');
   var User = AugeoDB.model('AUGEO_USER');
   var log = new Logger();
+
+  exports.addStagedFlag = function(stagedFlag, logData, callback, rollback) {
+    log.functionCall(SERVICE, 'addStagedFlag', logData.parentProcess, logData.username, {'stagedFlag.activityId': (stagedFlag) ? stagedFlag.activityId : 'Invalid'});
+
+    if(AugeoValidator.isMongooseObjectIdValid(stagedFlag.activityId, logData) && AugeoUtility.getGlyphicon(stagedFlag.currentClassification, logData).length > 0 &&
+        AugeoValidator.isUsernameValid(stagedFlag.username, logData) && (AugeoUtility.getGlyphicon(stagedFlag.suggestedClassification, logData).length > 0 || stagedFlag.suggestedClassification == 'Delete Activity')) {
+
+      stagedFlag.timestamp = Date.now();
+      stagedFlag.reclassifyDate = AugeoUtility.calculateReclassifyDate(stagedFlag.timestamp, 48, logData);
+
+      // Determine number of votes user gets
+      User.getUserWithUsername(stagedFlag.username, logData, function(user) {
+
+        var communityIndex = AugeoUtility.getSkillIndex('Community', logData);
+        var communityLevel = user.subSkills[communityIndex].level;
+        var adminVotes = (user.admin) ? AugeoUtility.ADMIN_RECLASSIFY_VOTES : 0;
+
+        stagedFlag.votes = Math.max(adminVotes, communityLevel);
+
+        StagedFlag.addVotes(stagedFlag, logData, callback);
+      });
+    } else {
+      rollback('Invalid Request');
+    }
+  };
 
   exports.addUser = function(user, logData, callback, rollback) {
     log.functionCall(SERVICE, 'addUser', logData.parentProcess, logData.username);
