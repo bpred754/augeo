@@ -121,19 +121,18 @@
               // Update the activity classification
               Activity.updateClassification(key, newClassification, newClassificationGlyphicon, logData, function (updatedActivity) {
 
-                // Build skill data
-                var subSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData);
-                subSkillsExperience[newClassification] = updatedActivity.experience;
-                subSkillsExperience[oldClassification] = -1 * updatedActivity.experience;
-                subSkillsExperience['Community'] += AugeoUtility.FLAG_EXPERIENCE;
+                // Build flaggee skill data
+                var flaggeeSubSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData);
+                flaggeeSubSkillsExperience[newClassification] = updatedActivity.experience;
+                flaggeeSubSkillsExperience[oldClassification] = -1 * updatedActivity.experience;
 
-                var experience = {
-                  mainSkillExperience: AugeoUtility.FLAG_EXPERIENCE,
-                  subSkillsExperience: subSkillsExperience
+                var flaggeeExperience = {
+                  mainSkillExperience: 0,
+                  subSkillsExperience: flaggeeSubSkillsExperience
                 };
 
                 // Update the activity user's subskill experience
-                User.updateSkillData(updatedActivity.user, experience, logData, function () {
+                User.updateSkillData(updatedActivity.user, flaggeeExperience, logData, function () {
 
                   // Asynchronously loop through the activity's staged flags
                   var activityStagedFlags = dictionary[key].stagedFlags;
@@ -152,32 +151,49 @@
                     // Determine if the activity's staged flag had the correct vote
                     if (activityStagedFlag.suggestedClassification === newClassification) {
 
-                      // Get the flaggee's username
-                      User.getUserWithId(updatedActivity.user, logData, function(flaggee) {
+                      // Get the flagger's userId
+                      User.getUserWithUsername(stagedFlag.username, logData, function(flagger) {
 
-                        // Add the staged flag to the AUGEO_FLAG collection
-                        var flag = {
-                          activity: stagedFlag.activityId,
-                          flaggee: flaggee.username,
-                          newClassification: newClassification,
-                          previousClassification: oldClassification,
-                          reclassifiedDate: stagedFlag.reclassifyDate
+                        // Build flagger skill data
+                        var flaggerSubSkillsExperience = AugeoUtility.initializeSubSkillsExperienceArray(AugeoUtility.SUB_SKILLS, logData);
+                        flaggerSubSkillsExperience['Community'] = AugeoUtility.FLAG_EXPERIENCE;
+
+                        var flaggerExperience = {
+                          mainSkillExperience: AugeoUtility.FLAG_EXPERIENCE,
+                          subSkillsExperience: flaggerSubSkillsExperience
                         };
 
-                        Flag.addFlag(flag, logData, function (addedFlag) {
+                        // Update the flagger's community experience
+                        User.updateSkillData(flagger._id, flaggerExperience, logData, function() {
 
-                          // Create a new activity for the successful flag
-                          var activity = flag;
-                          activity.classification = 'Community';
-                          activity.classificationGlyphicon = AugeoUtility.getGlyphicon('Community', logData);
-                          activity.data = addedFlag._id;
-                          activity.experience = AugeoUtility.FLAG_EXPERIENCE;
-                          activity.kind = 'AUGEO_FLAG';
-                          activity.timestamp = stagedFlag.timestamp;
-                          activity.user = updatedActivity.user;
+                          // Get the flaggee's username
+                          User.getUserWithId(updatedActivity.user, logData, function(flaggee) {
 
-                          Activity.addActivity(activity, logData, function (addedActivity) {
-                            nextStagedActivityIteration();
+                            // Add the staged flag to the AUGEO_FLAG collection
+                            var flag = {
+                              activity: stagedFlag.activityId,
+                              flaggee: flaggee.username,
+                              newClassification: newClassification,
+                              previousClassification: oldClassification,
+                              reclassifiedDate: stagedFlag.reclassifyDate
+                            };
+
+                            Flag.addFlag(flag, logData, function (addedFlag) {
+
+                              // Create a new activity for the successful flag
+                              var activity = flag;
+                              activity.classification = 'Community';
+                              activity.classificationGlyphicon = AugeoUtility.getGlyphicon('Community', logData);
+                              activity.data = addedFlag._id;
+                              activity.experience = AugeoUtility.FLAG_EXPERIENCE;
+                              activity.kind = 'AUGEO_FLAG';
+                              activity.timestamp = stagedFlag.timestamp;
+                              activity.user = flagger._id;
+
+                              Activity.addActivity(activity, logData, function (addedActivity) {
+                                nextStagedActivityIteration();
+                              });
+                            });
                           });
                         });
                       });
