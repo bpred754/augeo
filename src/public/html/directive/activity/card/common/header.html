@@ -28,7 +28,7 @@
             <div class="activity-header-right">
                 <div class="activity-experience-container">
                     <div class="large-text activity-experience">+{{activity.experience}}</div>
-                    <div class="glyphicon activity-classification" ng-class="((hover && activity.isFlaggable) ? 'glyphicon-flag' : activity.classificationGlyphicon) + ' ' + ((hover && activity.isFlaggable) ? 'activity-red-flag' : '')" ng-mouseenter="hover=true;" ng-mouseleave="hover=false;" ng-click="showFlagActivityModal()"></div>
+                    <div class="glyphicon activity-classification" ng-class="(hover ? 'glyphicon-flag' : activity.classificationGlyphicon) + ' ' + (hover ? 'activity-red-flag' : '')" ng-mouseenter="hover=true;" ng-mouseleave="hover=false;" ng-click="showFlagActivityModal()"></div>
                 </div>
             </div>
             <div class="activity-name-container">

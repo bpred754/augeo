@@ -75,7 +75,6 @@
         classification: 'Fitness',
         classificationGlyphicon: 'glyphicon-heart',
         experience: 15,
-        isFlaggable: true,
         kind: 'FITBIT_DAY_STEPS',
         timestamp: Date.now(),
         user: userInit._id
@@ -90,7 +89,6 @@
         classification: 'Fitness',
         classificationGlyphicon: 'glyphicon-heart',
         experience: 55,
-        isFlaggable: true,
         kind: 'FITBIT_DAY_STEPS',
         timestamp: Date.now(),
         user: userInit._id

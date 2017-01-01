@@ -181,7 +181,7 @@
 
       log.functionCall(API, GET_SKILL_ACTIVITY, null, sessionUsername, {'username':username,'skill':skill,'timestamp':timestamp});
       var logData = AugeoUtility.formatLogData(API+GET_SKILL_ACTIVITY, sessionUsername);
-      UserService.getSkillActivity(username, skill, timestamp, logData, function (newData) {
+      UserService.getSkillActivity(username, sessionUsername, skill, timestamp, logData, function (newData) {
         if(newData) {
           UserService.getUser(username, logData, function (targetUser) {
             newData.user = targetUser;

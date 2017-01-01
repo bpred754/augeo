@@ -36,8 +36,8 @@
       this.classificationGlyphicon = json.classificationGlyphicon;
       this.experience = json.experience;
       this.id = json._id;
-      this.isFlaggable = json.isFlaggable;
       this.kind = json.kind;
+      this.suggestedClassification = json.suggestedClassification;
       this.timestamp = json.timestamp;
       this.user = json.user;
 

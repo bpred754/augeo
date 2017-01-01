@@ -27,9 +27,7 @@
     return {
       link: function(scope) {
         scope.showFlagActivityModal = function() {
-          if(scope.activity.isFlaggable) {
-            showFlagActivityModal(scope.activity);
-          }
+          showFlagActivityModal(scope.activity);
         };
       },
       restrict: 'E',

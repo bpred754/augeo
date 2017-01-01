@@ -52,20 +52,26 @@
     if(AugeoValidator.isMongooseObjectIdValid(stagedFlag.activityId, logData) && AugeoUtility.getGlyphicon(stagedFlag.currentClassification, logData).length > 0 &&
         AugeoValidator.isUsernameValid(stagedFlag.username, logData) && (AugeoUtility.getGlyphicon(stagedFlag.suggestedClassification, logData).length > 0 || stagedFlag.suggestedClassification == 'Delete Activity')) {
 
-      stagedFlag.timestamp = Date.now();
-      stagedFlag.reclassifyDate = AugeoUtility.calculateReclassifyDate(stagedFlag.timestamp, 48, logData);
+      if(stagedFlag.suggestedClassification != stagedFlag.currentClassification) {
+        stagedFlag.timestamp = Date.now();
+        stagedFlag.reclassifyDate = AugeoUtility.calculateReclassifyDate(stagedFlag.timestamp, 48, logData);
 
-      // Determine number of votes user gets
-      User.getUserWithUsername(stagedFlag.username, logData, function(user) {
+        // Determine number of votes user gets
+        User.getUserWithUsername(stagedFlag.username, logData, function(user) {
 
-        var communityIndex = AugeoUtility.getSkillIndex('Community', logData);
-        var communityLevel = user.subSkills[communityIndex].level;
-        var adminVotes = (user.admin) ? AugeoUtility.ADMIN_RECLASSIFY_VOTES : 0;
+          var communityIndex = AugeoUtility.getSkillIndex('Community', logData);
+          var communityLevel = user.subSkills[communityIndex].level;
+          var adminVotes = (user.admin) ? AugeoUtility.ADMIN_RECLASSIFY_VOTES : 0;
 
-        stagedFlag.votes = Math.max(adminVotes, communityLevel);
+          stagedFlag.votes = Math.max(adminVotes, communityLevel);
 
-        StagedFlag.addVotes(stagedFlag, logData, callback);
-      });
+          StagedFlag.addVotes(stagedFlag, logData, callback);
+        });
+      } else {
+        rollback('Please choose a classification different from the current classification');
+      }
+
+
     } else {
       rollback('Invalid Request');
     }
@@ -258,7 +264,7 @@
     }
   };
 
-  exports.getSkillActivity = function(username, skill, timestamp, logData, callback, rollback) {
+  exports.getSkillActivity = function(username, sessionUsername, skill, timestamp, logData, callback, rollback) {
     log.functionCall(SERVICE, 'getSkillActivity', logData.parentProcess, logData.username, {'username':username, 'skill':skill,
       'timestamp':timestamp});
 
@@ -270,12 +276,33 @@
           if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isTimestampValid(timestamp, logData)) {
             Activity.getSkillActivity(user._id, skill, ACTIVITY_PER_PAGE, timestamp, logData, function(activities) {
 
-              // Set callback data
-              var data = {
-                activity: activities
-              };
+              // Build array of activity Ids and initialize suggestedClassifications
+              var activityIds = new Array();
+              for(var i = 0; i < activities.length; i++) {
+                activityIds.push(activities[i]._id);
 
-              callback(data);
+                activities[i].suggestedClassification = activities[i].classification;
+              }
+
+              // Get all staged flags by this user
+              StagedFlag.getStagedFlagsWithActivityIds(activityIds, sessionUsername, logData, function(stagedFlags) {
+
+                for(var i = 0; i < stagedFlags.length; i++) {
+                  var stagedFlag = stagedFlags[i];
+                  for(var j = 0; j < activities.length; j++) {
+                    if(stagedFlag.activityId.equals(activities[j]._id)) {
+                      activities[j].suggestedClassification = stagedFlag.suggestedClassification;
+                    }
+                  }
+                }
+
+                // Set callback data
+                var data = {
+                  activity: activities
+                };
+
+                callback(data);
+              });
             });
           } else {
             rollback(400, 'Invalid skill or timestamp');

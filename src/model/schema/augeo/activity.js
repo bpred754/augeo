@@ -41,7 +41,6 @@
     classificationGlyphicon: String,
     data: {type: Mongoose.Schema.Types.ObjectId, 'refPath':'kind'},
     experience: Number,
-    isFlaggable: {type:Boolean, default: true},
     kind: String,
     timestamp: Date,
     user: {type: Mongoose.Schema.Types.ObjectId, ref:'AUGEO_USER'}
@@ -114,6 +113,7 @@
       .select('_id')
       .sort({'timestamp': -1})
       .limit(limit)
+      .lean()
       //.populate('data') // Can't use populate & sort due to Mongoose issue: https://github.com/Automattic/mongoose/issues/2202
       .exec(function(error, activityIds) {
         if(error) {
@@ -132,6 +132,7 @@
             (function myClojure(i) {
               model.findOne({'_id':activityIds[i]})
                 .populate('data')
+                .lean()
                 .exec(function(error, activity) {
 
                   if(error) {
@@ -246,16 +247,9 @@
           // Grab current experience so it's not duplicated in user's experience
           duplicateExperience = foundActivity.experience;
 
-          // Use the current isFlaggable value
-          activity.isFlaggable = foundActivity.isFlaggable;
-
           // Use the current classification and glyphicon
           activity.classification = foundActivity.classification;
           activity.classificationGlyphicon = foundActivity.classificationGlyphicon;
-        } else {
-
-          // If the activity is new then set it to be flaggable
-          activity.isFlaggable = true;
         }
 
         activityDocument.findOneAndUpdate({$and: [{user: activity.user}, {data: activity.data}]}, activity, { upsert: true, 'new': true},

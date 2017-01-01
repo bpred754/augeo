@@ -81,6 +81,10 @@
     });
 
     $scope.flagActivity = function(activity, suggestedClassification) {
+
+      // Set the current activity's suggestedClassification
+      activity.suggestedClassification = suggestedClassification;
+
       UserClientService.flagActivity(activity.id, activity.classification, suggestedClassification, function(data, status) {
         if(status == 200) {
           closeFlagActivityModal();

@@ -71,7 +71,7 @@
 <!-- Flag Activity Modal -->
 <div class="modal fade" id="flag-activity-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content" ng-init="suggestedClassification = 'Books'">
+    <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="large-text">Vote for Activity Re-Classification</h4>
@@ -91,7 +91,7 @@
             <span class="glyphicon va-popup-glyphicon" ng-class="getGlyphicon(suggestedClassification)"></span>
           </div>
           <select class="form-control va-popup-select" ng-model="suggestedClassification">
-            <option ng-repeat="skill in skills | filter:'!' + selectedActivity.classification">{{skill.name}}</option>
+            <option ng-repeat="skill in skills">{{skill.name}}</option>
             <option>Delete Activity</option>
           </select>
         </div>
@@ -140,6 +140,9 @@
     // Set the selected activity scope variable
     var modalElement = $('#flag-activity-modal');
     angular.element(modalElement).scope().selectedActivity = activity;
+
+    // Set the selected activity's suggestedClassification scope variable
+    angular.element(modalElement).scope().suggestedClassification = activity.suggestedClassification;
 
     // Show the modal
     modalElement.modal();

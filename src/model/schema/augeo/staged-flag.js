@@ -77,6 +77,18 @@
     });
   };
 
+  AUGEO_STAGED_FLAG.statics.getStagedFlagsWithActivityIds = function(activityIds, username, logData, callback) {
+    this.find({$and: [{username: username}, {activityId: {$in: activityIds}}]}, function(error, stagedFlags) {
+      if(error) {
+        log.functionError(COLLECTION, 'getStagedFlagsWithActivityIds', logData.parentProcess, logData.username, 'Failed to get staged flags for activityIds. length: ' + (activityIds) ? activityIds.length: 'invalid');
+        callback();
+      } else {
+        log.functionCall(COLLECTION, 'getStagedFlagsWithActivityIds', logData.parentProcess, logData.username, {'activityIds.length':(activityIds) ? activityIds.length: 'invalid'});
+        callback(stagedFlags);
+      }
+    });
+  };
+
   AUGEO_STAGED_FLAG.statics.removeStagedFlags = function(date, logData, callback) {
     this.remove({reclassifyDate: date}, function(error, removed) {
       if(error) {
