@@ -31,6 +31,6 @@
   augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'ClientValidator',require('./login-controller')]);
   augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
   augeo.controller('ProfileController', ['$scope','ProfileService', 'UserClientService', require('./profile-controller')]);
-  augeo.controller('ViewActivityController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', 'ActivityService', require('./view-activity-controller')]);
+  augeo.controller('ActivitiesController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', 'ActivityService', require('./activities-controller')]);
 
   require('./error');

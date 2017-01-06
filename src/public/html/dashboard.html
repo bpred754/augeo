@@ -30,7 +30,7 @@
               <div ng-class="{'db-links-top':(dashboardData.profileImg.indexOf('profile_150_square') > -1), 'db-links-bottom': (dashboardData.profileImg.indexOf('profile_150_square') == -1)}" ng-if="!invalidUser">
                 <span class="small-text augeo-link" ng-click="showProfile()">Profile</span>
                 <span class="small-text">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-                <span><a class="small-text augeo-link" ui-sref="viewActivity({username:dashboardData.username})">Activity</a></span>
+                <span><a class="small-text augeo-link" ui-sref="activities({username:dashboardData.username})">Activity</a></span>
               </div>
           </div>
           <div id="db-recent-activity-container">

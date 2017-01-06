@@ -43,7 +43,7 @@
   @import url('./leaderboard.css');
   @import url('./login.css');
   @import url('./interface-history.css');
-  @import url('./view-activity.css');
+  @import url('./activities.css');
 
   /* Directives */
   @import url('./directive/activity/activity-card.css');

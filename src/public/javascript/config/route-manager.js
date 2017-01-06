@@ -28,12 +28,12 @@
 
     $stateProvider
 
-      .state('activity', {
-          url:'/viewActivity',
+      .state('session-user-activities', {
+          url:'/activities',
           views: {
             'mainContent': {
-              templateUrl:'html/view-activity.html',
-              controller: 'ViewActivityController'
+              templateUrl:'html/activities.html',
+              controller: 'ActivitiesController'
             }
           }
       })
@@ -108,12 +108,12 @@
         }
       })
 
-      .state('viewActivity', {
-          url:'/viewActivity/:username',
+      .state('activities', {
+          url:'/activities/:username',
           views: {
             'mainContent': {
-              templateUrl:'html/view-activity.html',
-              controller: 'ViewActivityController'
+              templateUrl:'html/activities.html',
+              controller: 'ActivitiesController'
             }
           }
       })

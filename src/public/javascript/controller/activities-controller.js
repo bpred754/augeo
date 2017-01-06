@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Binds data to view-activity.html                           */
+  /* Description: Binds data to activities.html                              */
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
@@ -52,7 +52,7 @@
     $scope.activityLoaded = false;
     $scope.finishedLoading = false;
     $scope.activities = new Array();
-    $scope.state = 'viewActivity';
+    $scope.state = 'activities';
     $scope.screenSize = getScreenSize($window.innerWidth);
 
     // Bind to the window resize function to hide Angular Grid for small screens
@@ -97,7 +97,7 @@
     $scope.getGlyphicon = function(name) {
       var glyphicon = 'glyphicon-books';
 
-      if ($scope.skills) { // Make sure View Activity data has loaded
+      if ($scope.skills) { // Make sure ActivitiesController data has loaded
         if (name == 'Delete Activity') {
           glyphicon = 'glyphicon-trash'
         } else {
