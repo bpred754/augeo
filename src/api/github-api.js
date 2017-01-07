@@ -110,10 +110,10 @@
                         if (request.session.user.profileImg == 'image/avatar-medium.png') {
                           UserService.setProfileImage('Github', request.session.user, logData, function (updatedUser) {
                             request.session.user = updatedUser;
-                            response.redirect(process.env.AUGEO_HOME + '/interfaceHistory');
+                            response.redirect(process.env.AUGEO_HOME + '/interface-history');
                           });
                         } else {
-                          response.redirect(process.env.AUGEO_HOME + '/interfaceHistory');
+                          response.redirect(process.env.AUGEO_HOME + '/interface-history');
                         }
                       });
                     });

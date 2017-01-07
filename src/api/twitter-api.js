@@ -107,7 +107,7 @@
                     QueueService.twitterConnectQueue.connectToTwitter(logData, function(){});
                   }
 
-                  response.redirect(process.env.AUGEO_HOME + '/interfaceHistory');
+                  response.redirect(process.env.AUGEO_HOME + '/interface-history');
                 }, rollback); // End updateTwitterInfo
 
               }, rollback); // End getTwitterUser

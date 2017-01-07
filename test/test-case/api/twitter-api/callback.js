@@ -99,7 +99,7 @@
             .expect(302)
             .end(function(error2, response2) {
               Should.not.exist(error2);
-              Assert.strictEqual(response2.headers.location, process.env.AUGEO_HOME + '/interfaceHistory');
+              Assert.strictEqual(response2.headers.location, process.env.AUGEO_HOME + '/interface-history');
               done();
             });
         });

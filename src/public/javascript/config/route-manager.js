@@ -28,14 +28,14 @@
 
     $stateProvider
 
-      .state('session-user-activities', {
-          url:'/activities',
-          views: {
-            'mainContent': {
-              templateUrl:'html/activities.html',
-              controller: 'ActivitiesController'
-            }
+      .state('activities', {
+        url:'/activities/:username',
+        views: {
+          'mainContent': {
+            templateUrl:'html/activities.html',
+            controller: 'ActivitiesController'
           }
+        }
       })
 
       .state('dashboard', {
@@ -44,6 +44,16 @@
           'mainContent' : {
             templateUrl: 'html/dashboard.html',
             controller:'DashboardController'
+          }
+        }
+      })
+
+      .state('interfaceHistory', {
+        url:'/interface-history',
+        views: {
+          'mainContent': {
+            templateUrl:'html/interface-history.html',
+            controller: 'InterfaceHistoryController'
           }
         }
       })
@@ -98,24 +108,14 @@
         }
       })
 
-      .state('interfaceHistory', {
-        url:'/interfaceHistory',
+      .state('sessionUserActivities', {
+        url:'/activities',
         views: {
           'mainContent': {
-            templateUrl:'html/interface-history.html',
-            controller: 'InterfaceHistoryController'
+            templateUrl:'html/activities.html',
+            controller: 'ActivitiesController'
           }
         }
-      })
-
-      .state('activities', {
-          url:'/activities/:username',
-          views: {
-            'mainContent': {
-              templateUrl:'html/activities.html',
-              controller: 'ActivitiesController'
-            }
-          }
       })
 
       .state('viewDashboard', {
