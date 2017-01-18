@@ -106,14 +106,10 @@
                 Should.not.exist(error1);
                 Assert.strictEqual(response1.headers.location, process.env.AUGEO_HOME + '/signup/error');
 
-                // Clean up - remove Fitbit user from FITBIT_USER collection
-                FitbitUser.remove(addedUser.augeoUser, Common.logData, function() {
-
-                  // Verify user was removed
-                  FitbitUser.getUserWithFitbitId(fitbitUser.screenName, Common.logData, function(removedUser) {
-                    Should.not.exist(removedUser);
-                    done();
-                  });
+                // Verify user was removed
+                FitbitUser.getUserWithFitbitId(fitbitUser.screenName, Common.logData, function(removedUser) {
+                  Should.not.exist(removedUser);
+                  done();
                 });
               });
           });

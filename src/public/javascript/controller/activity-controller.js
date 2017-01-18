@@ -19,19 +19,15 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Index file that requires all controllers for browserify    */
+  /* Description: Binds data to activity.html                                */
   /***************************************************************************/
 
-  var augeo = require('angular').module('augeo');
+  // Reminder: Update controller/index.js when controller params are modified
+  module.exports = function($controller, $scope, $stateParams, ActivityClientService) {
 
-  augeo.controller('ActivitiesController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', 'ActivityClientService', require('./activities-controller')]);
-  augeo.controller('ActivityController', ['$controller', '$scope', '$stateParams', 'ActivityClientService', require('./activity-controller')]);
-  augeo.controller('AppController', ['$scope', '$state', 'UserClientService', 'ProfileService', require('./app-controller')]);
-  augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'UserClientService', 'ProfileService', 'ActivityClientService',require('./dashboard-controller')]);
-  augeo.controller('InterfaceHistoryController', ['$scope', 'InterfaceClientService', require('./interface-history-controller')]);
-  augeo.controller('LeaderboardController', ['$scope', 'UserClientService', require('./leaderboard-controller')]);
-  augeo.controller('LoginController', ['$scope', '$state', 'UserClientService', 'ClientValidator',require('./login-controller')]);
-  augeo.controller('LogoutController', ['$scope', '$controller', 'UserClientService', require('./logout-controller')]);
-  augeo.controller('ProfileController', ['$scope','ProfileService', 'UserClientService', require('./profile-controller')]);
+    ActivityClientService.getActivity($stateParams.activityId, function(activity) {
 
-  require('./error');
+      $scope.isLoaded = true;
+      $scope.activity = activity;
+    });
+  };

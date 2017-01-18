@@ -399,52 +399,6 @@
     });
   });
 
-  // removeActivities
-  it('should remove a users activities from the ACTIVITY collection', function(done) {
-
-    User.getUserWithUsername(Common.USER.username, Common.logData, function(user) {
-
-      // Add activity to ACTIVITY collection
-      var activity = {
-        "data": Mongoose.Types.ObjectId("57f0472466afca92698d6e19"),
-        "user": user._id,
-        "timestamp": new Date("2014-08-13T17:55:11-0700"),
-        "kind": "TWITTER_TWEET",
-        "experience": 30,
-        "classificationGlyphicon": "glyphicon-globe",
-        "classification": "General"
-      };
-
-      Activity.addActivity(activity, Common.logData, function() {
-
-        // Verify user has activities in ACTIVITY collection
-        Activity.getUserActivities(user._id, Common.logData, function(beforeActivities0) {
-          beforeActivities0.length.should.be.above(0);
-
-          // Invalid userId
-          UserService.removeActivities('!!!', Common.logData, function() {}, function(code, message) {
-            Assert.strictEqual(code, 400);
-
-            // Verify activities are still there
-            Activity.getUserActivities(user._id, Common.logData, function(beforeActivities1) {
-              beforeActivities1.length.should.be.above(0);
-
-              // Success
-              UserService.removeActivities(user._id, Common.logData, function() {
-
-                Activity.getUserActivities(user._id, Common.logData, function(afterActivities) {
-                  Assert.strictEqual(afterActivities.length, 0);
-
-                  done();
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-
   // removeUser
   it('should remove user from database with a specified username -- removeUser()', function(done) {
     this.timeout(Common.TIMEOUT);

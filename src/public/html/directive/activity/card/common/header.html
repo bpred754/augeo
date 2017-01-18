@@ -21,20 +21,20 @@
     <div class="activity-header-container">
         <div class="activity-header">
             <div class="activity-avatar-container">
-                <a href="{{activity.interfaceProfileUrl}}" target="_blank">
+                <a href="{{activity.interfaceProfileUrl}}" target="_blank" ng-click="$event.stopPropagation()">
                     <img src="{{activity.avatarImageSrc}}" class="activity-avatar"/>
                 </a>
             </div>
             <div class="activity-header-right">
                 <div class="activity-experience-container">
                     <div class="large-text activity-experience">+{{activity.experience}}</div>
-                    <div class="glyphicon activity-classification" ng-class="(hover ? 'glyphicon-flag' : activity.classificationGlyphicon) + ' ' + (hover ? 'activity-red-flag' : '')" ng-mouseenter="hover=true;" ng-mouseleave="hover=false;" ng-click="showFlagActivityModal()"></div>
+                    <div class="glyphicon activity-classification" ng-class="(hover ? 'glyphicon-flag' : activity.classificationGlyphicon) + ' ' + (hover ? 'activity-red-flag' : '')" ng-mouseenter="hover=true;" ng-mouseleave="hover=false;" ng-click="showFlagActivityModal(); $event.stopPropagation()"></div>
                 </div>
             </div>
             <div class="activity-name-container">
-                <a href="{{activity.interfaceProfileUrl}}" target="_blank" ng-class="{'standard-text': screenSize == 'x-small', 'large-text': screenSize != 'x-small'}" class="text-primary activity-name">{{activity.name}}</a>
+                <a href="{{activity.interfaceProfileUrl}}" target="_blank" ng-class="{'standard-text': screenSize == 'x-small', 'large-text': screenSize != 'x-small'}" class="text-primary activity-name" ng-click="$event.stopPropagation();">{{activity.name}}</a>
                 <div>
-                    <a href="{{activity.interfaceProfileUrl}}" target="_blank" class="small-text text-primary">{{activity.displayScreenName}}</a>
+                    <a href="{{activity.interfaceProfileUrl}}" target="_blank" class="small-text text-primary" ng-click="$event.stopPropagation()">{{activity.displayScreenName}}</a>
                 </div>
             </div>
         </div>

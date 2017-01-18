@@ -26,6 +26,7 @@
   var UserRouter = require('express').Router();
 
   // Required local modules
+  var ActivityService = require('../service/activity-service');
   var AugeoUtility = require('../utility/augeo-utility');
   var AugeoValidator = require('../validator/augeo-validator');
   var EmailProvider = require('../module/email-provider');
@@ -44,7 +45,6 @@
   var GET_CURRENT_USER = '/getCurrentUser';
   var GET_DASHBOARD_DISPLAY_DATA = '/getDashboardDisplayData';
   var GET_LEADERBOARD_DISPLAY_DATA = '/getLeaderboardDisplayData';
-  var GET_SKILL_ACTIVITY = '/getSkillActivity';
   var INVALID_SESSION = 'Invalid session';
   var LOGIN = '/login';
   var LOGOUT = '/logout';
@@ -164,36 +164,6 @@
       response.sendStatus(401);
     }
 
-  });
-
-  UserRouter.get(GET_SKILL_ACTIVITY, function(request, response) {
-    var sessionUsername = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
-
-    var rollback = function (code, message) {
-      log.functionError(API, GET_SKILL_ACTIVITY, sessionUsername, message);
-      response.sendStatus(code);
-    };
-
-    if(sessionUsername) {
-      var username = request.query.username;
-      var skill = request.query.skill;
-      var timestamp = new Date(request.query.timestamp);
-
-      log.functionCall(API, GET_SKILL_ACTIVITY, null, sessionUsername, {'username':username,'skill':skill,'timestamp':timestamp});
-      var logData = AugeoUtility.formatLogData(API+GET_SKILL_ACTIVITY, sessionUsername);
-      UserService.getSkillActivity(username, sessionUsername, skill, timestamp, logData, function (newData) {
-        if(newData) {
-          UserService.getUser(username, logData, function (targetUser) {
-            newData.user = targetUser;
-            response.status(200).json(newData);
-          });
-        } else {
-          rollback(400, 'Invalid username');
-        }
-      }, rollback);
-    } else {
-      rollback(401, INVALID_SESSION)
-    }
   });
 
   /***************************************************************************/
@@ -368,7 +338,7 @@
                   TwitterService.removeUser(userId, logData, function(twitterUser) {
 
                     // Remove user activities
-                    UserService.removeActivities(userId, logData, function() {
+                    ActivityService.removeActivities(userId, logData, function() {
 
                       if(process.env.ENV == 'prod') {
                         // Remove user from SendGrid contacts

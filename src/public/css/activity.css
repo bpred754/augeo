@@ -18,36 +18,19 @@
   /* along with this program.  If not, see <http://www.gnu.org/licenses/>.   */
   /***************************************************************************/
 
-  /****************************************************************************/
-  /* Description: Service that contains activity logic                        */
-  /****************************************************************************/
+  /***************************************************************************/
+  /* Description: css for activity.html                                      */
+  /***************************************************************************/
 
-  var Commit = require('../common/commit');
-  var Flag = require('../common/flag');
-  var DaySteps = require('../common/day-steps');
-  var Tweet = require('../common/tweet');
+  #a-header-container {
+    height:250px;
+    position:relative;
+  }
 
-  // Reminder: Update service/index.js when service params are modified
-  module.exports = function() {
-
-    this.getActivityObject = function(rawActivity, user) {
-
-      var activity = rawActivity;
-      switch(rawActivity.kind) {
-        case 'AUGEO_FLAG':
-          activity = new Flag(rawActivity, user);
-          break;
-        case 'FITBIT_DAY_STEPS':
-          activity = new DaySteps(rawActivity, user.fitbit);
-          break;
-        case 'GITHUB_COMMIT':
-          activity = new Commit(rawActivity);
-          break;
-        case 'TWITTER_TWEET':
-          activity = new Tweet(rawActivity);
-          break;
-      }
-
-      return activity;
-    }
-  };
+  .a-single-activity {
+    max-width:500px;
+    position:absolute;
+    top:50%;left:50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+  }

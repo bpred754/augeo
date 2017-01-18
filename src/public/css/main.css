@@ -39,11 +39,12 @@
   @import url('./layout.css');
 
   /* Screens */
+  @import url('./activities.css');
+  @import url('./activity.css');
   @import url('./dashboard.css');
   @import url('./leaderboard.css');
   @import url('./login.css');
   @import url('./interface-history.css');
-  @import url('./activities.css');
 
   /* Directives */
   @import url('./directive/activity/activity-card.css');

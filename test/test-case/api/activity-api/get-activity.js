@@ -19,27 +19,29 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/user-api                           */
-  /*              'getActivityDisplayData' requests                          */
+  /* Description: Unit test cases for api/activity-api                       */
+  /*              'getActivity' requests                                     */
   /***************************************************************************/
 
   // Required libraries
+  var Assert = require('assert');
   var Request = require('supertest');
   var Should = require('should');
 
   // Required local modules
   var Common = require('../../../data/common');
+  var ActivityService = require('../../../../src/service/activity-service');
 
   module.exports = function(app) {
 
     var agent = Request.agent(app);
 
-    // Session username invalid
-    it('should return status 401 - invalid session username', function(done) {
+    // Invalid session
+    it('should return status 404 - missing username parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/user-api/getActivityDisplayData')
+        .get('/activity-api/getActivity?activityId=587ea02afd8348155a15de62')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -47,25 +49,57 @@
         });
     });
 
-    it('should return status 200 -- valid session username', function(done) {
+    // Missing activityId parameter
+    it('should return status 400 - missing activityId parameter', function(done) {
       this.timeout(Common.TIMEOUT);
 
       // Login in user
       agent
         .post('/user-api/login')
-        .send(Common.USER)
+        .send(Common.LOGIN_USER)
         .expect(200)
-        .end(function(error, response) {
-          Should.not.exist(error);
+        .end(function(error0, response0) {
+          Should.not.exist(error0);
 
-          // Get activity display data with valid session
           agent
-            .get('/user-api/getActivityDisplayData')
-            .expect(200)
-            .end(function(error, response) {
-              Should.not.exist(error);
+            .get('/activity-api/getActivity')
+            .expect(400)
+            .end(function(error1, response1) {
+              Should.not.exist(error1);
               done();
             });
         });
+    });
+
+    // Non existent activityId parameter
+    it('should return status 400 - non existent username parameter', function(done) {
+      this.timeout(Common.TIMEOUT);
+
+      agent
+        .get('/activity-api/getActivity?activityId=abcde02afd8348155a15de62')
+        .expect(400)
+        .end(function(error, response) {
+          Should.not.exist(error);
+          done();
+        });
+    });
+
+    // Valid
+    it('should return status 200 - valid', function(done) {
+      this.timeout(Common.TIMEOUT);
+
+      ActivityService.getSkillActivity(Common.USER.username, Common.USER.username, 'Augeo', new Date(8640000000000000), Common.logData, function (data0) {
+        agent
+          .get('/activity-api/getActivity?activityId=' + data0.activity[0]._id)
+          .expect(200)
+          .end(function (error, response) {
+            Should.not.exist(error);
+            Should.exist(response.body.activity);
+            Should.exist(response.body.user);
+            Assert.strictEqual(response.body.activity._id, data0.activity[0]._id.toString());
+            Assert.strictEqual(response.body.activity.experience, data0.activity[0].experience);
+            done();
+          });
+      });
     });
   };

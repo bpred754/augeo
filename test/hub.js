@@ -86,7 +86,8 @@
     importTests('fitbitService', './test-case/service/fitbit-service.js');
     importTests('githubService', './test-case/service/github-service.js');
     importTests('twitterService', './test-case/service/twitter-service.js');
-    importTests('userServiceDependent', './test-case/service/user-service-dependent.js');
+    importTests('userServiceDependent', './test-case/service/user-service-dependent.js'); // Dependent on interface-service
+    importTests('activityService', './test-case/service/activity-service.js'); // Dependent on interface-service
 
     after(function(done) {
       this.timeout(Common.TIMEOUT);
@@ -186,8 +187,9 @@
     importTests('getQueueWaitTimes', './test-case/api/twitter-api/get-queue-wait-times', App);
   });
 
-   describe('Twitter Dependent User API', function() {
-     importTests('getSkillActivity', './test-case/api/user-api/get-skill-activity', App);
+   describe('Interface Dependent', function() {
+     importTests('getActivity', './test-case/api/activity-api/get-activity', App);
+     importTests('getSkillActivity', './test-case/api/activity-api/get-skill-activity', App);
      importTests('Set Profile Image', './test-case/api/user-api/set-profile-image', App);
    });
 

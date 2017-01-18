@@ -89,17 +89,6 @@
       });
     };
 
-    this.getSkillActivity = function(username, skill, timestamp, callback) {
-      var parameters = {
-        username:username,
-        skill:skill,
-        timestamp: timestamp
-      };
-      AugeoClientService.getAugeoApi('user-api/getSkillActivity', parameters, function(data) {
-        callback(data);
-      });
-    };
-
     this.login = function(user, callback) {
       AugeoClientService.postAugeoApi('user-api/login', user, callback);
     };

@@ -88,6 +88,19 @@
     });
   };
 
+  ACTIVITY.statics.getActivityWithId = function(activityId, logData, callback) {
+    this.findOne({_id: activityId}).populate('data').lean().exec(function(error, activity) {
+      if(error) {
+        log.functionError(COLLECTION, 'getActivityWithId', logData.parentProcess, logData.username, 'Failed to get activity with ID: ' + activityId +
+          '. Error: ' + error);
+        callback();
+      } else {
+        log.functionCall(COLLECTION, 'getActivityWithId', logData.parentProcess, logData.username, {'activityId': activityId});
+        callback(activity);
+      }
+    });
+  };
+
   ACTIVITY.statics.getSkillActivity = function(userId, skill, limit, maxTimestamp, logData, callback) {
     var model = this;
 

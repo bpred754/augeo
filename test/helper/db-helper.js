@@ -178,8 +178,11 @@
 
   exports.cleanStagedFlags = function(callback) {
     var todayDate = AugeoUtility.calculateReclassifyDate(Date.now(), 0, Common.logData);
+    var futureDate = AugeoUtility.calculateReclassifyDate(Date.now(), 48, Common.logData);
     StagedFlag.removeStagedFlags(todayDate, Common.logData, function() {
-      callback();
+      StagedFlag.removeStagedFlags(futureDate, Common.logData, function () {
+        callback();
+      });
     });
   };
 

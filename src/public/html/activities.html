@@ -49,13 +49,13 @@
 
   <div id="activity-wrap" class="container" ng-if="!invalidUser">
     <ul ng-if="screenSize == 'large'" class="dynamic-grid" angular-grid="activities" ag-grid-width="350" ag-gutter-size="20" ag-id="gallery" ag-refresh-on-img-load="false" ag-scroll-container="activityWrap" ag-infinite-scroll="getNewPage()">
-      <li data-ng-repeat="activity in activities" class="w3-card-4 grid">
-        <activity-card activity="activity" screen-size="screenSize"></activity-card>
+      <li data-ng-repeat="activity in activities" class="w3-card-4 w3-card-4-hover grid">
+        <activity-card activity="activity" screen-size="screenSize" is-clickable="true" ui-sref="activity({activityId: activity.id})"></activity-card>
       </li>
     </ul>
     <div ng-if="screenSize != 'large'" class="activity-list" infinite-scroll="getNewPage()" infinite-scroll-distance="0">
-      <div ng-repeat="activity in activities" class="activity-list-card w3-card-4">
-        <activity-card activity="activity" screen-size="screenSize"></activity-card>
+      <div ng-repeat="activity in activities" class="activity-list-card w3-card-4 w3-card-4-hover">
+        <activity-card activity="activity" screen-size="screenSize" is-clickable="true" ui-sref="activity({activityId: activity.id})"></activity-card>
       </div>
     </div>
   </div>

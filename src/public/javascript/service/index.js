@@ -24,7 +24,7 @@
 
   var augeo = require('angular').module('augeo');
 
-  augeo.service('ActivityService', require('./activity-service'));
+  augeo.service('ActivityClientService', ['AugeoClientService', require('./activity-client-service')]);
   augeo.service('AugeoClientService', ['$http', '$state', require('./augeo-client-service')]);
   augeo.service('ClientValidator', require('./client-validator'));
   augeo.service('InterfaceClientService', ['AugeoClientService', require('./interface-client-service')]);

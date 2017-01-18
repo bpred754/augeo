@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($scope, $timeout, $interval, $stateParams, UserClientService, ProfileService, ActivityService) {
+  module.exports = function($scope, $timeout, $interval, $stateParams, UserClientService, ProfileService, ActivityClientService) {
 
     // Internal functions
     var init = function() {
@@ -72,7 +72,7 @@
           if (data.recentActions && data.recentActions.length > 0) {
             $scope.activities = new Array();
             for(var i = 0; i < data.recentActions.length; i++) {
-              var activity = ActivityService.getActivityObject(data.recentActions[i], data.user);
+              var activity = ActivityClientService.getActivityObject(data.recentActions[i], data.user);
               if(activity.formatThumbMedia) {
                 activity.formatThumbMedia();
               }

@@ -19,7 +19,7 @@
   /***************************************************************************/
 
   /***************************************************************************/
-  /* Description: Unit test cases for api/user-api                        */
+  /* Description: Unit test cases for api/activity-api                       */
   /*              'getActivityDisplayData' requests                          */
   /***************************************************************************/
 
@@ -48,7 +48,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/user-api/getSkillActivity?skill=Augeo&tweetID=9999999999999999999999999999999')
+        .get('/activity-api/getSkillActivity?skill=Augeo&tweetID=9999999999999999999999999999999')
         .expect(401)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -69,7 +69,7 @@
           Should.not.exist(error0);
 
         agent
-          .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&tweetID=9999999999999999999999999999999')
+          .get('/activity-api/getSkillActivity?username=' + Common.USER.username + '&tweetID=9999999999999999999999999999999')
           .expect(400)
           .end(function(error1, response1) {
             Should.not.exist(error1);
@@ -83,7 +83,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo')
+        .get('/activity-api/getSkillActivity?username=' + Common.USER.username + '&skill=Augeo')
         .expect(400)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -96,7 +96,7 @@
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/user-api/getSkillActivity?username=invalid&skill=Augeo&tweetId=9999999999999999999999999999999')
+        .get('/activity-api/getSkillActivity?username=invalid&skill=Augeo&tweetId=9999999999999999999999999999999')
         .expect(400)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -127,7 +127,7 @@
             var timestamp = new Date(8640000000000000);
 
             agent
-              .get('/user-api/getSkillActivity?username=' + Common.USER.username + '&skill=General&timestamp=' + timestamp)
+              .get('/activity-api/getSkillActivity?username=' + Common.USER.username + '&skill=General&timestamp=' + timestamp)
               .expect(200)
               .end(function(error, response) {
                 Should.not.exist(error);

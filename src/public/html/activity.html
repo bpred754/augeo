@@ -18,8 +18,19 @@
   <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
   <!-------------------------------------------------------------------------->
 
-  <div class="ac-component-container">
-    <activity-card-header activity="activity"></activity-card-header>
-    <activity-card-content activity="activity"></activity-card-content>
-    <activity-card-footer activity="activity"></activity-card-footer>
+  <div ng-show="isLoaded">
+
+    <!-- Header -->
+    <div class="container">
+      <div class="row">
+        <div class="jumbotron">
+          <div id="a-header-container">
+            <div class="activity-list-card w3-card-4 a-single-activity">
+              <activity-card ng-if="activity" activity="activity" screen-size="large" is-clickable="false"></activity-card>
+            </div>
+          </div>
+        </div>
+      </div> <!-- end header row -->
+    </div> <!-- end header container -->
+
   </div>

@@ -50,37 +50,3 @@
       }, function(){});
     }, function(){});
   });
-
-  // getSkillActivity
-  it('should return skill activity for a user username, skill, and tweetId -- getSkillActivity()', function(done) {
-    this.timeout(Common.TIMEOUT);
-
-    // Invalid username
-    UserService.getSkillActivity('', Common.USER.username, 'Augeo', null, Common.logData, function(){}, function() {
-
-      // Invalid skills
-      UserService.getSkillActivity(Common.USER.username, Common.USER.username, 'invalidSkill', null, Common.logData, function(){}, function() {
-
-        // Invalid max timestamp
-        UserService.getSkillActivity(Common.USER.username, Common.USER.username, 'Augeo', 'invalid', Common.logData, function(){}, function() {
-
-          // Valid input - no max
-          UserService.getSkillActivity(Common.USER.username, Common.USER.username, 'Augeo', new Date(8640000000000000), Common.logData, function (data0) {
-            Assert.ok(data0.activity);
-            data0.activity.length.should.be.above(0);
-            var maxTimestamp = data0.activity[0].timestamp;
-
-            // Valid input - max tweet ID
-            UserService.getSkillActivity(Common.USER.username, Common.USER.username, 'Augeo', maxTimestamp, Common.logData, function (data1) {
-              Assert.ok(data1.activity);
-              data1.activity.length.should.be.above(0);
-              Assert.notStrictEqual(data1.activity[0].timestamp, maxTimestamp);
-              done();
-            }, function () {
-            });
-          }, function () {
-          });
-        });
-      });
-    });
-  });

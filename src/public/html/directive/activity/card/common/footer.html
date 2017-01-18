@@ -20,14 +20,14 @@
 
     <div class="activity-footer-container">
         <div class="activity-logo-container">
-            <a href="{{activity.interfaceLink}}" target="_blank">
+            <a href="{{activity.interfaceLink}}" target="_blank" ng-click="$event.stopPropagation()">
                 <img src="{{activity.interfaceLogo}}" class="activity-logo"/>
             </a>
         </div>
         <div class="activity-footer">
             <div class="small-text activity-date-container">
                 <div class="activity-date">
-                    <a href="{{activity.link}}" target="_blank" class="text-secondary" >{{activity.date}}</a>
+                    <a href="{{activity.link}}" target="_blank" class="text-secondary" ng-click="$event.stopPropagation()">{{activity.date}}</a>
                 </div>
             </div>
         </div>

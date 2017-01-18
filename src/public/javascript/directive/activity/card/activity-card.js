@@ -28,10 +28,14 @@
       restrict: 'E',
       scope: {
         'activity': '=',
+        'isClickable': '=',
         'screenSize': '='
       },
       template: '<ng-include src="getTemplateUrl()"/>',
       link: function(scope, element, attributes) {
+
+        var isInitialized = false;
+
         scope.getTemplateUrl = function () {
           switch(scope.activity.kind) {
             // Only add cases where activity has custom html
@@ -42,6 +46,21 @@
               return 'html/directive/activity/card/standard-activity.html';
           }
         };
+
+        element.on('mouseenter', function() {
+          if(scope.isClickable) {
+            if(!isInitialized) {
+              angular.element(element[0].querySelector('.ac-component-container')).addClass('clickable');
+              isInitialized = true;
+            }
+
+            angular.element(element[0].querySelector('.ac-component-container')).addClass('w3-card-4-highlight');
+          }
+        });
+
+        element.on('mouseleave', function() {
+          angular.element(element[0].querySelector('.ac-component-container')).removeClass('w3-card-4-highlight');
+        });
       }
     }
   };

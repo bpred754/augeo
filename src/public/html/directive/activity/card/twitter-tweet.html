@@ -18,35 +18,35 @@
     <!-- along with this program. If not, see <http://www.gnu.org/licenses/>. -->
     <!-------------------------------------------------------------------------->
 
-    <div>
+    <div class="ac-component-container">
         <activity-card-header activity="activity"></activity-card-header>
         <activity-card-content activity="activity"></activity-card-content>
 
         <div class="activity-footer-container">
             <div class="activity-logo-container">
-                <a href="https://twitter.com" target="_blank">
+                <a href="https://twitter.com" target="_blank" ng-click="$event.stopPropagation()">
                     <img src="image/twitter/logo-blue-small.png" class="activity-logo"/>
                 </a>
             </div>
             <div class="activity-footer">
                 <div class="small-text activity-date-container">
                     <div class="activity-date">
-                        <a href="{{activity.link}}" target="_blank" class="text-secondary" >{{activity.date}}</a>
+                        <a href="{{activity.link}}" target="_blank" class="text-secondary" ng-click="$event.stopPropagation()">{{activity.date}}</a>
                     </div>
                 </div>
                 <div class="ttc-intent-container" ng-init="replySrc='image/twitter/default-reply.png'">
-                    <a href="https://twitter.com/intent/tweet?in_reply_to={{activity.tweetId}}" target="_blank">
+                    <a href="https://twitter.com/intent/tweet?in_reply_to={{activity.tweetId}}" target="_blank" ng-click="$event.stopPropagation()">
                         <img src="{{replySrc}}" class="ttc-intent" ng-mouseover="replySrc='image/twitter/reply-hover.png'" ng-mouseout="replySrc='image/twitter/default-reply.png'">
                     </a>
                 </div>
                 <div class="ttc-intent-container" ng-init="retweetSrc='image/twitter/default-retweet.png'">
-                    <a href="https://twitter.com/intent/retweet?tweet_id={{activity.tweetId}}" target="_blank">
+                    <a href="https://twitter.com/intent/retweet?tweet_id={{activity.tweetId}}" target="_blank" ng-click="$event.stopPropagation()">
                         <img src="{{retweetSrc}}" class="ttc-intent" ng-mouseover="retweetSrc='image/twitter/retweet-hover.png'" ng-mouseout="retweetSrc='image/twitter/default-retweet.png'">
                     </a>
                     <p class="small-text text-secondary ttc-intent-count" ng-if="activity.retweetCount > 0">{{activity.retweetCount}}</p>
                 </div>
                 <div class="ttc-intent-container" ng-init="favoriteSrc='image/twitter/default-favorite.png'">
-                    <a href="https://twitter.com/intent/favorite?tweet_id={{activity.tweetId}}" target="_blank">
+                    <a href="https://twitter.com/intent/favorite?tweet_id={{activity.tweetId}}" target="_blank" ng-click="$event.stopPropagation()">
                         <img src="{{favoriteSrc}}" class="ttc-intent" ng-mouseover="favoriteSrc='image/twitter/favorite-hover.png'" ng-mouseout="favoriteSrc='image/twitter/default-favorite.png'">
                     </a>
                     <p class="small-text text-secondary ttc-intent-count" ng-if="activity.favoriteCount > 0">{{activity.favoriteCount}}</p>

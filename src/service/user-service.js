@@ -32,7 +32,6 @@
   var Logger = require('../module/logger');
 
   // Private Constants
-  var ACTIVITY_PER_PAGE = 20;
   var USERS_PER_PAGE = 25;
   var SERVICE = 'user-service';
 
@@ -264,58 +263,6 @@
     }
   };
 
-  exports.getSkillActivity = function(username, sessionUsername, skill, timestamp, logData, callback, rollback) {
-    log.functionCall(SERVICE, 'getSkillActivity', logData.parentProcess, logData.username, {'username':username, 'skill':skill,
-      'timestamp':timestamp});
-
-    if(AugeoValidator.isUsernameValid(username, logData)) {
-
-      User.getUserWithUsername(username, logData, function(user) {
-
-        if(user) {
-          if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isTimestampValid(timestamp, logData)) {
-            Activity.getSkillActivity(user._id, skill, ACTIVITY_PER_PAGE, timestamp, logData, function(activities) {
-
-              // Build array of activity Ids and initialize suggestedClassifications
-              var activityIds = new Array();
-              for(var i = 0; i < activities.length; i++) {
-                activityIds.push(activities[i]._id);
-
-                activities[i].suggestedClassification = activities[i].classification;
-              }
-
-              // Get all staged flags by this user
-              StagedFlag.getStagedFlagsWithActivityIds(activityIds, sessionUsername, logData, function(stagedFlags) {
-
-                for(var i = 0; i < stagedFlags.length; i++) {
-                  var stagedFlag = stagedFlags[i];
-                  for(var j = 0; j < activities.length; j++) {
-                    if(stagedFlag.activityId.equals(activities[j]._id)) {
-                      activities[j].suggestedClassification = stagedFlag.suggestedClassification;
-                    }
-                  }
-                }
-
-                // Set callback data
-                var data = {
-                  activity: activities
-                };
-
-                callback(data);
-              });
-            });
-          } else {
-            rollback(400, 'Invalid skill or timestamp');
-          }
-        } else {
-          callback();
-        }
-      });
-    } else {
-      rollback(404, 'Invalid username');
-    }
-  };
-
   exports.getUser = function(username, logData, callback) {
     log.functionCall(SERVICE, 'getUser', logData.parentProcess, logData.username, {'username': username});
 
@@ -388,16 +335,6 @@
       });
     } else  {
       rollback(exports.INCORRECT_LOGIN);
-    }
-  };
-
-  exports.removeActivities = function(userId, logData, callback, rollback) {
-    log.functionCall(SERVICE, 'removeActivities', logData.parentProcess, logData.username, {'userId': userId});
-
-    if(AugeoValidator.isMongooseObjectIdValid(userId, logData)){
-      Activity.removeActivities(userId, logData, callback);
-    } else {
-      rollback(400, 'Failed to remove activities - userId is invalid');
     }
   };
 

@@ -38,6 +38,16 @@
         }
       })
 
+      .state('activity', {
+        url:'/activity/:activityId',
+        views: {
+          'mainContent': {
+            templateUrl: 'html/activity.html',
+            controller: 'ActivityController'
+          }
+        }
+      })
+
       .state('dashboard', {
         url: '/dashboard',
         views: {

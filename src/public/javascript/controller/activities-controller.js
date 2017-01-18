@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($rootScope, $scope, $stateParams, $window, UserClientService, ActivityService) {
+  module.exports = function($rootScope, $scope, $stateParams, $window, UserClientService, ActivityClientService) {
 
     /***************************************************************************/
     /* Private functions                                                       */
@@ -116,13 +116,13 @@
 
       if($scope.activityLoaded) {
         $scope.activityLoaded = false;
-        UserClientService.getSkillActivity($scope.username, $scope.currentSkill, maxTimestamp, function(data) {
+        ActivityClientService.getSkillActivity($scope.username, $scope.currentSkill, maxTimestamp, function(data) {
 
           var activity = data.activity;
           if(activity) {
             if (activity.length > 0) {
               for(var i = 0; i < activity.length; i++) {
-                $scope.activities.push(ActivityService.getActivityObject(activity[i], data.user));
+                $scope.activities.push(ActivityClientService.getActivityObject(activity[i], data.user));
               }
               maxTimestamp = data.activity[data.activity.length - 1].timestamp;
               $scope.activityLoaded = true;

@@ -49,6 +49,9 @@
       next();
     });
 
+    // Route all activity requests to activity-api.js
+    app.use('/activity-api', require('./activity-api'));
+
     // Route all admin requests to admin-api.js
     app.use('/admin-api', require('./admin-api'));
 
