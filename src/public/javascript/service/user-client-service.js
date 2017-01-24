@@ -38,13 +38,6 @@
       AugeoClientService.postAugeoApi('user-api/flagActivity', parameters, callback);
     };
 
-    this.getActivityDisplayData = function(callback) {
-      var parameters = null;
-      AugeoClientService.getAugeoApi('user-api/getActivityDisplayData', parameters, function(data) {
-        callback(data);
-      });
-    };
-
     this.getCompetitors = function(username, skill, callback) {
       var parameters = {
         username: username,
@@ -68,9 +61,9 @@
       });
     };
 
-    this.getCurrentUser = function(callback) {
+    this.getStateChangedData = function(callback) {
       var parameters = null;
-      AugeoClientService.getAugeoApi('user-api/getCurrentUser', parameters, function(user, status) {
+      AugeoClientService.getAugeoApi('user-api/getStateChangedData', parameters, function(user, status) {
         callback(user, status);
       });
     };

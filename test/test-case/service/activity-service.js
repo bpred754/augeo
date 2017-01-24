@@ -38,17 +38,17 @@
   it('should return an activity for a given activity ID -- getActivity()', function(done) {
 
     // Null activityId
-    ActivityService.getActivity(null, Common.logData, function() {}, function() {
+    ActivityService.getActivity(null, Common.USER.username, Common.logData, function() {}, function() {
 
       // Invalid ObjectId
-      ActivityService.getActivity('invalid', Common.logData, function(){}, function() {
+      ActivityService.getActivity('invalid', Common.USER.username, Common.logData, function(){}, function() {
         // Valid
         ActivityService.getSkillActivity(Common.USER.username, Common.USER.username, 'Augeo', new Date(8640000000000000), Common.logData, function (data0) {
 
           var referenceActivity = data0.activity[0]
           var activityId = referenceActivity._id;
 
-          ActivityService.getActivity(activityId, Common.logData, function(activity2) {
+          ActivityService.getActivity(activityId, Common.USER.username, Common.logData, function(activity2) {
             Assert.strictEqual(activity2._id.toString(), activityId.toString());
             Assert.strictEqual(activity2.experience, referenceActivity.experience);
             done();

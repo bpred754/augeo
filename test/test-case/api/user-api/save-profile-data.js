@@ -66,16 +66,16 @@
 
           //  Verify profile data is not present
           agent
-            .get('/user-api/getCurrentUser')
+            .get('/user-api/getStateChangedData')
             .expect(200)
             .end(function(error1, response1){
 
-              var body1 = response1.body;
-              Assert.strictEqual(body1.username, Common.USER.username);
-              Assert.strictEqual(body1.profession, '');
-              Assert.strictEqual(body1.location, '');
-              Assert.strictEqual(body1.website, '');
-              Assert.strictEqual(body1.description, '');
+              var user1 = response1.body.user;
+              Assert.strictEqual(user1.username, Common.USER.username);
+              Assert.strictEqual(user1.profession, '');
+              Assert.strictEqual(user1.location, '');
+              Assert.strictEqual(user1.website, '');
+              Assert.strictEqual(user1.description, '');
 
               var invalidProfileData = {
                 firstName: Common.USER.firstName,
@@ -103,16 +103,16 @@
       
       // Verify profile data is not present
       agent
-        .get('/user-api/getCurrentUser')
+        .get('/user-api/getStateChangedData')
         .expect(200)
         .end(function(error1, response1){
 
-          var body1 = response1.body;
-          Assert.strictEqual(body1.username, Common.USER.username);
-          Assert.strictEqual(body1.profession, '');
-          Assert.strictEqual(body1.location, '');
-          Assert.strictEqual(body1.website, '');
-          Assert.strictEqual(body1.description, '');
+          var user1 = response1.body.user;
+          Assert.strictEqual(user1.username, Common.USER.username);
+          Assert.strictEqual(user1.profession, '');
+          Assert.strictEqual(user1.location, '');
+          Assert.strictEqual(user1.website, '');
+          Assert.strictEqual(user1.description, '');
 
           var validProfileData = {
             firstName: Common.USER.firstName,
@@ -139,16 +139,16 @@
 
               // Verify profile data is in session
               agent
-                .get('/user-api/getCurrentUser')
+                .get('/user-api/getStateChangedData')
                 .expect(200)
                 .end(function(error3, response3) {
 
-                  var body3 = response3.body;
-                  Assert.strictEqual(body3.username, Common.USER.username);
-                  Assert.strictEqual(body3.profession, validProfileData.profession);
-                  Assert.strictEqual(body3.location, validProfileData.location);
-                  Assert.strictEqual(body3.website, validProfileData.website);
-                  Assert.strictEqual(body3.description, validProfileData.description);
+                  var user2 = response3.body.user;
+                  Assert.strictEqual(user2.username, Common.USER.username);
+                  Assert.strictEqual(user2.profession, validProfileData.profession);
+                  Assert.strictEqual(user2.location, validProfileData.location);
+                  Assert.strictEqual(user2.website, validProfileData.website);
+                  Assert.strictEqual(user2.description, validProfileData.description);
 
                   done();
                 });

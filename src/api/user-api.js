@@ -40,11 +40,10 @@
   var ADD = '/add';
   var API = 'user-api';
   var FLAG_ACTIVITY = '/flagActivity';
-  var GET_ACTIVITY_DISPLAY_DATA = '/getActivityDisplayData';
   var GET_COMPETITORS = '/getCompetitors';
-  var GET_CURRENT_USER = '/getCurrentUser';
   var GET_DASHBOARD_DISPLAY_DATA = '/getDashboardDisplayData';
   var GET_LEADERBOARD_DISPLAY_DATA = '/getLeaderboardDisplayData';
+  var GET_STATE_CHANGED_DATA = '/getStateChangedData';
   var INVALID_SESSION = 'Invalid session';
   var LOGIN = '/login';
   var LOGOUT = '/logout';
@@ -58,22 +57,6 @@
   /***************************************************************************/
   /* GET Requests                                                            */
   /***************************************************************************/
-
-  UserRouter.get(GET_ACTIVITY_DISPLAY_DATA, function(request, response) {
-
-    if(AugeoValidator.isSessionValid(request)) {
-      log.functionCall(API, GET_ACTIVITY_DISPLAY_DATA, null, request.session.user.username);
-
-      var jsonResponse = {
-        skills: AugeoUtility.SUB_SKILLS
-      };
-      response.status(200).send(jsonResponse);
-    } else {
-      log.functionError(API, GET_ACTIVITY_DISPLAY_DATA, null, INVALID_SESSION);
-      response.sendStatus(401);
-    }
-
-  });
 
   UserRouter.get(GET_COMPETITORS, function(request, response) {
     var sessionUsername = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
@@ -102,24 +85,6 @@
       }
     } else {
       rollback(401, INVALID_SESSION);
-    }
-  });
-
-  UserRouter.get(GET_CURRENT_USER, function(request, response) {
-    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
-
-    if(username) {
-      var logData = AugeoUtility.formatLogData(API+GET_CURRENT_USER, username);
-      log.functionCall(API, GET_CURRENT_USER, null, username);
-
-      UserService.getSessionUser(username, logData, function(user) {
-        response.status(200).send(user);
-      }, function() {
-        log.functionError(API, GET_CURRENT_USER, username, 'Failed to find session user');
-        response.sendStatus(401);
-      });
-    } else {
-      response.sendStatus(200);
     }
   });
 
@@ -154,9 +119,8 @@
       UserService.getNumberUsers(logData, function(numUsers) {
 
         var jsonResponse = {
-          skills: AugeoUtility.SUB_SKILLS,
           numberUsers: numUsers
-        }
+        };
         response.status(200).json(jsonResponse);
       });
     } else {
@@ -164,6 +128,30 @@
       response.sendStatus(401);
     }
 
+  });
+
+  UserRouter.get(GET_STATE_CHANGED_DATA, function(request, response) {
+    var username = AugeoValidator.isSessionValid(request) ? request.session.user.username : null;
+
+    if(username) {
+      var logData = AugeoUtility.formatLogData(API+GET_STATE_CHANGED_DATA, username);
+      log.functionCall(API, GET_STATE_CHANGED_DATA, null, username);
+
+      UserService.getSessionUser(username, logData, function(user) {
+
+        var jsonResponse = {
+          user: user,
+          skills: AugeoUtility.SUB_SKILLS
+        };
+
+        response.status(200).send(jsonResponse);
+      }, function() {
+        log.functionError(API, GET_STATE_CHANGED_DATA, username, 'Failed to find session user');
+        response.sendStatus(401);
+      });
+    } else {
+      response.sendStatus(200);
+    }
   });
 
   /***************************************************************************/

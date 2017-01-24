@@ -67,15 +67,8 @@
             .end(function(error1, response1) {
               Should.not.exist(error1);
 
-              var skills = response1.body.skills;
-              var actualSkills = AugeoUtility.SUB_SKILLS;
-
-              skills.length.should.be.above(0);
-
-              for(var i = 0; i < skills.length; i++) {
-                Assert.strictEqual(skills[i].name, actualSkills[i].name);
-                Assert.strictEqual(skills[i].glyphicon, actualSkills[i].glyphicon);
-              }
+              var numberUsers = response1.body.numberUsers;
+              numberUsers.should.be.above(0);
 
               done();
             });

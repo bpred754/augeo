@@ -175,10 +175,50 @@
         </div>
       </div>
 
+      <!-- Flag Modal -->
+      <div class="modal fade" id="flag-activity-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="large-text">Vote for Activity Re-Classification</h4>
+            </div>
+            <div class="modal-body">
+              <p class="standard-text text-error text-align-center">{{flagActivityError}}</p>
+              <div class="va-popup-container">
+                <p class="row large-text text-align-center va-popup-container-title">Current Classification</p>
+                <div class="horizontal-center va-popup-glyphicon-container">
+                  <span class="glyphicon {{selectedActivity.classificationGlyphicon}} va-popup-glyphicon"></span>
+                </div>
+                <p class="row standard-text text-align-center">{{selectedActivity.classification}}</p>
+              </div>
+              <div class="va-popup-container">
+                <p class="row large-text text-align-center va-popup-container-title">New Classification</p>
+                <div class="horizontal-center va-popup-glyphicon-container">
+                  <span class="glyphicon va-popup-glyphicon" ng-class="getGlyphicon(suggestedClassification)"></span>
+                </div>
+                <select class="form-control va-popup-select" ng-model="suggestedClassification">
+                  <option ng-repeat="skill in Skills">{{skill.name}}</option>
+                  <option>Delete Activity</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" ng-click="flagActivity(selectedActivity, suggestedClassification)">Submit</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Bundled JavaScript -->
       <script type="text/javascript" src="javascript/bundle.js"></script>
 
       <script>
+
+        var closeFlagActivityModal = function(activity) {
+          $('#flag-activity-modal').modal('hide');
+        };
 
         var disableBodyScrolling = function() {
           $('body').css('overflow', 'hidden');
@@ -194,6 +234,19 @@
 
         var showDeleteModal = function() {
           $('#delete-modal').modal();
+        };
+
+        var showFlagActivityModal = function(activity) {
+
+          // Set the selected activity scope variable
+          var modalElement = $('#flag-activity-modal');
+          angular.element(modalElement).scope().selectedActivity = activity;
+
+          // Set the selected activity's suggestedClassification scope variable
+          angular.element(modalElement).scope().suggestedClassification = activity.suggestedClassification;
+
+          // Show the modal
+          modalElement.modal();
         };
 
         var showProfileModal = function() {

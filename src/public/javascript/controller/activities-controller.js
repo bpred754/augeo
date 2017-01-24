@@ -23,7 +23,7 @@
   /***************************************************************************/
 
   // Reminder: Update controller/index.js when controller params are modified
-  module.exports = function($rootScope, $scope, $stateParams, $window, UserClientService, ActivityClientService) {
+  module.exports = function($rootScope, $scope, $stateParams, $window, ActivityClientService) {
 
     /***************************************************************************/
     /* Private functions                                                       */
@@ -41,6 +41,31 @@
       return screenSize;
     };
 
+    var init = function() {
+      $scope.activityLoaded = false;
+      $scope.finishedLoading = false;
+      $scope.activities = new Array();
+      $scope.state = 'activities';
+      $scope.screenSize = getScreenSize($window.innerWidth);
+
+      // Bind to the window resize function to hide Angular Grid for small screens
+      angular.element($window).bind('resize', function(){
+        $scope.screenSize = getScreenSize($window.innerWidth);
+
+        // Manual $digest required as resize event is outside of angular
+        $scope.$digest();
+      });
+
+      if ($stateParams.username) {
+        $scope.username = $stateParams.username;
+      } else {
+        $scope.username = $scope.User.username;
+      }
+
+      $scope.setSkillActivity('Augeo');
+      $scope.isLoaded = true;
+    };
+
     /***************************************************************************/
     /* Controller start                                                        */
     /***************************************************************************/
@@ -48,69 +73,8 @@
     // Constants
     var MAX_TIMESTAMP = new Date(8640000000000000);
 
+    // Global variables
     var maxTimestamp = MAX_TIMESTAMP;
-    $scope.activityLoaded = false;
-    $scope.finishedLoading = false;
-    $scope.activities = new Array();
-    $scope.state = 'activities';
-    $scope.screenSize = getScreenSize($window.innerWidth);
-
-    // Bind to the window resize function to hide Angular Grid for small screens
-    angular.element($window).bind('resize', function(){
-      $scope.screenSize = getScreenSize($window.innerWidth);
-
-      // Manual $digest required as resize event is outside of angular
-      $scope.$digest();
-    });
-
-    UserClientService.getActivityDisplayData(function(data) {
-
-      if(data != 'Unauthorized') {
-
-        $scope.isLoaded = true;
-
-        if ($stateParams.username) {
-          $scope.username = $stateParams.username;
-        } else {
-          $scope.username = $scope.User.username;
-        }
-
-        $scope.skills = data.skills;
-        $scope.setSkillActivity('Augeo');
-      }
-    });
-
-    $scope.flagActivity = function(activity, suggestedClassification) {
-
-      // Set the current activity's suggestedClassification
-      activity.suggestedClassification = suggestedClassification;
-
-      UserClientService.flagActivity(activity.id, activity.classification, suggestedClassification, function(data, status) {
-        if(status == 200) {
-          closeFlagActivityModal();
-        } else {
-          $scope.flagActivityError = data;
-        }
-      });
-    };
-
-    $scope.getGlyphicon = function(name) {
-      var glyphicon = 'glyphicon-books';
-
-      if ($scope.skills) { // Make sure ActivitiesController data has loaded
-        if (name == 'Delete Activity') {
-          glyphicon = 'glyphicon-trash'
-        } else {
-          for (var i = 0; i < $scope.skills.length; i++) {
-            if ($scope.skills[i].name == name) {
-              glyphicon = $scope.skills[i].glyphicon;
-              break;
-            }
-          }
-        }
-      }
-      return glyphicon;
-    };
 
     $scope.getNewPage = function() {
 
@@ -145,4 +109,7 @@
       $scope.finishedLoading = false;
       $scope.getNewPage();
     };
+
+    // Initialize the controller
+    init();
   };

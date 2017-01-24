@@ -58,13 +58,13 @@
       var activityId = request.query.activityId;
       log.functionCall(API, GET_ACTIVITY, null, sessionUsername, {'activityId':activityId});
 
-      ActivityService.getActivity(activityId, logData, function (activity) {
+      ActivityService.getActivity(activityId, sessionUsername, logData, function (activity) {
 
         if(activity) {
-          UserService.getUser(sessionUsername, logData, function (sessionUser) {
+          UserService.getUserPublicWithId(activity.user, logData, function (activityUser) {
             var returnJson = {
               activity: activity,
-              user: sessionUser
+              user: activityUser
             };
 
             response.status(200).json(returnJson);

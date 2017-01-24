@@ -356,6 +356,21 @@
     });
   };
 
+  AUGEO_USER.statics.getUserPublicWithId = function(userId, logData, callback) {
+    this.findOne({_id:userId})
+      .select(exports.PROJECTION_STRING)
+      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}])
+      .exec(function(error, user) {
+        if(error) {
+          log.functionError(COLLECTION, 'getUserPublicWithId', logData.parentProcess, logData.username, 'Failed to find user with id: ' + userId);
+          callback();
+        } else {
+          log.functionError(COLLECTION, 'getUserPublicWithId', logData.parentProcess, logData.username, {'id': userId});
+          callback(user);
+        }
+      });
+  };
+
   AUGEO_USER.statics.getUserSecretWithUsername = function(username, logData, callback) {
     this.findOne({'username':{'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}})
       .select('-password')

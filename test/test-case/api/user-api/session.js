@@ -46,11 +46,11 @@
         })
     });
 
-    it('should return status 200 - getCurrentUser when user is logged in', function(done) {
+    it('should return status 200 - get current user when user is logged in', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/user-api/getCurrentUser')
+        .get('/user-api/getStateChangedData')
         .expect(200)
         .end(function(error, response) {
           Should.not.exist(error);
@@ -82,11 +82,11 @@
         });
     });
 
-    it('should return status 400 - getCurrentUser when no user is logged in', function(done) {
+    it('should return status 400 - get current user when no user is logged in', function(done) {
       this.timeout(Common.TIMEOUT);
 
       agent
-        .get('/user-api/getCurrentUser')
+        .get('/user-api/getStateChangedData')
         .expect(400)
         .end(function(error, response) {
           Should.not.exist(error);

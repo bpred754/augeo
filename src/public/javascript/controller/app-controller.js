@@ -30,32 +30,69 @@
 
     $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
-      UserClientService.getCurrentUser(function(user, status) {
+      UserClientService.getStateChangedData(function(data, status) {
 
-        // Set global User object
-        $scope.User = user;
-        UserClientService.setAuthentications($scope.User);
+        if(data.user && data.skills) {
+          // Set global Skills object
+          $scope.Skills = data.skills;
 
-        if(toState.name != 'logout') {
-          if(user.firstName) {
-            $scope.layoutNavbar = 'initial';
+          // Set global User object
+          $scope.User = data.user;
+          UserClientService.setAuthentications($scope.User);
+
+          if (toState.name != 'logout') {
+            if (data.user.firstName) {
+              $scope.layoutNavbar = 'initial';
+            } else {
+              $scope.layoutNavbar = 'hidden';
+            }
           } else {
             $scope.layoutNavbar = 'hidden';
           }
-        } else {
-          $scope.layoutNavbar = 'hidden';
-        }
-        if($scope.User.username && toState.name != 'signupError') {
-          // Display welcome popup if user has no authentications and has not viewed it within this session
-          if (!$scope.User.hasAuthentications && !$scope.isWelcomeModalViewed) {
-            $scope.isWelcomeModalViewed = true;
-            $scope.aboutModalHeading = 'Welcome to Augeo!'
-            showAboutModal();
+          if ($scope.User.username && toState.name != 'signupError') {
+            // Display welcome popup if user has no authentications and has not viewed it within this session
+            if (!$scope.User.hasAuthentications && !$scope.isWelcomeModalViewed) {
+              $scope.isWelcomeModalViewed = true;
+              $scope.aboutModalHeading = 'Welcome to Augeo!'
+              showAboutModal();
+            }
           }
         }
-
       });
     });
+
+    $scope.flagActivity = function(activity, suggestedClassification) {
+
+      // Set the current activity's suggestedClassification
+      activity.suggestedClassification = suggestedClassification;
+
+      UserClientService.flagActivity(activity.id, activity.classification, suggestedClassification, function(data, status) {
+        if(status == 200) {
+          closeFlagActivityModal();
+        } else {
+          $scope.flagActivityError = data;
+        }
+      });
+    };
+
+    $scope.getGlyphicon = function(name) {
+
+      var glyphicon = 'glyphicon-books';
+
+      if (name && $scope.Skills) {
+        if (name == 'Delete Activity') {
+          glyphicon = 'glyphicon-trash'
+        } else {
+          for (var i = 0; i < $scope.Skills.length; i++) {
+            if ($scope.Skills[i].name == name) {
+              glyphicon = $scope.Skills[i].glyphicon;
+              break;
+            }
+          }
+        }
+      }
+      return glyphicon;
+    };
 
     $scope.removeErrorMessage = '';
     $scope.removeUser = function(password) {
@@ -72,7 +109,7 @@
     $scope.showAboutModal = function() {
       $scope.aboutModalHeading = 'About';
       showAboutModal();
-    }
+    };
 
     $scope.showProfile = function() {
       ProfileService.setTargetUser($scope.User);

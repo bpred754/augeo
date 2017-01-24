@@ -37,12 +37,33 @@
   var User = AugeoDB.model('AUGEO_USER');
   var log = new Logger();
 
-  exports.getActivity = function(activityId, logData, callback, rollback) {
+  exports.getActivity = function(activityId, sessionUsername, logData, callback, rollback) {
     log.functionCall(SERVICE, 'getActivity', logData.parentProcess, logData.username, {'activityId': activityId});
 
     if(activityId && AugeoValidator.isMongooseObjectIdValid(activityId, logData)) {
       Activity.getActivityWithId(activityId, logData, function(activity) {
-        callback(activity)
+
+        if(activity) {
+          activity.suggestedClassification = activity.classification;
+
+          // See if there is a staged flag for the current user and activityId
+          var activityIds = new Array();
+          activityIds.push(activityId);
+
+          StagedFlag.getStagedFlagsWithActivityIds(activityIds, sessionUsername, logData, function(stagedFlags) {
+            if(stagedFlags) {
+              var activities = new Array();
+              activities.push(activity);
+
+              activities = addSuggestedClassificationsToActivities(activities, stagedFlags);
+              callback(activities[0]);
+            } else {
+              callback(activity);
+            }
+          });
+        } else {
+          rollback(400, 'Invalid activityId');
+        }
       });
     } else {
       rollback(400, 'Invalid activityId');
@@ -72,18 +93,9 @@
               // Get all staged flags by this user
               StagedFlag.getStagedFlagsWithActivityIds(activityIds, sessionUsername, logData, function(stagedFlags) {
 
-                for(var i = 0; i < stagedFlags.length; i++) {
-                  var stagedFlag = stagedFlags[i];
-                  for(var j = 0; j < activities.length; j++) {
-                    if(stagedFlag.activityId.equals(activities[j]._id)) {
-                      activities[j].suggestedClassification = stagedFlag.suggestedClassification;
-                    }
-                  }
-                }
-
                 // Set callback data
                 var data = {
-                  activity: activities
+                  activity: addSuggestedClassificationsToActivities(activities, stagedFlags)
                 };
 
                 callback(data);
@@ -109,5 +121,21 @@
     } else {
       rollback(400, 'Failed to remove activities - userId is invalid');
     }
+  };
+
+  /***************************************************************************/
+  /* Private Functions                                                       */
+  /***************************************************************************/
+
+  var addSuggestedClassificationsToActivities = function(activities, stagedFlags) {
+    for(var i = 0; i < stagedFlags.length; i++) {
+      var stagedFlag = stagedFlags[i];
+      for(var j = 0; j < activities.length; j++) {
+        if(stagedFlag.activityId.equals(activities[j]._id)) {
+          activities[j].suggestedClassification = stagedFlag.suggestedClassification;
+        }
+      }
+    }
+    return activities;
   };
 

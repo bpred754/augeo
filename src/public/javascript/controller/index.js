@@ -24,7 +24,7 @@
 
   var augeo = require('angular').module('augeo');
 
-  augeo.controller('ActivitiesController', ['$rootScope', '$scope', '$stateParams', '$window', 'UserClientService', 'ActivityClientService', require('./activities-controller')]);
+  augeo.controller('ActivitiesController', ['$rootScope', '$scope', '$stateParams', '$window', 'ActivityClientService', require('./activities-controller')]);
   augeo.controller('ActivityController', ['$controller', '$scope', '$stateParams', 'ActivityClientService', require('./activity-controller')]);
   augeo.controller('AppController', ['$scope', '$state', 'UserClientService', 'ProfileService', require('./app-controller')]);
   augeo.controller('DashboardController', ['$scope', '$timeout', '$interval', '$stateParams', 'UserClientService', 'ProfileService', 'ActivityClientService',require('./dashboard-controller')]);

@@ -33,7 +33,10 @@
     this.getActivity = function(activityId, callback) {
       var self = this;
       AugeoClientService.getAugeoApi('activity-api/getActivity', {activityId:activityId}, function(data) {
-        var activityObject = self.getActivityObject(data.activity, data.user);
+        var activityObject = null;
+        if(data.activity && data.user) {
+          activityObject = self.getActivityObject(data.activity, data.user);
+        }
         callback(activityObject);
       });
     };

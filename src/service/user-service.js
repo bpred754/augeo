@@ -269,6 +269,12 @@
     User.getUserWithUsername(username, logData, callback);
   };
 
+  exports.getUserPublicWithId = function(userId, logData, callback) {
+    log.functionCall(SERVICE, 'getUserPublicWithId', logData.parentProcess, logData.username, {'userId': userId});
+
+    User.getUserPublicWithId(userId, logData, callback);
+  };
+
   exports.getUserSecret = function(username, logData, callback) {
     log.functionCall(SERVICE, 'getUserSecret', logData.parentProcess, logData.username, {'username': username});
 

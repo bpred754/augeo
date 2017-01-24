@@ -155,7 +155,6 @@
   describe('User API', function() {
     importTests('Add User', './test-case/api/user-api/add-user');
     importTests('flagActivity', './test-case/api/user-api/flag-activity', App);
-    importTests('getActivityDisplayData', './test-case/api/user-api/get-activity-display-data', App);
     importTests('getCompetitors', './test-case/api/user-api/get-competitors', App);
     importTests('getDashboardDisplayData', './test-case/api/user-api/get-dashboard-display-data', App);
     importTests('getLeaderboardDisplayData', './test-case/api/user-api/get-leaderboard-display-data', App);
