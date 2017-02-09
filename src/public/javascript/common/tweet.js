@@ -81,14 +81,14 @@
         for(var j = 0; j < mentions.length; j++) {
           var mention = mentions[j];
           if(mention != this.screenName) {
-            html = html.replace('@' + mention, '<a href="https://www.twitter.com/' + mention + '" class="clickable" style="color:#0084B4" target="_blank">' + '@' + mention + '</a>');
+            html = html.replace('@' + mention, '<a href="https://www.twitter.com/' + mention + '" class="clickable" style="color:#0084B4" target="_blank" onclick="window.event.stopPropagation()">' + '@' + mention + '</a>');
           }
         }
       }
 
       // Replace all instances of tweet's screen name with a link
       var screenName = this.screenName;
-      html = html.replace('@' + screenName, '<a href="https://www.twitter.com/' + screenName + '" class="clickable" style="color:#0084B4" target="_blank">' + '@' + screenName + '</a>');
+      html = html.replace('@' + screenName, '<a href="https://www.twitter.com/' + screenName + '" class="clickable" style="color:#0084B4" target="_blank" onclick="window.event.stopPropagation()">' + '@' + screenName + '</a>');
 
       // Check if tweet contains hashtags
       if(this.hashtags.length > 0) {
@@ -97,7 +97,7 @@
         // Convert twitter hashtags to href links
         for(var j = 0; j < hashtags.length; j++) {
           var hashtag = hashtags[j];
-          html = html.replace('#' + hashtag, '<a href="https://www.twitter.com/search?q=%23' + hashtag + '" class="clickable" style="color:#0084B4" target="_blank">' + '#' + hashtag + '</a>');
+          html = html.replace('#' + hashtag, '<a href="https://www.twitter.com/search?q=%23' + hashtag + '" class="clickable" style="color:#0084B4" target="_blank" onclick="window.event.stopPropagation()">' + '#' + hashtag + '</a>');
         }
       }
 
@@ -108,7 +108,7 @@
         // Convert text links into href links
         for (var j = 0; j < links.length; j++) {
           var link = links[j];
-          html = html.replace(link, '<a href="' + link + '" class="clickable" style="color:#0084B4" target="_blank">' + link + '</a>');
+          html = html.replace(link, '<a href="' + link + '" class="clickable" style="color:#0084B4" target="_blank" onclick="window.event.stopPropagation()">' + link + '</a>');
         }
       }
       return html;

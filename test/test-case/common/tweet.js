@@ -61,7 +61,7 @@
 
     var tweet = new Tweet(tweetJson);
 
-    Assert.strictEqual(tweet.html, '<a href="https://www.twitter.com/mentionee" class="clickable" style="color:#0084B4" target="_blank">@mentionee</a> this is a test');
+    Assert.strictEqual(tweet.html, '<a href="https://www.twitter.com/mentionee" class="clickable" style="color:#0084B4" target="_blank" onclick="window.event.stopPropagation()">@mentionee</a> this is a test');
 
     done();
   });
@@ -78,7 +78,7 @@
 
     var tweet = new Tweet(tweetJson);
 
-    Assert.strictEqual(tweet.html, '<a href="https://www.twitter.com/ScreenName" class="clickable" style="color:#0084B4" target="_blank">@ScreenName</a> this is a test');
+    Assert.strictEqual(tweet.html, '<a href="https://www.twitter.com/ScreenName" class="clickable" style="color:#0084B4" target="_blank" onclick="window.event.stopPropagation()">@ScreenName</a> this is a test');
 
     done();
   });
@@ -95,7 +95,7 @@
 
     var tweet = new Tweet(tweetJson);
 
-    Assert.strictEqual(tweet.html, 'this is a test <a href="https://www.twitter.com/search?q=%23augeo" class="clickable" style="color:#0084B4" target="_blank">#augeo</a>');
+    Assert.strictEqual(tweet.html, 'this is a test <a href="https://www.twitter.com/search?q=%23augeo" class="clickable" style="color:#0084B4" target="_blank" onclick="window.event.stopPropagation()">#augeo</a>');
 
     done();
   });
@@ -112,7 +112,7 @@
 
     var tweet = new Tweet(tweetJson);
 
-    Assert.strictEqual(tweet.html, 'check out this link! <a href="https://www.augeo.io" class="clickable" style="color:#0084B4" target="_blank">https://www.augeo.io</a>');
+    Assert.strictEqual(tweet.html, 'check out this link! <a href="https://www.augeo.io" class="clickable" style="color:#0084B4" target="_blank" onclick="window.event.stopPropagation()">https://www.augeo.io</a>');
 
     done();
   });

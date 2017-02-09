@@ -36,7 +36,7 @@
     };
 
     var commit = new Commit(commitJson);
-    Assert.strictEqual(commit.html, 'Commit to <a href="https://github.com/test-repo" target="_blank">test-repo</a>: commit text');
+    Assert.strictEqual(commit.html, 'Commit to <a href="https://github.com/test-repo" target="_blank" onclick="window.event.stopPropagation()">test-repo</a>: commit text');
 
     done();
   });

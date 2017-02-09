@@ -62,7 +62,7 @@
   AbstractObject.extend(Activity, $this, {
 
     formatText: function() {
-      var html = 'Commit to <a href="https://github.com/' + this.repo + '" target="_blank">' +  this.repo + '</a>: ';
+      var html = 'Commit to <a href="https://github.com/' + this.repo + '" target="_blank" onclick="window.event.stopPropagation()">' +  this.repo + '</a>: ';
       return html += this.text;
     }
 
