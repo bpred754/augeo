@@ -32,13 +32,9 @@
 
   // Constants
   var COLLECTION = 'augeo_user-collection';
-  exports.PROJECTION_STRING = 'firstName fitbit github lastName username admin profileImg profileIcon profession location website description skill subSkills twitter';
 
   // Global variables
-  var fitbitProjection = 'fitbitId name profileImageUrl screenName';
-  var githubProjection = 'githubId name profileImageUrl screenName';
   var log = new Logger();
-  var twitterProjection = 'augeoUser name profileIcon profileImageUrl screenName twitterId';
 
   // Schema declaration
   var AUGEO_USER = Mongoose.Schema({
@@ -358,8 +354,8 @@
 
   AUGEO_USER.statics.getUserPublicWithId = function(userId, logData, callback) {
     this.findOne({_id:userId})
-      .select(exports.PROJECTION_STRING)
-      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}])
+      .select(AugeoUtility.USER_PROJECTION)
+      .populate(AugeoUtility.USER_PROJECTION_ARRAY)
       .exec(function(error, user) {
         if(error) {
           log.functionError(COLLECTION, 'getUserPublicWithId', logData.parentProcess, logData.username, 'Failed to find user with id: ' + userId);
@@ -399,8 +395,8 @@
 
   AUGEO_USER.statics.getUserWithEmail = function(email, logData, callback) {
     this.findOne({email:{'$regex': AugeoUtility.buildRegex(email, logData), $options: 'i'}})
-      .select(exports.PROJECTION_STRING)
-      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}])
+      .select(AugeoUtility.USER_PROJECTION)
+      .populate(AugeoUtility.USER_PROJECTION_ARRAY)
       .exec(function(error, user) {
         if(error) {
           log.functionError(COLLECTION, 'getUserWithEmail', logData.parentProcess, logData.username,
@@ -414,8 +410,8 @@
 
   AUGEO_USER.statics.getUserWithUsername = function(username, logData, callback) {
     this.findOne({'username':{'$regex': AugeoUtility.buildRegex(username, logData), $options: 'i'}})
-      .select(exports.PROJECTION_STRING)
-      .populate([{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}])
+      .select()
+      .populate(AugeoUtility.USER_PROJECTION_ARRAY)
       .exec(function(error, user) {
         if(error) {
           log.functionError(COLLECTION, 'getUserWithUsername', logData.parentProcess, logData.username,

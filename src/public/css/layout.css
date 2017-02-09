@@ -67,7 +67,7 @@
   }
 
   #lyt-header-project-name {
-    padding-left:40px;
+    padding-left:20px;
   }
 
   #lyt-navbar-container {
@@ -156,21 +156,22 @@
   }
 
   .lyt-header-image-container {
-    margin-left:auto;
     margin-right:40px;
   }
 
-  .lyt-header-leaderboards-option-container {
+  .lyt-header-option-container {
     display:flex;
     align-items: center;
     height:100%;
+    float:left;
+    margin-right:20px;
   }
 
-  .lyt-header-leaderboards-option-container:hover {
+  .lyt-header-option-container:hover {
     cursor:pointer;
   }
 
-  .lyt-header-leaderboards-option-container:hover  .lyt-header-text{
+  .lyt-header-option-container:hover  .lyt-header-text{
     text-decoration: none;
     color:white;
     cursor:pointer;
@@ -186,10 +187,9 @@
     float:right;
     display:inline-block;
   }
-
   .lyt-header-settings-container {
     height:100%;
-    width:100px;
+    width:50px;
     float:right;
     display:flex;
     align-items: center;
@@ -315,13 +315,13 @@
       font-size:.7em;
     }
 
-    .lyt-header-leaderboards-glyphicon {
+    .lyt-header-glyphicon {
       float:left;
       margin-bottom:3px;
       font-size:1.7em;
     }
 
-    .lyt-header-leaderboards-text {
+    .lyt-header-link-text {
       display:none;
     }
 
@@ -333,14 +333,14 @@
 
   @media(min-width:501px) {
 
-    .lyt-header-leaderboards-glyphicon {
+    .lyt-header-glyphicon {
       float:left;
       margin-right:10px;
       margin-bottom:3px;
       font-size:1.7em;
     }
 
-    .lyt-header-leaderboards-text {
+    .lyt-header-link-text {
       float:left;
     }
 

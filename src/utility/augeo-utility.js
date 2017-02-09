@@ -30,24 +30,28 @@
   var UTILITY = 'augeo-utility';
 
   // Global variables
+  var fitbitProjection = 'fitbitId name profileImageUrl screenName';
+  var githubProjection = 'githubId name profileImageUrl screenName';
   var log = new Logger();
+  var twitterProjection = 'augeoUser name profileIcon profileImageUrl screenName twitterId';
 
   exports.ADMIN_RECLASSIFY_VOTES = 100;
-
   exports.FLAG_EXPERIENCE = 10;
-
   exports.SUB_SKILLS = [{name:"Books", glyphicon:"glyphicon-book"}, {name:"Business", glyphicon:"glyphicon-briefcase"}, {name:"Community", glyphicon:"glyphicon-tree-deciduous"},
     {name:"Entertainment", glyphicon:"glyphicon-star"}, {name:"Fitness", glyphicon:"glyphicon-heart"}, {name:"Food & Drink", glyphicon:"glyphicon-cutlery"},
     {name:"Games", glyphicon:"glyphicon-tower"}, {name:"General", glyphicon:"glyphicon-globe"}, {name:"Music", glyphicon:"glyphicon-headphones"},
     {name:"Photography", glyphicon:"glyphicon-camera"}, {name:"Sports", glyphicon:"glyphicon-bullhorn"}, {name:"Technology", glyphicon:"glyphicon-phone"}];
+  exports.USER_PROJECTION = 'firstName fitbit github lastName username admin profileImg profileIcon profession location website description skill subSkills twitter';
+  exports.USER_PROJECTION_ARRAY = [{path:'twitter', select:twitterProjection}, {path:'github',select:githubProjection}, {path:'fitbit',select:fitbitProjection}];
 
   exports.buildRegex = function(before, logData) {
     log.functionCall(UTILITY, 'buildRegex', logData.parentProcess, logData.username, {'before':before});
 
     var escapeCharacters = ['-','.','/','[',']','*','+','?',')','{','}','|'];
-    var after = '';
+    var after = '\b\B'; // Initial value that should not match anything
 
     if(before && typeof before === 'string') {
+      after = '';
       for (var i = 0; i < before.length; i++) {
         var currentChar = before.charAt(i);
         if (escapeCharacters.indexOf(currentChar) > -1) {

@@ -41,15 +41,15 @@
       });
     };
 
-    this.getActivityObject = function(rawActivity, user) {
+    this.getActivityObject = function(rawActivity) {
 
       var activity = rawActivity;
       switch(rawActivity.kind) {
         case 'AUGEO_FLAG':
-          activity = new Flag(rawActivity, user);
+          activity = new Flag(rawActivity);
           break;
         case 'FITBIT_DAY_STEPS':
-          activity = new DaySteps(rawActivity, user.fitbit);
+          activity = new DaySteps(rawActivity, rawActivity.user.fitbit);
           break;
         case 'GITHUB_COMMIT':
           activity = new Commit(rawActivity);

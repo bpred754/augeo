@@ -28,27 +28,27 @@
   var Activity = require('./activity');
 
   // Constructor
-  var $this = function(json, user) {
+  var $this = function(json, fitbitUser) {
     $this.base.constructor.call(this, json);
 
     if(json) {
 
       var data;
-      if (json.data) {
+      if (json.data) { // From Augeo server
         data = json.data;
-      } else {
+      } else { // From Fitbit server
         data = json;
       }
 
       // public variables
       this.dateTime = data.dateTime;
-      this.fitbitId = user.fitbitId;
-      this.name = user.name;
-      this.screenName = user.screenName;
+      this.fitbitId = fitbitUser.fitbitId;
+      this.name = fitbitUser.name;
+      this.screenName = fitbitUser.screenName;
       this.steps = data.steps;
 
       // Client only attributes
-      this.avatarImageSrc = user.profileImageUrl;
+      this.avatarImageSrc = fitbitUser.profileImageUrl;
       this.interfaceLink = 'https://fitbit.com';
       this.interfaceLogo = 'image/fitbit/logo-blue-small.png';
       this.interfaceProfileUrl = 'https://fitbit.com/user/' + this.fitbitId;

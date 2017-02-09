@@ -74,40 +74,37 @@
     log.functionCall(SERVICE, 'getSkillActivity', logData.parentProcess, logData.username, {'username':username, 'skill':skill,
       'timestamp':timestamp});
 
-    if(AugeoValidator.isUsernameValid(username, logData)) {
+    if(typeof username == 'undefined' || AugeoValidator.isUsernameValid(username, logData)) {
+      if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isTimestampValid(timestamp, logData)) {
 
-      User.getUserWithUsername(username, logData, function(user) {
+        User.getUserWithUsername(username, logData, function(user) {
 
-        if(user) {
-          if (AugeoValidator.isSkillValid(skill, logData) && AugeoValidator.isTimestampValid(timestamp, logData)) {
-            Activity.getSkillActivity(user._id, skill, ACTIVITY_PER_PAGE, timestamp, logData, function(activities) {
+          var userId = (user) ? user._id : null;
+          Activity.getSkillActivity(userId, skill, ACTIVITY_PER_PAGE, timestamp, logData, function (activities) {
 
-              // Build array of activity Ids and initialize suggestedClassifications
-              var activityIds = new Array();
-              for(var i = 0; i < activities.length; i++) {
-                activityIds.push(activities[i]._id);
+            // Build array of activity Ids and initialize suggestedClassifications
+            var activityIds = new Array();
+            for (var i = 0; i < activities.length; i++) {
+              activityIds.push(activities[i]._id);
 
-                activities[i].suggestedClassification = activities[i].classification;
-              }
+              activities[i].suggestedClassification = activities[i].classification;
+            }
 
-              // Get all staged flags by this user
-              StagedFlag.getStagedFlagsWithActivityIds(activityIds, sessionUsername, logData, function(stagedFlags) {
+            // Get all staged flags by this user
+            StagedFlag.getStagedFlagsWithActivityIds(activityIds, sessionUsername, logData, function (stagedFlags) {
 
-                // Set callback data
-                var data = {
-                  activity: addSuggestedClassificationsToActivities(activities, stagedFlags)
-                };
+              // Set callback data
+              var data = {
+                activity: addSuggestedClassificationsToActivities(activities, stagedFlags)
+              };
 
-                callback(data);
-              });
+              callback(data);
             });
-          } else {
-            rollback(400, 'Invalid skill or timestamp');
-          }
-        } else {
-          callback();
-        }
-      });
+          });
+        });
+      } else {
+        rollback(400, 'Invalid skill or timestamp');
+      }
     } else {
       rollback(404, 'Invalid username');
     }

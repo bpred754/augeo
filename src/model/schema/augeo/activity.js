@@ -27,6 +27,7 @@
 
   // Required local modules
   var AugeoDB = require('../../database');
+  var AugeoUtility = require('../../../utility/augeo-utility');
   var Logger = require('../../../module/logger');
 
   // Constants
@@ -89,7 +90,11 @@
   };
 
   ACTIVITY.statics.getActivityWithId = function(activityId, logData, callback) {
-    this.findOne({_id: activityId}).populate('data').lean().exec(function(error, activity) {
+    this.findOne({_id: activityId})
+      .populate('data')
+      .populate({path:'user', select: AugeoUtility.USER_PROJECTION, populate: AugeoUtility.USER_PROJECTION_ARRAY})
+      .lean()
+      .exec(function(error, activity) {
       if(error) {
         log.functionError(COLLECTION, 'getActivityWithId', logData.parentProcess, logData.username, 'Failed to get activity with ID: ' + activityId +
           '. Error: ' + error);
@@ -108,14 +113,20 @@
       maxTimestamp = new Date(8640000000000000);
     }
 
-    var query = {
-      $and:[
-        {
-          user: userId,
-          timestamp: {$lt: maxTimestamp}
-        }
-      ]
-    };
+    // Don't include user in the query if user is not specified
+    var query;
+    if(userId) {
+      query = {
+        $and:[
+          {
+            user: userId,
+            timestamp: {$lt: maxTimestamp}
+          }
+        ]
+      };
+    } else {
+      query = {timestamp: {$lt: maxTimestamp}};
+    }
 
     if(skill && skill != 'Augeo') {
       query.classification = skill;
@@ -145,6 +156,7 @@
             (function myClojure(i) {
               model.findOne({'_id':activityIds[i]})
                 .populate('data')
+                .populate({path:'user', select: AugeoUtility.USER_PROJECTION, populate: AugeoUtility.USER_PROJECTION_ARRAY})
                 .lean()
                 .exec(function(error, activity) {
 

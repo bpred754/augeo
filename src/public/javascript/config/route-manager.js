@@ -48,6 +48,16 @@
         }
       })
 
+      .state('community', {
+        url: '/community',
+        views: {
+          'mainContent': {
+            templateUrl: 'html/activities.html',
+            controller: 'ActivitiesController'
+          }
+        }
+      })
+
       .state('dashboard', {
         url: '/dashboard',
         views: {
@@ -114,16 +124,6 @@
           'mainContent': {
             templateUrl:'html/login.html',
             controller: 'SignupErrorController'
-          }
-        }
-      })
-
-      .state('sessionUserActivities', {
-        url:'/activities',
-        views: {
-          'mainContent': {
-            templateUrl:'html/activities.html',
-            controller: 'ActivitiesController'
           }
         }
       })

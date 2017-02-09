@@ -45,7 +45,6 @@
       $scope.activityLoaded = false;
       $scope.finishedLoading = false;
       $scope.activities = new Array();
-      $scope.state = 'activities';
       $scope.screenSize = getScreenSize($window.innerWidth);
 
       // Bind to the window resize function to hide Angular Grid for small screens
@@ -56,10 +55,12 @@
         $scope.$digest();
       });
 
+      // Determine if it is Activities or Community screen
+      $scope.username = $stateParams.username;
       if ($stateParams.username) {
-        $scope.username = $stateParams.username;
+        $scope.screen = 'Activities';
       } else {
-        $scope.username = $scope.User.username;
+        $scope.screen = 'Community';
       }
 
       $scope.setSkillActivity('Augeo');
@@ -86,7 +87,7 @@
           if(activity) {
             if (activity.length > 0) {
               for(var i = 0; i < activity.length; i++) {
-                $scope.activities.push(ActivityClientService.getActivityObject(activity[i], data.user));
+                $scope.activities.push(ActivityClientService.getActivityObject(activity[i]));
               }
               maxTimestamp = data.activity[data.activity.length - 1].timestamp;
               $scope.activityLoaded = true;
